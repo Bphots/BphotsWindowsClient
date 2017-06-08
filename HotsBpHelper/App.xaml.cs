@@ -13,5 +13,6 @@ namespace HotsBpHelper
     /// </summary>
     public partial class App : Application
     {
+        public static string AppPath;
     }
 }

@@ -1,0 +1,25 @@
+﻿<Window x:Class="HotsBpHelper.Pages.WebFileUpdaterView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HotsBpHelper.Pages"
+        xmlns:lex="http://wpflocalizeextension.codeplex.com"
+        mc:Ignorable="d"
+        lex:ResxLocalizationProvider.DefaultAssembly="HotsBpHelper"
+        lex:ResxLocalizationProvider.DefaultDictionary="Strings"
+        ResizeMode="NoResize"
+        SizeToContent="Width"
+        Title="{lex:Loc FileUpdate}" Height="200" 
+        d:DataContext="{d:DesignInstance local:WebFileUpdaterViewModel}">
+    <DockPanel>
+        <ListView ItemsSource="{Binding FileUpdateInfos}">
+            <ListView.View>
+                <GridView AllowsColumnReorder="False">
+                    <GridViewColumn Header="{lex:Loc FileName}" Width="250" DisplayMemberBinding="{Binding FileName}"></GridViewColumn>
+                    <GridViewColumn Header="{lex:Loc FileStatus}" Width="100" DisplayMemberBinding="{Binding FileStatus}"></GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </DockPanel>
+</Window>
