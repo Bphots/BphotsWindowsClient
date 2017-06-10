@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using HotsBpHelper.Api.Model;
 
@@ -27,6 +28,11 @@ namespace HotsBpHelper.Api
                 },
             };
             return Task.FromResult(result);
+        }
+
+        public byte[] DownloadFile(string filePath)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

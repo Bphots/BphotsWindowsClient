@@ -82,6 +82,7 @@
     <Compile Include="Const.cs" />
     <Compile Include="Pages\ViewModelBase.cs" />
     <Compile Include="Utils\FileUtils.cs" />
+    <Compile Include="WPF\TrulyObservableCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Localization\Strings.Designer.cs">

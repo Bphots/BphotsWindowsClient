@@ -13,7 +13,7 @@ namespace HotsBpHelper.Utils
             {
                 using (var stream = File.OpenRead(filename))
                 {
-                    return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "‌​").ToLower();
+                    return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", String.Empty);
                 }
             }
         }

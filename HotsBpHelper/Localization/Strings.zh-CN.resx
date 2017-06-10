@@ -120,6 +120,9 @@
   <data name="FileName" xml:space="preserve">
     <value>文件名</value>
   </data>
+  <data name="FilesNotReady" xml:space="preserve">
+    <value>不能完成更新, 请稍后重启工具重试.</value>
+  </data>
   <data name="FileStatus" xml:space="preserve">
     <value>文件状态</value>
   </data>
@@ -129,10 +132,31 @@
   <data name="HotsBpHelper" xml:space="preserve">
     <value>风暴BP助手</value>
   </data>
+  <data name="UpdateFailed" xml:space="preserve">
+    <value>更新失败</value>
+  </data>
   <data name="Updating" xml:space="preserve">
     <value>更新中...</value>
   </data>
   <data name="UpToDate" xml:space="preserve">
     <value>最新</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="GetFileListFailed" xml:space="preserve">
+    <value>取得更新文件列表失败, 请稍后重启工具重试.</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>确定</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>是</value>
   </data>
 </root>

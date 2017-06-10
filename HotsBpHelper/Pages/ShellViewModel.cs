@@ -1,24 +1,26 @@
-using System;
+using System.Net.Mime;
+using System.Windows;
 using Stylet;
 
 namespace HotsBpHelper.Pages
 {
     public class ShellViewModel : ViewModelBase
     {
-        private readonly IWindowManager _windowManager;
-
         private readonly WebFileUpdaterViewModel _webFileUpdaterViewModel;
 
-        public ShellViewModel(IWindowManager windowManager, WebFileUpdaterViewModel webFileUpdaterViewModel)
+        public ShellViewModel( WebFileUpdaterViewModel webFileUpdaterViewModel)
         {
-            _windowManager = windowManager;
             _webFileUpdaterViewModel = webFileUpdaterViewModel;
         }
 
         protected override void OnViewLoaded()
         {
-            _windowManager.ShowDialog(_webFileUpdaterViewModel);
+            if (WindowManager.ShowDialog(_webFileUpdaterViewModel) != true)
+            {
+                Application.Current.Shutdown();
+            }
             base.OnViewLoaded();
         }
+
     }
 }
