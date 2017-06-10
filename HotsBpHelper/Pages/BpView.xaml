@@ -4,10 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HotsBpHelper.Pages"
-        xmlns:wpf1="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
+        xmlns:userControls="clr-namespace:HotsBpHelper.UserControls"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance local:BpViewModel}">
     <DockPanel>
-        <wpf1:ChromiumWebBrowser Address="{Binding LocalFileUri}" />
+        <userControls:WebKitBrowser Source="{Binding LocalFileUri}"/>
     </DockPanel>
 </Window>
