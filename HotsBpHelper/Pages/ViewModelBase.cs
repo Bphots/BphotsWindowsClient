@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
+using NLog;
 using Stylet;
 using StyletIoC;
 using WPFLocalizeExtension.Extensions;
@@ -8,6 +9,8 @@ namespace HotsBpHelper.Pages
 {
     public class ViewModelBase : Screen
     {
+        protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         [Inject]
         protected IWindowManager WindowManager { get; set; }
 

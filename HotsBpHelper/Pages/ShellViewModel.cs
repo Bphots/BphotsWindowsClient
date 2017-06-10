@@ -21,6 +21,7 @@ namespace HotsBpHelper.Pages
             if (WindowManager.ShowDialog(_webFileUpdaterViewModel) != true)
             {
                 Application.Current.Shutdown();
+                return;
             }
             WindowManager.ShowDialog(_bpViewModel);
             base.OnViewLoaded();

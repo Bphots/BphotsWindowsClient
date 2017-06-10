@@ -18,7 +18,6 @@ namespace HotsBpHelper.Pages
     {
         private readonly IRestApi _restApi;
 
-
         public BindableCollection<FileUpdateInfo> FileUpdateInfos { get; set; } = new BindableCollection<FileUpdateInfo>();
 
         public WebFileUpdaterViewModel(IRestApi restApi)
@@ -50,6 +49,7 @@ namespace HotsBpHelper.Pages
             try
             {
                 remoteFileInfos = await _restApi.GetRemoteFileListAsync();
+                Logger.Trace("Remote files:\r\n{0}", string.Join("\r\n", remoteFileInfos.Select(rfi => rfi.Name)));
             }
             catch (Exception)
             {
@@ -76,15 +76,19 @@ namespace HotsBpHelper.Pages
                     {
                         try
                         {
+                            Logger.Trace("Downloading file: {0}", fileUpdateInfo.FileName);
                             byte[] content = _restApi.DownloadFile(fileUpdateInfo.FileName);
                             content.SaveAs(fileUpdateInfo.LocalFilePath);
+                            Logger.Trace("Downloaded. Byte count: {0}", content.Length);
                             if (NeedUpdate(fileUpdateInfo)) fileUpdateInfo.FileStatus = L("UpdateFailed");
                             else fileUpdateInfo.FileStatus = L("UpToDate");
+                            Logger.Trace("File status: {0}", fileUpdateInfo.FileStatus);
                             FileUpdateInfos.Refresh();
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
                             fileUpdateInfo.FileStatus = L("UpdateFailed");
+                            Logger.Error(e, "Downloading error.");
                         }
                     }
                     else
