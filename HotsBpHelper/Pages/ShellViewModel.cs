@@ -8,9 +8,12 @@ namespace HotsBpHelper.Pages
     {
         private readonly WebFileUpdaterViewModel _webFileUpdaterViewModel;
 
-        public ShellViewModel( WebFileUpdaterViewModel webFileUpdaterViewModel)
+        private readonly BpViewModel _bpViewModel;
+
+        public ShellViewModel(WebFileUpdaterViewModel webFileUpdaterViewModel, BpViewModel bpViewModel)
         {
             _webFileUpdaterViewModel = webFileUpdaterViewModel;
+            _bpViewModel = bpViewModel;
         }
 
         protected override void OnViewLoaded()
@@ -19,6 +22,7 @@ namespace HotsBpHelper.Pages
             {
                 Application.Current.Shutdown();
             }
+            WindowManager.ShowDialog(_bpViewModel);
             base.OnViewLoaded();
         }
 

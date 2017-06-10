@@ -80,9 +80,13 @@
     </Compile>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Const.cs" />
+    <Compile Include="Pages\BpView.xaml.cs">
+      <DependentUpon>BpView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\BpViewModel.cs" />
     <Compile Include="Pages\ViewModelBase.cs" />
     <Compile Include="Utils\FileUtils.cs" />
-    <Compile Include="WPF\TrulyObservableCollection.cs" />
+    <Compile Include="WPF\WebBrowserUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Localization\Strings.Designer.cs">
@@ -138,6 +142,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Pages\BpView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\ShellView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
