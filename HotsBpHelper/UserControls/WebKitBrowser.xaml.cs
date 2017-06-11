@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace HotsBpHelper.UserControls
@@ -24,9 +25,9 @@ namespace HotsBpHelper.UserControls
         /// <summary>
         /// 取得或设置 <see cref="Source" /> 的值。这是一个依赖属性。
         /// </summary>
-        public string Source
+        public Uri Source
         {
-            get { return (string) GetValue(SourceProperty); }
+            get { return (Uri) GetValue(SourceProperty); }
             set { SetValue(SourceProperty, value); }
         }
 
@@ -35,13 +36,14 @@ namespace HotsBpHelper.UserControls
         /// </summary>
         public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
             SourcePropertyName,
-            typeof (string),
+            typeof (Uri),
             typeof (WebKitBrowser),
             new UIPropertyMetadata(null, SourceChangedCallBack));
 
         private static void SourceChangedCallBack(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
             var ctrl = (WebKitBrowser) dependencyObject;
+            ctrl.Browser.Navigate((Uri)e.NewValue);
         }
 
         #endregion

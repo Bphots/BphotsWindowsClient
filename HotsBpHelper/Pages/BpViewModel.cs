@@ -6,12 +6,12 @@ namespace HotsBpHelper.Pages
 {
     public class BpViewModel : ViewModelBase
     {
-        public string LocalFileUri { get; set; }
+        public Uri LocalFileUri { get; set; }
 
         public BpViewModel()
         {
             string filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "index.html");
-            LocalFileUri = new Uri(filePath, UriKind.Absolute).AbsoluteUri;
+            LocalFileUri = new Uri(filePath, UriKind.Absolute);
 //            Debug.WriteLine(LocalFileUri.IsWellFormedOriginalString());
         }
     }
