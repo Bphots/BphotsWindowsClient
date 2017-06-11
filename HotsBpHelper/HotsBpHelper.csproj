@@ -57,16 +57,16 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GitLink, Version=2.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\gitlink.2.4.1\lib\net45\GitLink.exe</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.10\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.105.2.3\lib\net45\RestSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Stylet, Version=1.1.20.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Stylet.1.1.20\lib\net45\Stylet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -109,11 +109,13 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Const.cs" />
     <Compile Include="Pages\BpViewModel.cs" />
+    <Compile Include="Pages\HeroSelectorViewModel.cs" />
     <Compile Include="Pages\ViewModelBase.cs" />
     <Compile Include="UserControls\WebKitBrowser.xaml.cs">
       <DependentUpon>WebKitBrowser.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\FileUtils.cs" />
+    <Compile Include="Utils\ScreenUtils.cs" />
     <Compile Include="WPF\WebBrowserUtility.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -129,9 +131,6 @@
     </Compile>
     <Compile Include="Models\FileUpdateInfo.cs" />
     <Compile Include="Pages\ShellViewModel.cs" />
-    <Compile Include="Pages\WebFileUpdaterView.xaml.cs">
-      <DependentUpon>WebFileUpdaterView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\WebFileUpdaterViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -180,6 +179,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\HeroSelectorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\ShellView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -198,7 +201,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Github\Stylet\Stylet\Stylet.csproj">
+      <Project>{2435bd00-ac12-48b0-ad36-9bab2fdec3f5}</Project>
+      <Name>Stylet</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
