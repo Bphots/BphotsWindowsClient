@@ -6,7 +6,12 @@
         xmlns:local="clr-namespace:HotsBpHelper.Pages"
         xmlns:userControls="clr-namespace:HotsBpHelper.UserControls"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance local:BpViewModel}">
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="ToolWindow"
+        d:DataContext="{d:DesignInstance local:BpViewModel}"
+        Width="440" Height="187"
+        >
     <DockPanel>
         <userControls:WebKitBrowser Source="{Binding LocalFileUri}"/>
     </DockPanel>
