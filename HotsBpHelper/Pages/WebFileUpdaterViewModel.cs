@@ -25,7 +25,7 @@ namespace HotsBpHelper.Pages
             _restApi = restApi;
         }
 
-        protected override async void OnActivate()
+        protected override async void OnViewLoaded()
         {
             await GetFileList();
             await DownloadNeededFiles();

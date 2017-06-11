@@ -4,17 +4,21 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:pages="clr-namespace:HotsBpHelper.Pages"
-        WindowStyle="ToolWindow"
         SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize"
         mc:Ignorable="d"
         Topmost="True"
         WindowStartupLocation="Manual"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"       
         d:DataContext="{d:DesignInstance pages:HeroSelectorViewModel}"
         Left="{Binding Location.X}"
         Top="{Binding Location.Y}"
         >
-    <DockPanel>
-        <Button DockPanel.Dock="Right" Content="..." />
-        <TextBlock VerticalAlignment="Center" Text="阿拉纳克" />
-    </DockPanel>
+    <ComboBox Width="150" Height="20" Opacity="0.4" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" >
+        <ComboBoxItem>阿拉纳克</ComboBoxItem>
+        <ComboBoxItem>源氏</ComboBoxItem>
+        <ComboBoxItem>维拉</ComboBoxItem>
+    </ComboBox>
 </Window>
