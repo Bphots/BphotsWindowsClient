@@ -12,7 +12,6 @@ namespace HotsBpHelper.Pages
         {
             string filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "index.html");
             LocalFileUri = new Uri(filePath, UriKind.Absolute);
-//            Debug.WriteLine(LocalFileUri.IsWellFormedOriginalString());
         }
     }
 }

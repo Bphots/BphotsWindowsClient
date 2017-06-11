@@ -9,10 +9,11 @@
         ShowInTaskbar="False"
         WindowStartupLocation="CenterScreen"
         WindowStyle="ToolWindow"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
         d:DataContext="{d:DesignInstance local:BpViewModel}"
-        Width="440" Height="187"
         >
     <DockPanel>
-        <userControls:WebKitBrowser Source="{Binding LocalFileUri}"/>
+        <userControls:WebKitBrowser Width="422" Height="150" Source="{Binding LocalFileUri}"/>
     </DockPanel>
 </Window>
