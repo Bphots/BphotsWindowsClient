@@ -107,7 +107,7 @@ namespace HotsBpHelper.Pages
                 Directory.CreateDirectory(Path.GetDirectoryName(fileUpdateInfo.LocalFilePath));
                 return true;
             }
-            string localMd5 = FileUtils.CheckMD5(fileUpdateInfo.LocalFilePath).ToLower();
+            string localMd5 = FileUtil.CheckMD5(fileUpdateInfo.LocalFilePath).ToLower();
             string remoteMd5 = fileUpdateInfo.RemoteMD5.Trim().ToLower();
             return localMd5 != remoteMd5;
         }

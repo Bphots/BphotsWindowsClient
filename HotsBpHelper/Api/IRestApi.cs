@@ -11,5 +11,7 @@ namespace HotsBpHelper.Api
         Task<List<RemoteFileInfo>> GetRemoteFileListAsync();
 
         byte[] DownloadFile(string filePath);
+
+        Task<List<string>> GetHeroList(string name);
     }
 }

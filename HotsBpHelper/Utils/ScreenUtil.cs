@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace HotsBpHelper.Utils
 {
-    public static  class ScreenUtils
+    public static  class ScreenUtil
     {
         [DllImport("gdi32.dll")]
         public static extern int GetDeviceCaps(IntPtr hDc, int nIndex);
