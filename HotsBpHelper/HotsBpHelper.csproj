@@ -114,9 +114,11 @@
     <Compile Include="UserControls\WebKitBrowser.xaml.cs">
       <DependentUpon>WebKitBrowser.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utils\FileUtils.cs" />
-    <Compile Include="Utils\ScreenUtils.cs" />
-    <Compile Include="WPF\WebBrowserUtility.cs" />
+    <Compile Include="Utils\FileUtil.cs" />
+    <Compile Include="Utils\HeroUtil\HeroInfo.cs" />
+    <Compile Include="Utils\HeroUtil\HeroUtil.cs" />
+    <Compile Include="Utils\HeroUtil\IHeroUtil.cs" />
+    <Compile Include="Utils\ScreenUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Localization\Strings.Designer.cs">
@@ -206,6 +208,9 @@
       <Project>{2435bd00-ac12-48b0-ad36-9bab2fdec3f5}</Project>
       <Name>Stylet</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="WPF\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

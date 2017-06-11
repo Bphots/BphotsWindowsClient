@@ -34,5 +34,10 @@ namespace HotsBpHelper.Api
         {
             throw new System.NotImplementedException();
         }
+
+        public Task<List<string>> GetHeroList(string language)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

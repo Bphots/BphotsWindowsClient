@@ -5,7 +5,7 @@ using System.Text;
 
 namespace HotsBpHelper.Utils
 {
-    public class FileUtils
+    public class FileUtil
     {
         public static string CheckMD5(string filename)
         {

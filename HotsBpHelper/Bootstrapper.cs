@@ -4,6 +4,7 @@ using HotsBpHelper.Api;
 using Stylet;
 using StyletIoC;
 using HotsBpHelper.Pages;
+using HotsBpHelper.Utils.HeroUtil;
 using WPFLocalizeExtension.Engine;
 
 namespace HotsBpHelper
@@ -14,7 +15,9 @@ namespace HotsBpHelper
         {
 //            builder.Bind<IRestApi>().To<DummyRestApi>();
             builder.Bind<IRestApi>().To<RestApi>();
+            builder.Bind<IHeroUtil>().To<HeroUtil>().InSingletonScope();
             builder.Autobind();
+            builder.Bind<IHeroSelectorViewModelFactory>().ToAbstractFactory();
         }
 
         protected override void Configure()

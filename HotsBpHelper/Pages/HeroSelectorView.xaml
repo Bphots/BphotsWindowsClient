@@ -16,9 +16,6 @@
         Left="{Binding Location.X}"
         Top="{Binding Location.Y}"
         >
-    <ComboBox Width="150" Height="20" Opacity="0.4" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" >
-        <ComboBoxItem>阿拉纳克</ComboBoxItem>
-        <ComboBoxItem>源氏</ComboBoxItem>
-        <ComboBoxItem>维拉</ComboBoxItem>
+    <ComboBox Width="150" Height="20" Opacity="0.4" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" ItemsSource="{Binding HeroInfos}" DisplayMemberPath="FullName" >
     </ComboBox>
 </Window>
