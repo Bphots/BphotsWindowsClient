@@ -5,15 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HotsBpHelper.Pages"
         xmlns:userControls="clr-namespace:HotsBpHelper.UserControls"
+        xmlns:s="https://github.com/canton7/Stylet"
         mc:Ignorable="d"
         ShowInTaskbar="False"
-        WindowStartupLocation="CenterScreen"
         WindowStyle="ToolWindow"
+        WindowStartupLocation="Manual"
         ResizeMode="NoResize"
         SizeToContent="WidthAndHeight"
         d:DataContext="{d:DesignInstance local:BpViewModel}"
         >
     <DockPanel>
         <userControls:WebKitBrowser DockPanel.Dock="Top" Width="422" Height="150" Source="{Binding LocalFileUri}"/>
+        <Button DockPanel.Dock="Bottom" Command="{s:Action ShowHeroSelector}" Height="50"></Button>
     </DockPanel>
 </Window>
