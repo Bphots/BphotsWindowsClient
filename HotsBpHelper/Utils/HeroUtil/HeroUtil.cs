@@ -17,15 +17,16 @@ namespace HotsBpHelper.Utils.HeroUtil
             _restApi = restApi;
         }
 
-        public async Task<IEnumerable<HeroInfo>> GetHeroInfosAsync()
+        public IEnumerable<HeroInfo> GetHeroInfos()
         {
             if (_heroInfos == null)
             {
-                var names = await _restApi.GetHeroList(CultureInfo.CurrentCulture.Name);
+                var names = _restApi.GetHeroList(CultureInfo.CurrentCulture.Name);
                 _heroInfos = names.Select(n => new HeroInfo()
                 {
-                    FullName = n,
-                    ShortName = n,
+                    Id = n.Key,
+                    FullName = n.Value,
+                    ShortName = n.Value,
                 });
             }
             return _heroInfos;
