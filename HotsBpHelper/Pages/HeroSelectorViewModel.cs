@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
-using HotsBpHelper.Api;
-using HotsBpHelper.Localization;
-using HotsBpHelper.Utils;
 using HotsBpHelper.Utils.HeroUtil;
 
 namespace HotsBpHelper.Pages
@@ -20,9 +18,9 @@ namespace HotsBpHelper.Pages
             _heroUtil = heroUtil;
         }
 
-        protected override async void OnViewLoaded()
+        protected override void OnViewLoaded()
         {
-            HeroInfos = await _heroUtil.GetHeroInfosAsync();
+            HeroInfos = _heroUtil.GetHeroInfos();
             base.OnViewLoaded();
         }
     }

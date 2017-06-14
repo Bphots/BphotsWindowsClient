@@ -5,6 +5,6 @@ namespace HotsBpHelper.Utils.HeroUtil
 {
     public interface IHeroUtil
     {
-        Task<IEnumerable<HeroInfo>> GetHeroInfosAsync();
+        IEnumerable<HeroInfo> GetHeroInfos();
     }
 }

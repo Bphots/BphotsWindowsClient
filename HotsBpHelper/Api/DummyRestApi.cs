@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using HotsBpHelper.Api.Model;
@@ -35,9 +36,9 @@ namespace HotsBpHelper.Api
             throw new System.NotImplementedException();
         }
 
-        public Task<List<string>> GetHeroList(string language)
+        Dictionary<int, string> IRestApi.GetHeroList(string name)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

@@ -14,9 +14,8 @@ namespace HotsBpHelper
         protected override void ConfigureIoC(IStyletIoCBuilder builder)
         {
 //            builder.Bind<IRestApi>().To<DummyRestApi>();
-            builder.Bind<IRestApi>().To<RestApi>();
+            builder.Bind<IRestApi>().To<RestApi>().InSingletonScope();
             builder.Bind<IHeroUtil>().To<HeroUtil>().InSingletonScope();
-            builder.Autobind();
             builder.Bind<IHeroSelectorViewModelFactory>().ToAbstractFactory();
         }
 
