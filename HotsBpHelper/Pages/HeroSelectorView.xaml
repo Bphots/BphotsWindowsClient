@@ -13,9 +13,10 @@
         AllowsTransparency="True"
         Background="Transparent"       
         d:DataContext="{d:DesignInstance pages:HeroSelectorViewModel}"
-        Left="{Binding Location.X}"
-        Top="{Binding Location.Y}"
+        Left="{Binding Left}"
+        Top="{Binding Top}"
+        ShowInTaskbar="False"
         >
-    <ComboBox Width="150" Height="20" Opacity="0.4" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" ItemsSource="{Binding HeroInfos}" DisplayMemberPath="FullName">
+    <ComboBox Width="{Binding Size.Width}" Height="{Binding Size.Height}" Opacity="0.4" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" ItemsSource="{Binding HeroInfos}" DisplayMemberPath="FullName">
     </ComboBox>
 </Window>

@@ -61,6 +61,14 @@
       <HintPath>..\packages\gitlink.2.4.1\lib\net45\GitLink.exe</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Its.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Its.Configuration.1.0.6\lib\net40\Its.Configuration.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.10\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
@@ -109,8 +117,15 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Const.cs" />
     <Compile Include="Pages\BpViewModel.cs" />
+    <Compile Include="Pages\HeroSelectorView.xaml.cs">
+      <DependentUpon>HeroSelectorView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\HeroSelectorViewModel.cs" />
+    <Compile Include="Pages\test.xaml.cs">
+      <DependentUpon>test.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\ViewModelBase.cs" />
+    <Compile Include="Settings\AppSetting.cs" />
     <Compile Include="UserControls\WebKitBrowser.xaml.cs">
       <DependentUpon>WebKitBrowser.xaml</DependentUpon>
     </Compile>
@@ -163,6 +178,9 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include=".config\AppSetting.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -188,6 +206,10 @@
     <Page Include="Pages\ShellView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\test.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\WebFileUpdaterView.xaml">
       <SubType>Designer</SubType>

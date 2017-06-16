@@ -27,10 +27,10 @@ namespace HotsBpHelper.Pages
 
         protected override async void OnViewLoaded()
         {
+            base.OnViewLoaded();
             await GetFileList();
             await DownloadNeededFiles();
             CheckFiles();
-            base.OnActivate();
         }
 
         private void CheckFiles()

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using HotsBpHelper.Utils;
 using HotsBpHelper.Utils.HeroUtil;
 
 namespace HotsBpHelper.Pages
@@ -9,19 +10,36 @@ namespace HotsBpHelper.Pages
     {
         private readonly IHeroUtil _heroUtil;
 
-        public Point Location { get; set; }
+        public int Left { get; set; }
+        public int Top { get; set; }
+
+        public Size Size { get; set; }
 
         public IEnumerable<HeroInfo> HeroInfos { get; set; }
 
         public HeroSelectorViewModel(IHeroUtil heroUtil)
         {
             _heroUtil = heroUtil;
+            Size = new Size(150, 20);
+            HeroInfos = _heroUtil.GetHeroInfos();
         }
 
-        protected override void OnViewLoaded()
+        public void SetLeftAndTop(Point position)
         {
-            HeroInfos = _heroUtil.GetHeroInfos();
-            base.OnViewLoaded();
+            var pos = position.ToPixelPoint();
+            SetPosition(pos);
+        }
+
+        public void SetRightAndTop(Point position)
+        {
+            var pos = new Point(position.X - Size.Width, position.Y).ToPixelPoint();
+            SetPosition(pos);
+        }
+
+        private void SetPosition(Point position)
+        {
+            Left = (int)position.X;
+            Top = (int)position.Y;
         }
     }
 }

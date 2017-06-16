@@ -17,6 +17,8 @@ namespace HotsBpHelper
             builder.Bind<IRestApi>().To<RestApi>().InSingletonScope();
             builder.Bind<IHeroUtil>().To<HeroUtil>().InSingletonScope();
             builder.Bind<IHeroSelectorViewModelFactory>().ToAbstractFactory();
+            builder.Bind<ShellViewModel.IWebFileUpdaterViewModelFactory>().ToAbstractFactory();
+            builder.Bind<ShellViewModel.IBpViewModelFactory>().ToAbstractFactory();
         }
 
         protected override void Configure()

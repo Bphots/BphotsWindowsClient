@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using HotsBpHelper.Settings;
 
 namespace HotsBpHelper
 {
@@ -14,5 +15,6 @@ namespace HotsBpHelper
     public partial class App : Application
     {
         public static string AppPath;
+        public static Position MyPosition;
     }
 }
