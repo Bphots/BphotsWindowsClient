@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:HotsBpHelper.Pages"
         lex:ResxLocalizationProvider.DefaultAssembly="HotsBpHelper"
         lex:ResxLocalizationProvider.DefaultDictionary="Strings"
+        WindowState="Minimized"
         mc:Ignorable="d"
         Title="{lex:Loc HotsBpHelper}" Height="350" Width="525"
         xmlns:lex="http://wpflocalizeextension.codeplex.com"

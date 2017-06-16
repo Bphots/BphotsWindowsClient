@@ -1,31 +1,66 @@
+using System;
+using System.Linq;
 using System.Net.Mime;
 using System.Windows;
+using HotsBpHelper.Settings;
 using Stylet;
 
 namespace HotsBpHelper.Pages
 {
     public class ShellViewModel : ViewModelBase
     {
-        private readonly WebFileUpdaterViewModel _webFileUpdaterViewModel;
+        private readonly IWebFileUpdaterViewModelFactory _webFileUpdaterViewModelFactory;
 
-        private readonly BpViewModel _bpViewModel;
+        private readonly IBpViewModelFactory _bpViewModelFactory;
 
-        public ShellViewModel(WebFileUpdaterViewModel webFileUpdaterViewModel, BpViewModel bpViewModel)
+
+        public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory)
         {
-            _webFileUpdaterViewModel = webFileUpdaterViewModel;
-            _bpViewModel = bpViewModel;
+            _webFileUpdaterViewModelFactory = webFileUpdaterViewModelFactory;
+            _bpViewModelFactory = bpViewModelFactory;
         }
 
         protected override void OnViewLoaded()
         {
-            if (WindowManager.ShowDialog(_webFileUpdaterViewModel) != true)
+            Init();
+            if (WindowManager.ShowDialog(_webFileUpdaterViewModelFactory.CreateViewModel()) != true)
             {
                 Application.Current.Shutdown();
                 return;
             }
-            WindowManager.ShowDialog(_bpViewModel);
+            WindowManager.ShowDialog(_bpViewModelFactory.CreateViewModel());
             base.OnViewLoaded();
         }
 
+        private void Init()
+        {
+            try
+            {
+                var appSetting = Its.Configuration.Settings.Get<AppSetting>();
+                var position = appSetting.Positions.SingleOrDefault(s => s.Width == (int)SystemParameters.PrimaryScreenWidth && s.Height == (int)SystemParameters.PrimaryScreenHeight);
+                if (position == null)
+                {
+                    ShowMessageBox(L("MSG_NoMatchResolution"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    Application.Current.Shutdown();
+                    return;
+                }
+                App.MyPosition = position;
+            }
+            catch (Exception e)
+            {
+                ShowMessageBox(e.Message, MessageBoxButton.OK, MessageBoxImage.Error);
+                Application.Current.Shutdown();
+            }
+        }
+
+        public interface IBpViewModelFactory
+        {
+            BpViewModel CreateViewModel();
+        }
+        public interface IWebFileUpdaterViewModelFactory
+        {
+            WebFileUpdaterViewModel CreateViewModel();
+        }
     }
+
 }

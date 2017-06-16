@@ -159,4 +159,7 @@
   <data name="Yes" xml:space="preserve">
     <value>是</value>
   </data>
+  <data name="MSG_NoMatchResolution" xml:space="preserve">
+    <value>未找到匹配的分辨率,工具不能正常使用.</value>
+  </data>
 </root>

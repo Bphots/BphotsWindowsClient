@@ -27,7 +27,7 @@ namespace HotsBpHelper.Utils.HeroUtil
                     Id = n.Key,
                     FullName = n.Value,
                     ShortName = n.Value,
-                });
+                }).OrderBy(hi => hi.FullName);
             }
             return _heroInfos;
         }
