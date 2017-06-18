@@ -61,6 +61,7 @@ namespace HotsBpHelper.Pages
             FileUpdateInfos.AddRange(remoteFileInfos.Select(fi => new FileUpdateInfo
             {
                 FileName = fi.Name,
+                Url = fi.Url,
                 RemoteMD5 = fi.MD5,
                 LocalFilePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, fi.Name.TrimStart('/')),
                 FileStatus = L("Updating"),
@@ -78,7 +79,7 @@ namespace HotsBpHelper.Pages
                         try
                         {
                             Logger.Trace("Downloading file: {0}", fileUpdateInfo.FileName);
-                            byte[] content = _restApi.DownloadFile(fileUpdateInfo.FileName);
+                            byte[] content = _restApi.DownloadFile(fileUpdateInfo.Url);
                             content.SaveAs(fileUpdateInfo.LocalFilePath);
                             Logger.Trace("Downloaded. Byte count: {0}", content.Length);
                             if (NeedUpdate(fileUpdateInfo)) fileUpdateInfo.FileStatus = L("UpdateFailed");

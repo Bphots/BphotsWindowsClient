@@ -117,6 +117,9 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Const.cs" />
     <Compile Include="DateTimeUtils.cs" />
+    <Compile Include="Pages\BpView.xaml.cs">
+      <DependentUpon>BpView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\BpViewModel.cs" />
     <Compile Include="Pages\HeroSelectorView.xaml.cs">
       <DependentUpon>HeroSelectorView.xaml</DependentUpon>

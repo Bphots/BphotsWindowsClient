@@ -18,11 +18,11 @@
         Top ="{Binding Top}"
         >
     <DockPanel >
-        <userControls:WebKitBrowser DockPanel.Dock="Top" Width="430" Height="160" Source="{Binding LocalFileUri}"/>
+        <userControls:WebKitBrowser x:Name="Browser" DockPanel.Dock="Top" Width="430" Height="160" Source="{Binding LocalFileUri}"/>
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom">
             <Button Content="Show" Command="{s:Action ShowHeroSelector}" Height="50"></Button>
             <Button Content="Close" Command="{s:Action CloseHeroSelector}" Height="50"></Button>
-            <Button Content="Advise" Command="{s:Action Init}" Height="50"></Button>
+            <Button Content="Init" Command="{s:Action Init}" Height="50"></Button>
         </StackPanel>
     </DockPanel>
 </Window>

@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Media;
 using HotsBpHelper.Settings;
+using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using Stylet;
 
@@ -15,6 +16,8 @@ namespace HotsBpHelper.Pages
     {
         private readonly IHeroSelectorViewModelFactory _heroSelectorViewModelFactory;
 
+        private readonly IEventAggregator _eventAggregator;
+
         public BindableCollection<HeroSelectorViewModel> HeroSelectorViewModels { get; set; }
 
         public int Left { get; set; }
@@ -22,9 +25,10 @@ namespace HotsBpHelper.Pages
 
         public Uri LocalFileUri { get; set; }
 
-        public BpViewModel(IHeroSelectorViewModelFactory heroSelectorViewModelFactory)
+        public BpViewModel(IHeroSelectorViewModelFactory heroSelectorViewModelFactory, IEventAggregator eventAggregator)
         {
             _heroSelectorViewModelFactory = heroSelectorViewModelFactory;
+            _eventAggregator = eventAggregator;
             HeroSelectorViewModels = new BindableCollection<HeroSelectorViewModel>();
 
             Left = (int) App.MyPosition.BpHelperPosition.X;
@@ -100,19 +104,18 @@ namespace HotsBpHelper.Pages
             HeroSelectorViewModels.Clear();
         }
 
-        public void Advise()
+        public void Init()
         {
-            const string fmt = "http://www.bphots.com/bp_helper/advice?map={0}&timestamp={1}&nonce={2}&client_patch={3}&sign={4}";
-            string map = "zhm";
-            string timestamp = DateTime.Now.ToUnixTimestamp().ToString();
-            string nonce = Guid.NewGuid().ToString().Substring(0, 8);
-            string client_patch = "17060801";
-            string param = "{map:'zhm'}";
-            string key = "I7@gPm2F4HAcz@ak";
-            string sign = Md5Util.CaculateStringMd5($"{key}-{timestamp}-{client_patch}-{nonce}-{param}");
+            InvokeScript("init", "zhm", 0, "zh-CN");
+        }
 
-            string url = string.Format(fmt, map, timestamp, nonce, client_patch, sign);
-            LocalFileUri  = new Uri(url);
+        private void InvokeScript(string scriptName, params object[] args)
+        {
+            _eventAggregator.Publish(new InvokeScriptParameter()
+            {
+                ScriptName = scriptName,
+                Args = args
+            });
         }
 
         protected override void OnClose()

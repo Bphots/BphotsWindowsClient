@@ -14,6 +14,10 @@ namespace HotsBpHelper.UserControls
             InitializeComponent();
         }
 
+        public object InvokeScript(InvokeScriptParameter parameter)
+        {
+            return Browser.InvokeScript(parameter.ScriptName, parameter.Args);
+        }
 
         #region Source 依赖属性
 
@@ -47,5 +51,12 @@ namespace HotsBpHelper.UserControls
         }
 
         #endregion
+    }
+
+    public class InvokeScriptParameter
+    {
+        public string ScriptName { get; set; }
+
+        public object[] Args { get; set; }
     }
 }
