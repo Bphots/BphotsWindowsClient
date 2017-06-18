@@ -22,6 +22,7 @@
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom">
             <Button Content="Show" Command="{s:Action ShowHeroSelector}" Height="50"></Button>
             <Button Content="Close" Command="{s:Action CloseHeroSelector}" Height="50"></Button>
+            <Button Content="Advise" Command="{s:Action Init}" Height="50"></Button>
         </StackPanel>
     </DockPanel>
 </Window>
