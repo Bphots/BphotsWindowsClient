@@ -116,6 +116,7 @@
     </Compile>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Const.cs" />
+    <Compile Include="DateTimeUtils.cs" />
     <Compile Include="Pages\BpViewModel.cs" />
     <Compile Include="Pages\HeroSelectorView.xaml.cs">
       <DependentUpon>HeroSelectorView.xaml</DependentUpon>
@@ -133,6 +134,7 @@
     <Compile Include="Utils\HeroUtil\HeroInfo.cs" />
     <Compile Include="Utils\HeroUtil\HeroUtil.cs" />
     <Compile Include="Utils\HeroUtil\IHeroUtil.cs" />
+    <Compile Include="Utils\Md5Util.cs" />
     <Compile Include="Utils\ScreenUtil.cs" />
   </ItemGroup>
   <ItemGroup>

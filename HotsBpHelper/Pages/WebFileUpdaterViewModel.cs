@@ -51,9 +51,10 @@ namespace HotsBpHelper.Pages
                 remoteFileInfos = await _restApi.GetRemoteFileListAsync();
                 Logger.Trace("Remote files:\r\n{0}", string.Join("\r\n", remoteFileInfos.Select(rfi => rfi.Name)));
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 ShowMessageBox(L("FilesNotReady"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                Logger.Error(e);
                 RequestClose(false);
                 return;
             }
@@ -107,7 +108,7 @@ namespace HotsBpHelper.Pages
                 Directory.CreateDirectory(Path.GetDirectoryName(fileUpdateInfo.LocalFilePath));
                 return true;
             }
-            string localMd5 = FileUtil.CheckMD5(fileUpdateInfo.LocalFilePath).ToLower();
+            string localMd5 = Md5Util.CaculateFileMd5(fileUpdateInfo.LocalFilePath).ToLower();
             string remoteMd5 = fileUpdateInfo.RemoteMD5.Trim().ToLower();
             return localMd5 != remoteMd5;
         }

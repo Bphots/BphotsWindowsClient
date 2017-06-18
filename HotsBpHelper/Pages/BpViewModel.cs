@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Media;
 using HotsBpHelper.Settings;
@@ -97,6 +98,21 @@ namespace HotsBpHelper.Pages
                 vm.RequestClose();
             }
             HeroSelectorViewModels.Clear();
+        }
+
+        public void Advise()
+        {
+            const string fmt = "http://www.bphots.com/bp_helper/advice?map={0}&timestamp={1}&nonce={2}&client_patch={3}&sign={4}";
+            string map = "zhm";
+            string timestamp = DateTime.Now.ToUnixTimestamp().ToString();
+            string nonce = Guid.NewGuid().ToString().Substring(0, 8);
+            string client_patch = "17060801";
+            string param = "{map:'zhm'}";
+            string key = "I7@gPm2F4HAcz@ak";
+            string sign = Md5Util.CaculateStringMd5($"{key}-{timestamp}-{client_patch}-{nonce}-{param}");
+
+            string url = string.Format(fmt, map, timestamp, nonce, client_patch, sign);
+            LocalFileUri  = new Uri(url);
         }
 
         protected override void OnClose()
