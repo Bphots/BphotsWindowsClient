@@ -5,6 +5,7 @@ namespace HotsBpHelper.Models
     public class FileUpdateInfo : PropertyChangedBase
     {
         public string FileName { get; set; }
+        public string Url { get; set; }
 
         public string FileStatus { get; set; }
 

@@ -4,10 +4,12 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using HotsBpHelper.Api.Model;
 using HotsBpHelper.Utils;
+using NLog;
 using RestSharp;
 using RestSharp.Deserializers;
 
@@ -15,7 +17,7 @@ namespace HotsBpHelper.Api
 {
     public class RestApi : IRestApi
     {
-        private RestRequest CreateRequest(string method, IDictionary<string, string> dictParam)
+        private RestRequest CreateRequest(string method, IDictionary<string, string> dictParam, bool returnJson = true)
         {
             const string key = "I7@gPm2F4HAcz@ak";
 
@@ -27,10 +29,12 @@ namespace HotsBpHelper.Api
 
             string sign = Md5Util.CaculateStringMd5($"{key}-{dictParam["timestamp"]}-{dictParam["client_patch"]}-{nonce}-{param}");
             string urlParam = string.Join("&", dictParam.Select(kv => $"{kv.Key}={kv.Value}"));
-            return new RestRequest($"{method}?{urlParam}&nonce={nonce}&sign={sign}")
+            var request = new RestRequest($"{method}?{urlParam}&nonce={nonce}&sign={sign}");
+            if (returnJson)
             {
-                OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; }
-            };
+                request.OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; };
+            }
+            return request;
         }
 
         private async Task<T> ExecuteAsync<T>(RestRequest request) where T : new()
@@ -41,14 +45,26 @@ namespace HotsBpHelper.Api
                         request.AddParameter("AccountSid", _accountSid, ParameterType.UrlSegment); // used on every request
             */
             var response = await client.ExecuteTaskAsync<T>(request);
-            var deserializer = new JsonDeserializer();
-            var data = deserializer.Deserialize<Dictionary<string, object>>(response);
-
-            if (data != null && data.ContainsKey("result") && data["result"].ToString() == "failure")
-            {
-                throw new Exception(data["error"].ToString());
-            }
+            EnsureNotErrorResponse(response);
             return response.Data;
+        }
+
+        private static void EnsureNotErrorResponse<T>(IRestResponse<T> response) where T : new()
+        {
+            try
+            {
+                var deserializer = new JsonDeserializer();
+                var data = deserializer.Deserialize<Dictionary<string, object>>(response);
+
+                if (data != null && data.ContainsKey("result") && data["result"].ToString() == "failure")
+                {
+                    throw new Exception(data["error"].ToString());
+                }
+            }
+            catch (InvalidCastException)
+            {
+                // CONTENT不是error的结构, 无需处理
+            }
         }
 
 
@@ -60,11 +76,7 @@ namespace HotsBpHelper.Api
                         request.AddParameter("AccountSid", _accountSid, ParameterType.UrlSegment); // used on every request
             */
             var response = client.Execute<T>(request);
-
-            if (response.ErrorException != null)
-            {
-                throw response.ErrorException;
-            }
+            EnsureNotErrorResponse(response);
             return response.Data;
         }
 
@@ -74,10 +86,12 @@ namespace HotsBpHelper.Api
             return await ExecuteAsync<List<RemoteFileInfo>>(request);
         }
 
-        public byte[] DownloadFile(string filePath)
+        public byte[] DownloadFile(string url)
         {
-            var client = new RestClient(Const.WEB_API_ROOT);
-            return client.DownloadData(new RestRequest("filedata?path=" + filePath));
+            using (var client = new WebClient())
+            {
+                return client.DownloadData(url);
+            }
         }
 
         public Dictionary<int, string> GetHeroList(string language)

@@ -4,5 +4,6 @@
     {
         public string Name { get; set; }
         public string MD5 { get; set; }
+        public string Url { get; set; }
     }
 }
