@@ -21,7 +21,7 @@ namespace HotsBpHelper.Api
         {
             const string key = "I7@gPm2F4HAcz@ak";
 
-            var strParams = dictParam.OrderBy(kv => kv.Key).Select(kv => $"'{kv.Key}':'{kv.Value}'");
+            var strParams = dictParam.OrderBy(kv => kv.Key).Select(kv => $"\"{kv.Key}\":\"{kv.Value}\"");
             string param = "{" + string.Join(",", strParams) + "}";
             dictParam["timestamp"] = ((int)DateTime.Now.ToUnixTimestamp()).ToString();
             dictParam["client_patch"] = "17060801";
