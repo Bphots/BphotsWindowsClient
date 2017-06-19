@@ -29,6 +29,7 @@ namespace HotsBpHelper.Pages
                 return;
             }
             WindowManager.ShowDialog(_bpViewModelFactory.CreateViewModel());
+            Application.Current.Shutdown();
             base.OnViewLoaded();
         }
 

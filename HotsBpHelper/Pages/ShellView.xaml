@@ -7,8 +7,10 @@
         lex:ResxLocalizationProvider.DefaultAssembly="HotsBpHelper"
         lex:ResxLocalizationProvider.DefaultDictionary="Strings"
         WindowState="Minimized"
+        Visibility="Hidden"
+        ShowInTaskbar="False"
         mc:Ignorable="d"
-        Title="{lex:Loc HotsBpHelper}" Height="350" Width="525"
+        Title="{lex:Loc HotsBpHelper}" Height="0" Width="0"
         xmlns:lex="http://wpflocalizeextension.codeplex.com"
         d:DataContext="{d:DesignInstance local:ShellViewModel}">
     <TextBlock FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center">
