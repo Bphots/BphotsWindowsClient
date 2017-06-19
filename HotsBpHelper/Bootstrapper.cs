@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using HotsBpHelper.Api;
+using HotsBpHelper.Api.Security;
 using Stylet;
 using StyletIoC;
 using HotsBpHelper.Pages;
@@ -16,6 +17,7 @@ namespace HotsBpHelper
 //            builder.Bind<IRestApi>().To<DummyRestApi>();
             builder.Bind<IRestApi>().To<RestApi>().InSingletonScope();
             builder.Bind<IHeroUtil>().To<HeroUtil>().InSingletonScope();
+            builder.Bind<ISecurityProvider>().To<SecurityProvider>().InSingletonScope();
             builder.Bind<IHeroSelectorViewModelFactory>().ToAbstractFactory();
             builder.Bind<ShellViewModel.IWebFileUpdaterViewModelFactory>().ToAbstractFactory();
             builder.Bind<ShellViewModel.IBpViewModelFactory>().ToAbstractFactory();

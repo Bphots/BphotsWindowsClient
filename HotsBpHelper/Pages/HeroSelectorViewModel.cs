@@ -20,7 +20,7 @@ namespace HotsBpHelper.Pages
         public HeroSelectorViewModel(IHeroUtil heroUtil)
         {
             _heroUtil = heroUtil;
-            Size = new Size(150, 20);
+            Size = new Size(100, 20);
             HeroInfos = _heroUtil.GetHeroInfos();
         }
 
