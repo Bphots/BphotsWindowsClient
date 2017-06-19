@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using HotsBpHelper.Api.Model;
+using HotsBpHelper.Api.Security;
 using HotsBpHelper.Utils;
 using NLog;
 using RestSharp;
@@ -17,19 +18,22 @@ namespace HotsBpHelper.Api
 {
     public class RestApi : IRestApi
     {
+        private readonly ISecurityProvider _securityProvider;
+
+        public RestApi(ISecurityProvider securityProvider)
+        {
+            _securityProvider = securityProvider;
+        }
+
         private RestRequest CreateRequest(string method, IDictionary<string, string> dictParam, bool returnJson = true)
         {
-            const string key = "I7@gPm2F4HAcz@ak";
+            var sp = _securityProvider.CaculateSecurityParameter(dictParam);
 
-            var strParams = dictParam.OrderBy(kv => kv.Key).Select(kv => $"\"{kv.Key}\":\"{kv.Value}\"");
-            string param = "{" + string.Join(",", strParams) + "}";
-            dictParam["timestamp"] = ((int)DateTime.Now.ToUnixTimestamp()).ToString();
-            dictParam["client_patch"] = "17060801";
-            string nonce = Guid.NewGuid().ToString().Substring(0, 8);
+            dictParam["timestamp"] = sp.Timestamp;
+            dictParam["client_patch"] = sp.Patch;
 
-            string sign = Md5Util.CaculateStringMd5($"{key}-{dictParam["timestamp"]}-{dictParam["client_patch"]}-{nonce}-{param}");
             string urlParam = string.Join("&", dictParam.Select(kv => $"{kv.Key}={kv.Value}"));
-            var request = new RestRequest($"{method}?{urlParam}&nonce={nonce}&sign={sign}");
+            var request = new RestRequest($"{method}?{urlParam}&nonce={sp.Nonce}&sign={sp.Sign}");
             if (returnJson)
             {
                 request.OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; };
