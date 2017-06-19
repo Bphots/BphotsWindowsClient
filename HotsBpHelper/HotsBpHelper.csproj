@@ -110,6 +110,9 @@
     <Compile Include="Api\IRestApi.cs" />
     <Compile Include="Api\Model\RemoteFileInfo.cs" />
     <Compile Include="Api\RestApi.cs" />
+    <Compile Include="Api\Security\ISecurityProvider.cs" />
+    <Compile Include="Api\Security\SecurityParameter.cs" />
+    <Compile Include="Api\Security\SecurityProvider.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>

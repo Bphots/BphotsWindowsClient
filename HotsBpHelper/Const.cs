@@ -5,5 +5,9 @@
         public const string WEB_API_ROOT = "http://www.bphots.com/bp_helper/get/";
 
         public const string LOCAL_WEB_FILE_DIR = "WebFiles";
+
+        public const string PATCH = "17060801";
+
+        public const string KEY = "I7@gPm2F4HAcz@ak";
     }
 }
