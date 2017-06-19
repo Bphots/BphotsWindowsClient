@@ -4,7 +4,7 @@ using Stylet;
 
 namespace HotsBpHelper.Pages
 {
-    public partial class BpView : Window, IHandle<InvokeScriptParameter>
+    public partial class BpView : Window, IHandle<InvokeScriptMessage>
     {
         public BpView(IEventAggregator eventAggregator)
         {
@@ -12,7 +12,7 @@ namespace HotsBpHelper.Pages
             eventAggregator.Subscribe(this);
         }
 
-        public void Handle(InvokeScriptParameter message)
+        public void Handle(InvokeScriptMessage message)
         {
             Browser.InvokeScript(message);
         }

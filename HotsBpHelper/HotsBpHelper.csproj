@@ -128,9 +128,6 @@
       <DependentUpon>HeroSelectorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\HeroSelectorViewModel.cs" />
-    <Compile Include="Pages\test.xaml.cs">
-      <DependentUpon>test.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\ViewModelBase.cs" />
     <Compile Include="Settings\AppSetting.cs" />
     <Compile Include="UserControls\WebKitBrowser.xaml.cs">
@@ -214,10 +211,6 @@
     <Page Include="Pages\ShellView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Pages\test.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\WebFileUpdaterView.xaml">
       <SubType>Designer</SubType>
