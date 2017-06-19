@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Media;
+using HotsBpHelper.Api.Security;
 using HotsBpHelper.Settings;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
@@ -12,11 +16,13 @@ using Stylet;
 
 namespace HotsBpHelper.Pages
 {
-    public class BpViewModel : ViewModelBase
+    public class BpViewModel : ViewModelBase, IHandle<HeroSelectedMessage>
     {
         private readonly IHeroSelectorViewModelFactory _heroSelectorViewModelFactory;
 
         private readonly IEventAggregator _eventAggregator;
+
+        private readonly ISecurityProvider _securityProvider;
 
         public BindableCollection<HeroSelectorViewModel> HeroSelectorViewModels { get; set; }
 
@@ -25,15 +31,21 @@ namespace HotsBpHelper.Pages
 
         public Uri LocalFileUri { get; set; }
 
-        public BpViewModel(IHeroSelectorViewModelFactory heroSelectorViewModelFactory, IEventAggregator eventAggregator)
+        private string _map = "zhm";
+
+        private string _language = CultureInfo.CurrentCulture.Name;
+
+        public BpViewModel(IHeroSelectorViewModelFactory heroSelectorViewModelFactory, IEventAggregator eventAggregator, ISecurityProvider securityProvider)
         {
             _heroSelectorViewModelFactory = heroSelectorViewModelFactory;
             _eventAggregator = eventAggregator;
+            _securityProvider = securityProvider;
+
+            _eventAggregator.Subscribe(this);
             HeroSelectorViewModels = new BindableCollection<HeroSelectorViewModel>();
 
-            Left = (int) App.MyPosition.BpHelperPosition.X;
-            Top = (int) App.MyPosition.BpHelperPosition.Y;
-            
+            Left = (int)App.MyPosition.BpHelperPosition.X;
+            Top = (int)App.MyPosition.BpHelperPosition.Y;
 
             string filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "index.html");
             LocalFileUri = new Uri(filePath, UriKind.Absolute);
@@ -67,6 +79,7 @@ namespace HotsBpHelper.Pages
             {
                 var vm = _heroSelectorViewModelFactory.CreateViewModel();
                 HeroSelectorViewModels.Add(vm);
+                vm.Id = HeroSelectorViewModels.Count;
                 vm.SetLeftAndTop(point);
                 WindowManager.ShowWindow(vm);
             }
@@ -90,6 +103,7 @@ namespace HotsBpHelper.Pages
             {
                 var vm = _heroSelectorViewModelFactory.CreateViewModel();
                 HeroSelectorViewModels.Add(vm);
+                vm.Id = HeroSelectorViewModels.Count;
                 vm.SetRightAndTop(point);
                 WindowManager.ShowWindow(vm);
             }
@@ -104,17 +118,25 @@ namespace HotsBpHelper.Pages
             HeroSelectorViewModels.Clear();
         }
 
-        public void Init()
+        private void InvokeScript(string scriptName, params string[] args)
         {
-            InvokeScript("init", "zhm", 0, "zh-CN");
-        }
-
-        private void InvokeScript(string scriptName, params object[] args)
-        {
-            _eventAggregator.Publish(new InvokeScriptParameter()
+            _eventAggregator.Publish(new InvokeScriptMessage()
             {
                 ScriptName = scriptName,
                 Args = args
+            });
+        }
+        private void InvokeScript(string scriptName, IList<Tuple<string, string>> parameters)
+        {
+            var sp = _securityProvider.CaculateSecurityParameter(parameters);
+            parameters.Add(Tuple.Create("timestamp", sp.Timestamp));
+            parameters.Add(Tuple.Create("client_patch", sp.Patch));
+            parameters.Add(Tuple.Create("nonce", sp.Nonce));
+            parameters.Add(Tuple.Create("sign", sp.Sign));
+            _eventAggregator.Publish(new InvokeScriptMessage()
+            {
+                ScriptName = scriptName,
+                Args = parameters.Select(tuple => tuple.Item2).ToArray(),
             });
         }
 
@@ -122,6 +144,25 @@ namespace HotsBpHelper.Pages
         {
             CloseHeroSelector();
             base.OnClose();
+        }
+
+        public void Handle(HeroSelectedMessage message)
+        {
+            switch (message.SelectorId)
+            {
+                case 1:
+                case 8:
+                    // 首BAN
+                    var side = message.SelectorId == 1 ? "0" : "1";
+                    InvokeScript("init", _map, side, _language);
+                    InvokeScript("update", new List<Tuple<string, string>>()
+                    {
+                        Tuple.Create("chose", ""),
+                        Tuple.Create("map",_map),
+                        Tuple.Create("lang",_language),
+                    });
+                    break;
+            }
         }
     }
 
