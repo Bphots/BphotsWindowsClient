@@ -25,14 +25,14 @@ namespace HotsBpHelper.Api
             _securityProvider = securityProvider;
         }
 
-        private RestRequest CreateRequest(string method, IDictionary<string, string> dictParam, bool returnJson = true)
+        private RestRequest CreateRequest(string method, IList<Tuple<string, string>> parameters, bool returnJson = true)
         {
-            var sp = _securityProvider.CaculateSecurityParameter(dictParam);
+            var sp = _securityProvider.CaculateSecurityParameter(parameters);
 
-            dictParam["timestamp"] = sp.Timestamp;
-            dictParam["client_patch"] = sp.Patch;
+            parameters.Add(Tuple.Create("timestamp", sp.Timestamp));
+            parameters.Add(Tuple.Create("client_patch", sp.Patch));
 
-            string urlParam = string.Join("&", dictParam.Select(kv => $"{kv.Key}={kv.Value}"));
+            string urlParam = string.Join("&", parameters.Select(tuple => $"{tuple.Item1}={tuple.Item2}"));
             var request = new RestRequest($"{method}?{urlParam}&nonce={sp.Nonce}&sign={sp.Sign}");
             if (returnJson)
             {
@@ -86,7 +86,7 @@ namespace HotsBpHelper.Api
 
         public async Task<List<RemoteFileInfo>> GetRemoteFileListAsync()
         {
-            var request = CreateRequest("filelist", new Dictionary<string, string>());
+            var request = CreateRequest("filelist", new List<Tuple<string, string>>());
             return await ExecuteAsync<List<RemoteFileInfo>>(request);
         }
 
@@ -101,9 +101,9 @@ namespace HotsBpHelper.Api
         public Dictionary<int, string> GetHeroList(string language)
         {
             var request = CreateRequest("herolist",
-                new Dictionary<string, string>()
+                new List<Tuple<string, string>>()
                 {
-                    {"lang",language}
+                    Tuple.Create("lang",language),
                 });
 
             return Execute<Dictionary<int, string>>(request);
