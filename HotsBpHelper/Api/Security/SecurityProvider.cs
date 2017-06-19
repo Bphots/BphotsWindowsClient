@@ -8,10 +8,10 @@ namespace HotsBpHelper.Api.Security
 {
     public class SecurityProvider : ISecurityProvider
     {
-        public SecurityParameter CaculateSecurityParameter(IDictionary<string, string> dictParam)
+        public SecurityParameter CaculateSecurityParameter(IList<Tuple<string, string>> parameters)
         {
             var sp = new SecurityParameter();
-            var strParams = dictParam.OrderBy(kv => kv.Key).Select(kv => $"\"{kv.Key}\":\"{kv.Value}\"");
+            var strParams = parameters.OrderBy(tuple => tuple.Item1).Select(tuple => $"\"{tuple.Item1}\":\"{tuple.Item2}\"");
             string param = "{" + string.Join(",", strParams) + "}";
             sp.Timestamp = ((int)DateTime.Now.ToUnixTimestamp()).ToString();
             sp.Patch = Const.PATCH;

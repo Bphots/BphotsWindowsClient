@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using HotsBpHelper.Utils;
 using HotsBpHelper.Utils.HeroUtil;
+using Stylet;
 
 namespace HotsBpHelper.Pages
 {
@@ -10,17 +11,38 @@ namespace HotsBpHelper.Pages
     {
         private readonly IHeroUtil _heroUtil;
 
+        private readonly IEventAggregator _eventAggregator;
+
+        public int Id { get; set; }
+
         public int Left { get; set; }
+
         public int Top { get; set; }
 
         public Size Size { get; set; }
 
         public IEnumerable<HeroInfo> HeroInfos { get; set; }
 
-        public HeroSelectorViewModel(IHeroUtil heroUtil)
+        private HeroInfo _selectedHeroInfo;
+        public HeroInfo SelectedHeroInfo
+        {
+            get { return _selectedHeroInfo; }
+            set
+            {
+                SetAndNotify(ref _selectedHeroInfo, value);
+                _eventAggregator.Publish(new HeroSelectedMessage
+                {
+                    HeroInfo = value,
+                    SelectorId = Id,
+                });
+            }
+        }
+
+        public HeroSelectorViewModel(IHeroUtil heroUtil, IEventAggregator eventAggregator)
         {
             _heroUtil = heroUtil;
-            Size = new Size(100, 20);
+            _eventAggregator = eventAggregator;
+            Size = new Size(130, 20);
             HeroInfos = _heroUtil.GetHeroInfos();
         }
 
@@ -41,5 +63,12 @@ namespace HotsBpHelper.Pages
             Left = (int)position.X;
             Top = (int)position.Y;
         }
+    }
+
+    public class HeroSelectedMessage
+    {
+        public HeroInfo HeroInfo { get; set; }
+
+        public int SelectorId { get; set; }
     }
 }
