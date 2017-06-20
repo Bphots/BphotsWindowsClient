@@ -4,6 +4,7 @@
       "Width": 1600,
       "Height": 900,
       "BpHelperPosition" :  "263,753",
+      "MapSelectorPosition":  "799,129",
       "Left": {
         "Ban1": "400, 5",
         "Ban2": "400, 45",

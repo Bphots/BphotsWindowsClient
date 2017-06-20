@@ -1,33 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 using HotsBpHelper.Api;
 
-namespace HotsBpHelper.Utils.HeroUtil
+namespace HotsBpHelper.Utils.ComboBoxItemUtil
 {
-    public class HeroUtil : IHeroUtil
+    public class HeroItemUtil : IComboxItemUtil
     {
         private readonly IRestApi _restApi;
 
-        private IEnumerable<HeroInfo> _heroInfos;
+        private IEnumerable<ItemInfo> _heroInfos;
 
-        public HeroUtil(IRestApi restApi)
+        public HeroItemUtil(IRestApi restApi)
         {
             _restApi = restApi;
         }
 
-        public IEnumerable<HeroInfo> GetHeroInfos()
+        public IEnumerable<ItemInfo> GetComboxItemInfos()
         {
             if (_heroInfos == null)
             {
                 var names = _restApi.GetHeroList(CultureInfo.CurrentCulture.Name);
-                _heroInfos = names.Select(n => new HeroInfo()
+                _heroInfos = names.Select(n => new ItemInfo()
                 {
-                    Id = n.Key,
-                    FullName = n.Value,
+                    Id = n.Key.ToString(),
+                    DisplayName = n.Value,
                     ShortName = n.Value,
-                }).OrderBy(hi => hi.FullName);
+                }).OrderBy(hi => hi.DisplayName);
             }
             return _heroInfos;
         }
