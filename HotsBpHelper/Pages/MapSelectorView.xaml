@@ -1,22 +1,19 @@
-﻿<Window x:Class="HotsBpHelper.Pages.HeroSelectorView"
+﻿<Window x:Class="HotsBpHelper.Pages.MapSelectorView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:pages="clr-namespace:HotsBpHelper.Pages"
-        SizeToContent="WidthAndHeight"
-        ResizeMode="NoResize"
         mc:Ignorable="d"
         Topmost="True"
         WindowStartupLocation="Manual"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"       
-        d:DataContext="{d:DesignInstance pages:HeroSelectorViewModel}"
+        d:DataContext="{d:DesignInstance pages:MapSelectorViewModel}"
         Left="{Binding Left}"
         Top="{Binding Top}"
-        ShowInTaskbar="False"
-        >
-    <ComboBox Width="{Binding Size.Width}" Height="{Binding Size.Height}" Opacity="0.4" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" ItemsSource="{Binding ItemsInfos}" DisplayMemberPath="DisplayName" SelectedItem="{Binding SelectedItemInfo}">
+        ShowInTaskbar="False">
+    <ComboBox Width="{Binding Size.Width}" Height="{Binding Size.Height}" Opacity="0.4" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" ItemsSource="{Binding MapInfos}" DisplayMemberPath="DisplayName" SelectedItem="{Binding SelectedHeroInfo}">
     </ComboBox>
 </Window>
