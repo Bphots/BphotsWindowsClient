@@ -17,6 +17,6 @@
         Top="{Binding Top}"
         ShowInTaskbar="False"
         >
-    <ComboBox Width="{Binding Size.Width}" Height="{Binding Size.Height}" Opacity="0.4" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" ItemsSource="{Binding ItemsInfos}" DisplayMemberPath="DisplayName" SelectedItem="{Binding SelectedItemInfo}">
+    <ComboBox Width="{Binding Size.Width}" Height="{Binding Size.Height}" Opacity="0.4" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" ItemsSource="{Binding ItemsInfos}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedItemInfo}">
     </ComboBox>
 </Window>
