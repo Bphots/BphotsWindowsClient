@@ -17,6 +17,8 @@ namespace HotsBpHelper.Settings
 
         public Point BpHelperPosition { get; set; }
 
+        public Point MapSelectorPosition { get; set; }
+
         public SidePosition Left { get; set; }
 
         public SidePosition Right { get; set; }

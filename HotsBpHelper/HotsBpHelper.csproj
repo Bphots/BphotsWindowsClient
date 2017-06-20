@@ -128,15 +128,21 @@
       <DependentUpon>HeroSelectorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\HeroSelectorViewModel.cs" />
+    <Compile Include="Pages\MapSelectorView.xaml.cs">
+      <DependentUpon>MapSelectorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MapSelectorViewModel.cs" />
+    <Compile Include="Pages\SelectorViewModel.cs" />
     <Compile Include="Pages\ViewModelBase.cs" />
     <Compile Include="Settings\AppSetting.cs" />
     <Compile Include="UserControls\WebKitBrowser.xaml.cs">
       <DependentUpon>WebKitBrowser.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\ComboBoxItemUtil\MapItemUtil.cs" />
     <Compile Include="Utils\FileUtil.cs" />
-    <Compile Include="Utils\HeroUtil\HeroInfo.cs" />
-    <Compile Include="Utils\HeroUtil\HeroUtil.cs" />
-    <Compile Include="Utils\HeroUtil\IHeroUtil.cs" />
+    <Compile Include="Utils\ComboBoxItemUtil\ItemInfo.cs" />
+    <Compile Include="Utils\ComboBoxItemUtil\HeroItemUtil.cs" />
+    <Compile Include="Utils\ComboBoxItemUtil\IComboxItemUtil.cs" />
     <Compile Include="Utils\Md5Util.cs" />
     <Compile Include="Utils\ScreenUtil.cs" />
   </ItemGroup>
@@ -205,6 +211,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\HeroSelectorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\MapSelectorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
