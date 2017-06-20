@@ -30,8 +30,6 @@ namespace HotsBpHelper.Pages
 
         private readonly string _map = "zhm";
 
-        private readonly string _language = CultureInfo.CurrentCulture.Name;
-
         public BpStatus BpStatus { get; set; }
 
         public BpViewModel(IHeroSelectorViewModelFactory heroSelectorViewModelFactory,
@@ -195,12 +193,12 @@ namespace HotsBpHelper.Pages
                 case 2:
                     // 首BAN
                     var side = message.SelectorId == 1 ? "0" : "1";
-                    InvokeScript("init", _map, side, _language);
+                    InvokeScript("init", _map, side, App.Language);
                     InvokeScript("update", new List<Tuple<string, string>>
                     {
                         Tuple.Create("chose", ""),
                         Tuple.Create("map", _map),
-                        Tuple.Create("lang", _language)
+                        Tuple.Create("lang", App.Language)
                     });
                     break;
             }
