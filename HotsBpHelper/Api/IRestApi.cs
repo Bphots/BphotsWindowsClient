@@ -12,6 +12,8 @@ namespace HotsBpHelper.Api
 
         byte[] DownloadFile(string filePath);
 
-        Dictionary<int, string> GetHeroList(string name);
+        List<ItemInfo> GetHeroList(string name);
+
+        List<ItemInfo> GetMapList(string language);
     }
 }

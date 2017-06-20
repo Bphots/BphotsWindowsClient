@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using HotsBpHelper.Api;
+using HotsBpHelper.Api.Model;
 
 namespace HotsBpHelper.Utils.ComboBoxItemUtil
 {
@@ -20,13 +21,7 @@ namespace HotsBpHelper.Utils.ComboBoxItemUtil
         {
             if (_heroInfos == null)
             {
-                var names = _restApi.GetHeroList(CultureInfo.CurrentCulture.Name);
-                _heroInfos = names.Select(n => new ItemInfo()
-                {
-                    Id = n.Key.ToString(),
-                    DisplayName = n.Value,
-                    ShortName = n.Value,
-                }).OrderBy(hi => hi.DisplayName);
+                _heroInfos = _restApi.GetHeroList(App.Language).OrderBy(hi => hi.Name);
             }
             return _heroInfos;
         }
