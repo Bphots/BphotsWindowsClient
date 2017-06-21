@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using HotsBpHelper.Api.Model;
+using HotsBpHelper.Messages;
 using HotsBpHelper.Utils;
 using HotsBpHelper.Utils.ComboBoxItemUtil;
 using Stylet;
@@ -23,14 +24,14 @@ namespace HotsBpHelper.Pages
 
         public IEnumerable<ComboBoxItemInfo> ItemsInfos { get; set; }
 
-        private ComboBoxItemInfo _selectedItemInfo;
+        protected ComboBoxItemInfo PSelectedItemInfo;
 
         public ComboBoxItemInfo SelectedItemInfo
         {
-            get { return _selectedItemInfo; }
+            get { return PSelectedItemInfo; }
             set
             {
-                SetAndNotify(ref _selectedItemInfo, value);
+                SetAndNotify(ref PSelectedItemInfo, value);
                 EventAggregator.Publish(new ItemSelectedMessage
                 {
                     ItemInfo = value,
@@ -70,12 +71,5 @@ namespace HotsBpHelper.Pages
             Left = (int)position.X;
             Top = (int)position.Y;
         }
-    }
-
-    public class ItemSelectedMessage
-    {
-        public ComboBoxItemInfo ItemInfo { get; set; }
-
-        public int SelectorId { get; set; }
     }
 }

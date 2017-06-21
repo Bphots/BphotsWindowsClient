@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:pages="clr-namespace:HotsBpHelper.Pages"
+        xmlns:s="https://github.com/canton7/Stylet"
         mc:Ignorable="d"
           SizeToContent="WidthAndHeight"
       Topmost="True"
@@ -14,6 +15,13 @@
         d:DataContext="{d:DesignInstance pages:MapSelectorViewModel}"
         Left="{Binding Left}"
         Top="{Binding Top}"
-        ShowInTaskbar="False">
-    <ComboBox Width="{Binding Size.Width}" Height="{Binding Size.Height}" Opacity="0.4" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" ItemsSource="{Binding ItemsInfos}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedItemInfo}" />
+        ShowInTaskbar="False"
+        Opacity="0.4"
+        Width="{Binding Size.Width}" Height="{Binding Size.Height}"
+        >
+    <DockPanel>
+        <Button DockPanel.Dock="Left" Content="←" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Left}"></Button>
+        <Button DockPanel.Dock="Right" Content="→" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Right}"></Button>
+        <ComboBox VerticalAlignment="Stretch" MinWidth="130" BorderThickness="1" BorderBrush="#1C1239" ItemsSource="{Binding ItemsInfos}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedItemInfo}" />
+    </DockPanel>
 </Window>
