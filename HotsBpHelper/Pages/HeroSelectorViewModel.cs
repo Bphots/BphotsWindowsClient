@@ -1,17 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using HotsBpHelper.Messages;
 using HotsBpHelper.Utils;
 using HotsBpHelper.Utils.ComboBoxItemUtil;
 using Stylet;
 
 namespace HotsBpHelper.Pages
 {
-    public class HeroSelectorViewModel : SelectorViewModel
+    public class HeroSelectorViewModel : SelectorViewModel, IHandle<ItemSelectedMessage>
     {
         public HeroSelectorViewModel(HeroItemUtil heroItemUtil, IEventAggregator eventAggregator) : base(heroItemUtil, eventAggregator)
         {
             Size = new Size(130, 20);
+            EventAggregator.Subscribe(this);
         }
 
         protected override void OnViewLoaded()
@@ -28,6 +30,12 @@ namespace HotsBpHelper.Pages
                 });
             }
             base.OnViewLoaded();
+        }
+
+        public void Handle(ItemSelectedMessage message)
+        {
+            // TODO 将已选的英雄移除(又改了之前的选择需要恢复)
+
         }
     }
 }
