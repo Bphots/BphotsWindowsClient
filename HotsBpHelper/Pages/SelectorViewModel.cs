@@ -21,11 +21,11 @@ namespace HotsBpHelper.Pages
 
         public Size Size { get; set; }
 
-        public IEnumerable<ItemInfo> ItemsInfos { get; set; }
+        public IEnumerable<ComboBoxItemInfo> ItemsInfos { get; set; }
 
-        private ItemInfo _selectedItemInfo;
+        private ComboBoxItemInfo _selectedItemInfo;
 
-        public ItemInfo SelectedItemInfo
+        public ComboBoxItemInfo SelectedItemInfo
         {
             get { return _selectedItemInfo; }
             set
@@ -74,7 +74,7 @@ namespace HotsBpHelper.Pages
 
     public class ItemSelectedMessage
     {
-        public ItemInfo ItemInfo { get; set; }
+        public ComboBoxItemInfo ItemInfo { get; set; }
 
         public int SelectorId { get; set; }
     }
