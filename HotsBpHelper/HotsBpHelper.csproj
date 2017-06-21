@@ -61,6 +61,10 @@
       <HintPath>..\packages\gitlink.2.4.1\lib\net45\GitLink.exe</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="GlobalHotKey, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GlobalHotKey.1.1.0\lib\GlobalHotKey.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Its.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Its.Configuration.1.0.6\lib\net40\Its.Configuration.dll</HintPath>
       <Private>True</Private>
@@ -121,6 +125,8 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Const.cs" />
     <Compile Include="DateTimeUtils.cs" />
+    <Compile Include="Messages\ItemSelectedMessage.cs" />
+    <Compile Include="Messages\SideSelectedMessage.cs" />
     <Compile Include="Pages\BpView.xaml.cs">
       <DependentUpon>BpView.xaml</DependentUpon>
     </Compile>
