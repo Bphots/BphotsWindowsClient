@@ -162,4 +162,7 @@
   <data name="MSG_NoMatchResolution" xml:space="preserve">
     <value>未找到匹配的分辨率,工具不能正常使用.</value>
   </data>
+  <data name="NO_CHOOSE" xml:space="preserve">
+    <value>[未选择]</value>
+  </data>
 </root>

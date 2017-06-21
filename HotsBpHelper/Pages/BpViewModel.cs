@@ -165,8 +165,17 @@ namespace HotsBpHelper.Pages
 
         public void Handle(ItemSelectedMessage message)
         {
-            // InvokeScript
-            if (BpStatus.StepSelectedIndex.Contains(message.SelectorId))
+            InvokeScript("update", new List<Tuple<string, string>>
+                    {
+                        Tuple.Create("chose", string.Join("|",
+                            HeroSelectorViewModels
+                            .Where(vm => vm.SelectedItemInfo != null)
+                            .Select(vm => vm.SelectedItemInfo.Id))),
+                        Tuple.Create("map", BpStatus.Map),
+                        Tuple.Create("lang", App.Language)
+                    });
+            if (BpStatus.StepSelectedIndex.Contains(message.SelectorId) ||  // 修改本轮选过的英雄
+                !_listBpSteps[BpStatus.CurrentStep].Contains(message.SelectorId)) // 修改其他轮选过的英雄
             {
                 // 修改英雄选择,无需处理
             }
@@ -186,19 +195,20 @@ namespace HotsBpHelper.Pages
         public void Handle(SideSelectedMessage message)
         {
             // 初始化BP过程
-            int side = (int)message.Side;
-            InvokeScript("init", message.ItemInfo.Id, side.ToString(), App.Language);
-            InvokeScript("update", new List<Tuple<string, string>>
-                    {
-                        Tuple.Create("chose", ""),
-                        Tuple.Create("map", message.ItemInfo.Id),
-                        Tuple.Create("lang", App.Language)
-                    });
             BpStatus = new BpStatus()
             {
                 Map = message.ItemInfo.Id,
                 FirstSide = message.Side,
             };
+
+            int side = (int)BpStatus.FirstSide;
+            InvokeScript("init", message.ItemInfo.Id, side.ToString(), App.Language);
+            InvokeScript("update", new List<Tuple<string, string>>
+                    {
+                        Tuple.Create("chose", ""),
+                        Tuple.Create("map", BpStatus.Map),
+                        Tuple.Create("lang", App.Language)
+                    });
 
             CloseHeroSelector();
             // Position下标位置示意
