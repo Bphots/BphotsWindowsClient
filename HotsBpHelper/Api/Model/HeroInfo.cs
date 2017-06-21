@@ -2,7 +2,7 @@
 
 namespace HotsBpHelper.Api.Model
 {
-    public class ItemInfo
+    public class HeroInfo
     {
         public int Id { get; set; }
 

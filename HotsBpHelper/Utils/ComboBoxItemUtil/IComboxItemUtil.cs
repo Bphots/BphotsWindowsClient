@@ -5,6 +5,6 @@ namespace HotsBpHelper.Utils.ComboBoxItemUtil
 {
     public interface IComboxItemUtil
     {
-        IEnumerable<ItemInfo> GetComboxItemInfos();
+        IEnumerable<ComboBoxItemInfo> GetComboxItemInfos();
     }
 }

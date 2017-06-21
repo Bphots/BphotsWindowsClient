@@ -107,7 +107,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Api\IRestApi.cs" />
-    <Compile Include="Api\Model\ItemInfo.cs" />
+    <Compile Include="Api\Model\HeroInfo.cs" />
+    <Compile Include="Api\Model\MapInfo.cs" />
     <Compile Include="Api\Model\RemoteFileInfo.cs" />
     <Compile Include="Api\RestApi.cs" />
     <Compile Include="Api\Security\ISecurityProvider.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="UserControls\WebKitBrowser.xaml.cs">
       <DependentUpon>WebKitBrowser.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\ComboBoxItemUtil\ComboBoxItemInfo.cs" />
     <Compile Include="Utils\ComboBoxItemUtil\MapItemUtil.cs" />
     <Compile Include="Utils\FileUtil.cs" />
     <Compile Include="Utils\ComboBoxItemUtil\HeroItemUtil.cs" />
