@@ -10,18 +10,25 @@ namespace HotsBpHelper.Utils.ComboBoxItemUtil
     {
         private readonly IRestApi _restApi;
 
-        private IEnumerable<ItemInfo> _heroInfos;
+        private IEnumerable<ComboBoxItemInfo> _heroInfos;
 
         public HeroItemUtil(IRestApi restApi)
         {
             _restApi = restApi;
         }
 
-        public IEnumerable<ItemInfo> GetComboxItemInfos()
+        public IEnumerable<ComboBoxItemInfo> GetComboxItemInfos()
         {
             if (_heroInfos == null)
             {
-                _heroInfos = _restApi.GetHeroList(App.Language).OrderBy(hi => hi.Name);
+                _heroInfos = _restApi.GetHeroList(App.Language)
+                    .Select(hi => new ComboBoxItemInfo()
+                    {
+                        Id = hi.Id.ToString(),
+                        Name = hi.Name,
+                        Acronym = hi.Acronym,
+                    })
+                    .OrderBy(item => item.Name);
             }
             return _heroInfos;
         }

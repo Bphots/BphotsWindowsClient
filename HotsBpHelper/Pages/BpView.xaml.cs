@@ -8,7 +8,7 @@ namespace HotsBpHelper.Pages
     {
         public BpView(IEventAggregator eventAggregator)
         {
-            InitializeComponent();
+//            InitializeComponent();
             eventAggregator.Subscribe(this);
         }
 

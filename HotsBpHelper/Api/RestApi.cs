@@ -98,7 +98,7 @@ namespace HotsBpHelper.Api
             }
         }
 
-        public List<ItemInfo> GetHeroList(string language)
+        public List<HeroInfo> GetHeroList(string language)
         {
             var request = CreateRequest("herolist",
                 new List<Tuple<string, string>>()
@@ -106,9 +106,9 @@ namespace HotsBpHelper.Api
                     Tuple.Create("lang",language),
                 });
 
-            return Execute<List<ItemInfo>>(request);
+            return Execute<List<HeroInfo>>(request);
         }
-        public List<ItemInfo> GetMapList(string language)
+        public List<MapInfo> GetMapList(string language)
         {
             var request = CreateRequest("maplist",
                 new List<Tuple<string, string>>()
@@ -116,7 +116,7 @@ namespace HotsBpHelper.Api
                     Tuple.Create("lang",language),
                 });
 
-            return Execute<List<ItemInfo>>(request);
+            return Execute<List<MapInfo>>(request);
         }
     }
 }

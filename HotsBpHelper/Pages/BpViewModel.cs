@@ -28,7 +28,6 @@ namespace HotsBpHelper.Pages
 
         public Uri LocalFileUri { get; set; }
 
-        private readonly string _map = "zhm";
 
         public BpStatus BpStatus { get; set; }
 
@@ -44,8 +43,8 @@ namespace HotsBpHelper.Pages
             _eventAggregator.Subscribe(this);
             HeroSelectorViewModels = new BindableCollection<HeroSelectorViewModel>();
 
-            Left = (int) App.MyPosition.BpHelperPosition.X;
-            Top = (int) App.MyPosition.BpHelperPosition.Y;
+            Left = (int)App.MyPosition.BpHelperPosition.X;
+            Top = (int)App.MyPosition.BpHelperPosition.Y;
 
             string filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "index.html");
             LocalFileUri = new Uri(filePath, UriKind.Absolute);
@@ -61,6 +60,7 @@ namespace HotsBpHelper.Pages
         private void ShowMapSelector()
         {
             var vm = _mapSelectorViewModelFactory.CreateViewModel();
+            vm.Id = 0;
             vm.SetCenterAndTop(App.MyPosition.MapSelectorPosition);
             WindowManager.ShowWindow(vm);
         }
@@ -189,15 +189,23 @@ namespace HotsBpHelper.Pages
         {
             switch (message.SelectorId)
             {
+                case 0:
+                    BpStatus = new BpStatus()
+                    {
+                        Map = message.ItemInfo.Id,
+                    };
+                    // TODO 先完地图允许首BAN
+                    break;
                 case 1:
                 case 2:
                     // 首BAN
-                    var side = message.SelectorId == 1 ? "0" : "1";
-                    InvokeScript("init", _map, side, App.Language);
+                    var side = message.SelectorId == 1 ? 0 : 1;
+                    BpStatus.FirstSide = (BpStatus.Side)side;
+                    InvokeScript("init", BpStatus.Map, side.ToString(), App.Language);
                     InvokeScript("update", new List<Tuple<string, string>>
                     {
                         Tuple.Create("chose", ""),
-                        Tuple.Create("map", _map),
+                        Tuple.Create("map", BpStatus.Map),
                         Tuple.Create("lang", App.Language)
                     });
                     break;
@@ -223,5 +231,9 @@ namespace HotsBpHelper.Pages
 
             Right
         }
+
+        public Side FirstSide { get; set; }
+
+        public string Map { get; set; }
     }
 }
