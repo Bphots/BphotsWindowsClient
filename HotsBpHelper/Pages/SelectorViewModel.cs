@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using HotsBpHelper.Api.Model;
 using HotsBpHelper.Messages;
@@ -22,7 +24,7 @@ namespace HotsBpHelper.Pages
 
         public Size Size { get; set; }
 
-        public IEnumerable<ComboBoxItemInfo> ItemsInfos { get; set; }
+        public ObservableCollection<ComboBoxItemInfo> ItemsInfos { get; set; }
 
         protected ComboBoxItemInfo PSelectedItemInfo;
 
@@ -45,7 +47,7 @@ namespace HotsBpHelper.Pages
             ComboxItemUtil = comboxItemUtil;
             EventAggregator = eventAggregator;
 
-            ItemsInfos = ComboxItemUtil.GetComboxItemInfos();
+            ItemsInfos = new ObservableCollection<ComboBoxItemInfo>(ComboxItemUtil.GetComboxItemInfos());
         }
 
         public void SetLeftAndTop(Point position)
