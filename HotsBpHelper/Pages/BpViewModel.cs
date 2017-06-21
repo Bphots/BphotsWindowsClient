@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using HotsBpHelper.Api.Security;
+using HotsBpHelper.Messages;
+using HotsBpHelper.Settings;
 using HotsBpHelper.UserControls;
 using Stylet;
 
 namespace HotsBpHelper.Pages
 {
-    public class BpViewModel : ViewModelBase, IHandle<ItemSelectedMessage>
+    public class BpViewModel : ViewModelBase, IHandle<ItemSelectedMessage>, IHandle<SideSelectedMessage>
     {
         private readonly IHeroSelectorViewModelFactory _heroSelectorViewModelFactory;
 
@@ -20,7 +21,7 @@ namespace HotsBpHelper.Pages
 
         private readonly ISecurityProvider _securityProvider;
 
-        public BindableCollection<HeroSelectorViewModel> HeroSelectorViewModels { get; set; }
+        public BindableCollection<HeroSelectorViewModel> HeroSelectorViewModels { get; set; } = new BindableCollection<HeroSelectorViewModel>();
 
         public int Left { get; set; }
 
@@ -28,8 +29,12 @@ namespace HotsBpHelper.Pages
 
         public Uri LocalFileUri { get; set; }
 
-
         public BpStatus BpStatus { get; set; }
+
+        private IList<Point> _listPositions;
+
+        private IList<IList<int>> _listBpSteps;
+
 
         public BpViewModel(IHeroSelectorViewModelFactory heroSelectorViewModelFactory,
             IMapSelectorViewModelFactory mapSelectorViewModelFactory,
@@ -41,7 +46,6 @@ namespace HotsBpHelper.Pages
             _securityProvider = securityProvider;
 
             _eventAggregator.Subscribe(this);
-            HeroSelectorViewModels = new BindableCollection<HeroSelectorViewModel>();
 
             Left = (int)App.MyPosition.BpHelperPosition.X;
             Top = (int)App.MyPosition.BpHelperPosition.Y;
@@ -53,8 +57,8 @@ namespace HotsBpHelper.Pages
         protected override void OnViewLoaded()
         {
             base.OnViewLoaded();
+            FillPositions();
             ShowMapSelector();
-            ShowBanSelector();
         }
 
         private void ShowMapSelector()
@@ -65,19 +69,13 @@ namespace HotsBpHelper.Pages
             WindowManager.ShowWindow(vm);
         }
 
-        public void ShowBanSelector()
-        {
-            ShowHeroSelector(App.MyPosition.Left.Ban1, BpStatus.Side.Left);
-            ShowHeroSelector(App.MyPosition.Right.Ban1, BpStatus.Side.Right);
-            // TODO: 显示地图选择和重置按钮
-        }
-
-        public void ShowHeroSelector(Point position, BpStatus.Side side)
+        public void ShowHeroSelector(int pointIndex)
         {
             var vm = _heroSelectorViewModelFactory.CreateViewModel();
             HeroSelectorViewModels.Add(vm);
-            vm.Id = HeroSelectorViewModels.Count;
-            if (side == BpStatus.Side.Left)
+            vm.Id = pointIndex;
+            var position = _listPositions[pointIndex];
+            if (pointIndex < 7)
             {
                 vm.SetLeftAndTop(position);
             }
@@ -88,64 +86,44 @@ namespace HotsBpHelper.Pages
             WindowManager.ShowWindow(vm);
         }
 
-        /*
-                public void ShowHeroSelector()
-                {
-                    List<Point> lstPoints;
-                    SidePosition sidePosition;
-                    double x, y;
-                    int dx, dy;
+        public void FillPositions()
+        {
+            SidePosition sidePosition;
+            double x, y;
+            int dx, dy;
+            _listPositions = new List<Point>(14); // BP总共14个选择
 
-                    // Left
-                    lstPoints = new List<Point>(7);
-                    sidePosition = App.MyPosition.Left;
-                    lstPoints.Add(sidePosition.Ban1);
-                    lstPoints.Add(sidePosition.Ban2);
-                    x = sidePosition.Pick1.X;
-                    y = sidePosition.Pick1.Y;
-                    dx = sidePosition.Dx;
-                    dy = sidePosition.Dy;
-                    for (int i = 0; i < 5; i++)
-                    {
-                        lstPoints.Add(new Point(x, y));
-                        x += dx;
-                        y += dy;
-                        dx = -dx;
-                    }
-                    foreach (var point in lstPoints)
-                    {
-                        var vm = _heroSelectorViewModelFactory.CreateViewModel();
-                        HeroSelectorViewModels.Add(vm);
-                        vm.Id = HeroSelectorViewModels.Count;
-                        vm.SetLeftAndTop(point);
-                        WindowManager.ShowWindow(vm);
-                    }
-                    // Left
-                    lstPoints = new List<Point>(7);
-                    sidePosition = App.MyPosition.Right;
-                    lstPoints.Add(sidePosition.Ban1);
-                    lstPoints.Add(sidePosition.Ban2);
-                    x = sidePosition.Pick1.X;
-                    y = sidePosition.Pick1.Y;
-                    dx = sidePosition.Dx;
-                    dy = sidePosition.Dy;
-                    for (int i = 0; i < 5; i++)
-                    {
-                        lstPoints.Add(new Point(x, y));
-                        x += dx;
-                        y += dy;
-                        dx = -dx;
-                    }
-                    foreach (var point in lstPoints)
-                    {
-                        var vm = _heroSelectorViewModelFactory.CreateViewModel();
-                        HeroSelectorViewModels.Add(vm);
-                        vm.Id = HeroSelectorViewModels.Count;
-                        vm.SetRightAndTop(point);
-                        WindowManager.ShowWindow(vm);
-                    }
-                }
-        */
+            // Left
+            sidePosition = App.MyPosition.Left;
+            _listPositions.Add(sidePosition.Ban1);
+            _listPositions.Add(sidePosition.Ban2);
+            x = sidePosition.Pick1.X;
+            y = sidePosition.Pick1.Y;
+            dx = sidePosition.Dx;
+            dy = sidePosition.Dy;
+            for (int i = 0; i < 5; i++)
+            {
+                _listPositions.Add(new Point(x, y));
+                x += dx;
+                y += dy;
+                dx = -dx;
+            }
+            // Right
+            sidePosition = App.MyPosition.Right;
+            _listPositions.Add(sidePosition.Ban1);
+            _listPositions.Add(sidePosition.Ban2);
+            x = sidePosition.Pick1.X;
+            y = sidePosition.Pick1.Y;
+            dx = sidePosition.Dx;
+            dy = sidePosition.Dy;
+            for (int i = 0; i < 5; i++)
+            {
+                _listPositions.Add(new Point(x, y));
+                x += dx;
+                y += dy;
+                dx = -dx;
+            }
+        }
 
         public void CloseHeroSelector()
         {
@@ -187,29 +165,95 @@ namespace HotsBpHelper.Pages
 
         public void Handle(ItemSelectedMessage message)
         {
-            switch (message.SelectorId)
+            // InvokeScript
+            if (BpStatus.StepSelectedIndex.Contains(message.SelectorId))
             {
-                case 0:
-                    BpStatus = new BpStatus()
-                    {
-                        Map = message.ItemInfo.Id,
-                    };
-                    // TODO 先完地图允许首BAN
-                    break;
-                case 1:
-                case 2:
-                    // 首BAN
-                    var side = message.SelectorId == 1 ? 0 : 1;
-                    BpStatus.FirstSide = (BpStatus.Side)side;
-                    InvokeScript("init", BpStatus.Map, side.ToString(), App.Language);
-                    InvokeScript("update", new List<Tuple<string, string>>
+                // 修改英雄选择,无需处理
+            }
+            else
+            {
+                // 新英雄选择,判断本轮是否已选够英雄
+                BpStatus.StepSelectedIndex.Add(message.SelectorId);
+                if (BpStatus.StepSelectedIndex.Count == _listBpSteps[BpStatus.CurrentStep].Count)
+                {
+                    // 选够了,下一步
+                    BpStatus.CurrentStep++;
+                    ProcessStep();
+                }
+            }
+        }
+
+        public void Handle(SideSelectedMessage message)
+        {
+            // 初始化BP过程
+            int side = (int)message.Side;
+            InvokeScript("init", message.ItemInfo.Id, side.ToString(), App.Language);
+            InvokeScript("update", new List<Tuple<string, string>>
                     {
                         Tuple.Create("chose", ""),
-                        Tuple.Create("map", BpStatus.Map),
+                        Tuple.Create("map", message.ItemInfo.Id),
                         Tuple.Create("lang", App.Language)
                     });
-                    break;
+            BpStatus = new BpStatus()
+            {
+                Map = message.ItemInfo.Id,
+                FirstSide = message.Side,
+            };
+
+            CloseHeroSelector();
+            // Position下标位置示意
+            //   0 1   7 8
+            // 2          9
+            // 3          10
+            // 4          11
+            // 5          12
+            // 6          13
+
+            if (message.Side == BpStatus.Side.Left)
+            {
+                _listBpSteps = new List<IList<int>> // BP总共10手
+                {
+                    new List<int> {0},
+                    new List<int> {7},
+                    new List<int> {2},
+                    new List<int> {9, 10},
+                    new List<int> {3, 4},
+                    new List<int> {8},
+                    new List<int> {1},
+                    new List<int> {11, 12},
+                    new List<int> {5, 6},
+                    new List<int> {13},
+                };
             }
+            else
+            {
+                _listBpSteps = new List<IList<int>> // BP总共10手
+                {
+                    new List<int> {7},
+                    new List<int> {0},
+                    new List<int> {9},
+                    new List<int> {2, 3},
+                    new List<int> {10, 11},
+                    new List<int> {1},
+                    new List<int> {8},
+                    new List<int> {4, 5},
+                    new List<int> {12, 13},
+                    new List<int> {6},
+                };
+            }
+            BpStatus.CurrentStep = 0;
+            ProcessStep();
+        }
+
+        private void ProcessStep()
+        {
+            if (BpStatus.CurrentStep == _listBpSteps.Count) return;
+            // 显示英雄选择框
+            foreach (var i in _listBpSteps[BpStatus.CurrentStep])
+            {
+                ShowHeroSelector(i);
+            }
+            BpStatus.StepSelectedIndex = new HashSet<int>();
         }
     }
 
@@ -235,5 +279,9 @@ namespace HotsBpHelper.Pages
         public Side FirstSide { get; set; }
 
         public string Map { get; set; }
+
+        public int CurrentStep { get; set; }
+
+        public HashSet<int> StepSelectedIndex { get; set; }
     }
 }
