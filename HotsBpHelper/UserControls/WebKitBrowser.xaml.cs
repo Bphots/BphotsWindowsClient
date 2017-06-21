@@ -57,6 +57,6 @@ namespace HotsBpHelper.UserControls
     {
         public string ScriptName { get; set; }
 
-        public string[] Args { get; set; }
+        public object[] Args { get; set; }
     }
 }
