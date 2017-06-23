@@ -2,7 +2,7 @@
 {
     public class Const
     {
-        public const string WEB_API_ROOT = "http://s-354531.gotocdn.com/bp_helper/get/";
+        public const string WEB_API_ROOT = "http://www.bphots.com/bp_helper/get/";
 
         public const string UPDATE_FEED_XML = "http://bphots-client-files.oss-cn-shanghai.aliyuncs.com/bp_helper/client/Update.xml";
 

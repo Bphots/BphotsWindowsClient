@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -57,6 +58,6 @@ namespace HotsBpHelper.UserControls
     {
         public string ScriptName { get; set; }
 
-        public object[] Args { get; set; }
+        public string[] Args { get; set; }
     }
 }
