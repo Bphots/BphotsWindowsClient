@@ -57,16 +57,16 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GitLink, Version=2.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\gitlink.2.4.1\lib\net45\GitLink.exe</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="GlobalHotKey, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GlobalHotKey.1.1.0\lib\GlobalHotKey.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Its.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Its.Configuration.1.0.6\lib\net40\Its.Configuration.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NAppUpdate.Framework, Version=0.5.1.0, Culture=neutral, PublicKeyToken=d1f1d1f19f9e5a56, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAppUpdate.Framework.0.5.1.0\lib\net40\NAppUpdate.Framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -250,6 +250,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="NAppUpdate\" />
     <Folder Include="WPF\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -266,4 +267,7 @@
     </ItemGroup>
     <Move SourceFiles="@(MoveToLibFolder)" DestinationFolder="$(OutputPath)lib" OverwriteReadOnlyFiles="true" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>"D:\Program Files\.NET Reactor\dotNET_Reactor.Console.exe" -file "D:\用户目录\我的文档\My Programs\WPF\HotsBpHelper\HotsBpHelper\bin\Release\HotsBpHelper.exe"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
