@@ -134,7 +134,7 @@ namespace HotsBpHelper.Pages
             HeroSelectorViewModels.Clear();
         }
 
-        private void InvokeScript(string scriptName, params object[] args)
+        private void InvokeScript(string scriptName, params string[] args)
         {
             _eventAggregator.Publish(new InvokeScriptMessage
             {
@@ -202,7 +202,7 @@ namespace HotsBpHelper.Pages
             };
 
             int side = (int)BpStatus.FirstSide;
-            InvokeScript("init", message.ItemInfo.Id, side, App.Language);
+            InvokeScript("init", message.ItemInfo.Id, side.ToString(), App.Language);
             InvokeScript("update", new List<Tuple<string, string>>
                     {
                         Tuple.Create("chose", ""),
