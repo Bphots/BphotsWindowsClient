@@ -4,10 +4,12 @@
     {
         public const string WEB_API_ROOT = "http://s-354531.gotocdn.com/bp_helper/get/";
 
+        public const string UPDATE_FEED_XML = "http://bphots-client-files.oss-cn-shanghai.aliyuncs.com/bp_helper/client/Update.xml";
+
         public const string LOCAL_WEB_FILE_DIR = "WebFiles";
 
-        public const string PATCH = "17060801";
+        public const string PATCH = "17062401";
 
-        public const string KEY = "I7@gPm2F4HAcz@ak";
+        public const string KEY = "jX5QchI9iH%8L084";
     }
 }
