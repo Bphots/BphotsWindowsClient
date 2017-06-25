@@ -57,10 +57,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotNetKit.Wpf.AutoCompleteComboBox, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetKit.Wpf.AutoCompleteComboBox.1.2.0\lib\net45\DotNetKit.Wpf.AutoCompleteComboBox.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="GlobalHotKey, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GlobalHotKey.1.1.0\lib\GlobalHotKey.dll</HintPath>
       <Private>True</Private>
