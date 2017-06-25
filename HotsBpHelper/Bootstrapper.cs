@@ -27,7 +27,7 @@ namespace HotsBpHelper
 
         protected override void Configure()
         {
-            LocalizeDictionary.Instance.Culture = CultureInfo.CurrentUICulture;
+            LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN");
             App.AppPath = AppDomain.CurrentDomain.BaseDirectory;
         }
     }
