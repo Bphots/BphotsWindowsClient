@@ -15,5 +15,7 @@ namespace HotsBpHelper.Api
         List<HeroInfo> GetHeroList(string name);
 
         List<MapInfo> GetMapList(string language);
+
+        double GetTimestamp();
     }
 }

@@ -24,7 +24,11 @@ namespace HotsBpHelper.Pages
 
         protected override void OnViewLoaded()
         {
-            Update();
+            if (!App.Debug)
+            {
+                // 不是调试模拟,则检查更新
+                Update();
+            }
             Init();
             if (WindowManager.ShowDialog(_webFileUpdaterViewModelFactory.CreateViewModel()) != true)
             {
