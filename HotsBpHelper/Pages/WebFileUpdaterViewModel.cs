@@ -81,7 +81,7 @@ namespace HotsBpHelper.Pages
                             Logger.Trace("Downloading file: {0}", fileUpdateInfo.FileName);
                             byte[] content = _restApi.DownloadFile(fileUpdateInfo.Url);
                             content.SaveAs(fileUpdateInfo.LocalFilePath);
-                            Logger.Trace("Downloaded. Byte count: {0}", content.Length);
+                            Logger.Trace("Downloaded. Bytes count: {0}", content.Length);
                             if (NeedUpdate(fileUpdateInfo)) fileUpdateInfo.FileStatus = L("UpdateFailed");
                             else fileUpdateInfo.FileStatus = L("UpToDate");
                             Logger.Trace("File status: {0}", fileUpdateInfo.FileStatus);
