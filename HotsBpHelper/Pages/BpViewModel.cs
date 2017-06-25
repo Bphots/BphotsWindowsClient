@@ -66,6 +66,12 @@ namespace HotsBpHelper.Pages
             var vm = _mapSelectorViewModelFactory.CreateViewModel();
             vm.Id = 0;
             vm.SetCenterAndTop(App.MyPosition.MapSelectorPosition);
+/*
+            _eventAggregator.Publish(new ShowWindowMessage
+            {
+                ViewModel = vm,
+            });
+*/
             WindowManager.ShowWindow(vm);
         }
 
@@ -83,6 +89,10 @@ namespace HotsBpHelper.Pages
             {
                 vm.SetRightAndTop(position);
             }
+            _eventAggregator.Publish(new ShowWindowMessage
+            {
+                ViewModel = vm,
+            });
             WindowManager.ShowWindow(vm);
         }
 
