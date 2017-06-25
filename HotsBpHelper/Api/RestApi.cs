@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using HotsBpHelper.Api.Model;
 using HotsBpHelper.Api.Security;
-using HotsBpHelper.Utils;
-using NLog;
 using RestSharp;
 using RestSharp.Deserializers;
 
@@ -23,9 +17,10 @@ namespace HotsBpHelper.Api
         public RestApi(ISecurityProvider securityProvider)
         {
             _securityProvider = securityProvider;
+            _securityProvider.SetServerTimestamp(GetTimestamp());
         }
 
-        private RestRequest CreateRequest(string method, IList<Tuple<string, string>> parameters, bool returnJson = true)
+        private RestRequest CreateRequest(string method, IList<Tuple<string, string>> parameters)
         {
             var sp = _securityProvider.CaculateSecurityParameter(parameters);
 
@@ -33,11 +28,19 @@ namespace HotsBpHelper.Api
             parameters.Add(Tuple.Create("client_patch", sp.Patch));
 
             string urlParam = string.Join("&", parameters.Select(tuple => $"{tuple.Item1}={tuple.Item2}"));
-            var request = new RestRequest($"{method}?{urlParam}&nonce={sp.Nonce}&sign={sp.Sign}");
-            if (returnJson)
+            var request = new RestRequest($"{method}?{urlParam}&nonce={sp.Nonce}&sign={sp.Sign}")
             {
-                request.OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; };
-            }
+                OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; }
+            };
+            return request;
+        }
+
+        private RestRequest CreateRequest(string method)
+        {
+            var request = new RestRequest(method)
+            {
+                OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; }
+            };
             return request;
         }
 
@@ -101,22 +104,29 @@ namespace HotsBpHelper.Api
         public List<HeroInfo> GetHeroList(string language)
         {
             var request = CreateRequest("herolist",
-                new List<Tuple<string, string>>()
+                new List<Tuple<string, string>>
                 {
-                    Tuple.Create("lang",language),
+                    Tuple.Create("lang", language)
                 });
 
             return Execute<List<HeroInfo>>(request);
         }
+
         public List<MapInfo> GetMapList(string language)
         {
             var request = CreateRequest("maplist",
-                new List<Tuple<string, string>>()
+                new List<Tuple<string, string>>
                 {
-                    Tuple.Create("lang",language),
+                    Tuple.Create("lang", language)
                 });
 
             return Execute<List<MapInfo>>(request);
+        }
+
+        public double GetTimestamp()
+        {
+            var request = CreateRequest("timestamp");
+            return Execute<double>(request);
         }
     }
 }

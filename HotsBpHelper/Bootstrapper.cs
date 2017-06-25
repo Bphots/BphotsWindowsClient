@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Linq;
 using HotsBpHelper.Api;
 using HotsBpHelper.Api.Security;
 using Stylet;
@@ -29,6 +30,12 @@ namespace HotsBpHelper
         {
             LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN");
             App.AppPath = AppDomain.CurrentDomain.BaseDirectory;
+
+            var args = Environment.GetCommandLineArgs();
+            if (args.Any(arg => arg.ToLower() == "/debug"))
+            {
+                App.Debug = true;
+            }
         }
     }
 }
