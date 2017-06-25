@@ -130,7 +130,7 @@
     <value>更新文件</value>
   </data>
   <data name="HotsBpHelper" xml:space="preserve">
-    <value>风暴BP助手</value>
+    <value>背锅助手</value>
   </data>
   <data name="UpdateFailed" xml:space="preserve">
     <value>更新失败</value>
@@ -164,5 +164,11 @@
   </data>
   <data name="NO_CHOOSE" xml:space="preserve">
     <value>[未选择]</value>
+  </data>
+  <data name="UpdatesAvailable" xml:space="preserve">
+    <value>发现新版本! 点击确定更新.</value>
+  </data>
+  <data name="UpdatesFailed" xml:space="preserve">
+    <value>更新出错: {0}</value>
   </data>
 </root>
