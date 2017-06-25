@@ -66,13 +66,11 @@ namespace HotsBpHelper.Pages
             var vm = _mapSelectorViewModelFactory.CreateViewModel();
             vm.Id = 0;
             vm.SetCenterAndTop(App.MyPosition.MapSelectorPosition);
-/*
+            WindowManager.ShowWindow(vm);
             _eventAggregator.Publish(new ShowWindowMessage
             {
                 ViewModel = vm,
             });
-*/
-            WindowManager.ShowWindow(vm);
         }
 
         public void ShowHeroSelector(int pointIndex)
@@ -89,11 +87,11 @@ namespace HotsBpHelper.Pages
             {
                 vm.SetRightAndTop(position);
             }
+            WindowManager.ShowWindow(vm);
             _eventAggregator.Publish(new ShowWindowMessage
             {
                 ViewModel = vm,
             });
-            WindowManager.ShowWindow(vm);
         }
 
         public void FillPositions()

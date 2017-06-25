@@ -20,6 +20,7 @@ namespace HotsBpHelper.Pages
 
         public void Handle(ShowWindowMessage message)
         {
+            ((Window) message.ViewModel.View).Owner = this;
         }
     }
 }
