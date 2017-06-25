@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:pages="clr-namespace:HotsBpHelper.Pages"
+        xmlns:controls="clr-namespace:DotNetKit.Windows.Controls;assembly=DotNetKit.Wpf.AutoCompleteComboBox"
         SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
         mc:Ignorable="d"
@@ -17,6 +18,6 @@
         Top="{Binding Top}"
         ShowInTaskbar="False"
         >
-    <ComboBox Width="{Binding Size.Width}" Height="{Binding Size.Height}" Opacity="0.4" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" ItemsSource="{Binding ItemsInfos}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedItemInfo}">
-    </ComboBox>
+    <controls:AutoCompleteComboBox Width="{Binding Size.Width}" Height="{Binding Size.Height}" Opacity="0.4" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" 
+                               ItemsSource="{Binding ItemsInfos}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedItemInfo}" />
 </Window>

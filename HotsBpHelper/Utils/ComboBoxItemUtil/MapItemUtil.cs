@@ -26,7 +26,7 @@ namespace HotsBpHelper.Utils.ComboBoxItemUtil
                     {
                         Id = mi.Code,
                         Name = mi.Name,
-                        Acronym = mi.Name,
+                        Acronym = mi.Code,
                     })
                     .OrderBy(mi => mi.Name);
             }
