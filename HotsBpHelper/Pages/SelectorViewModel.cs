@@ -33,6 +33,7 @@ namespace HotsBpHelper.Pages
             get { return PSelectedItemInfo; }
             set
             {
+                if (value == null) return;
                 SetAndNotify(ref PSelectedItemInfo, value);
                 EventAggregator.Publish(new ItemSelectedMessage
                 {
