@@ -18,6 +18,8 @@ namespace HotsBpHelper
         public static string AppPath;
         public static Position MyPosition;
 
+        public static bool Debug;
+
         public static string Language = CultureInfo.CurrentCulture.Name;
     }
 }
