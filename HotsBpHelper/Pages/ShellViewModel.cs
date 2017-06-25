@@ -1,9 +1,11 @@
 using System;
 using System.Linq;
-using System.Net.Mime;
 using System.Windows;
 using HotsBpHelper.Settings;
-using Stylet;
+using NAppUpdate.Framework;
+using NAppUpdate.Framework.Common;
+using NAppUpdate.Framework.Sources;
+using NAppUpdate.Framework.Tasks;
 
 namespace HotsBpHelper.Pages
 {
@@ -22,6 +24,7 @@ namespace HotsBpHelper.Pages
 
         protected override void OnViewLoaded()
         {
+            Update();
             Init();
             if (WindowManager.ShowDialog(_webFileUpdaterViewModelFactory.CreateViewModel()) != true)
             {
@@ -31,6 +34,55 @@ namespace HotsBpHelper.Pages
             WindowManager.ShowDialog(_bpViewModelFactory.CreateViewModel());
             Application.Current.Shutdown();
             base.OnViewLoaded();
+        }
+
+        private void Update()
+        {
+            UpdateManager updManager = UpdateManager.Instance;
+            try
+            {
+                updManager.ReinstateIfRestarted();
+
+                updManager.UpdateSource = new SimpleWebSource(Const.UPDATE_FEED_XML);
+                try
+                {
+                    updManager.CheckForUpdates();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Checking updates exception.");
+                    return;
+                }
+                Logger.Trace("Need updates files: {0}", updManager.UpdatesAvailable);
+                if (updManager.UpdatesAvailable == 0) return;
+                try
+                {
+                    updManager.PrepareUpdates();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Preparing updates exception.");
+                    return;
+                }
+                ShowMessageBox(L("UpdatesAvailable"), MessageBoxButton.OK, MessageBoxImage.Information);
+                try
+                {
+                    foreach (var updateTask in updManager.Tasks)
+                    {
+                        Logger.Trace(((FileUpdateTask)updateTask).LocalPath);
+                    }
+                    updManager.ApplyUpdates(true);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Applying updates exception.");
+                    ShowMessageBox(string.Format(L("UpdatesFailed"), ex.Message), MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            finally
+            {
+                updManager.CleanUp();
+            }
         }
 
         private void Init()
@@ -58,10 +110,10 @@ namespace HotsBpHelper.Pages
         {
             BpViewModel CreateViewModel();
         }
+
         public interface IWebFileUpdaterViewModelFactory
         {
             WebFileUpdaterViewModel CreateViewModel();
         }
     }
-
 }
