@@ -129,6 +129,11 @@ namespace HotsBpHelper.Pages
             }
         }
 
+        public void Exit()
+        {
+            Application.Current.Shutdown();
+        }
+
         protected override void OnClose()
         {
             _hotKeyManager.Dispose();
