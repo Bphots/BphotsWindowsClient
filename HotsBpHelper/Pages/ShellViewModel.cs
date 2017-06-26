@@ -1,11 +1,14 @@
 using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
+using GlobalHotKey;
 using HotsBpHelper.Settings;
 using NAppUpdate.Framework;
 using NAppUpdate.Framework.Common;
 using NAppUpdate.Framework.Sources;
 using NAppUpdate.Framework.Tasks;
+using Stylet;
 
 namespace HotsBpHelper.Pages
 {
@@ -15,11 +18,15 @@ namespace HotsBpHelper.Pages
 
         private readonly IBpViewModelFactory _bpViewModelFactory;
 
+        private readonly HotKeyManager _hotKeyManager;
+
+        private BpViewModel _bpViewModel;
 
         public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory)
         {
             _webFileUpdaterViewModelFactory = webFileUpdaterViewModelFactory;
             _bpViewModelFactory = bpViewModelFactory;
+            _hotKeyManager = new HotKeyManager();
         }
 
         protected override void OnViewLoaded()
@@ -29,15 +36,36 @@ namespace HotsBpHelper.Pages
                 // 不是调试模拟,则检查更新
                 Update();
             }
-            Init();
+            InitSettings();
+            RegisterHotKey();
             if (WindowManager.ShowDialog(_webFileUpdaterViewModelFactory.CreateViewModel()) != true)
             {
                 Application.Current.Shutdown();
                 return;
             }
-            WindowManager.ShowDialog(_bpViewModelFactory.CreateViewModel());
-            Application.Current.Shutdown();
+            _bpViewModel = _bpViewModelFactory.CreateViewModel();
+            WindowManager.ShowDialog(_bpViewModel);
             base.OnViewLoaded();
+        }
+
+        private void RegisterHotKey()
+        {
+            _hotKeyManager.Register(Key.B, ModifierKeys.Control | ModifierKeys.Shift);
+            _hotKeyManager.KeyPressed += HotKeyManagerPressed;
+        }
+
+        private void HotKeyManagerPressed(object sender, KeyPressedEventArgs e)
+        {
+            if (_bpViewModel == null)
+            {
+                _bpViewModel = _bpViewModelFactory.CreateViewModel();
+                WindowManager.ShowDialog(_bpViewModel);
+            }
+            else
+            {
+                _bpViewModel.RequestClose();
+                _bpViewModel = null;
+            }
         }
 
         private void Update()
@@ -89,7 +117,7 @@ namespace HotsBpHelper.Pages
             }
         }
 
-        private void Init()
+        private void InitSettings()
         {
             try
             {
@@ -108,6 +136,12 @@ namespace HotsBpHelper.Pages
                 ShowMessageBox(e.Message, MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Shutdown();
             }
+        }
+
+        protected override void OnClose()
+        {
+            _hotKeyManager.Dispose();
+            base.OnClose();
         }
 
         public interface IBpViewModelFactory

@@ -27,6 +27,9 @@ namespace HotsBpHelper.Pages
 
         public int Top { get; set; }
 
+        public int Width { get; set; }
+        public int Height { get; set; }
+
         public Uri LocalFileUri { get; set; }
 
         public BpStatus BpStatus { get; set; }
@@ -34,7 +37,6 @@ namespace HotsBpHelper.Pages
         private IList<Point> _listPositions;
 
         private IList<IList<int>> _listBpSteps;
-
 
         public BpViewModel(IHeroSelectorViewModelFactory heroSelectorViewModelFactory,
             IMapSelectorViewModelFactory mapSelectorViewModelFactory,
@@ -49,6 +51,8 @@ namespace HotsBpHelper.Pages
 
             Left = (int)App.MyPosition.BpHelperPosition.X;
             Top = (int)App.MyPosition.BpHelperPosition.Y;
+            Width = (int) App.MyPosition.BpHelperSize.Width;
+            Height = (int) App.MyPosition.BpHelperSize.Height;
 
             string filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "index.html");
             LocalFileUri = new Uri(filePath, UriKind.Absolute);
@@ -73,7 +77,7 @@ namespace HotsBpHelper.Pages
             });
         }
 
-        public void ShowHeroSelector(int pointIndex)
+        private void ShowHeroSelector(int pointIndex)
         {
             var vm = _heroSelectorViewModelFactory.CreateViewModel();
             HeroSelectorViewModels.Add(vm);
@@ -94,7 +98,7 @@ namespace HotsBpHelper.Pages
             });
         }
 
-        public void FillPositions()
+        private void FillPositions()
         {
             SidePosition sidePosition;
             double x, y;
@@ -133,7 +137,7 @@ namespace HotsBpHelper.Pages
             }
         }
 
-        public void CloseHeroSelector()
+        private void CloseHeroSelector()
         {
             foreach (var vm in HeroSelectorViewModels)
             {
