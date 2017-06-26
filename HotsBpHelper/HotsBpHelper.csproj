@@ -153,6 +153,7 @@
     <Compile Include="Utils\ComboBoxItemUtil\IComboxItemUtil.cs" />
     <Compile Include="Utils\Md5Util.cs" />
     <Compile Include="Utils\ScreenUtil.cs" />
+    <Compile Include="WPF\FilteredComboBox.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Localization\Strings.Designer.cs">
@@ -252,7 +253,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="NAppUpdate\" />
-    <Folder Include="WPF\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
