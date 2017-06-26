@@ -44,7 +44,7 @@ namespace HotsBpHelper.Pages
                 return;
             }
             _bpViewModel = _bpViewModelFactory.CreateViewModel();
-            WindowManager.ShowDialog(_bpViewModel);
+            WindowManager.ShowWindow(_bpViewModel);
             base.OnViewLoaded();
         }
 
@@ -56,16 +56,7 @@ namespace HotsBpHelper.Pages
 
         private void HotKeyManagerPressed(object sender, KeyPressedEventArgs e)
         {
-            if (_bpViewModel == null)
-            {
-                _bpViewModel = _bpViewModelFactory.CreateViewModel();
-                WindowManager.ShowDialog(_bpViewModel);
-            }
-            else
-            {
-                _bpViewModel.RequestClose();
-                _bpViewModel = null;
-            }
+            _bpViewModel.ToggleVisible();
         }
 
         private void Update()
