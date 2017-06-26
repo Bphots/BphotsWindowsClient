@@ -16,6 +16,8 @@
         d:DataContext="{d:DesignInstance local:BpViewModel}"
         Left="{Binding Left}"
         Top ="{Binding Top}"
+        Width="{Binding Width}"
+        Height="{Binding Height}"
         >
     <DockPanel >
         <userControls:WebKitBrowser x:Name="Browser" DockPanel.Dock="Top" Width="425" Height="160" Source="{Binding LocalFileUri}"/>
