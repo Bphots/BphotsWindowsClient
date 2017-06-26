@@ -38,6 +38,8 @@ namespace HotsBpHelper.Pages
 
         private IList<IList<int>> _listBpSteps;
 
+        private MapSelectorViewModel _mapSelectorViewModel;
+
         public BpViewModel(IHeroSelectorViewModelFactory heroSelectorViewModelFactory,
             IMapSelectorViewModelFactory mapSelectorViewModelFactory,
             IEventAggregator eventAggregator, ISecurityProvider securityProvider)
@@ -67,14 +69,17 @@ namespace HotsBpHelper.Pages
 
         private void ShowMapSelector()
         {
-            var vm = _mapSelectorViewModelFactory.CreateViewModel();
-            vm.Id = 0;
-            vm.SetCenterAndTop(App.MyPosition.MapSelectorPosition);
-            WindowManager.ShowWindow(vm);
+            _mapSelectorViewModel = _mapSelectorViewModelFactory.CreateViewModel();
+            _mapSelectorViewModel.Id = 0;
+            _mapSelectorViewModel.SetCenterAndTop(App.MyPosition.MapSelectorPosition);
+            WindowManager.ShowWindow(_mapSelectorViewModel);
+            ((Window)_mapSelectorViewModel.View).Owner = (Window)this.View;
+/*
             _eventAggregator.Publish(new ShowWindowMessage
             {
                 ViewModel = vm,
             });
+*/
         }
 
         private void ShowHeroSelector(int pointIndex)
@@ -92,10 +97,13 @@ namespace HotsBpHelper.Pages
                 vm.SetRightAndTop(position);
             }
             WindowManager.ShowWindow(vm);
+            ((Window)vm.View).Owner = (Window)this.View;
+/*
             _eventAggregator.Publish(new ShowWindowMessage
             {
                 ViewModel = vm,
             });
+*/
         }
 
         private void FillPositions()
@@ -137,7 +145,7 @@ namespace HotsBpHelper.Pages
             }
         }
 
-        private void CloseHeroSelector()
+        private void CloseHeroSelectorWindows()
         {
             foreach (var vm in HeroSelectorViewModels)
             {
@@ -171,7 +179,8 @@ namespace HotsBpHelper.Pages
 
         protected override void OnClose()
         {
-            CloseHeroSelector();
+            _mapSelectorViewModel.RequestClose();
+            CloseHeroSelectorWindows();
             base.OnClose();
         }
 
@@ -222,7 +231,7 @@ namespace HotsBpHelper.Pages
                         Tuple.Create("lang", App.Language)
                     });
 
-            CloseHeroSelector();
+            CloseHeroSelectorWindows();
             // Position下标位置示意
             //   0 1   7 8
             // 2          9
@@ -276,6 +285,26 @@ namespace HotsBpHelper.Pages
                 ShowHeroSelector(i);
             }
             BpStatus.StepSelectedIndex = new HashSet<int>();
+        }
+
+        public void ToggleVisible()
+        {
+            var view = View;
+            Visibility visibility;
+            if (view.Visibility == Visibility.Visible)
+            {
+                visibility = Visibility.Hidden;
+            }
+            else
+            {
+                visibility = Visibility.Visible;
+            }
+            _mapSelectorViewModel.View.Visibility = visibility;
+            foreach (var heroSelectorViewModel in HeroSelectorViewModels)
+            {
+                heroSelectorViewModel.View.Visibility = visibility;
+            }
+            View.Visibility = visibility;
         }
     }
 
