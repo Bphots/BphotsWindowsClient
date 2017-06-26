@@ -171,4 +171,7 @@
   <data name="UpdatesFailed" xml:space="preserve">
     <value>更新出错: {0}</value>
   </data>
+  <data name="Exit" xml:space="preserve">
+    <value>退出</value>
+  </data>
 </root>
