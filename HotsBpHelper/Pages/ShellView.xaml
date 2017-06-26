@@ -12,8 +12,14 @@
         mc:Ignorable="d"
         Title="{lex:Loc HotsBpHelper}" Height="0" Width="0"
         xmlns:lex="http://wpflocalizeextension.codeplex.com"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        xmlns:s="https://github.com/canton7/Stylet"
         d:DataContext="{d:DesignInstance local:ShellViewModel}">
-    <TextBlock FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center">
-        Hello Stylet!
-    </TextBlock>
+    <tb:TaskbarIcon IconSource="/Images/0.ico" ToolTipText="{lex:Loc HotsBpHelper}">
+        <tb:TaskbarIcon.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="{lex:Loc Exit}" Command="{s:Action Exit}" />
+            </ContextMenu>
+        </tb:TaskbarIcon.ContextMenu>
+    </tb:TaskbarIcon>
 </Window>
