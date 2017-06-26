@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:pages="clr-namespace:HotsBpHelper.Pages"
         xmlns:s="https://github.com/canton7/Stylet"
+        xmlns:wpf="clr-namespace:HotsBpHelper.WPF"
         mc:Ignorable="d"
           SizeToContent="WidthAndHeight"
       Topmost="True"
@@ -22,8 +23,10 @@
     <DockPanel>
         <Button DockPanel.Dock="Left" Content="←" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Left}" />
         <Button DockPanel.Dock="Right" Content="→" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Right}" />
-        <ComboBox VerticalAlignment="Stretch" MinWidth="130" BorderThickness="1" BorderBrush="#1C1239" ItemsSource="{Binding ItemsInfos}"
-                        TextSearch.TextPath="Acronym"
+        <wpf:FilteredComboBox VerticalAlignment="Stretch" MinWidth="130" BorderThickness="1" BorderBrush="#1C1239" ItemsSource="{Binding ItemsInfos}"
+                                        IsEditable="True" 
+                                        IsTextSearchEnabled="False" 
+                                        StaysOpenOnEdit="True"
                                        DisplayMemberPath="Name" SelectedItem="{Binding SelectedItemInfo}" />
     </DockPanel>
 </Window>
