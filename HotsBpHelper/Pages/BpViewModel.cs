@@ -7,6 +7,7 @@ using HotsBpHelper.Api.Security;
 using HotsBpHelper.Messages;
 using HotsBpHelper.Settings;
 using HotsBpHelper.UserControls;
+using HotsBpHelper.Utils;
 using Stylet;
 
 namespace HotsBpHelper.Pages
@@ -51,10 +52,13 @@ namespace HotsBpHelper.Pages
 
             _eventAggregator.Subscribe(this);
 
-            Left = (int)App.MyPosition.BpHelperPosition.X;
-            Top = (int)App.MyPosition.BpHelperPosition.Y;
-            Width = (int) App.MyPosition.BpHelperSize.Width;
-            Height = (int) App.MyPosition.BpHelperSize.Height;
+            var unitPos = App.MyPosition.BpHelperPosition.ToUnitPoint();
+            Left = (int)unitPos.X;
+            Top = (int)unitPos.Y;
+
+            var unitSize = App.MyPosition.BpHelperSize.ToUnitSize();
+            Width = (int)unitSize.Width;
+            Height = (int)unitSize.Height;
 
             string filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "index.html");
             LocalFileUri = new Uri(filePath, UriKind.Absolute);
