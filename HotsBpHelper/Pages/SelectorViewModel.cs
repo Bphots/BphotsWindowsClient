@@ -53,26 +53,28 @@ namespace HotsBpHelper.Pages
 
         public void SetLeftAndTop(Point position)
         {
-            var pos = position.ToPixelPoint();
+            var pos = position.ToUnitPoint();
             SetPosition(pos);
         }
 
         public void SetRightAndTop(Point position)
         {
-            var pos = new Point(position.X - Size.Width, position.Y).ToPixelPoint();
+            var unitPos = position.ToUnitPoint();
+            var pos = new Point(unitPos.X - Size.Width, unitPos.Y);
             SetPosition(pos);
         }
 
         public void SetCenterAndTop(Point position)
         {
-            var pos = new Point(position.X - Size.Width / 2, position.Y).ToPixelPoint();
+            var unitPos = position.ToUnitPoint();
+            var pos = new Point(unitPos.X - Size.Width / 2, unitPos.Y);
             SetPosition(pos);
         }
 
-        private void SetPosition(Point position)
+        private void SetPosition(Point unitPosition)
         {
-            Left = (int)position.X;
-            Top = (int)position.Y;
+            Left = (int)unitPosition.X;
+            Top = (int)unitPosition.Y;
         }
     }
 }

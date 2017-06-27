@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using GlobalHotKey;
 using HotsBpHelper.Settings;
+using HotsBpHelper.Utils;
 using NAppUpdate.Framework;
 using NAppUpdate.Framework.Common;
 using NAppUpdate.Framework.Sources;
@@ -126,7 +127,8 @@ namespace HotsBpHelper.Pages
             try
             {
                 var appSetting = Its.Configuration.Settings.Get<AppSetting>();
-                var position = appSetting.Positions.SingleOrDefault(s => s.Width == (int)SystemParameters.PrimaryScreenWidth && s.Height == (int)SystemParameters.PrimaryScreenHeight);
+                var screenSize = ScreenUtil.GetScreenResolution();
+                var position = appSetting.Positions.SingleOrDefault(s => s.Width == (int)screenSize.Width && s.Height == (int)screenSize.Height);
                 if (position == null)
                 {
                     ShowMessageBox(L("MSG_NoMatchResolution"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
