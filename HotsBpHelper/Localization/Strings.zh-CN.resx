@@ -175,6 +175,9 @@
     <value>退出</value>
   </data>
   <data name="ToggleVisibility" xml:space="preserve">
-    <value>切换显示/隐藏</value>
+    <value>切换显示/隐藏助手</value>
+  </data>
+  <data name="RegisterHotKeyFailed" xml:space="preserve">
+    <value>热键注册失败,请使用托盘菜单显示/隐藏助手</value>
   </data>
 </root>

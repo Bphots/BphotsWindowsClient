@@ -50,8 +50,16 @@ namespace HotsBpHelper.Pages
 
         private void RegisterHotKey()
         {
-            _hotKeyManager.Register(Key.B, ModifierKeys.Control | ModifierKeys.Shift);
-            _hotKeyManager.KeyPressed += HotKeyManagerPressed;
+            try
+            {
+                _hotKeyManager.Register(Key.B, ModifierKeys.Control | ModifierKeys.Shift);
+                _hotKeyManager.KeyPressed += HotKeyManagerPressed;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                ShowMessageBox(L("RegisterHotKeyFailed"), MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+            }
         }
 
         private void HotKeyManagerPressed(object sender, KeyPressedEventArgs e)
