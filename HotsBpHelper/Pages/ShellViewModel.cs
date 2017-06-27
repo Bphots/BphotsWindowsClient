@@ -56,6 +56,11 @@ namespace HotsBpHelper.Pages
 
         private void HotKeyManagerPressed(object sender, KeyPressedEventArgs e)
         {
+            ToggleVisible();
+        }
+
+        public void ToggleVisible()
+        {
             _bpViewModel.ToggleVisible();
         }
 

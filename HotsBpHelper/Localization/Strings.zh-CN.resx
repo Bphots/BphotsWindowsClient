@@ -174,4 +174,7 @@
   <data name="Exit" xml:space="preserve">
     <value>退出</value>
   </data>
+  <data name="ToggleVisibility" xml:space="preserve">
+    <value>切换显示/隐藏</value>
+  </data>
 </root>
