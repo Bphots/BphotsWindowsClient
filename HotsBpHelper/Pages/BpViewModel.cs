@@ -251,12 +251,12 @@ namespace HotsBpHelper.Pages
                     new List<int> {0},
                     new List<int> {7},
                     new List<int> {2},
-                    new List<int> {9, 10},
-                    new List<int> {3, 4},
+                    new List<int> {10, 9}, // 倒序是为了让9获得输入焦点
+                    new List<int> {4, 3},
                     new List<int> {8},
                     new List<int> {1},
-                    new List<int> {11, 12},
-                    new List<int> {5, 6},
+                    new List<int> {12, 11},
+                    new List<int> {6, 5},
                     new List<int> {13},
                 };
             }
@@ -267,12 +267,12 @@ namespace HotsBpHelper.Pages
                     new List<int> {7},
                     new List<int> {0},
                     new List<int> {9},
-                    new List<int> {2, 3},
-                    new List<int> {10, 11},
+                    new List<int> {3, 2},
+                    new List<int> {11, 10},
                     new List<int> {1},
                     new List<int> {8},
-                    new List<int> {4, 5},
-                    new List<int> {12, 13},
+                    new List<int> {5, 4},
+                    new List<int> {13, 12},
                     new List<int> {6},
                 };
             }

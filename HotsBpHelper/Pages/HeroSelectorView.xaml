@@ -18,10 +18,22 @@
         Top="{Binding Top}"
         ShowInTaskbar="False"
         >
-    <wpf:FilteredComboBox Width="{Binding Size.Width}" Height="{Binding Size.Height}" Opacity="0.4" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" 
+        <Window.Resources>
+        <Style TargetType="Window">
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="LawnGreen"/>
+                    <Setter Property="BorderThickness" Value="5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <wpf:FilteredComboBox x:Name="ComboBox" Width="{Binding Size.Width}" Height="{Binding Size.Height}" Opacity="0.6" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" 
                                         IsEditable="True" 
                                         IsTextSearchEnabled="False" 
                                         StaysOpenOnEdit="True"
                                         DisplayMemberPath="Name"
-                                        ItemsSource="{Binding ItemsInfos}" SelectedItem="{Binding SelectedItemInfo}" />
+                                        ItemsSource="{Binding ItemsInfos}" SelectedItem="{Binding SelectedItemInfo}"
+                          >
+    </wpf:FilteredComboBox>
 </Window>
