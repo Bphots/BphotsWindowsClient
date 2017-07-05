@@ -34,13 +34,16 @@ namespace HotsBpHelper.Pages
             set
             {
                 SetAndNotify(ref PSelectedItemInfo, value);
-                if (value == null) return;
-                EventAggregator.Publish(new ItemSelectedMessage
-                {
-                    ItemInfo = value,
-                    SelectorId = Id
-                });
             }
+        }
+
+        public void ConfirmSelection()
+        {
+            EventAggregator.Publish(new ItemSelectedMessage
+            {
+                ItemInfo = PSelectedItemInfo,
+                SelectorId = Id
+            });
         }
 
         protected SelectorViewModel(IComboxItemUtil comboxItemUtil, IEventAggregator eventAggregator)
