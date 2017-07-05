@@ -6,10 +6,17 @@
       DispatcherUnhandledException="App_OnDispatcherUnhandledException"
       >
     <Application.Resources>
-        <s:ApplicationLoader>
-            <s:ApplicationLoader.Bootstrapper>
-                <local:Bootstrapper />
-            </s:ApplicationLoader.Bootstrapper>
-        </s:ApplicationLoader>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <s:ApplicationLoader>
+                    <s:ApplicationLoader.Bootstrapper>
+                        <local:Bootstrapper />
+                    </s:ApplicationLoader.Bootstrapper>
+                </s:ApplicationLoader>
+            </ResourceDictionary.MergedDictionaries>
+            <Storyboard x:Key="FlashAnimation" >
+                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" AutoReverse="True" Duration="0:0:0.3" RepeatBehavior="3x" />
+            </Storyboard>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

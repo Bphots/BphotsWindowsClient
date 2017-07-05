@@ -83,6 +83,7 @@ namespace HotsBpHelper.WPF
             }
         }
 
+/*
         protected override void OnPreviewLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
         {
             ClearFilter();
@@ -92,6 +93,7 @@ namespace HotsBpHelper.WPF
             SelectedIndex = temp;
             base.OnPreviewLostKeyboardFocus(e);
         }
+*/
 
         private void RefreshFilter()
         {
