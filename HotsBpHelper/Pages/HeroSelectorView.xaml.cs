@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace HotsBpHelper.Pages
 {
@@ -7,6 +8,12 @@ namespace HotsBpHelper.Pages
         public HeroSelectorView()
         {
 //            InitializeComponent();
+            Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            ComboBox.Focus();
         }
     }
 }
