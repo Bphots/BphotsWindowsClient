@@ -89,7 +89,7 @@ namespace HotsBpHelper.Api
 
         public async Task<List<RemoteFileInfo>> GetRemoteFileListAsync()
         {
-            var request = CreateRequest("filelist", new List<Tuple<string, string>>());
+            var request = CreateRequest("get/filelist", new List<Tuple<string, string>>());
             return await ExecuteAsync<List<RemoteFileInfo>>(request);
         }
 
@@ -103,7 +103,7 @@ namespace HotsBpHelper.Api
 
         public List<HeroInfo> GetHeroList(string language)
         {
-            var request = CreateRequest("herolist",
+            var request = CreateRequest("get/herolist",
                 new List<Tuple<string, string>>
                 {
                     Tuple.Create("lang", language)
@@ -114,7 +114,7 @@ namespace HotsBpHelper.Api
 
         public List<MapInfo> GetMapList(string language)
         {
-            var request = CreateRequest("maplist",
+            var request = CreateRequest("get/maplist",
                 new List<Tuple<string, string>>
                 {
                     Tuple.Create("lang", language)
@@ -125,7 +125,7 @@ namespace HotsBpHelper.Api
 
         public double GetTimestamp()
         {
-            var request = CreateRequest("timestamp");
+            var request = CreateRequest("get/timestamp");
             return Execute<double>(request);
         }
     }
