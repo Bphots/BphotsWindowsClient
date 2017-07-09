@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -14,6 +16,11 @@ namespace HotsBpHelper.WPF
 
         protected TextBox EditableTextBox => GetTemplateChild("PART_EditableTextBox") as TextBox;
 
+        protected override void OnSelectionChanged(SelectionChangedEventArgs e)
+        {
+            Effect = null;
+            base.OnSelectionChanged(e);
+        }
 
         protected override void OnItemsSourceChanged(IEnumerable oldValue, IEnumerable newValue)
         {
@@ -34,10 +41,12 @@ namespace HotsBpHelper.WPF
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
+            string temp = Text;
             switch (e.Key)
             {
                 case Key.Tab:
                 case Key.Enter:
+                    if (SelectedIndex == -1) SelectedIndex = 0;
                     IsDropDownOpen = false;
                     break;
                 case Key.Escape:
@@ -45,9 +54,20 @@ namespace HotsBpHelper.WPF
                     SelectedIndex = -1;
                     Text = currentFilter;
                     break;
-                default:
-                    if (e.Key == Key.Down) IsDropDownOpen = true;
+                case Key.Down:
+                    IsDropDownOpen = true;
+                    if (SelectedIndex == -1) SelectedIndex = 0;
+                    base.OnPreviewKeyDown(e);
+                    break;
+                case Key.Up:
+                    IsDropDownOpen = true;
+                    if (SelectedIndex == -1) SelectedIndex = 0;
+                    base.OnPreviewKeyDown(e);
+                    break;
 
+                default:
+
+                    if (e.Key == Key.Down) IsDropDownOpen = true;
                     base.OnPreviewKeyDown(e);
                     break;
             }
@@ -62,11 +82,13 @@ namespace HotsBpHelper.WPF
             {
                 case Key.Up:
                 case Key.Down:
+                    base.OnKeyUp(e);
                     break;
                 case Key.Tab:
                 case Key.Enter:
 
                     ClearFilter();
+                    base.OnKeyUp(e);
                     break;
                 default:
                     if (Text != oldFilter)
@@ -82,18 +104,18 @@ namespace HotsBpHelper.WPF
                     break;
             }
         }
+        /*
+                protected override void OnPreviewLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
+                {
+                    ClearFilter();
+                    var temp = SelectedIndex;
+                    SelectedIndex = -1;
+                    Text = string.Empty;
+                    SelectedIndex = temp;
+                    base.OnPreviewLostKeyboardFocus(e);
+                }
+        */
 
-/*
-        protected override void OnPreviewLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
-        {
-            ClearFilter();
-            var temp = SelectedIndex;
-            SelectedIndex = -1;
-            Text = string.Empty;
-            SelectedIndex = temp;
-            base.OnPreviewLostKeyboardFocus(e);
-        }
-*/
 
         private void RefreshFilter()
         {
