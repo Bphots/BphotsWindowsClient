@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using HotsBpHelper.Utils;
-using RestSharp;
 
 namespace HotsBpHelper.Api.Security
 {
     public class SecurityProvider : ISecurityProvider
     {
+        public const string KEY = "jX5QchI9iH%8L084";
+
         private DateTime _startDateTime;
 
         private double _timestamp;
@@ -23,11 +23,11 @@ namespace HotsBpHelper.Api.Security
         {
             var sp = new SecurityParameter();
             var strParams = parameters.OrderBy(tuple => tuple.Item1).Select(tuple => $"\"{tuple.Item1}\":\"{tuple.Item2}\"");
-            string param = "{" + string.Join(",", strParams) + "}";
+            string param = "{" + String.Join(",", strParams) + "}";
             sp.Timestamp = CalcNewTimestamp();
             sp.Patch = Const.PATCH;
             sp.Nonce = Guid.NewGuid().ToString().Substring(0, 8);
-            sp.Sign = Md5Util.CaculateStringMd5($"{Const.KEY}-{sp.Timestamp}-{sp.Patch}-{sp.Nonce}-{param}");
+            sp.Sign = Md5Util.CaculateStringMd5($"{KEY}-{sp.Timestamp}-{sp.Patch}-{sp.Nonce}-{param}");
             return sp;
         }
 
