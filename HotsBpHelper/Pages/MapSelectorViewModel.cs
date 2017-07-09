@@ -11,7 +11,7 @@ namespace HotsBpHelper.Pages
     {
         public MapSelectorViewModel(MapItemUtil mapItemUtil, IEventAggregator eventAggregator) : base(mapItemUtil, eventAggregator)
         {
-            Size = new Size(150, 20);
+            Size = new Size(178, 24);//修改地图框大小后，需要修改此项进行匹配
         }
 
         public new ComboBoxItemInfo SelectedItemInfo
