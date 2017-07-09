@@ -35,8 +35,8 @@
                 </Style.Triggers>
             </Style>
         </DockPanel.Resources>
-        <Button DockPanel.Dock="Left" Content="←" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Left}" />
-        <Button DockPanel.Dock="Right" Content="→" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Right}" />
+        <Button DockPanel.Dock="Left" Content="←" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Left}" Width="24" />
+        <Button DockPanel.Dock="Right" Content="→" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Right}" Width="24" />
         <wpf:FilteredComboBox VerticalAlignment="Stretch" MinWidth="130" BorderThickness="1" BorderBrush="#1C1239" ItemsSource="{Binding ItemsInfos}"
                                         IsEditable="True" 
                                         IsTextSearchEnabled="False" 
