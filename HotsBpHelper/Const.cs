@@ -9,7 +9,5 @@
         public const string LOCAL_WEB_FILE_DIR = "WebFiles";
 
         public const string PATCH = "17070501";
-
-        public const string KEY = "jX5QchI9iH%8L084";
     }
 }
