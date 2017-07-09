@@ -17,6 +17,7 @@ namespace HotsBpHelper.WPF
         protected TextBox EditableTextBox => GetTemplateChild("PART_EditableTextBox") as TextBox;
 
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
+        //取消高光效果
         {
             Effect = null;
             base.OnSelectionChanged(e);
