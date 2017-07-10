@@ -8,6 +8,6 @@
 
         public const string LOCAL_WEB_FILE_DIR = "WebFiles";
 
-        public const string PATCH = "17070902";
+        public const string PATCH = "17071001";
     }
 }
