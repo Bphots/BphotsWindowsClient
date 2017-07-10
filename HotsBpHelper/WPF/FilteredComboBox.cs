@@ -23,6 +23,12 @@ namespace HotsBpHelper.WPF
             base.OnSelectionChanged(e);
         }
 
+        protected override void OnDropDownOpened(EventArgs e)
+        {
+            ClearFilter();
+            base.OnDropDownOpened(e);
+        }
+
         protected override void OnItemsSourceChanged(IEnumerable oldValue, IEnumerable newValue)
         {
             if (newValue != null)
@@ -42,7 +48,6 @@ namespace HotsBpHelper.WPF
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
-            string temp = Text;
             switch (e.Key)
             {
                 case Key.Tab:
@@ -53,7 +58,6 @@ namespace HotsBpHelper.WPF
                 case Key.Escape:
                     IsDropDownOpen = false;
                     SelectedIndex = -1;
-                    Text = currentFilter;
                     break;
                 case Key.Down:
                     IsDropDownOpen = true;
@@ -67,8 +71,6 @@ namespace HotsBpHelper.WPF
                     break;
 
                 default:
-
-                    if (e.Key == Key.Down) IsDropDownOpen = true;
                     base.OnPreviewKeyDown(e);
                     break;
             }
@@ -87,21 +89,21 @@ namespace HotsBpHelper.WPF
                     break;
                 case Key.Tab:
                 case Key.Enter:
-
+                    
                     ClearFilter();
                     base.OnKeyUp(e);
                     break;
                 default:
-                    if (Text != oldFilter)
-                    {
-                        RefreshFilter();
-                        IsDropDownOpen = true;
-
-                        EditableTextBox.SelectionStart = int.MaxValue;
-                    }
-
                     base.OnKeyUp(e);
                     currentFilter = Text;
+                    if (currentFilter != oldFilter)
+                    {
+                        IsDropDownOpen = true;
+                        currentFilter = Text;
+                        RefreshFilter();
+
+                        //EditableTextBox.SelectionStart = int.MaxValue;
+                    }
                     break;
             }
         }
@@ -135,9 +137,9 @@ namespace HotsBpHelper.WPF
         private bool FilterItem(object value)
         {
             if (value == null) return false;
-            if (Text.Length == 0) return true;
+            if (currentFilter.Length == 0) return true;
 
-            return value.ToString().ToLower().Contains(Text.ToLower());
+            return value.ToString().ToLower().Contains(currentFilter.ToLower());
         }
     }
 }
