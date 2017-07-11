@@ -12,6 +12,23 @@ namespace HotsBpHelper.Pages
             Loaded += OnLoaded;
             KeyDown += OnKeyDown;
             PreviewKeyUp += OnPreviewKeyUp;
+            
+        }
+
+        protected override void OnMouseLeave(MouseEventArgs e)
+        {
+            base.OnMouseLeave(e);
+            Confirm();
+        }
+
+        public void Confirm()
+        {
+
+            var vm = (HeroSelectorViewModel)DataContext;
+            if (vm.SelectedItemInfo != null)
+            {
+                vm.ConfirmSelection();
+            }
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
@@ -24,10 +41,9 @@ namespace HotsBpHelper.Pages
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
         {
-            var vm = (HeroSelectorViewModel)DataContext;
-            if (keyEventArgs.Key == Key.Enter && vm.SelectedItemInfo != null)
+            if (keyEventArgs.Key == Key.Enter)
             {
-                vm.ConfirmSelection();
+                Confirm();
             }
         }
 
