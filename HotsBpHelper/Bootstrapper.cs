@@ -28,7 +28,7 @@ namespace HotsBpHelper
 
         protected override void Configure()
         {
-            LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN");
+            
             App.AppPath = AppDomain.CurrentDomain.BaseDirectory;
 
             var args = Environment.GetCommandLineArgs();
@@ -36,6 +36,24 @@ namespace HotsBpHelper
             {
                 App.Debug = true;
             }
+            if (args.Any(arg => arg.ToLower() == "/cn"))
+            {
+                LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN");                
+            }
+            else if (args.Any(arg => arg.ToLower() == "/us"))
+            {
+                LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("en-US");
+            }
+            else if (args.Any(arg => arg.ToLower() == "/kr"))
+            {
+                LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("ko-KR");
+            }
+            else if (args.Any(arg => arg.ToLower() == "/tw"))
+            {
+                LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-TW");
+            }
+            else LocalizeDictionary.Instance.Culture = System.Globalization.CultureInfo.InstalledUICulture;
+            App.Language = LocalizeDictionary.Instance.Culture.Name;
         }
     }
 }

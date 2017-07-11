@@ -1,5 +1,5 @@
 ﻿{
-  "DefaultBpHelperSize": "425,160",
+  "DefaultBpHelperSize": "425,150",
   "Positions": [
     {
       "Width": 1366,
@@ -46,8 +46,8 @@
     {
       "Width": 1600,
       "Height": 900,
-      "BpHelperPosition": "263,753",
-      "BpHelperSize": "425,160",
+      "BpHelperPosition": "263,758",
+      "BpHelperSize": "425,150",
       "MapSelectorPosition": "799,129",
       "Left": {
         "Ban1": "400, 10",
@@ -67,8 +67,8 @@
     {
       "Width": 1680,
       "Height": 1050,
-      "BpHelperPosition": "310,880",
-      "BpHelperSize": "425,160",
+      "BpHelperPosition": "310,885",
+      "BpHelperSize": "425,150",
       "MapSelectorPosition": "840,152",
       "Left": {
         "Ban1": "479, 17",
@@ -88,8 +88,8 @@
     {
       "Width": 1920,
       "Height": 1080,
-      "BpHelperPosition": "322,901",
-      "BpHelperSize": "425,160",
+      "BpHelperPosition": "322,906",
+      "BpHelperSize": "425,150",
       "MapSelectorPosition": "961,157",
       "Left": {
         "Ban1": "479, 17",
@@ -109,8 +109,8 @@
     {
       "Width": 1920,
       "Height": 1200,
-      "BpHelperPosition": "355,1017",
-      "BpHelperSize": "425,160",
+      "BpHelperPosition": "355,1022",
+      "BpHelperSize": "425,150",
       "MapSelectorPosition": "961,175",
       "Left": {
         "Ban1": "550, 17",
@@ -130,8 +130,8 @@
     {
       "Width": 2560,
       "Height": 1080,
-      "BpHelperPosition": "690,910",
-      "BpHelperSize": "425,160",
+      "BpHelperPosition": "690,915",
+      "BpHelperSize": "425,150",
       "MapSelectorPosition": "1280,157",
       "Left": {
         "Ban1": "485, 10",
