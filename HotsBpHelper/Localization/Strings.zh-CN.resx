@@ -121,7 +121,7 @@
     <value>文件名</value>
   </data>
   <data name="FilesNotReady" xml:space="preserve">
-    <value>不能完成更新, 请稍后重启工具重试.</value>
+    <value>不能完成更新, 请重启客户端再次尝试.</value>
   </data>
   <data name="FileStatus" xml:space="preserve">
     <value>文件状态</value>
@@ -145,7 +145,7 @@
     <value>取消</value>
   </data>
   <data name="GetFileListFailed" xml:space="preserve">
-    <value>取得更新文件列表失败, 请稍后重启工具重试.</value>
+    <value>取得更新文件列表失败, 请重启客户端再次尝试.</value>
   </data>
   <data name="No" xml:space="preserve">
     <value>否</value>
@@ -160,13 +160,13 @@
     <value>是</value>
   </data>
   <data name="MSG_NoMatchResolution" xml:space="preserve">
-    <value>未找到匹配的分辨率,工具不能正常使用.</value>
+    <value>未找到匹配的分辨率, 工具不能正常使用.</value>
   </data>
   <data name="NO_CHOOSE" xml:space="preserve">
-    <value>[未选择]</value>
+    <value>[不选择]</value>
   </data>
   <data name="UpdatesAvailable" xml:space="preserve">
-    <value>发现新版本! 点击确定更新.</value>
+    <value>发现新版本! 即将开始更新.</value>
   </data>
   <data name="UpdatesFailed" xml:space="preserve">
     <value>更新出错: {0}</value>
@@ -175,7 +175,7 @@
     <value>退出</value>
   </data>
   <data name="ToggleVisibility" xml:space="preserve">
-    <value>切换显示/隐藏助手</value>
+    <value>显示/隐藏</value>
   </data>
   <data name="RegisterHotKeyFailed" xml:space="preserve">
     <value>热键注册失败,请使用托盘菜单显示/隐藏助手</value>
