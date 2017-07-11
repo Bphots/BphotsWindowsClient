@@ -38,7 +38,7 @@ namespace HotsBpHelper
             }
             if (args.Any(arg => arg.ToLower() == "/cn"))
             {
-                LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN");
+                LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN");                
             }
             else if (args.Any(arg => arg.ToLower() == "/us"))
             {
@@ -53,6 +53,7 @@ namespace HotsBpHelper
                 LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-TW");
             }
             else LocalizeDictionary.Instance.Culture = System.Globalization.CultureInfo.InstalledUICulture;
+            App.Language = LocalizeDictionary.Instance.Culture.Name;
         }
     }
 }
