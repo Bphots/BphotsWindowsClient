@@ -18,7 +18,7 @@
         Top="{Binding Top}"
         ShowInTaskbar="False"
         >
-        <Window.Resources>
+    <Window.Resources>
         <Style TargetType="Window">
             <Style.Triggers>
                 <Trigger Property="IsFocused" Value="True">
@@ -28,12 +28,18 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    <wpf:FilteredComboBox x:Name="ComboBox" Width="{Binding Size.Width}" Height="{Binding Size.Height}" Opacity="0.6" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" 
+
+    <wpf:FilteredComboBox x:Name="ComboBox" Width="{Binding Size.Width}"  Opacity="0.6" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" 
                                         IsEditable="True" 
-                                        IsTextSearchEnabled="False" 
+                                        IsTextSearchEnabled="False"
                                         StaysOpenOnEdit="True"
                                         DisplayMemberPath="Name"
+                                        FontSize="14"
                                         ItemsSource="{Binding ItemsInfos}" SelectedItem="{Binding SelectedItemInfo}"
                           >
+        <wpf:FilteredComboBox.Effect>
+            <DropShadowEffect Color="#FF51FF00" ShadowDepth="0"/>
+        </wpf:FilteredComboBox.Effect>
+
     </wpf:FilteredComboBox>
 </Window>
