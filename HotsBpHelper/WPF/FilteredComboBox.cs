@@ -140,8 +140,8 @@ namespace HotsBpHelper.WPF
             if (currentFilter.Length == 0) return true;
             string v = value.ToString().ToLower();
             string f = currentFilter.ToLower();
-            v.Replace(" ", "");
-            f.Replace(" ", "");
+            v=v.Replace(" ", "");
+            f=f.Replace(" ", "");
 
             return v.Contains(f);
         }
