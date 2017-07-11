@@ -69,7 +69,6 @@ namespace HotsBpHelper.WPF
                     if (SelectedIndex == -1) SelectedIndex = 0;
                     base.OnPreviewKeyDown(e);
                     break;
-
                 default:
                     base.OnPreviewKeyDown(e);
                     break;
@@ -139,8 +138,12 @@ namespace HotsBpHelper.WPF
         {
             if (value == null) return false;
             if (currentFilter.Length == 0) return true;
+            string v = value.ToString().ToLower();
+            string f = currentFilter.ToLower();
+            v.Replace(" ", "");
+            f.Replace(" ", "");
 
-            return value.ToString().ToLower().Contains(currentFilter.ToLower());
+            return v.Contains(f);
         }
     }
 }
