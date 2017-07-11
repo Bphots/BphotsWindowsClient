@@ -76,7 +76,7 @@ namespace HotsBpHelper.WPF
             }
 
             // Cache text
-            oldFilter = Text;
+            //oldFilter = Text;
         }
 
         protected override void OnKeyUp(KeyEventArgs e)
@@ -98,11 +98,12 @@ namespace HotsBpHelper.WPF
                     currentFilter = Text;
                     if (currentFilter != oldFilter)
                     {
+                        oldFilter = Text;
                         IsDropDownOpen = true;
-                        currentFilter = Text;
                         RefreshFilter();
-
-                        //EditableTextBox.SelectionStart = int.MaxValue;
+                        currentFilter = oldFilter;
+                        Text = oldFilter;
+                        EditableTextBox.SelectionStart = int.MaxValue;
                     }
                     break;
             }
