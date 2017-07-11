@@ -118,66 +118,66 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FileName" xml:space="preserve">
-    <value>Flies</value>
+    <value>파일 이름</value>
   </data>
   <data name="FilesNotReady" xml:space="preserve">
-    <value>Cannot update files, please try again.</value>
+    <value>업데이트 실패,프로그램을 다시 시작하세요 </value>
   </data>
   <data name="FileStatus" xml:space="preserve">
-    <value>Status</value>
+    <value>파일 상태</value>
   </data>
   <data name="FileUpdate" xml:space="preserve">
-    <value>Update files</value>
+    <value>업데이트 파일</value>
   </data>
   <data name="HotsBpHelper" xml:space="preserve">
     <value>BP Helper</value>
   </data>
   <data name="UpdateFailed" xml:space="preserve">
-    <value>Update failed</value>
+    <value>업데이트 실패</value>
   </data>
   <data name="Updating" xml:space="preserve">
-    <value>Updating...</value>
+    <value>업데이트 중...</value>
   </data>
   <data name="UpToDate" xml:space="preserve">
-    <value>Recognized</value>
+    <value>최신 파일</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>취소</value>
   </data>
   <data name="GetFileListFailed" xml:space="preserve">
-    <value>Get file list failed, please try again.</value>
+    <value>업데이트 파일 리스트 다운로드 실패.프로그램을 다시 시작하세요</value>
   </data>
   <data name="No" xml:space="preserve">
-    <value>No</value>
+    <value>아니요</value>
   </data>
   <data name="None" xml:space="preserve">
-    <value>None</value>
+    <value>없음</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="Yes" xml:space="preserve">
-    <value>Yes</value>
+    <value>예</value>
   </data>
   <data name="MSG_NoMatchResolution" xml:space="preserve">
-    <value>No match resolution, cannot start the client.</value>
+    <value>해상도 지원하지 않음,프로그램 종료.</value>
   </data>
   <data name="NO_CHOOSE" xml:space="preserve">
-    <value>[NoChose]</value>
+    <value>[선택 없음]</value>
   </data>
   <data name="UpdatesAvailable" xml:space="preserve">
-    <value>Find new version, ready to update.</value>
+    <value>업데이트 버전 있습니다.업데이트 준비중</value>
   </data>
   <data name="UpdatesFailed" xml:space="preserve">
-    <value>Update failed: {0}</value>
+    <value>업데이트 오류: {0}</value>
   </data>
   <data name="Exit" xml:space="preserve">
-    <value>Exit</value>
+    <value>종료</value>
   </data>
   <data name="ToggleVisibility" xml:space="preserve">
-    <value>Show / Hide</value>
+    <value>표시하시/줌기기</value>
   </data>
   <data name="RegisterHotKeyFailed" xml:space="preserve">
-    <value>Register hotkey failed, please use system tray.</value>
+    <value>핫 키를 등록 실패, 시스템 트레이 아이콘을 사용하세요.</value>
   </data>
 </root>
