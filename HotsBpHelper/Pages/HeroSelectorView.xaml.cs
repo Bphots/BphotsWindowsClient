@@ -6,19 +6,32 @@ namespace HotsBpHelper.Pages
 {
     public partial class HeroSelectorView : Window
     {
+
+        private bool isPressed = false;
+
         public HeroSelectorView()
         {
             //            InitializeComponent();
             Loaded += OnLoaded;
             KeyDown += OnKeyDown;
             PreviewKeyUp += OnPreviewKeyUp;
-            
+
+        }
+
+        protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            base.OnPreviewMouseLeftButtonUp(e);
+            isPressed = true;
         }
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
             base.OnMouseLeave(e);
-            Confirm();
+            if (isPressed)
+            {
+                Confirm();
+                isPressed = false;
+            }
         }
 
         public void Confirm()

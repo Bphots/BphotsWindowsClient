@@ -60,7 +60,7 @@ namespace HotsBpHelper.Pages
             Width = (int)unitSize.Width;
             Height = (int)unitSize.Height;
 
-            string filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "index.html");
+            string filePath = @Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "index.html#") + App.Language;
             LocalFileUri = new Uri(filePath, UriKind.Absolute);
         }
 
