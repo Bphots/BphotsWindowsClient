@@ -240,4 +240,7 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
-/HotsBpHelper/Api/Security
+/bfg-1.12.15.jar
+/HotsBpHelper/Api/Security/SecurityProvider.cs
+/HotsBpHelper/Api/Security/SecurityParameter.cs
+/HotsBpHelper/Api/Security/ISecurityProvider.cs

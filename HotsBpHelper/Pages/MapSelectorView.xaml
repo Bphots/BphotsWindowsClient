@@ -17,7 +17,7 @@
         Left="{Binding Left}"
         Top="{Binding Top}"
         ShowInTaskbar="False"
-        Opacity="0.6"
+        Opacity="0.8"
         Width="{Binding Size.Width}" Height="{Binding Size.Height}"
         >
     <DockPanel>
@@ -35,13 +35,18 @@
                 </Style.Triggers>
             </Style>
         </DockPanel.Resources>
-        <Button DockPanel.Dock="Left" Content="←" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Left}" />
-        <Button DockPanel.Dock="Right" Content="→" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Right}" />
+        <Button DockPanel.Dock="Left" Content="←" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Left}" Width="24" />
+        <Button DockPanel.Dock="Right" Content="→" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Right}" Width="24" />
         <wpf:FilteredComboBox VerticalAlignment="Stretch" MinWidth="130" BorderThickness="1" BorderBrush="#1C1239" ItemsSource="{Binding ItemsInfos}"
                                         IsEditable="True" 
                                         IsTextSearchEnabled="False" 
                                         StaysOpenOnEdit="True"
-                                       DisplayMemberPath="Name" SelectedItem="{Binding SelectedItemInfo}" 
-                              />
+                                        FontSize="14"
+                                       DisplayMemberPath="Name" SelectedItem="{Binding SelectedItemInfo}" Opacity="0.6" 
+                              >
+            <wpf:FilteredComboBox.Effect>
+                <DropShadowEffect Color="#FF51FF00" ShadowDepth="0"/>
+            </wpf:FilteredComboBox.Effect>
+        </wpf:FilteredComboBox>
     </DockPanel>
 </Window>
