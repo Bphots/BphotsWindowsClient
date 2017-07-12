@@ -16,6 +16,8 @@ namespace HotsBpHelper.WPF
 
         protected TextBox EditableTextBox => GetTemplateChild("PART_EditableTextBox") as TextBox;
 
+        private bool isPressed = false;
+
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
         //取消高光效果
         {
@@ -23,9 +25,18 @@ namespace HotsBpHelper.WPF
             base.OnSelectionChanged(e);
         }
 
+        protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            base.OnPreviewMouseLeftButtonUp(e);
+            isPressed = true;
+        }
+
         protected override void OnDropDownOpened(EventArgs e)
         {
-            ClearFilter();
+            if (isPressed)
+            {
+                ClearFilter();
+            }
             base.OnDropDownOpened(e);
         }
 
@@ -80,6 +91,7 @@ namespace HotsBpHelper.WPF
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
+            isPressed = false;
             switch (e.Key)
             {
                 case Key.Up:
@@ -88,7 +100,7 @@ namespace HotsBpHelper.WPF
                     break;
                 case Key.Tab:
                 case Key.Enter:
-                    
+
                     ClearFilter();
                     base.OnKeyUp(e);
                     break;
@@ -140,8 +152,8 @@ namespace HotsBpHelper.WPF
             if (currentFilter.Length == 0) return true;
             string v = value.ToString().ToLower();
             string f = currentFilter.ToLower();
-            v=v.Replace(" ", "");
-            f=f.Replace(" ", "");
+            v = v.Replace(" ", "");
+            f = f.Replace(" ", "");
 
             return v.Contains(f);
         }
