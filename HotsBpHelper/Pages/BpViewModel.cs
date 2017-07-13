@@ -220,6 +220,11 @@ namespace HotsBpHelper.Pages
         public void Init()
         {
             InvokeScript("init", "0", "", App.Language);
+        }
+
+        public void Reload()
+        {
+            //重启界面
             _mapSelectorViewModel.RequestClose();
             CloseHeroSelectorWindows();
             FillPositions();
@@ -228,9 +233,12 @@ namespace HotsBpHelper.Pages
 
         public void Handle(SideSelectedMessage message)
         {
-            if (message.ItemInfo==null)
+            //收到重置命令，重置
+            if (message.ItemInfo == null)
             {
                 Init();
+                CloseHeroSelectorWindows();
+                FillPositions();
                 return;
             }
             // 初始化BP过程

@@ -14,6 +14,19 @@ namespace HotsBpHelper.Pages
             Size = new Size(178, 24);//修改地图框大小后，需要修改此项进行匹配
         }
 
+        protected override void OnPropertyChanged(string propertyName)
+        {
+            if (propertyName == "CanSelectSide")
+            {
+                EventAggregator.Publish(new SideSelectedMessage()
+                {
+                    ItemInfo = null,
+                    Side = BpStatus.Side.Left,
+                });
+            }
+            base.OnPropertyChanged(propertyName);
+        }
+
         public new ComboBoxItemInfo SelectedItemInfo
         {
             get { return base.SelectedItemInfo; }
