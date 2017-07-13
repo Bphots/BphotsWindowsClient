@@ -70,6 +70,7 @@ namespace HotsBpHelper.Pages
 
         public void ToggleVisible()
         {
+            _bpViewModel.Init();
             _bpViewModel.ToggleVisible();
         }
 

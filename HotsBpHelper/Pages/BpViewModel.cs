@@ -217,8 +217,22 @@ namespace HotsBpHelper.Pages
             }
         }
 
+        public void Init()
+        {
+            InvokeScript("init", "0", "", App.Language);
+            _mapSelectorViewModel.RequestClose();
+            CloseHeroSelectorWindows();
+            FillPositions();
+            ShowMapSelector();
+        }
+
         public void Handle(SideSelectedMessage message)
         {
+            if (message.ItemInfo==null)
+            {
+                Init();
+                return;
+            }
             // 初始化BP过程
             BpStatus = new BpStatus()
             {
