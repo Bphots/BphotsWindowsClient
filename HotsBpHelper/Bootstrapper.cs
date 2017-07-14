@@ -52,7 +52,23 @@ namespace HotsBpHelper
             {
                 LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-TW");
             }
+            else if (args.Any(arg => arg.ToLower() == "/jp"))
+            {
+                LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("ja-JP");
+            }
             else LocalizeDictionary.Instance.Culture = System.Globalization.CultureInfo.InstalledUICulture;
+            switch (LocalizeDictionary.Instance.Culture.Name) {
+                case "zh-CN":
+                    break;
+                case "ko-KR":
+                    break;
+                case "zh-TW":
+                    break;
+                default:
+                    App.Language = "en-US";
+                    return;
+            }
+
             App.Language = LocalizeDictionary.Instance.Culture.Name;
         }
     }
