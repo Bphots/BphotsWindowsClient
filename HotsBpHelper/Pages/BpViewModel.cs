@@ -211,8 +211,10 @@ namespace HotsBpHelper.Pages
                 if (BpStatus.StepSelectedIndex.Count == _listBpSteps[BpStatus.CurrentStep].Count)
                 {
                     // 选够了,下一步
-                    BpStatus.CurrentStep++;
-                    ProcessStep();
+                    if (BpStatus.CurrentStep < 13) {
+                        BpStatus.CurrentStep++;
+                        ProcessStep();
+                    }
                 }
             }
         }
