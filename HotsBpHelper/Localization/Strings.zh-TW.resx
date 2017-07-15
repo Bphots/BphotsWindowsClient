@@ -201,4 +201,7 @@
   <data name="UpdateFullText" xml:space="preserve">
     <value>軟體更新中。。。請稍候</value>
   </data>
+  <data name="FileUpdateFail" xml:space="preserve">
+    <value>文件無法更新</value>
+  </data>
 </root>
