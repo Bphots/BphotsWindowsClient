@@ -26,7 +26,7 @@ namespace HotsBpHelper
         private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             Pages.ErrorView _errorView = new Pages.ErrorView(e.Exception.Message);
-            _errorView.Show();
+            _errorView.ShowDialog();
             _errorView.Pause();
             //MessageBox.Show(e.Exception.Message, "", MessageBoxButton.OK, MessageBoxImage.Error);
             e.Handled = true;

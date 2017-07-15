@@ -62,7 +62,7 @@ namespace HotsBpHelper.Pages
                 /*
                 Pages.ErrorView _errorView = new Pages.ErrorView(L("RegisterHotKeyFailed"),e.Message);
                 _errorView.isShutDown = false;
-                _errorView.Show();
+                _errorView.ShowDialog();
                 */
                 ShowMessageBox(L("RegisterHotKeyFailed"), MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
             }
@@ -141,7 +141,7 @@ namespace HotsBpHelper.Pages
                 if (position == null)
                 {
                     Pages.ErrorView _errorView = new Pages.ErrorView(L("NoMatchResolution"), L("MSG_NoMatchResolution"));
-                    _errorView.Show();
+                    _errorView.ShowDialog();
                     _errorView.isShutDown = true;
                     _errorView.Pause();
                     //ShowMessageBox(L("MSG_NoMatchResolution"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
@@ -153,7 +153,7 @@ namespace HotsBpHelper.Pages
             catch (Exception e)
             {
                 Pages.ErrorView _errorView = new Pages.ErrorView(e.Message);
-                _errorView.Show();
+                _errorView.ShowDialog();
                 _errorView.Pause();
             }
         }
