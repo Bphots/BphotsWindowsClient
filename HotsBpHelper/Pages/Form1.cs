@@ -15,14 +15,16 @@ namespace HotsBpHelper.Pages
         public Form1()
         {
             InitializeComponent();
+            this.Text= ViewModelBase.L("UpdateFullText");
+            notifyIcon1.Visible = false;
         }
 
         public void ShowBallowNotify(int percent)
         {
             
             //设置托盘的各个属性
-            notifyIcon1.BalloonTipText = "软件更新中..."+ percent.ToString() + "%";
-            notifyIcon1.BalloonTipTitle = "背锅助手";
+            notifyIcon1.BalloonTipText = ViewModelBase.L("UpdateFullText")+"——"+ percent.ToString() + "%";
+            notifyIcon1.BalloonTipTitle = ViewModelBase.L("HotsBpHelper"); ;
             //notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
 
             notifyIcon1.ShowBalloonTip(2000);
@@ -32,10 +34,18 @@ namespace HotsBpHelper.Pages
         {
 
             //设置托盘的各个属性
-            notifyIcon1.BalloonTipText = "软件更新中...请稍等";
-            notifyIcon1.BalloonTipTitle = "背锅助手";
+            notifyIcon1.Visible = true;
+            notifyIcon1.BalloonTipText = ViewModelBase.L("UpdateFullText");
+            notifyIcon1.BalloonTipTitle = ViewModelBase.L("HotsBpHelper");
             //notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
-            notifyIcon1.ShowBalloonTip(2000);
+            notifyIcon1.ShowBalloonTip(1000);
+            notifyIcon1.Visible = false;
+            
+        }
+
+        public void xuMing()
+        {
+            notifyIcon1.InitializeLifetimeService();
         }
 
         private void update_Load(object sender, EventArgs e)
