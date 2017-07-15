@@ -16,7 +16,7 @@ namespace HotsBpHelper.Pages
 
         protected override void OnPropertyChanged(string propertyName)
         {
-            if (propertyName=="CanSelectSide" )
+            if (propertyName == "CanSelectSide")
             {
                 EventAggregator.Publish(new SideSelectedMessage()
                 {

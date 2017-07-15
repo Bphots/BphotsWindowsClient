@@ -11,7 +11,7 @@
         ResizeMode="NoResize"
         SizeToContent="Width"
         Title="{lex:Loc FileUpdate}" Height="200" 
-        d:DataContext="{d:DesignInstance local:WebFileUpdaterViewModel}">
+        d:DataContext="{d:DesignInstance local:WebFileUpdaterViewModel}" Visibility="Visible" IsEnabled="False" Focusable="False" IsTabStop="False" IsHitTestVisible="False" ShowActivated="False" WindowStyle="ToolWindow" WindowState="Minimized">
     <DockPanel>
         <ListView ItemsSource="{Binding FileUpdateInfos}">
             <ListView.View>

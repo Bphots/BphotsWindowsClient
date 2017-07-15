@@ -22,6 +22,8 @@ namespace HotsBpHelper.Pages
 
         private readonly ISecurityProvider _securityProvider;
 
+        private ErrorView _errorView;
+
         public BindableCollection<HeroSelectorViewModel> HeroSelectorViewModels { get; set; } = new BindableCollection<HeroSelectorViewModel>();
 
         public int Left { get; set; }
@@ -84,6 +86,8 @@ namespace HotsBpHelper.Pages
                             ViewModel = vm,
                         });
             */
+            
+
         }
 
         private void ShowHeroSelector(int pointIndex)
@@ -211,15 +215,17 @@ namespace HotsBpHelper.Pages
                 if (BpStatus.StepSelectedIndex.Count == _listBpSteps[BpStatus.CurrentStep].Count)
                 {
                     // 选够了,下一步
-                    BpStatus.CurrentStep++;
-                    ProcessStep();
+                    if (BpStatus.CurrentStep < 13) {
+                        BpStatus.CurrentStep++;
+                        ProcessStep();
+                    }
                 }
             }
         }
 
         public void Init()
         {
-            InvokeScript("init", "0", "", App.Language);            
+            InvokeScript("init", "0", "", App.Language);
         }
 
         public void Reload()
@@ -234,7 +240,7 @@ namespace HotsBpHelper.Pages
         public void Handle(SideSelectedMessage message)
         {
             //收到重置命令，重置
-            if (message.ItemInfo==null)
+            if (message.ItemInfo == null)
             {
                 Init();
                 CloseHeroSelectorWindows();
