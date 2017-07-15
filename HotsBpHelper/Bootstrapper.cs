@@ -36,6 +36,12 @@ namespace HotsBpHelper
             {
                 App.Debug = true;
             }
+            if (args.Any(arg => arg.ToLower() == "/errortest"))
+            {
+                ErrorView _errorView = new ErrorView("±¨´í¿ò²âÊÔ", "±¨´í¿ò²âÊÔ", "http://www.bphots.com/articles/QA/test");
+                _errorView.Show();
+            }
+
             if (args.Any(arg => arg.ToLower() == "/cn"))
             {
                 LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN");                
@@ -52,7 +58,23 @@ namespace HotsBpHelper
             {
                 LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-TW");
             }
+            else if (args.Any(arg => arg.ToLower() == "/jp"))
+            {
+                LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("ja-JP");
+            }
             else LocalizeDictionary.Instance.Culture = System.Globalization.CultureInfo.InstalledUICulture;
+            switch (LocalizeDictionary.Instance.Culture.Name) {
+                case "zh-CN":
+                    break;
+                case "ko-KR":
+                    break;
+                case "zh-TW":
+                    break;
+                default:
+                    App.Language = "en-US";
+                    return;
+            }
+
             App.Language = LocalizeDictionary.Instance.Culture.Name;
         }
     }

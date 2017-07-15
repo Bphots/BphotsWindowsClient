@@ -87,6 +87,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -136,6 +137,15 @@
       <DependentUpon>BpView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\BpViewModel.cs" />
+    <Compile Include="Pages\ErrorView.xaml.cs">
+      <DependentUpon>ErrorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Pages\HeroSelectorView.xaml.cs">
       <DependentUpon>HeroSelectorView.xaml</DependentUpon>
     </Compile>
@@ -193,6 +203,9 @@
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Localization\Strings.zh-TW.resx" />
+    <EmbeddedResource Include="Pages\Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -203,6 +216,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Resource Include="Images\0.ico" />
+    <Resource Include="imageres_00080.png" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -224,6 +238,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Pages\BpView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\ErrorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
