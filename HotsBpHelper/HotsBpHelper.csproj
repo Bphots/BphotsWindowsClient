@@ -137,6 +137,9 @@
       <DependentUpon>BpView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\BpViewModel.cs" />
+    <Compile Include="Pages\ErrorView.xaml.cs">
+      <DependentUpon>ErrorView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -213,6 +216,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Resource Include="Images\0.ico" />
+    <Resource Include="imageres_00080.png" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -234,6 +238,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Pages\BpView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\ErrorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

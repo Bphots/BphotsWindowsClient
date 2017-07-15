@@ -22,6 +22,8 @@ namespace HotsBpHelper.Pages
 
         private readonly ISecurityProvider _securityProvider;
 
+        private ErrorView _errorView;
+
         public BindableCollection<HeroSelectorViewModel> HeroSelectorViewModels { get; set; } = new BindableCollection<HeroSelectorViewModel>();
 
         public int Left { get; set; }
@@ -84,6 +86,9 @@ namespace HotsBpHelper.Pages
                             ViewModel = vm,
                         });
             */
+            _errorView = new ErrorView(L("RegisterHotKeyFailed"), "地图框没出错", "http://www.bphots.com/articles/QA/map");
+            _errorView.Show();
+
         }
 
         private void ShowHeroSelector(int pointIndex)
