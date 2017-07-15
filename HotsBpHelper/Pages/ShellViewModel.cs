@@ -140,8 +140,12 @@ namespace HotsBpHelper.Pages
                 var position = appSetting.Positions.SingleOrDefault(s => s.Width == (int)screenSize.Width && s.Height == (int)screenSize.Height);
                 if (position == null)
                 {
-                    ShowMessageBox(L("MSG_NoMatchResolution"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                    Application.Current.Shutdown();
+                    Pages.ErrorView _errorView = new Pages.ErrorView(L("NoMatchResolution"), L("MSG_NoMatchResolution"));
+                    _errorView.Show();
+                    _errorView.isShutDown = true;
+                    _errorView.Pause();
+                    //ShowMessageBox(L("MSG_NoMatchResolution"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    //Application.Current.Shutdown();
                     return;
                 }
                 App.MyPosition = position;

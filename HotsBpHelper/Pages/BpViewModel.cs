@@ -22,8 +22,6 @@ namespace HotsBpHelper.Pages
 
         private readonly ISecurityProvider _securityProvider;
 
-        private ErrorView _errorView;
-
         public BindableCollection<HeroSelectorViewModel> HeroSelectorViewModels { get; set; } = new BindableCollection<HeroSelectorViewModel>();
 
         public int Left { get; set; }
