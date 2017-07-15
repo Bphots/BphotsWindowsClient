@@ -1,0 +1,66 @@
+﻿using System;
+using System.Windows;
+
+namespace HotsBpHelper.Pages
+{
+    /// <summary>
+    /// ErrorView.xaml 的交互逻辑
+    /// </summary>
+    public partial class ErrorView : Window
+    {
+        public bool isPause = true,isShutDown=true;
+
+        public void Pause()
+        {
+            if (!isShutDown) isPause = false;
+            while (isPause)
+            {
+                System.Windows.Forms.Application.DoEvents();
+            }
+        }
+
+        public ErrorView()
+        {
+            InitializeComponent();
+        }
+
+        public ErrorView(string errorInfo)
+        {
+            InitializeComponent();
+            this.errorInfo.Text = errorInfo;
+        }
+
+        public ErrorView(string errorName,string errorInfo)
+        {
+
+            InitializeComponent();
+            this.Title = errorName;
+            this.errorInfo.Text = errorInfo;
+        }
+
+        public ErrorView(string errorName, string errorInfo, string url)
+        {
+
+            InitializeComponent();
+            this.Title = errorName;
+            this.errorInfo.Text = errorInfo;
+            Uri u = new Uri(url);
+            hyperlink1.NavigateUri = u;
+            UrlText.Text = url;
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            if (isShutDown)
+            {
+                Application.Current.Shutdown();
+                isPause = false;
+            }
+        }
+        public void hyperlink0_Click(object s,RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(hyperlink0.NavigateUri.ToString());  
+        }
+    }
+}

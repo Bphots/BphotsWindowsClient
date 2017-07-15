@@ -25,9 +25,12 @@ namespace HotsBpHelper
 
         private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show(e.Exception.Message, "", MessageBoxButton.OK, MessageBoxImage.Error);
+            Pages.ErrorView _errorView = new Pages.ErrorView(e.Exception.Message);
+            _errorView.Show();
+            _errorView.Pause();
+            //MessageBox.Show(e.Exception.Message, "", MessageBoxButton.OK, MessageBoxImage.Error);
             e.Handled = true;
-            Current.Shutdown();
+            //Current.Shutdown();
         }
     }
 }

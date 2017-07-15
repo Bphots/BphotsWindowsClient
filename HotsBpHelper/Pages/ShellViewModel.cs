@@ -59,6 +59,11 @@ namespace HotsBpHelper.Pages
             catch (Exception e)
             {
                 Logger.Error(e);
+                /*
+                Pages.ErrorView _errorView = new Pages.ErrorView(L("RegisterHotKeyFailed"),e.Message);
+                _errorView.isShutDown = false;
+                _errorView.Show();
+                */
                 ShowMessageBox(L("RegisterHotKeyFailed"), MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
             }
         }
@@ -141,8 +146,9 @@ namespace HotsBpHelper.Pages
             }
             catch (Exception e)
             {
-                ShowMessageBox(e.Message, MessageBoxButton.OK, MessageBoxImage.Error);
-                Application.Current.Shutdown();
+                Pages.ErrorView _errorView = new Pages.ErrorView(e.Message);
+                _errorView.Show();
+                _errorView.Pause();
             }
         }
 
