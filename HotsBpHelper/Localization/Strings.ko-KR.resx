@@ -201,4 +201,7 @@
   <data name="UpdateFullText" xml:space="preserve">
     <value>Updating...Please Wait.</value>
   </data>
+  <data name="FileUpdateFail" xml:space="preserve">
+    <value>Fail to update files</value>
+  </data>
 </root>

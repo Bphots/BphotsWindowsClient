@@ -199,6 +199,9 @@
     <value>未知错误</value>
   </data>
   <data name="UpdateFullText" xml:space="preserve">
-    <value>软件更新中。。。请稍候</value>
+    <value>软件更新中...请稍候</value>
+  </data>
+  <data name="FileUpdateFail" xml:space="preserve">
+    <value>文件无法更新</value>
   </data>
 </root>

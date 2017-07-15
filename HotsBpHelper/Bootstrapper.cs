@@ -66,9 +66,18 @@ namespace HotsBpHelper
             switch (LocalizeDictionary.Instance.Culture.Name) {
                 case "zh-CN":
                     break;
+                case "zh-CHS":
+                    App.Language = "zh-CN";
+                    break;
                 case "ko-KR":
                     break;
                 case "zh-TW":
+                    break;
+                case "zh-HK":
+                    App.Language = "zh-TW";
+                    break;
+                case "zh-CHT":
+                    App.Language = "zh-TW";
                     break;
                 default:
                     App.Language = "en-US";
