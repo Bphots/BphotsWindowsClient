@@ -187,10 +187,10 @@
     <value>未找到匹配的分辨率</value>
   </data>
   <data name="OfficalWebsite" xml:space="preserve">
-    <value>官网：</value>
+    <value>背锅助手官网：</value>
   </data>
   <data name="QQGroup" xml:space="preserve">
-    <value>QQ群：</value>
+    <value>背锅助手QQ群：</value>
   </data>
   <data name="Solution" xml:space="preserve">
     <value>解决方案：</value>
@@ -199,6 +199,6 @@
     <value>未知错误</value>
   </data>
   <data name="UpdateFullText" xml:space="preserve">
-    <value>软件更新中。。请稍候</value>
+    <value>软件更新中。。。请稍候</value>
   </data>
 </root>

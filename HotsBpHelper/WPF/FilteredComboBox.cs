@@ -77,7 +77,10 @@ namespace HotsBpHelper.WPF
                     break;
                 case Key.Up:
                     IsDropDownOpen = true;
-                    if (SelectedIndex == -1) SelectedIndex = 0;
+                    if (App.Debug) {
+                        Pages.ErrorView _errorView = new Pages.ErrorView(Pages.ViewModelBase.L("NoMatchResolution"), Pages.ViewModelBase.L("MSG_NoMatchResolution"), "http://www.bphots.com/articles/QA/test");
+                        _errorView.ShowDialog();
+                    }
                     base.OnPreviewKeyDown(e);
                     break;
                 default:
