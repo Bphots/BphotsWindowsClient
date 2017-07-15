@@ -86,8 +86,7 @@ namespace HotsBpHelper.Pages
                             ViewModel = vm,
                         });
             */
-            _errorView = new ErrorView(L("RegisterHotKeyFailed"), "地图框没出错", "http://www.bphots.com/articles/QA/map");
-            _errorView.Show();
+            
 
         }
 
