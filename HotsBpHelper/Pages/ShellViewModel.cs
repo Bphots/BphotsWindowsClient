@@ -108,7 +108,9 @@ namespace HotsBpHelper.Pages
                     Logger.Error(ex, "Preparing updates exception.");
                     return;
                 }
-                ShowMessageBox(L("UpdatesAvailable"), MessageBoxButton.OK, MessageBoxImage.Information);
+                //ShowMessageBox(L("UpdatesAvailable"), MessageBoxButton.OK, MessageBoxImage.Information);
+                Form1 form1 = new Form1();
+                form1.ShowBallowNotify();
                 try
                 {
                     foreach (var updateTask in updManager.Tasks)
