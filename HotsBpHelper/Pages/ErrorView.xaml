@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HotsBpHelper.Pages"
         mc:Ignorable="d"
-        Title=" 未知错误" Height="260" Width="628" WindowStyle="ToolWindow" ResizeMode="NoResize" Background="#FFE6E6E6" WindowStartupLocation="CenterScreen">
+        Title=" 未知错误" Height="260" Width="628" WindowStyle="ToolWindow" ResizeMode="NoResize" Background="#FFE6E6E6" WindowStartupLocation="CenterScreen" Topmost="True">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0*"/>
@@ -30,7 +30,7 @@
         		Width="445" Text="请见" />
         </Label>
         <Label x:Name="label8" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="175,120,0,0" VerticalAlignment="Top" Width="400" Height="23">
-            <Hyperlink x:Name="hyperlink1" Click="hyperlink0_Click" NavigateUri="http://www.bphots.com/articles/QA/" FontSize="10.667">
+            <Hyperlink x:Name="hyperlink1" Click="hyperlink1_Click" NavigateUri="http://www.bphots.com/articles/QA/" FontSize="10.667">
                 <Run x:Name="UrlText" Text="http://www.bphots.com/articles/QA/"/>
             </Hyperlink>
         </Label>

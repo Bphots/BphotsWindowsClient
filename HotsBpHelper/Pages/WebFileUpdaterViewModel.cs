@@ -84,14 +84,7 @@ namespace HotsBpHelper.Pages
                     {
                         try
                         {
-                            /*
-                            percent = count / FileUpdateInfos.Count;
-                            if (percent > lastBalloon)
-                            {
-                                form1.ShowBallowNotify(percent);
-                                lastBalloon += 20;
-                            }
-                            */
+                            form1.xuMing();
                             if (!isBallowShow)
                             {
                                 form1.ShowBallowNotify();
