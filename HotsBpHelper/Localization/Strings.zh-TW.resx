@@ -187,10 +187,10 @@
     <value>未找到匹配的解析度</value>
   </data>
   <data name="OfficalWebsite" xml:space="preserve">
-    <value>官網：</value>
+    <value>背鍋助手官網：</value>
   </data>
   <data name="QQGroup" xml:space="preserve">
-    <value>QQ群：</value>
+    <value>背鍋助手QQ群：</value>
   </data>
   <data name="Solution" xml:space="preserve">
     <value>解決方案：</value>
@@ -199,6 +199,6 @@
     <value>未知錯誤</value>
   </data>
   <data name="UpdateFullText" xml:space="preserve">
-    <value>軟體更新中。。請稍候</value>
+    <value>軟體更新中。。。請稍候</value>
   </data>
 </root>
