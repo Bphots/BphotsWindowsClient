@@ -18,6 +18,11 @@ namespace HotsBpHelper.Pages
     {
         private readonly IRestApi _restApi;
 
+        private Form1 form1 = new Form1();
+        private bool isBallowShow = false;
+
+        //private int percent,count=0, lastBalloon = 0;
+
         public BindableCollection<FileUpdateInfo> FileUpdateInfos { get; set; } = new BindableCollection<FileUpdateInfo>();
 
         public WebFileUpdaterViewModel(IRestApi restApi)
@@ -72,12 +77,26 @@ namespace HotsBpHelper.Pages
         {
             await Task.Run(() =>
             {
+                
                 foreach (var fileUpdateInfo in FileUpdateInfos)
                 {
                     if (NeedUpdate(fileUpdateInfo))
                     {
                         try
                         {
+                            /*
+                            percent = count / FileUpdateInfos.Count;
+                            if (percent > lastBalloon)
+                            {
+                                form1.ShowBallowNotify(percent);
+                                lastBalloon += 20;
+                            }
+                            */
+                            if (!isBallowShow)
+                            {
+                                form1.ShowBallowNotify();
+                                isBallowShow = true;
+                            }
                             Logger.Trace("Downloading file: {0}", fileUpdateInfo.FileName);
                             byte[] content = _restApi.DownloadFile(fileUpdateInfo.Url);
                             content.SaveAs(fileUpdateInfo.LocalFilePath);
