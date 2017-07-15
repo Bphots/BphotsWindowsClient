@@ -180,4 +180,25 @@
   <data name="RegisterHotKeyFailed" xml:space="preserve">
     <value>Register hotkey failed, please use system tray.</value>
   </data>
+  <data name="ErrorInfo" xml:space="preserve">
+    <value>Error information:</value>
+  </data>
+  <data name="NoMatchResolution" xml:space="preserve">
+    <value>No match resolution</value>
+  </data>
+  <data name="OfficalWebsite" xml:space="preserve">
+    <value> offical website：</value>
+  </data>
+  <data name="QQGroup" xml:space="preserve">
+    <value> QQ Group：</value>
+  </data>
+  <data name="Solution" xml:space="preserve">
+    <value>Solution:</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>Unknown error</value>
+  </data>
+  <data name="UpdateFullText" xml:space="preserve">
+    <value>Updating...Please Wait.</value>
+  </data>
 </root>

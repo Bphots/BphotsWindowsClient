@@ -39,7 +39,7 @@ namespace HotsBpHelper
             if (args.Any(arg => arg.ToLower() == "/errortest"))
             {
                 ErrorView _errorView = new ErrorView("±¨´í¿ò²âÊÔ", "±¨´í¿ò²âÊÔ", "http://www.bphots.com/articles/QA/test");
-                _errorView.Show();
+                _errorView.ShowDialog();
             }
 
             if (args.Any(arg => arg.ToLower() == "/cn"))

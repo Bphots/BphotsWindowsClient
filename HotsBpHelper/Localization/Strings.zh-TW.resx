@@ -180,4 +180,25 @@
   <data name="RegisterHotKeyFailed" xml:space="preserve">
     <value>熱鍵註冊失敗,請使用托盤菜單顯示/隱藏助手</value>
   </data>
+  <data name="ErrorInfo" xml:space="preserve">
+    <value>錯誤資訊：</value>
+  </data>
+  <data name="NoMatchResolution" xml:space="preserve">
+    <value>未找到匹配的解析度</value>
+  </data>
+  <data name="OfficalWebsite" xml:space="preserve">
+    <value>官網：</value>
+  </data>
+  <data name="QQGroup" xml:space="preserve">
+    <value>QQ群：</value>
+  </data>
+  <data name="Solution" xml:space="preserve">
+    <value>解決方案：</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>未知錯誤</value>
+  </data>
+  <data name="UpdateFullText" xml:space="preserve">
+    <value>軟體更新中。。請稍候</value>
+  </data>
 </root>
