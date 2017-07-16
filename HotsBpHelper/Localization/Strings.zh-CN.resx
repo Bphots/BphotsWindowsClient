@@ -180,4 +180,28 @@
   <data name="RegisterHotKeyFailed" xml:space="preserve">
     <value>热键注册失败,请使用托盘菜单显示/隐藏助手</value>
   </data>
+  <data name="ErrorInfo" xml:space="preserve">
+    <value>错误信息：</value>
+  </data>
+  <data name="NoMatchResolution" xml:space="preserve">
+    <value>未找到匹配的分辨率</value>
+  </data>
+  <data name="OfficalWebsite" xml:space="preserve">
+    <value>背锅助手官网：</value>
+  </data>
+  <data name="QQGroup" xml:space="preserve">
+    <value>背锅助手QQ群：</value>
+  </data>
+  <data name="Solution" xml:space="preserve">
+    <value>解决方案：</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>未知错误</value>
+  </data>
+  <data name="UpdateFullText" xml:space="preserve">
+    <value>软件更新中...请稍候</value>
+  </data>
+  <data name="FileUpdateFail" xml:space="preserve">
+    <value>文件无法更新</value>
+  </data>
 </root>
