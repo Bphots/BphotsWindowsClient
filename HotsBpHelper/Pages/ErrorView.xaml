@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:HotsBpHelper.Pages"
         xmlns:lex="http://wpflocalizeextension.codeplex.com"
         mc:Ignorable="d"
-        Title=" 未知错误" Height="260" Width="628" WindowStyle="ToolWindow" ResizeMode="NoResize" Background="#FFE6E6E6" WindowStartupLocation="CenterScreen" Topmost="True">
+        Title="{lex:Loc UnknownError}" Height="260" Width="628" WindowStyle="ToolWindow" ResizeMode="NoResize" Background="#FFE6E6E6" WindowStartupLocation="CenterScreen" Topmost="True">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0*"/>
@@ -27,8 +27,8 @@
             </Hyperlink>
         </Label>
         <Label x:Name="label8" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="140,120,0,0" VerticalAlignment="Top" Width="400" Height="23">
-            <Hyperlink x:Name="hyperlink1" Click="hyperlink1_Click" NavigateUri="http://www.bphots.com/articles/QA/" FontSize="10.667">
-                <Run x:Name="UrlText" Text="http://www.bphots.com/articles/QA/"/>
+            <Hyperlink x:Name="hyperlink1" Click="hyperlink1_Click" NavigateUri="http://www.bphots.com/articles/errors/" FontSize="10.667">
+                <Run x:Name="UrlText" Text="http://www.bphots.com/articles/errors/"/>
             </Hyperlink>
         </Label>
         <Label x:Name="label1" Grid.ColumnSpan="2" Content="{lex:Loc OfficalWebsite}" HorizontalAlignment="Left" Margin="376,160,0,0" VerticalAlignment="Top"/>

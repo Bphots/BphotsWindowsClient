@@ -44,7 +44,7 @@ namespace HotsBpHelper.Pages
             {
                 if (FileUpdateInfos.Any(fui => fui.FileStatus == L("UpdateFailed")))
                 {
-                    ErrorView _errorView = new ErrorView(L("FileUpdateFail"), L("FilesNotReady"), "http://www.bphots.com/articles/QA/");
+                    ErrorView _errorView = new ErrorView(L("FileUpdateFail"), L("FilesNotReady"), "http://www.bphots.com/articles/errors/");
                     _errorView.ShowDialog();
                     //ShowMessageBox(L("FilesNotReady"),  MessageBoxButton.OK, MessageBoxImage.Exclamation);
                     RequestClose(false);
@@ -53,7 +53,7 @@ namespace HotsBpHelper.Pages
             catch (Exception e)
             {
                 Logger.Error(e);
-                ErrorView _errorView = new ErrorView(L("FilesNotReady"), e.Message, "http://www.bphots.com/articles/QA/");
+                ErrorView _errorView = new ErrorView(L("FilesNotReady"), e.Message, "http://www.bphots.com/articles/errors/");
                 RequestClose(false);
                 return;
             }
@@ -71,7 +71,7 @@ namespace HotsBpHelper.Pages
             catch (Exception e)
             {
                 Logger.Error(e);
-                ErrorView _errorView = new ErrorView(L("FilesNotReady"), e.Message, "http://www.bphots.com/articles/QA/");
+                ErrorView _errorView = new ErrorView(L("FilesNotReady"), e.Message, "http://www.bphots.com/articles/errors/");
                 //ShowMessageBox(L("FilesNotReady"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 RequestClose(false);
                 return;

@@ -38,7 +38,7 @@ namespace HotsBpHelper
             }
             if (args.Any(arg => arg.ToLower() == "/errortest"))
             {
-                ErrorView _errorView = new ErrorView(ViewModelBase.L("NoMatchResolution"), ViewModelBase.L("MSG_NoMatchResolution"), "http://www.bphots.com/articles/QA/test");
+                ErrorView _errorView = new ErrorView(ViewModelBase.L("NoMatchResolution"), ViewModelBase.L("MSG_NoMatchResolution"), "http://www.bphots.com/articles/errors/test");
                 _errorView.ShowDialog();
             }
 
@@ -66,19 +66,19 @@ namespace HotsBpHelper
             switch (LocalizeDictionary.Instance.Culture.Name) {
                 case "zh-CN":
                     break;
-                case "zh-CHS":
-                    App.Language = "zh-CN";
-                    break;
                 case "ko-KR":
                     break;
                 case "zh-TW":
                     break;
+                case "zh-CHS":
+                    App.Language = "zh-CN";
+                    return;
                 case "zh-HK":
                     App.Language = "zh-TW";
-                    break;
+                    return;
                 case "zh-CHT":
                     App.Language = "zh-TW";
-                    break;
+                    return;
                 default:
                     App.Language = "en-US";
                     return;

@@ -25,7 +25,11 @@ namespace HotsBpHelper
 
         private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            Pages.ErrorView _errorView = new Pages.ErrorView(e.Exception.Message);
+            Pages.ErrorView _errorView;
+            if (e.Exception.Message.ToLower().Contains("lang")) {
+                _errorView = new Pages.ErrorView(e.Exception.Message + "\nApplication language=" + App.Language);
+            }
+            else _errorView = new Pages.ErrorView(e.Exception.Message);
             _errorView.ShowDialog();
             _errorView.Pause();
             //MessageBox.Show(e.Exception.Message, "", MessageBoxButton.OK, MessageBoxImage.Error);
