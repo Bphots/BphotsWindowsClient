@@ -23,6 +23,8 @@ namespace HotsBpHelper.Pages
 
         private BpViewModel _bpViewModel;
 
+        private bool isUpdated = false;
+
         public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory)
         {
             _webFileUpdaterViewModelFactory = webFileUpdaterViewModelFactory;
@@ -75,6 +77,10 @@ namespace HotsBpHelper.Pages
 
         public void ToggleVisible()
         {
+            if (!isUpdated)
+            {
+                return;
+            }
             _bpViewModel.Init();
             _bpViewModel.Reload();
             _bpViewModel.ToggleVisible();
@@ -127,6 +133,7 @@ namespace HotsBpHelper.Pages
             }
             finally
             {
+                isUpdated = true;
                 updManager.CleanUp();
             }
         }
