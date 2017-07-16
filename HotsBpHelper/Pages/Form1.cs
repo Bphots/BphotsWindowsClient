@@ -15,7 +15,7 @@ namespace HotsBpHelper.Pages
         public Form1()
         {
             InitializeComponent();
-            this.Text= ViewModelBase.L("UpdateFullText");
+            notifyIcon1.Text= ViewModelBase.L("UpdateFullText");
             notifyIcon1.Visible = false;
         }
 
@@ -39,6 +39,7 @@ namespace HotsBpHelper.Pages
             notifyIcon1.BalloonTipTitle = ViewModelBase.L("HotsBpHelper");
             //notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
             notifyIcon1.ShowBalloonTip(1000);
+            notifyIcon1.Visible = false;
         }
 
         public void xuMing()
