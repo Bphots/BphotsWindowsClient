@@ -23,7 +23,9 @@ namespace HotsBpHelper.Pages
 
         private BpViewModel _bpViewModel;
 
-        private bool isUpdated = false;
+        private bool isLoaded = false;
+
+        private Form1 form1 = new Form1();
 
         public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory)
         {
@@ -48,6 +50,8 @@ namespace HotsBpHelper.Pages
             }
             _bpViewModel = _bpViewModelFactory.CreateViewModel();
             WindowManager.ShowWindow(_bpViewModel);
+            form1.kill();
+            isLoaded = true;
             base.OnViewLoaded();
         }
 
@@ -77,7 +81,7 @@ namespace HotsBpHelper.Pages
 
         public void ToggleVisible()
         {
-            if (!isUpdated)
+            if (!isLoaded)
             {
                 return;
             }
@@ -88,7 +92,7 @@ namespace HotsBpHelper.Pages
 
         private void Update()
         {
-            Form1 form1 = new Form1(); ;
+             
             UpdateManager updManager = UpdateManager.Instance;
             try
             {
@@ -134,10 +138,9 @@ namespace HotsBpHelper.Pages
             }
             finally
             {
-                form1.kill();
-                isUpdated = true;
                 updManager.CleanUp();
             }
+
         }
 
         private void InitSettings()
