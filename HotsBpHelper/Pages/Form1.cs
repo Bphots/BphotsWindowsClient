@@ -39,13 +39,16 @@ namespace HotsBpHelper.Pages
             notifyIcon1.BalloonTipTitle = ViewModelBase.L("HotsBpHelper");
             //notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
             notifyIcon1.ShowBalloonTip(1000);
-            notifyIcon1.Visible = false;
-            
         }
 
         public void xuMing()
         {
             notifyIcon1.InitializeLifetimeService();
+        }
+
+        public void kill()
+        {
+            notifyIcon1.Visible = false;
         }
 
         private void update_Load(object sender, EventArgs e)
