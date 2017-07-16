@@ -88,6 +88,7 @@ namespace HotsBpHelper.Pages
 
         private void Update()
         {
+            Form1 form1 = new Form1(); ;
             UpdateManager updManager = UpdateManager.Instance;
             try
             {
@@ -115,7 +116,7 @@ namespace HotsBpHelper.Pages
                     return;
                 }
                 //ShowMessageBox(L("UpdatesAvailable"), MessageBoxButton.OK, MessageBoxImage.Information);
-                Form1 form1 = new Form1();
+                
                 form1.ShowBallowNotify();
                 try
                 {
@@ -133,6 +134,7 @@ namespace HotsBpHelper.Pages
             }
             finally
             {
+                form1.kill();
                 isUpdated = true;
                 updManager.CleanUp();
             }
