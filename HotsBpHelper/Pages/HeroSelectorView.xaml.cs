@@ -34,6 +34,12 @@ namespace HotsBpHelper.Pages
             }
         }
 
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            isPressed = false;
+        }
+
         public void Confirm()
         {
 
