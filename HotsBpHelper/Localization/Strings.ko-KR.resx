@@ -181,7 +181,7 @@
     <value>핫 키를 등록 실패, 시스템 트레이 아이콘을 사용하세요.</value>
   </data>
   <data name="ErrorInfo" xml:space="preserve">
-    <value>Error information:</value>
+    <value>오류 정보:</value>
   </data>
   <data name="NoMatchResolution" xml:space="preserve">
     <value>해상도 지원하지 않음</value>
