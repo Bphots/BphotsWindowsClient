@@ -187,21 +187,21 @@
     <value>해상도 지원하지 않음</value>
   </data>
   <data name="OfficalWebsite" xml:space="preserve">
-    <value>offical website：</value>
+    <value>웹사이트：</value>
   </data>
   <data name="QQGroup" xml:space="preserve">
-    <value>QQ Group：</value>
+    <value>QQ그룹：</value>
   </data>
   <data name="Solution" xml:space="preserve">
-    <value>Solution:</value>
+    <value>솔루션:</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
-    <value>Unknown error</value>
+    <value>미지 오류</value>
   </data>
   <data name="UpdateFullText" xml:space="preserve">
-    <value>Updating...Please Wait.</value>
+    <value>업데이트 중...잠깐 기대려 주세요</value>
   </data>
   <data name="FileUpdateFail" xml:space="preserve">
-    <value>Fail to update files</value>
+    <value>파일 업데이트 실패</value>
   </data>
 </root>
