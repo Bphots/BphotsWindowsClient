@@ -38,8 +38,8 @@ namespace HotsBpHelper
             }
             if (args.Any(arg => arg.ToLower() == "/errortest"))
             {
-                ErrorView _errorView = new ErrorView("±¨´í¿ò²âÊÔ", "±¨´í¿ò²âÊÔ", "http://www.bphots.com/articles/QA/test");
-                _errorView.Show();
+                ErrorView _errorView = new ErrorView(ViewModelBase.L("NoMatchResolution"), ViewModelBase.L("MSG_NoMatchResolution"), "http://www.bphots.com/articles/errors/test");
+                _errorView.ShowDialog();
             }
 
             if (args.Any(arg => arg.ToLower() == "/cn"))
@@ -70,6 +70,15 @@ namespace HotsBpHelper
                     break;
                 case "zh-TW":
                     break;
+                case "zh-CHS":
+                    App.Language = "zh-CN";
+                    return;
+                case "zh-HK":
+                    App.Language = "zh-TW";
+                    return;
+                case "zh-CHT":
+                    App.Language = "zh-TW";
+                    return;
                 default:
                     App.Language = "en-US";
                     return;
