@@ -57,6 +57,10 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="dmnet">
+      <HintPath>..\..\..\DM6.1550\dmnet.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="GlobalHotKey, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GlobalHotKey.1.1.0\lib\GlobalHotKey.dll</HintPath>
       <Private>True</Private>
@@ -217,6 +221,12 @@
     </EmbeddedResource>
     <Resource Include="Images\0.ico" />
     <Resource Include="imageres_00080.png" />
+    <Content Include="Images\lock\1600x900.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\lock\1920x1080.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -267,11 +277,18 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Screenshots\placeholder.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="WebFiles\placeholder.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\C#\FindHeroes\DMDotNet\DMDotNet.csproj">
+      <Project>{04e0f62e-bae4-499b-8c8c-beb604ed6d5b}</Project>
+      <Name>DMDotNet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Github\Stylet\Stylet\Stylet.csproj">
       <Project>{2435bd00-ac12-48b0-ad36-9bab2fdec3f5}</Project>
       <Name>Stylet</Name>
