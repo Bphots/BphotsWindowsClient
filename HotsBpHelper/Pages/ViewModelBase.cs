@@ -14,7 +14,7 @@ namespace HotsBpHelper.Pages
         [Inject]
         protected IWindowManager WindowManager { get; set; }
 
-        protected static string L(string key)
+        public static string L(string key)
         {
             return LocExtension.GetLocalizedValue<string>(key);
         }
