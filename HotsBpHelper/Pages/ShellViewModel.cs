@@ -1,7 +1,11 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using DMDotNet;
 using GlobalHotKey;
 using HotsBpHelper.Settings;
 using HotsBpHelper.Utils;
@@ -27,6 +31,10 @@ namespace HotsBpHelper.Pages
 
         private Form1 form1 = new Form1();
 
+        private NDM _ndm;
+
+        private bool _run;
+
         public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory)
         {
             _webFileUpdaterViewModelFactory = webFileUpdaterViewModelFactory;
@@ -51,8 +59,33 @@ namespace HotsBpHelper.Pages
             _bpViewModel = _bpViewModelFactory.CreateViewModel();
             WindowManager.ShowWindow(_bpViewModel);
             form1.kill();
+            Task.Run(() =>
+            {
+                _run = true;
+                using (_ndm = new NDM())
+                {
+                    CheckBpUi();
+                }
+            });
             isLoaded = true;
             base.OnViewLoaded();
+        }
+
+        private void CheckBpUi()
+        {
+
+            _ndm.SetPath(Path.Combine(App.AppPath, @"Images\lock"));
+            string picNames = _ndm.MatchPicName("*.bmp");
+            while (_run)
+            {
+                string result = _ndm.DM.FindPicEx(0, 0, App.MyPosition.Width, 300, picNames, "000000", 0.8, 0);
+                if (result != String.Empty && _bpViewModel.View.Visibility == Visibility.Hidden ||
+                    result == String.Empty && _bpViewModel.View.Visibility == Visibility.Visible)
+                {
+                    ToggleVisible();
+                }
+                Thread.Sleep(1500);
+            }
         }
 
         private void RegisterHotKey()
@@ -60,6 +93,7 @@ namespace HotsBpHelper.Pages
             try
             {
                 _hotKeyManager.Register(Key.B, ModifierKeys.Control | ModifierKeys.Shift);
+                _hotKeyManager.Register(Key.C, ModifierKeys.Control | ModifierKeys.Shift);
                 _hotKeyManager.KeyPressed += HotKeyManagerPressed;
             }
             catch (Exception e)
@@ -76,7 +110,15 @@ namespace HotsBpHelper.Pages
 
         private void HotKeyManagerPressed(object sender, KeyPressedEventArgs e)
         {
-            ToggleVisible();
+            if (e.HotKey.Key == Key.B)
+            {
+                ToggleVisible();
+            }
+            else if (e.HotKey.Key == Key.C)
+            {
+                string captureName = Path.Combine(App.AppPath, "Screenshots", DateTime.Now.ToString("yyyyMMdd_hhmmss") + ".bmp");
+                _ndm.Capture(0, 0, App.MyPosition.Width, App.MyPosition.Height, captureName);
+            }
         }
 
         public void ToggleVisible()
@@ -85,14 +127,17 @@ namespace HotsBpHelper.Pages
             {
                 return;
             }
-            _bpViewModel.Init();
-            _bpViewModel.Reload();
-            _bpViewModel.ToggleVisible();
+            Execute.OnUIThread(() =>
+            {
+                _bpViewModel.Init();
+                _bpViewModel.Reload();
+                _bpViewModel.ToggleVisible();
+            });
         }
 
         private void Update()
         {
-             
+
             UpdateManager updManager = UpdateManager.Instance;
             try
             {
@@ -120,7 +165,7 @@ namespace HotsBpHelper.Pages
                     return;
                 }
                 //ShowMessageBox(L("UpdatesAvailable"), MessageBoxButton.OK, MessageBoxImage.Information);
-                
+
                 form1.ShowBallowNotify();
                 try
                 {
@@ -178,6 +223,7 @@ namespace HotsBpHelper.Pages
         protected override void OnClose()
         {
             _hotKeyManager.Dispose();
+            _run = false;
             base.OnClose();
         }
 
