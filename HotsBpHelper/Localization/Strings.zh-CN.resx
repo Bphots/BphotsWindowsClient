@@ -174,11 +174,11 @@
   <data name="Exit" xml:space="preserve">
     <value>退出</value>
   </data>
-  <data name="ToggleVisibility" xml:space="preserve">
-    <value>显示/隐藏</value>
+  <data name="AutoShowHideHelper" xml:space="preserve">
+    <value>自动显示/隐藏助手</value>
   </data>
   <data name="RegisterHotKeyFailed" xml:space="preserve">
-    <value>热键注册失败,请使用托盘菜单显示/隐藏助手</value>
+    <value>热键注册失败,请使用托盘切换自动显示/隐藏助手</value>
   </data>
   <data name="ErrorInfo" xml:space="preserve">
     <value>错误信息：</value>
