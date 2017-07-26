@@ -174,8 +174,8 @@
   <data name="Exit" xml:space="preserve">
     <value>Exit</value>
   </data>
-  <data name="ToggleVisibility" xml:space="preserve">
-    <value>Show / Hide</value>
+  <data name="AutoShowHideHelper" xml:space="preserve">
+    <value>Auto show/hide helper</value>
   </data>
   <data name="RegisterHotKeyFailed" xml:space="preserve">
     <value>Register hotkey failed, please use system tray.</value>

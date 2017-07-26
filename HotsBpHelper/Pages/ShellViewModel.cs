@@ -33,7 +33,27 @@ namespace HotsBpHelper.Pages
 
         private NDM _ndm;
 
-        private bool _run;
+        private bool _autoShowHideHelper;
+        public bool AutoShowHideHelper
+        {
+            get { return _autoShowHideHelper; }
+            set
+            {
+                if (SetAndNotify(ref _autoShowHideHelper, value))
+                {
+                    if (AutoShowHideHelper)
+                    {
+                        Task.Run(() =>
+                        {
+                            using (_ndm = new NDM())
+                            {
+                                CheckBpUi();
+                            }
+                        });
+                    }
+                }
+            }
+        }
 
         public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory)
         {
@@ -59,14 +79,7 @@ namespace HotsBpHelper.Pages
             _bpViewModel = _bpViewModelFactory.CreateViewModel();
             WindowManager.ShowWindow(_bpViewModel);
             form1.kill();
-            Task.Run(() =>
-            {
-                _run = true;
-                using (_ndm = new NDM())
-                {
-                    CheckBpUi();
-                }
-            });
+            AutoShowHideHelper = true;
             isLoaded = true;
             base.OnViewLoaded();
         }
@@ -76,11 +89,11 @@ namespace HotsBpHelper.Pages
 
             _ndm.SetPath(Path.Combine(App.AppPath, @"Images\lock"));
             string picNames = _ndm.MatchPicName("*.bmp");
-            while (_run)
+            while (AutoShowHideHelper)
             {
                 string result = _ndm.DM.FindPicEx(0, 0, App.MyPosition.Width, 300, picNames, "000000", 0.8, 0);
-                if (result != String.Empty && _bpViewModel.View.Visibility == Visibility.Hidden ||
-                    result == String.Empty && _bpViewModel.View.Visibility == Visibility.Visible)
+                if (result != String.Empty && _bpViewModel.View?.Visibility == Visibility.Hidden ||
+                    result == String.Empty && _bpViewModel.View?.Visibility == Visibility.Visible)
                 {
                     ToggleVisible();
                 }
@@ -112,7 +125,7 @@ namespace HotsBpHelper.Pages
         {
             if (e.HotKey.Key == Key.B)
             {
-                ToggleVisible();
+                AutoShowHideHelper = !AutoShowHideHelper;
             }
             else if (e.HotKey.Key == Key.C)
             {
@@ -121,7 +134,7 @@ namespace HotsBpHelper.Pages
             }
         }
 
-        public void ToggleVisible()
+        private void ToggleVisible()
         {
             if (!isLoaded)
             {
@@ -223,7 +236,7 @@ namespace HotsBpHelper.Pages
         protected override void OnClose()
         {
             _hotKeyManager.Dispose();
-            _run = false;
+            AutoShowHideHelper = false;
             base.OnClose();
         }
 
