@@ -51,16 +51,21 @@ namespace HotsBpHelper.Pages
 
         protected override void OnClosed(EventArgs e)
         {
-            base.OnClosed(e);
+            
             if (isShutDown)
             {
-                Application.Current.Shutdown();
-                isPause = false;
+                Environment.Exit(0);
+                //isPause = false;
             }
+            base.OnClosed(e);
         }
         public void hyperlink0_Click(object s,RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start(hyperlink0.NavigateUri.ToString());  
+        }
+        public void hyperlink1_Click(object s, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(hyperlink1.NavigateUri.ToString());
         }
     }
 }

@@ -23,6 +23,10 @@ namespace HotsBpHelper.Pages
 
         private BpViewModel _bpViewModel;
 
+        private bool isLoaded = false;
+
+        private Form1 form1 = new Form1();
+
         public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory)
         {
             _webFileUpdaterViewModelFactory = webFileUpdaterViewModelFactory;
@@ -46,6 +50,8 @@ namespace HotsBpHelper.Pages
             }
             _bpViewModel = _bpViewModelFactory.CreateViewModel();
             WindowManager.ShowWindow(_bpViewModel);
+            form1.kill();
+            isLoaded = true;
             base.OnViewLoaded();
         }
 
@@ -62,7 +68,7 @@ namespace HotsBpHelper.Pages
                 /*
                 Pages.ErrorView _errorView = new Pages.ErrorView(L("RegisterHotKeyFailed"),e.Message);
                 _errorView.isShutDown = false;
-                _errorView.Show();
+                _errorView.ShowDialog();
                 */
                 ShowMessageBox(L("RegisterHotKeyFailed"), MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
             }
@@ -75,6 +81,10 @@ namespace HotsBpHelper.Pages
 
         public void ToggleVisible()
         {
+            if (!isLoaded)
+            {
+                return;
+            }
             _bpViewModel.Init();
             _bpViewModel.Reload();
             _bpViewModel.ToggleVisible();
@@ -82,6 +92,7 @@ namespace HotsBpHelper.Pages
 
         private void Update()
         {
+             
             UpdateManager updManager = UpdateManager.Instance;
             try
             {
@@ -108,7 +119,9 @@ namespace HotsBpHelper.Pages
                     Logger.Error(ex, "Preparing updates exception.");
                     return;
                 }
-                ShowMessageBox(L("UpdatesAvailable"), MessageBoxButton.OK, MessageBoxImage.Information);
+                //ShowMessageBox(L("UpdatesAvailable"), MessageBoxButton.OK, MessageBoxImage.Information);
+                
+                form1.ShowBallowNotify();
                 try
                 {
                     foreach (var updateTask in updManager.Tasks)
@@ -127,6 +140,7 @@ namespace HotsBpHelper.Pages
             {
                 updManager.CleanUp();
             }
+
         }
 
         private void InitSettings()
@@ -138,8 +152,12 @@ namespace HotsBpHelper.Pages
                 var position = appSetting.Positions.SingleOrDefault(s => s.Width == (int)screenSize.Width && s.Height == (int)screenSize.Height);
                 if (position == null)
                 {
-                    ShowMessageBox(L("MSG_NoMatchResolution"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                    Application.Current.Shutdown();
+                    Pages.ErrorView _errorView = new Pages.ErrorView(L("NoMatchResolution"), L("MSG_NoMatchResolution"));
+                    _errorView.ShowDialog();
+                    _errorView.isShutDown = true;
+                    _errorView.Pause();
+                    //ShowMessageBox(L("MSG_NoMatchResolution"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    //Application.Current.Shutdown();
                     return;
                 }
                 App.MyPosition = position;
@@ -147,7 +165,7 @@ namespace HotsBpHelper.Pages
             catch (Exception e)
             {
                 Pages.ErrorView _errorView = new Pages.ErrorView(e.Message);
-                _errorView.Show();
+                _errorView.ShowDialog();
                 _errorView.Pause();
             }
         }

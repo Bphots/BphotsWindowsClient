@@ -26,7 +26,7 @@ namespace HotsBpHelper.Pages
 
         public void Handle(InvokeScriptMessage message)
         {
-            Browser.InvokeScript(message);
+                Browser.InvokeScript(message);
         }
 
         public void Handle(ShowWindowMessage message)

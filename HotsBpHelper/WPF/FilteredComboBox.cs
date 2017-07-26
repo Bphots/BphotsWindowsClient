@@ -17,6 +17,7 @@ namespace HotsBpHelper.WPF
         protected TextBox EditableTextBox => GetTemplateChild("PART_EditableTextBox") as TextBox;
 
         private bool isPressed = false;
+        private bool isNull = true;
 
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
         //取消高光效果
@@ -63,7 +64,7 @@ namespace HotsBpHelper.WPF
             {
                 case Key.Tab:
                 case Key.Enter:
-                    if (SelectedIndex == -1) SelectedIndex = 0;
+                    if (Text!="" && SelectedIndex == -1) SelectedIndex = 0;
                     IsDropDownOpen = false;
                     break;
                 case Key.Escape:
@@ -71,13 +72,16 @@ namespace HotsBpHelper.WPF
                     SelectedIndex = -1;
                     break;
                 case Key.Down:
-                    IsDropDownOpen = true;
+                    IsDropDownOpen = true;  
                     if (SelectedIndex == -1) SelectedIndex = 0;
                     base.OnPreviewKeyDown(e);
                     break;
                 case Key.Up:
                     IsDropDownOpen = true;
-                    if (SelectedIndex == -1) SelectedIndex = 0;
+                    if (App.Debug) {
+                        Pages.ErrorView _errorView = new Pages.ErrorView(Pages.ViewModelBase.L("NoMatchResolution"), Pages.ViewModelBase.L("MSG_NoMatchResolution"), "http://www.bphots.com/articles/errors/test");
+                        _errorView.ShowDialog();
+                    }
                     base.OnPreviewKeyDown(e);
                     break;
                 default:
