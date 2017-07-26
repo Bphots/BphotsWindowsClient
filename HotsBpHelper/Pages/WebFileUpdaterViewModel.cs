@@ -40,10 +40,22 @@ namespace HotsBpHelper.Pages
 
         private void CheckFiles()
         {
-            if (FileUpdateInfos.Any(fui => fui.FileStatus == L("UpdateFailed")))
+            try
             {
-                ShowMessageBox(L("FilesNotReady"),  MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                if (FileUpdateInfos.Any(fui => fui.FileStatus == L("UpdateFailed")))
+                {
+                    ErrorView _errorView = new ErrorView(L("FileUpdateFail"), L("FilesNotReady"), "http://www.bphots.com/articles/errors/");
+                    _errorView.ShowDialog();
+                    //ShowMessageBox(L("FilesNotReady"),  MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    RequestClose(false);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                ErrorView _errorView = new ErrorView(L("FilesNotReady"), e.Message, "http://www.bphots.com/articles/errors/");
                 RequestClose(false);
+                return;
             }
             RequestClose(true);
         }
@@ -58,8 +70,9 @@ namespace HotsBpHelper.Pages
             }
             catch (Exception e)
             {
-                ShowMessageBox(L("FilesNotReady"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 Logger.Error(e);
+                ErrorView _errorView = new ErrorView(L("FilesNotReady"), e.Message, "http://www.bphots.com/articles/errors/");
+                //ShowMessageBox(L("FilesNotReady"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 RequestClose(false);
                 return;
             }
@@ -84,14 +97,7 @@ namespace HotsBpHelper.Pages
                     {
                         try
                         {
-                            /*
-                            percent = count / FileUpdateInfos.Count;
-                            if (percent > lastBalloon)
-                            {
-                                form1.ShowBallowNotify(percent);
-                                lastBalloon += 20;
-                            }
-                            */
+                            form1.xuMing();
                             if (!isBallowShow)
                             {
                                 form1.ShowBallowNotify();
