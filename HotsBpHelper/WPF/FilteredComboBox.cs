@@ -66,10 +66,6 @@ namespace HotsBpHelper.WPF
                     if (Text!="" && SelectedIndex == -1) SelectedIndex = 0;
                     IsDropDownOpen = false;
                     break;
-                case Key.Escape:
-                    IsDropDownOpen = false;
-                    SelectedIndex = -1;
-                    break;
                 case Key.Down:
                     IsDropDownOpen = true;  
                     if (SelectedIndex == -1) SelectedIndex = 0;

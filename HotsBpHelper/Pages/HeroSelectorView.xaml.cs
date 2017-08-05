@@ -37,7 +37,11 @@ namespace HotsBpHelper.Pages
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
-            if (e.Key == Key.Escape) Cancel();
+            if (e.Key == Key.Escape)
+            {
+                isPressed = false;
+                Cancel();
+            }
             isPressed = false;
         }
 
