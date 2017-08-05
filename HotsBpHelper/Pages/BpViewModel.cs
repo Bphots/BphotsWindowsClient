@@ -215,6 +215,15 @@ namespace HotsBpHelper.Pages
                     //重新推进一步
                     ProcessStep();
                 }
+                InvokeScript("update", new List<Tuple<string, string>>
+                    {
+                        Tuple.Create("chose", string.Join("|",
+                            HeroSelectorViewModels
+                            .Where(vm => vm.SelectedItemInfo != null)
+                            .Select(vm => vm.SelectedItemInfo.Id))),
+                        Tuple.Create("map", BpStatus.Map),
+                        Tuple.Create("lang", App.Language)
+                    });
                 return;
             }
             InvokeScript("update", new List<Tuple<string, string>>
