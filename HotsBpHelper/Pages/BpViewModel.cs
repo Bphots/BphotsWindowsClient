@@ -84,7 +84,7 @@ namespace HotsBpHelper.Pages
                             ViewModel = vm,
                         });
             */
-            
+
 
         }
 
@@ -192,6 +192,31 @@ namespace HotsBpHelper.Pages
 
         public void Handle(ItemSelectedMessage message)
         {
+
+            if (message.ItemInfo == null)
+            {
+                // 回退一步
+                if (BpStatus.CurrentStep > 0)
+                {
+                    //移除本次bp框
+                    HeroSelectorViewModels[BpStatus.CurrentStep].RequestClose();
+                    HeroSelectorViewModels.Remove(HeroSelectorViewModels[BpStatus.CurrentStep]);
+                    BpStatus.CurrentStep--;
+                    //移除上一步bp框
+                    HeroSelectorViewModels[BpStatus.CurrentStep].RequestClose();
+                    HeroSelectorViewModels.Remove(HeroSelectorViewModels[BpStatus.CurrentStep]);
+                    //重新推进一步
+                    ProcessStep();
+                }
+                else {
+                    //移除本次bp框
+                    HeroSelectorViewModels[BpStatus.CurrentStep].RequestClose();
+                    HeroSelectorViewModels.Remove(HeroSelectorViewModels[BpStatus.CurrentStep]);
+                    //重新推进一步
+                    ProcessStep();
+                }
+                return;
+            }
             InvokeScript("update", new List<Tuple<string, string>>
                     {
                         Tuple.Create("chose", string.Join("|",
@@ -213,7 +238,8 @@ namespace HotsBpHelper.Pages
                 if (BpStatus.StepSelectedIndex.Count == _listBpSteps[BpStatus.CurrentStep].Count)
                 {
                     // 选够了,下一步
-                    if (BpStatus.CurrentStep < 13) {
+                    if (BpStatus.CurrentStep < 13)
+                    {
                         BpStatus.CurrentStep++;
                         ProcessStep();
                     }
