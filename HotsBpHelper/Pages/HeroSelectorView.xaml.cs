@@ -37,6 +37,7 @@ namespace HotsBpHelper.Pages
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
+            if (e.Key == Key.Escape) Cancel();
             isPressed = false;
         }
 
@@ -48,6 +49,12 @@ namespace HotsBpHelper.Pages
             {
                 vm.ConfirmSelection();
             }
+        }
+
+        public void Cancel()
+        {
+            var vm = (HeroSelectorViewModel)DataContext;
+                vm.CancelSelection();
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
