@@ -17,6 +17,7 @@ namespace HotsBpHelper.Pages
     public class WebFileUpdaterViewModel : ViewModelBase
     {
         private readonly IRestApi _restApi;
+        private bool shutdown = false;
 
         private Form1 form1 = new Form1();
         private bool isBallowShow = false;
@@ -30,9 +31,36 @@ namespace HotsBpHelper.Pages
             _restApi = restApi;
         }
 
+        private void ReceiveBroadcast()
+        {
+            var BroadcastList = _restApi.GetBroadcastInfo("0", App.Language);
+            if (BroadcastList != null)
+            {
+                foreach (Api.Model.BroadcastInfo broadcast in BroadcastList)
+                {
+                    if (broadcast.Type == 0)
+                    {
+                        BroadcastWindow b = new BroadcastWindow(broadcast.Msg, broadcast.Url);
+                        b.Show();
+                    }
+                    else if (broadcast.Type == 1)
+                    {
+                        ErrorView e = new ErrorView(ViewModelBase.L("Reminder"), broadcast.Msg, broadcast.Url);
+                        e.ShowDialog();
+                        e.isShutDown = false;
+                        e.Pause();
+                        shutdown = true;
+                    }
+                
+                }
+                if (shutdown) Environment.Exit(0);
+            }
+        }
+
         protected override async void OnViewLoaded()
         {
             base.OnViewLoaded();
+            ReceiveBroadcast();
             await GetFileList();
             await DownloadNeededFiles();
             CheckFiles();

@@ -204,4 +204,13 @@
   <data name="FileUpdateFail" xml:space="preserve">
     <value>파일 업데이트 실패</value>
   </data>
+  <data name="Broadcast" xml:space="preserve">
+    <value>Broadcast</value>
+  </data>
+  <data name="BroadcastURL" xml:space="preserve">
+    <value>Broadcast URL</value>
+  </data>
+  <data name="Reminder" xml:space="preserve">
+    <value>Reminder</value>
+  </data>
 </root>
