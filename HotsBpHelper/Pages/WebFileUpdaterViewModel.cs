@@ -36,19 +36,20 @@ namespace HotsBpHelper.Pages
             var BroadcastList = _restApi.GetBroadcastInfo("0", App.Language);
             if (BroadcastList != null)
             {
-                MessageBox.Show("1");
+                //MessageBox.Show("1");
                 foreach (Api.Model.BroadcastInfo broadcast in BroadcastList)
                 {
                     if (broadcast.Type == 0)
                     {
                         BroadcastWindow b = new BroadcastWindow(broadcast.Msg, broadcast.Url);
-                        b.ShowDialog();
+                        b.Show();
                     }
                     else if (broadcast.Type == 1)
                     {
-                        ErrorView e = new ErrorView(ViewModelBase.L("Reminder"), broadcast.Msg, broadcast.Url);
-                        e.isShutDown = false;
-                        e.ShowDialog();                
+                        //ErrorView e = new ErrorView(ViewModelBase.L("Reminder"), broadcast.Msg, broadcast.Url);
+                        //e.isShutDown = false;
+                        ShowMessageBox(broadcast.Msg+"\n"+ broadcast.Url, MessageBoxButton.OK, MessageBoxImage.Warning);
+                        //e.Pause();
                         shutdown = true;
                     }
                 
@@ -60,7 +61,7 @@ namespace HotsBpHelper.Pages
         protected override async void OnViewLoaded()
         {
             base.OnViewLoaded();
-            ReceiveBroadcast();
+            //ReceiveBroadcast();
             await GetFileList();
             await DownloadNeededFiles();
             CheckFiles();
