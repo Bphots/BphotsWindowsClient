@@ -174,7 +174,7 @@
   <data name="Exit" xml:space="preserve">
     <value>退出</value>
   </data>
-  <data name="ToggleVisibility" xml:space="preserve">
+  <data name="AutoShowHideHelper" xml:space="preserve">
     <value>顯示/隱藏</value>
   </data>
   <data name="RegisterHotKeyFailed" xml:space="preserve">
