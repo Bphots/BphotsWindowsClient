@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:HotsBpHelper.Pages"
         xmlns:lex="http://wpflocalizeextension.codeplex.com" x:Class="HotsBpHelper.Pages.BroadcastWindow"
         mc:Ignorable="d"
-        Title="{lex:Loc Broadcast}" Height="251.282" Width="616.239">
+        Title="{lex:Loc Broadcast}" Height="251.282" Width="616.239" MinWidth="8" ResizeMode="NoResize">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
