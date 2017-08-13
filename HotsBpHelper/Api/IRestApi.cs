@@ -16,6 +16,10 @@ namespace HotsBpHelper.Api
 
         List<MapInfo> GetMapList(string language);
 
+        //String GetBroadcastInfo(string mode, string lang);
+
+        List<BroadcastInfo> GetBroadcastInfo(string mode, string lang);
+
         double GetTimestamp();
     }
 }

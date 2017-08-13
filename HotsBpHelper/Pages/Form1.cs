@@ -24,7 +24,7 @@ namespace HotsBpHelper.Pages
             
             //设置托盘的各个属性
             notifyIcon1.BalloonTipText = ViewModelBase.L("UpdateFullText")+"——"+ percent.ToString() + "%";
-            notifyIcon1.BalloonTipTitle = ViewModelBase.L("HotsBpHelper"); ;
+            notifyIcon1.BalloonTipTitle = ViewModelBase.L("HotsBpHelper"); 
             //notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
 
             notifyIcon1.ShowBalloonTip(2000);

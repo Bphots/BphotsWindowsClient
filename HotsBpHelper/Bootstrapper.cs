@@ -71,26 +71,28 @@ namespace HotsBpHelper
             else LocalizeDictionary.Instance.Culture = System.Globalization.CultureInfo.InstalledUICulture;
             switch (LocalizeDictionary.Instance.Culture.Name) {
                 case "zh-CN":
+                    App.Language = "zh-CN";
                     break;
                 case "ko-KR":
+                    App.Language = "ko-KR";
                     break;
                 case "zh-TW":
+                    App.Language = "zh-TW";
                     break;
                 case "zh-CHS":
                     App.Language = "zh-CN";
-                    return;
+                    break;
                 case "zh-HK":
                     App.Language = "zh-TW";
-                    return;
+                    break;
                 case "zh-CHT":
                     App.Language = "zh-TW";
-                    return;
+                    break;
                 default:
                     App.Language = "en-US";
-                    return;
+                    break;
             }
-
-            App.Language = LocalizeDictionary.Instance.Culture.Name;
+            
         }
     }
 }
