@@ -1,7 +1,15 @@
 using System;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Accord.Imaging;
+using Accord.Imaging.Filters;
 using GlobalHotKey;
 using HotsBpHelper.Settings;
 using HotsBpHelper.Utils;
@@ -19,6 +27,8 @@ namespace HotsBpHelper.Pages
 
         private readonly IBpViewModelFactory _bpViewModelFactory;
 
+        private readonly IImageUtil _imageUtil;
+
         private readonly HotKeyManager _hotKeyManager;
 
         private BpViewModel _bpViewModel;
@@ -27,10 +37,30 @@ namespace HotsBpHelper.Pages
 
         private Form1 form1 = new Form1();
 
-        public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory)
+        private bool _autoShowHideHelper;
+        public bool AutoShowHideHelper
+        {
+            get { return _autoShowHideHelper; }
+            set
+            {
+                if (SetAndNotify(ref _autoShowHideHelper, value))
+                {
+                    if (AutoShowHideHelper)
+                    {
+                        Task.Run(() =>
+                        {
+                            CheckBpUi();
+                        });
+                    }
+                }
+            }
+        }
+
+        public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory, IImageUtil imageUtil)
         {
             _webFileUpdaterViewModelFactory = webFileUpdaterViewModelFactory;
             _bpViewModelFactory = bpViewModelFactory;
+            _imageUtil = imageUtil;
             _hotKeyManager = new HotKeyManager();
         }
 
@@ -51,8 +81,52 @@ namespace HotsBpHelper.Pages
             _bpViewModel = _bpViewModelFactory.CreateViewModel();
             WindowManager.ShowWindow(_bpViewModel);
             form1.kill();
+            AutoShowHideHelper = true;
             isLoaded = true;
             base.OnViewLoaded();
+        }
+
+        private void CheckBpUi()
+        {
+
+            var etm = new ExhaustiveTemplateMatching(0.9f);
+            var grayLockImages = Directory.GetFiles(Path.Combine(App.AppPath, @"Images\lock"))
+                .Select(file => new Bitmap(file))
+                .Select(Grayscale.CommonAlgorithms.BT709.Apply)
+                .ToArray();
+            while (AutoShowHideHelper)
+            {
+                bool foundBpUi = false;
+                IntPtr hwnd = Win32.GetForegroundWindow();
+                Int32 pid = Win32.GetWindowProcessID(hwnd);
+                Process p = Process.GetProcessById(pid);
+                bool inHotsGame = p.ProcessName.StartsWith(Const.HEROES_PROCESS_NAME);
+                if (inHotsGame || p.ProcessName.StartsWith(Const.HOTSBPHELPER_PROCESS_NAME) || App.NotCheckProcess)
+                {
+                    using (var topScreenImage = _imageUtil.CaptureScreen(0, 0, App.MyPosition.Width, App.MyPosition.Height / 4))
+                    {
+                        using (var grayScreen = Grayscale.CommonAlgorithms.BT709.Apply(topScreenImage))
+                        {
+                            foreach (var grayLockImage in grayLockImages)
+                            {
+                                var tm = etm.ProcessImage(grayScreen, grayLockImage);
+                                if (tm.Length > 0)
+                                {
+                                    foundBpUi = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                bool helperShowed = _bpViewModel.View?.Visibility == Visibility.Visible;
+                //                Logger.Trace("process: {0}, foundBpUi: {1}, showed: {2}", p.ProcessName, foundBpUi, helperShowed);
+                if (foundBpUi && !helperShowed || !foundBpUi && helperShowed)
+                {
+                    ToggleVisible(inHotsGame && !foundBpUi);
+                }
+                Thread.Sleep(1500);
+            }
         }
 
         private void RegisterHotKey()
@@ -60,6 +134,7 @@ namespace HotsBpHelper.Pages
             try
             {
                 _hotKeyManager.Register(Key.B, ModifierKeys.Control | ModifierKeys.Shift);
+                _hotKeyManager.Register(Key.C, ModifierKeys.Control | ModifierKeys.Shift);
                 _hotKeyManager.KeyPressed += HotKeyManagerPressed;
             }
             catch (Exception e)
@@ -76,23 +151,38 @@ namespace HotsBpHelper.Pages
 
         private void HotKeyManagerPressed(object sender, KeyPressedEventArgs e)
         {
-            ToggleVisible();
+            if (e.HotKey.Key == Key.B)
+            {
+                AutoShowHideHelper = false;
+                ToggleVisible(true);
+            }
+            else if (e.HotKey.Key == Key.C)
+            {
+                string captureName = Path.Combine(App.AppPath, "Screenshots", DateTime.Now.ToString("yyyyMMdd_hhmmss") + ".bmp");
+                _imageUtil.CaptureScreen().Save(captureName);
+            }
         }
 
-        public void ToggleVisible()
+        private void ToggleVisible(bool clear)
         {
             if (!isLoaded)
             {
                 return;
             }
-            _bpViewModel.Init();
-            _bpViewModel.Reload();
-            _bpViewModel.ToggleVisible();
+            Execute.OnUIThread(() =>
+            {
+                if (clear)
+                {
+                    _bpViewModel.Init();
+                    _bpViewModel.Reload();
+                }
+                _bpViewModel.ToggleVisible();
+            });
         }
 
         private void Update()
         {
-             
+
             UpdateManager updManager = UpdateManager.Instance;
             try
             {
@@ -120,7 +210,7 @@ namespace HotsBpHelper.Pages
                     return;
                 }
                 //ShowMessageBox(L("UpdatesAvailable"), MessageBoxButton.OK, MessageBoxImage.Information);
-                
+
                 form1.ShowBallowNotify();
                 try
                 {
@@ -178,6 +268,7 @@ namespace HotsBpHelper.Pages
         protected override void OnClose()
         {
             _hotKeyManager.Dispose();
+            AutoShowHideHelper = false;
             base.OnClose();
         }
 
