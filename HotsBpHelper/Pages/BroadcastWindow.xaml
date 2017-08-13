@@ -1,0 +1,36 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HotsBpHelper.Pages"
+        xmlns:lex="http://wpflocalizeextension.codeplex.com" x:Class="HotsBpHelper.Pages.BroadcastWindow"
+        mc:Ignorable="d"
+        Title="{lex:Loc Broadcast}" Height="251.282" Width="616.239">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="0*"/>
+        </Grid.ColumnDefinitions>
+        <Label x:Name="label3" Content="{lex:Loc BroadcastURL}" HorizontalAlignment="Left" Margin="132,95,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <Label x:Name="label4" HorizontalAlignment="Left" Margin="132,30,0,0" VerticalAlignment="Top" Height="60" Width="455">
+            <TextBlock x:Name="broadcastInfoMsg" TextWrapping="Wrap"
+    			Width="445" Text="BroadcastInfoMsg" />
+        </Label>
+        <Label x:Name="label" Content="417011860" HorizontalAlignment="Left" Margin="522,187,0,0" VerticalAlignment="Top" FontSize="10.667" Width="71"/>
+        <Label x:Name="label6" HorizontalAlignment="Left" Margin="490,160,0,0" VerticalAlignment="Top" Width="105" Height="23">
+            <Hyperlink x:Name="hyperlink0" Click="hyperlink0_Click" NavigateUri="http://www.bphots.com/" FontSize="10.667">
+                <Run Text="www.bphots.com"/>
+            </Hyperlink>
+        </Label>
+        <Label x:Name="label8" HorizontalAlignment="Left" Margin="132,120,0,0" VerticalAlignment="Top" Width="400" Height="23">
+            <Hyperlink x:Name="hyperlink1" Click="hyperlink1_Click" NavigateUri="http://www.bphots.com/articles/broadcast/" FontSize="10.667">
+                <Run x:Name="UrlText" Text="http://www.bphots.com/articles/broadcast/"/>
+            </Hyperlink>
+        </Label>
+        <Label x:Name="label1" Content="{lex:Loc OfficalWebsite}" HorizontalAlignment="Left" Margin="376,160,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="label1_Copy" Content="{lex:Loc QQGroup}" HorizontalAlignment="Left" Margin="376,186,0,0" VerticalAlignment="Top"/>
+        <Image x:Name="___HotsBpHelper_component_imageres_00077_png" Margin="20,30,498,100" Source="/HotsBpHelper;component/imageres_00077.png" Stretch="Fill"/>
+
+    </Grid>
+</Window>
