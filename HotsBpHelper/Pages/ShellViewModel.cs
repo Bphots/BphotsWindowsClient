@@ -1,11 +1,15 @@
 using System;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using DMDotNet;
+using Accord.Imaging;
+using Accord.Imaging.Filters;
 using GlobalHotKey;
 using HotsBpHelper.Settings;
 using HotsBpHelper.Utils;
@@ -23,6 +27,8 @@ namespace HotsBpHelper.Pages
 
         private readonly IBpViewModelFactory _bpViewModelFactory;
 
+        private readonly IImageUtil _imageUtil;
+
         private readonly HotKeyManager _hotKeyManager;
 
         private BpViewModel _bpViewModel;
@@ -30,8 +36,6 @@ namespace HotsBpHelper.Pages
         private bool isLoaded = false;
 
         private Form1 form1 = new Form1();
-
-        private NDM _ndm;
 
         private bool _autoShowHideHelper;
         public bool AutoShowHideHelper
@@ -45,20 +49,18 @@ namespace HotsBpHelper.Pages
                     {
                         Task.Run(() =>
                         {
-                            using (_ndm = new NDM())
-                            {
-                                CheckBpUi();
-                            }
+                            CheckBpUi();
                         });
                     }
                 }
             }
         }
 
-        public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory)
+        public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory, IImageUtil imageUtil)
         {
             _webFileUpdaterViewModelFactory = webFileUpdaterViewModelFactory;
             _bpViewModelFactory = bpViewModelFactory;
+            _imageUtil = imageUtil;
             _hotKeyManager = new HotKeyManager();
         }
 
@@ -87,13 +89,38 @@ namespace HotsBpHelper.Pages
         private void CheckBpUi()
         {
 
-            _ndm.SetPath(Path.Combine(App.AppPath, @"Images\lock"));
-            string picNames = _ndm.MatchPicName("*.bmp");
+            var etm = new ExhaustiveTemplateMatching(0.9f);
+            var grayLockImages = Directory.GetFiles(Path.Combine(App.AppPath, @"Images\lock"))
+                .Select(file => new Bitmap(file))
+                .Select(Grayscale.CommonAlgorithms.BT709.Apply)
+                .ToArray();
             while (AutoShowHideHelper)
             {
-                string result = _ndm.DM.FindPicEx(0, 0, App.MyPosition.Width, 300, picNames, "000000", 0.8, 0);
-                if (result != String.Empty && _bpViewModel.View?.Visibility == Visibility.Hidden ||
-                    result == String.Empty && _bpViewModel.View?.Visibility == Visibility.Visible)
+                bool foundBpUi = false;
+                IntPtr hwnd = Win32.GetForegroundWindow();
+                Int32 pid = Win32.GetWindowProcessID(hwnd);
+                Process p = Process.GetProcessById(pid);
+                if (p.ProcessName.StartsWith(Const.HEROES_PROCESS_NAME) || p.ProcessName.StartsWith(Const.HOTSBPHELPER_PROCESS_NAME) || App.NotCheckProcess)
+                {
+                    using (var topScreenImage = _imageUtil.CaptureScreen(0, 0, App.MyPosition.Width, App.MyPosition.Height / 4))
+                    {
+                        using (var grayScreen = Grayscale.CommonAlgorithms.BT709.Apply(topScreenImage))
+                        {
+                            foreach (var grayLockImage in grayLockImages)
+                            {
+                                var tm = etm.ProcessImage(grayScreen, grayLockImage);
+                                if (tm.Length > 0)
+                                {
+                                    foundBpUi = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                bool helperShowed = _bpViewModel.View?.Visibility == Visibility.Visible;
+//                Logger.Trace("process: {0}, foundBpUi: {1}, showed: {2}", p.ProcessName, foundBpUi, helperShowed);
+                if (foundBpUi && !helperShowed || !foundBpUi && helperShowed)
                 {
                     ToggleVisible();
                 }
@@ -125,12 +152,13 @@ namespace HotsBpHelper.Pages
         {
             if (e.HotKey.Key == Key.B)
             {
-                AutoShowHideHelper = !AutoShowHideHelper;
+                AutoShowHideHelper = false;
+                ToggleVisible();
             }
             else if (e.HotKey.Key == Key.C)
             {
                 string captureName = Path.Combine(App.AppPath, "Screenshots", DateTime.Now.ToString("yyyyMMdd_hhmmss") + ".bmp");
-                _ndm.Capture(0, 0, App.MyPosition.Width, App.MyPosition.Height, captureName);
+                _imageUtil.CaptureScreen().Save(captureName);
             }
         }
 
