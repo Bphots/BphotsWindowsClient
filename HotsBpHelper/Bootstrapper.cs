@@ -6,6 +6,7 @@ using HotsBpHelper.Api.Security;
 using Stylet;
 using StyletIoC;
 using HotsBpHelper.Pages;
+using HotsBpHelper.Utils;
 using HotsBpHelper.Utils.ComboBoxItemUtil;
 using WPFLocalizeExtension.Engine;
 
@@ -24,6 +25,7 @@ namespace HotsBpHelper
             builder.Bind<IMapSelectorViewModelFactory>().ToAbstractFactory();
             builder.Bind<ShellViewModel.IWebFileUpdaterViewModelFactory>().ToAbstractFactory();
             builder.Bind<ShellViewModel.IBpViewModelFactory>().ToAbstractFactory();
+            builder.Bind<IImageUtil>().To<ImageUtils>();
         }
 
         protected override void Configure()
@@ -35,6 +37,10 @@ namespace HotsBpHelper
             if (args.Any(arg => arg.ToLower() == "/debug"))
             {
                 App.Debug = true;
+            }
+            if (args.Any(arg => arg.ToLower() == "/notcheckprocess"))
+            {
+                App.NotCheckProcess = true;
             }
             if (args.Any(arg => arg.ToLower() == "/errortest"))
             {
