@@ -36,6 +36,7 @@ namespace HotsBpHelper.Pages
             var BroadcastList = _restApi.GetBroadcastInfo("0", App.Language);
             if (BroadcastList != null)
             {
+                MessageBox.Show("1");
                 foreach (Api.Model.BroadcastInfo broadcast in BroadcastList)
                 {
                     if (broadcast.Type == 0)
@@ -48,7 +49,6 @@ namespace HotsBpHelper.Pages
                         ErrorView e = new ErrorView(ViewModelBase.L("Reminder"), broadcast.Msg, broadcast.Url);
                         e.isShutDown = false;
                         e.ShowDialog();                
-                        //e.Pause();
                         shutdown = true;
                     }
                 
