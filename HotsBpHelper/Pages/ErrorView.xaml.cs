@@ -52,13 +52,10 @@ namespace HotsBpHelper.Pages
 
         protected override void OnClosed(EventArgs e)
         {
-            
             if (isShutDown)
             {
                 Environment.Exit(0);
-                //isPause = false;
             }
-            isPause = false;
             base.OnClosed(e);
         }
         public void hyperlink0_Click(object s,RoutedEventArgs e)
