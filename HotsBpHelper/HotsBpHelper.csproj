@@ -244,7 +244,7 @@
     </EmbeddedResource>
     <Resource Include="Images\0.ico" />
     <Resource Include="imageres_00080.png" />
-    <Content Include="Images\lock\1376x768.bmp">
+    <Content Include="Images\lock\1366x768.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\lock\1600x900.bmp">
