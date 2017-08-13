@@ -213,4 +213,10 @@
   <data name="Reminder" xml:space="preserve">
     <value>提示</value>
   </data>
+  <data name="Started" xml:space="preserve">
+    <value>背鍋助手已啟動</value>
+  </data>
+  <data name="StartedTips" xml:space="preserve">
+    <value>助手會自動檢測是否進入bp介面，也可通過Ctrl+Shift+B手動控制顯隱。</value>
+  </data>
 </root>

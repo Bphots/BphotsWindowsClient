@@ -30,6 +30,18 @@ namespace HotsBpHelper.Pages
             notifyIcon1.ShowBalloonTip(2000);
         }
 
+        public void ShowBallowNotify(string title,string text)
+        {
+            notifyIcon1.Visible = true;
+            //设置托盘的各个属性
+            notifyIcon1.BalloonTipText = text;
+            notifyIcon1.BalloonTipTitle = title;
+            //notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
+
+            notifyIcon1.ShowBalloonTip(2000);
+            notifyIcon1.Visible = false;
+        }
+
         public void ShowBallowNotify()
         {
 
