@@ -100,7 +100,8 @@ namespace HotsBpHelper.Pages
                 IntPtr hwnd = Win32.GetForegroundWindow();
                 Int32 pid = Win32.GetWindowProcessID(hwnd);
                 Process p = Process.GetProcessById(pid);
-                if (p.ProcessName.StartsWith(Const.HEROES_PROCESS_NAME) || p.ProcessName.StartsWith(Const.HOTSBPHELPER_PROCESS_NAME) || App.NotCheckProcess)
+                bool inHotsGame = p.ProcessName.StartsWith(Const.HEROES_PROCESS_NAME);
+                if (inHotsGame || p.ProcessName.StartsWith(Const.HOTSBPHELPER_PROCESS_NAME) || App.NotCheckProcess)
                 {
                     using (var topScreenImage = _imageUtil.CaptureScreen(0, 0, App.MyPosition.Width, App.MyPosition.Height / 4))
                     {
@@ -119,10 +120,10 @@ namespace HotsBpHelper.Pages
                     }
                 }
                 bool helperShowed = _bpViewModel.View?.Visibility == Visibility.Visible;
-//                Logger.Trace("process: {0}, foundBpUi: {1}, showed: {2}", p.ProcessName, foundBpUi, helperShowed);
+                //                Logger.Trace("process: {0}, foundBpUi: {1}, showed: {2}", p.ProcessName, foundBpUi, helperShowed);
                 if (foundBpUi && !helperShowed || !foundBpUi && helperShowed)
                 {
-                    ToggleVisible();
+                    ToggleVisible(inHotsGame && !foundBpUi);
                 }
                 Thread.Sleep(1500);
             }
@@ -153,7 +154,7 @@ namespace HotsBpHelper.Pages
             if (e.HotKey.Key == Key.B)
             {
                 AutoShowHideHelper = false;
-                ToggleVisible();
+                ToggleVisible(true);
             }
             else if (e.HotKey.Key == Key.C)
             {
@@ -162,7 +163,7 @@ namespace HotsBpHelper.Pages
             }
         }
 
-        private void ToggleVisible()
+        private void ToggleVisible(bool clear)
         {
             if (!isLoaded)
             {
@@ -170,8 +171,11 @@ namespace HotsBpHelper.Pages
             }
             Execute.OnUIThread(() =>
             {
-                _bpViewModel.Init();
-                _bpViewModel.Reload();
+                if (clear)
+                {
+                    _bpViewModel.Init();
+                    _bpViewModel.Reload();
+                }
                 _bpViewModel.ToggleVisible();
             });
         }
