@@ -15,7 +15,7 @@
         xmlns:tb="http://www.hardcodet.net/taskbar"
         xmlns:s="https://github.com/canton7/Stylet"
         d:DataContext="{d:DesignInstance local:ShellViewModel}">
-    <tb:TaskbarIcon IconSource="/Images/0.ico" ToolTipText="{lex:Loc HotsBpHelper}">
+    <tb:TaskbarIcon IconSource="/Images/hots.ico" ToolTipText="{lex:Loc HotsBpHelper}">
         <tb:TaskbarIcon.ContextMenu>
             <ContextMenu>
                 <MenuItem Header="{lex:Loc AutoShowHideHelper}" IsCheckable="True" IsChecked="{Binding AutoShowHideHelper}" />
