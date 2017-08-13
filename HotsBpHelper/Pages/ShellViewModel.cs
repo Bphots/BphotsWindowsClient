@@ -93,7 +93,8 @@ namespace HotsBpHelper.Pages
             }
             _bpViewModel = _bpViewModelFactory.CreateViewModel();
             WindowManager.ShowWindow(_bpViewModel);
-            form1.kill();
+            form1.ShowBallowNotify(L("Started"), L("StartedTips"));
+            //form1.kill();
             AutoShowHideHelper = true;
             isLoaded = true;
             base.OnViewLoaded();
