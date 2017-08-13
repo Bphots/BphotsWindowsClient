@@ -17,7 +17,6 @@ namespace HotsBpHelper.WPF
         protected TextBox EditableTextBox => GetTemplateChild("PART_EditableTextBox") as TextBox;
 
         private bool isPressed = false;
-        private bool isNull = true;
 
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
         //取消高光效果
@@ -66,10 +65,6 @@ namespace HotsBpHelper.WPF
                 case Key.Enter:
                     if (Text!="" && SelectedIndex == -1) SelectedIndex = 0;
                     IsDropDownOpen = false;
-                    break;
-                case Key.Escape:
-                    IsDropDownOpen = false;
-                    SelectedIndex = -1;
                     break;
                 case Key.Down:
                     IsDropDownOpen = true;  

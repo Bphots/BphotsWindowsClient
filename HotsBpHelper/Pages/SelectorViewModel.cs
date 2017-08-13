@@ -46,6 +46,15 @@ namespace HotsBpHelper.Pages
             });
         }
 
+        public void CancelSelection()
+        {
+            EventAggregator.Publish(new ItemSelectedMessage
+            {
+                ItemInfo = null,
+                SelectorId = Id
+            });
+        }
+
         protected SelectorViewModel(IComboxItemUtil comboxItemUtil, IEventAggregator eventAggregator)
         {
             ComboxItemUtil = comboxItemUtil;
