@@ -66,6 +66,19 @@ namespace HotsBpHelper.Pages
 
         protected override void OnViewLoaded()
         {
+            using (Mutex mutex = new Mutex(false, "Global\\" + Const.HOTSBPHELPER_PROCESS_NAME))
+            {
+                if (!mutex.WaitOne(0, false))
+                {
+                    Application.Current.Shutdown();
+                    return;
+                }
+            }
+            if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
+            {
+                Application.Current.Shutdown();
+                return;
+            }
             if (!App.Debug)
             {
                 // 不是调试模拟,则检查更新

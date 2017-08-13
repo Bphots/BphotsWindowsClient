@@ -178,7 +178,7 @@
     <value>自动显示/隐藏助手</value>
   </data>
   <data name="RegisterHotKeyFailed" xml:space="preserve">
-    <value>热键注册失败,请使用托盘切换自动显示/隐藏助手</value>
+    <value>热键注册失败,请使用托盘显示/隐藏助手</value>
   </data>
   <data name="ErrorInfo" xml:space="preserve">
     <value>错误信息：</value>
