@@ -12,7 +12,6 @@ namespace HotsBpHelper.Pages
 
         public void Pause()
         {
-            if (!isShutDown) isPause = false;
             while (isPause)
             {
                 System.Windows.Forms.Application.DoEvents();
@@ -44,9 +43,11 @@ namespace HotsBpHelper.Pages
             InitializeComponent();
             this.Title = errorName;
             this.errorInfo.Text = errorInfo;
-            Uri u = new Uri(url);
-            hyperlink1.NavigateUri = u;
-            UrlText.Text = url;
+            if (url!=null) {
+                Uri u = new Uri(url);
+                hyperlink1.NavigateUri = u;
+                UrlText.Text = url;
+            }
         }
 
         protected override void OnClosed(EventArgs e)
@@ -57,6 +58,7 @@ namespace HotsBpHelper.Pages
                 Environment.Exit(0);
                 //isPause = false;
             }
+            isPause = false;
             base.OnClosed(e);
         }
         public void hyperlink0_Click(object s,RoutedEventArgs e)

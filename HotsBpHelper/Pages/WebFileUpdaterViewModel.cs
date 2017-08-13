@@ -41,14 +41,14 @@ namespace HotsBpHelper.Pages
                     if (broadcast.Type == 0)
                     {
                         BroadcastWindow b = new BroadcastWindow(broadcast.Msg, broadcast.Url);
-                        b.Show();
+                        b.ShowDialog();
                     }
                     else if (broadcast.Type == 1)
                     {
                         ErrorView e = new ErrorView(ViewModelBase.L("Reminder"), broadcast.Msg, broadcast.Url);
-                        e.ShowDialog();
                         e.isShutDown = false;
-                        e.Pause();
+                        e.ShowDialog();                
+                        //e.Pause();
                         shutdown = true;
                     }
                 
