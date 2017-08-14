@@ -17,7 +17,7 @@ namespace HotsBpHelper.Pages
     public class WebFileUpdaterViewModel : ViewModelBase
     {
         private readonly IRestApi _restApi;
-        private Form1 form1 = new Form1();
+        private Form1 form1 = new Form1();//用于显示气泡通知
         private bool isBallowShow = false;
 
         //private int percent,count=0, lastBalloon = 0;
@@ -31,6 +31,7 @@ namespace HotsBpHelper.Pages
 
         private void ReceiveBroadcast()
         {
+        //接收公告，并以对话框的形式显示
             var BroadcastList = _restApi.GetBroadcastInfo("0", App.Language);
             if (BroadcastList != null)
             {
@@ -112,6 +113,7 @@ namespace HotsBpHelper.Pages
                 Url = fi.Url,
                 RemoteMD5 = fi.MD5,
                 LocalFilePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, fi.Name.TrimStart('/')),
+                Path=fi.Url.Remove(0,24),//移去http://static.bphots.com/
                 FileStatus = L("Updating"),
             }));
         }
@@ -127,6 +129,7 @@ namespace HotsBpHelper.Pages
                     {
                         try
                         {
+                            //如果有文件在更新，延续气泡框的生命
                             form1.xuMing();
                             if (!isBallowShow)
                             {
@@ -134,6 +137,13 @@ namespace HotsBpHelper.Pages
                                 isBallowShow = true;
                             }
                             Logger.Trace("Downloading file: {0}", fileUpdateInfo.FileName);
+
+                            //防盗链算法
+                            string T = ((int)DateTime.Now.AddMinutes(1).ToUnixTimestamp()).ToString("x8").ToLower();
+                            string S=Api.Security.SecurityProvider.UrlKey + System.Web.HttpUtility.UrlEncode(fileUpdateInfo.Path).Replace("%2f","/") + T;
+                            string SIGN = System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(S, "MD5").ToLower();
+
+                            //byte[] content = _restApi.DownloadFile(fileUpdateInfo.Url + "?sign=" + SIGN + "&t=" + T);
                             byte[] content = _restApi.DownloadFile(fileUpdateInfo.Url);
                             content.SaveAs(fileUpdateInfo.LocalFilePath);
                             Logger.Trace("Downloaded. Bytes count: {0}", content.Length);
@@ -144,7 +154,7 @@ namespace HotsBpHelper.Pages
                         }
                         catch (Exception e)
                         {
-                            fileUpdateInfo.FileStatus = L("UpdateFailed");
+                            fileUpdateInfo.FileStatus = L("UpdateFailed")+e.Message;
                             Logger.Error(e, "Downloading error.");
                         }
                     }

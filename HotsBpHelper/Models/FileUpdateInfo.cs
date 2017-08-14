@@ -13,5 +13,7 @@ namespace HotsBpHelper.Models
         public string RemoteMD5 { get; set; }
 
         public string LocalFilePath { get; set; }
+
+        public string Path { get; set; }
     }
 }
