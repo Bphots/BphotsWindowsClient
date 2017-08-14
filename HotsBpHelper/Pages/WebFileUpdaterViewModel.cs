@@ -143,8 +143,8 @@ namespace HotsBpHelper.Pages
                             string S=Api.Security.SecurityProvider.UrlKey + System.Web.HttpUtility.UrlEncode(fileUpdateInfo.Path).Replace("%2f","/") + T;
                             string SIGN = System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(S, "MD5").ToLower();
 
-                            //byte[] content = _restApi.DownloadFile(fileUpdateInfo.Url + "?sign=" + SIGN + "&t=" + T);
-                            byte[] content = _restApi.DownloadFile(fileUpdateInfo.Url);
+                            byte[] content = _restApi.DownloadFile(fileUpdateInfo.Url + "?sign=" + SIGN + "&t=" + T);
+                            //byte[] content = _restApi.DownloadFile(fileUpdateInfo.Url);
                             content.SaveAs(fileUpdateInfo.LocalFilePath);
                             Logger.Trace("Downloaded. Bytes count: {0}", content.Length);
                             if (NeedUpdate(fileUpdateInfo)) fileUpdateInfo.FileStatus = L("UpdateFailed");
