@@ -213,4 +213,10 @@
   <data name="Reminder" xml:space="preserve">
     <value>Reminder</value>
   </data>
+  <data name="Started" xml:space="preserve">
+    <value>Started</value>
+  </data>
+  <data name="StartedTips" xml:space="preserve">
+    <value>助手会自动检测是否进入bp界面，也可通过Ctrl+Shift+B手动控制显隐。</value>
+  </data>
 </root>
