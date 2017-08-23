@@ -61,6 +61,15 @@ namespace HotsBpHelper.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About.
+        /// </summary>
+        public static string About {
+            get {
+                return ResourceManager.GetString("About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto show/hide helper.
         /// </summary>
         public static string AutoShowHideHelper {

@@ -19,6 +19,7 @@
         <tb:TaskbarIcon.ContextMenu>
             <ContextMenu>
                 <MenuItem Header="{lex:Loc AutoShowHideHelper}" IsCheckable="True" IsChecked="{Binding AutoShowHideHelper}" />
+                <MenuItem Header="{lex:Loc About}" Command="{s:Action ShowAbout}"/>
                 <Separator />
                 <MenuItem Header="{lex:Loc Exit}" Command="{s:Action Exit}" />
             </ContextMenu>
