@@ -219,4 +219,7 @@
   <data name="StartedTips" xml:space="preserve">
     <value>助手会自动检测是否进入bp界面，也可通过Ctrl+Shift+B手动控制显隐。</value>
   </data>
+  <data name="About" xml:space="preserve">
+    <value>关于</value>
+  </data>
 </root>

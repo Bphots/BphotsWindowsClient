@@ -180,4 +180,7 @@
   <data name="RegisterHotKeyFailed" xml:space="preserve">
     <value>Register hotkey failed, please use system tray.</value>
   </data>
+  <data name="About" xml:space="preserve">
+    <value>About</value>
+  </data>
 </root>
