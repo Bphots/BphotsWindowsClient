@@ -124,7 +124,7 @@ namespace HotsBpHelper.Pages
                             foreach (var grayLockImage in grayLockImages)
                             {
                                 var tm = etm.ProcessImage(grayScreen, grayLockImage);
-                                if (tm.Length > 1)
+                                if (tm.Length > 2)
                                 {
                                     foundBpUi = true;
                                     break;
