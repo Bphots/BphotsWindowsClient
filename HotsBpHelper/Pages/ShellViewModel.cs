@@ -95,7 +95,7 @@ namespace HotsBpHelper.Pages
             WindowManager.ShowWindow(_bpViewModel);
             form1.ShowBallowNotify(L("Started"), L("StartedTips"));
             //form1.kill();
-            AutoShowHideHelper = true;
+            AutoShowHideHelper = false; // 默认禁用自动显隐
             isLoaded = true;
             base.OnViewLoaded();
         }
@@ -124,7 +124,7 @@ namespace HotsBpHelper.Pages
                             foreach (var grayLockImage in grayLockImages)
                             {
                                 var tm = etm.ProcessImage(grayScreen, grayLockImage);
-                                if (tm.Length > 2)
+                                if (tm.Length > 1)
                                 {
                                     foundBpUi = true;
                                     break;
