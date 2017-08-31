@@ -286,6 +286,11 @@ namespace HotsBpHelper.Pages
             base.OnClose();
         }
 
+        public void ShowAbout()
+        {
+            Process.Start(Const.ABOUT_URL);
+        }
+
         public interface IBpViewModelFactory
         {
             BpViewModel CreateViewModel();
