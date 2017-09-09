@@ -29,7 +29,7 @@ namespace HotsBpHelper.Api
 
             string urlParam = string.Join("&", parameters.Select(tuple => $"{tuple.Item1}={tuple.Item2}"));
             /*调试服务器回传信息用
-            string u = "http://www.bphots.com/bp_helper/" + method + "?" + urlParam + "&nonce=" + sp.Nonce + "&sign=" + sp.Sign;
+            string u = "https://www.bphots.com/bp_helper/" + method + "?" + urlParam + "&nonce=" + sp.Nonce + "&sign=" + sp.Sign;
             if (method== "get/inform")
                 System.Diagnostics.Process.Start(u);
             System.Threading.Thread.Sleep(1000);
@@ -86,7 +86,7 @@ namespace HotsBpHelper.Api
             var client = new RestClient(Const.WEB_API_ROOT);
             /*
                         client.Authenticator = new HttpBasicAuthenticator(_accountSid, _secretKey);
-                        request.AddParameter("AccountSid", _accountSid, ParameterType.UrlSegment); // used on every request
+                        request.AddParameter("AccountSi`    1   d", _accountSid, ParameterType.UrlSegment); // used on every request
             */
             var response = client.Execute<T>(request);
             EnsureNotErrorResponse(response);

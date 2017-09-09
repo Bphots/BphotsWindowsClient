@@ -44,7 +44,7 @@ namespace HotsBpHelper
             }
             if (args.Any(arg => arg.ToLower() == "/errortest"))
             {
-                ErrorView _errorView = new ErrorView(ViewModelBase.L("NoMatchResolution"), ViewModelBase.L("MSG_NoMatchResolution"), "http://www.bphots.com/articles/errors/test");
+                ErrorView _errorView = new ErrorView(ViewModelBase.L("NoMatchResolution"), ViewModelBase.L("MSG_NoMatchResolution"), "https://www.bphots.com/articles/errors/test");
                 _errorView.ShowDialog();
             }
 
