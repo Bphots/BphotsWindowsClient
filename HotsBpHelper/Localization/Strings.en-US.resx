@@ -217,6 +217,6 @@
     <value>Started</value>
   </data>
   <data name="StartedTips" xml:space="preserve">
-    <value>助手会自动检测是否进入bp界面，也可通过Ctrl+Shift+B手动控制显隐。</value>
+    <value>Bphelper will automatically detect and show if in BP mode. Press Ctrl+Shift+B to manually control Bphelper Hide/Show.</value>
   </data>
 </root>
