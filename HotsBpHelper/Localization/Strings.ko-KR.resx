@@ -205,18 +205,18 @@
     <value>파일 업데이트 실패</value>
   </data>
   <data name="Broadcast" xml:space="preserve">
-    <value>Broadcast</value>
+    <value>공시</value>
   </data>
   <data name="BroadcastURL" xml:space="preserve">
-    <value>Broadcast URL</value>
+    <value>공시 URL</value>
   </data>
   <data name="Reminder" xml:space="preserve">
-    <value>Reminder</value>
+    <value>제시</value>
   </data>
   <data name="Started" xml:space="preserve">
-    <value>Started</value>
+    <value>BPhelper 운행중</value>
   </data>
   <data name="StartedTips" xml:space="preserve">
-    <value>助手会自动检测是否进入bp界面，也可通过Ctrl+Shift+B手动控制显隐。</value>
+    <value>BPhelper는 BP상태 자동 검시할거니다.  Ctrl+Shift+B 누르면 표시하기/숨기기 조작할 수 있습니다.</value>
   </data>
 </root>
