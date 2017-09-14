@@ -95,7 +95,7 @@ namespace HotsBpHelper.Pages
             WindowManager.ShowWindow(_bpViewModel);
             form1.ShowBallowNotify(L("Started"), L("StartedTips"));
             //form1.kill();
-            AutoShowHideHelper = false; // 默认禁用自动显隐
+            AutoShowHideHelper = true; // 默认启用自动显隐
             isLoaded = true;
             base.OnViewLoaded();
         }
@@ -167,14 +167,19 @@ namespace HotsBpHelper.Pages
         {
             if (e.HotKey.Key == Key.B)
             {
-                AutoShowHideHelper = false;
-                ToggleVisible(true);
+                ManuallyShowHideHelper();
             }
             else if (e.HotKey.Key == Key.C)
             {
                 string captureName = Path.Combine(App.AppPath, "Screenshots", DateTime.Now.ToString("yyyyMMdd_hhmmss") + ".bmp");
                 _imageUtil.CaptureScreen().Save(captureName);
             }
+        }
+
+        public void ManuallyShowHideHelper()
+        {
+            AutoShowHideHelper = false;
+            ToggleVisible(true);
         }
 
         private void ToggleVisible(bool clear)
