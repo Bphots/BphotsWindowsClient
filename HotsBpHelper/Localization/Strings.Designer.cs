@@ -19,7 +19,7 @@ namespace HotsBpHelper.Localization {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Strings {
@@ -66,6 +66,24 @@ namespace HotsBpHelper.Localization {
         public static string About {
             get {
                 return ResourceManager.GetString("About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto detect.
+        /// </summary>
+        public static string AutoDetect {
+            get {
+                return ResourceManager.GetString("AutoDetect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto detect hero and map.
+        /// </summary>
+        public static string AutoDetectHeroAndMap {
+            get {
+                return ResourceManager.GetString("AutoDetectHeroAndMap", resourceCulture);
             }
         }
         
@@ -201,6 +219,15 @@ namespace HotsBpHelper.Localization {
         public static string RegisterHotKeyFailed {
             get {
                 return ResourceManager.GetString("RegisterHotKeyFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show / Hide BPHelper.
+        /// </summary>
+        public static string ShowHideHelper {
+            get {
+                return ResourceManager.GetString("ShowHideHelper", resourceCulture);
             }
         }
         

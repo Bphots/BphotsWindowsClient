@@ -175,7 +175,7 @@
     <value>종료</value>
   </data>
   <data name="AutoShowHideHelper" xml:space="preserve">
-    <value>표시하시/줌기기</value>
+    <value>자동 표시하기/숨기기</value>
   </data>
   <data name="RegisterHotKeyFailed" xml:space="preserve">
     <value>핫 키를 등록 실패, 시스템 트레이 아이콘을 사용하세요.</value>
@@ -218,5 +218,14 @@
   </data>
   <data name="StartedTips" xml:space="preserve">
     <value>BPhelper는 BP상태 자동 검시할거니다.  Ctrl+Shift+B 누르면 표시하기/숨기기 조작할 수 있습니다.</value>
+  </data>
+  <data name="AutoDetect" xml:space="preserve">
+    <value>자동 인식 스위치</value>
+  </data>
+  <data name="AutoDetectHeroAndMap" xml:space="preserve">
+    <value>영웅&amp;지도 인식하기</value>
+  </data>
+  <data name="ShowHideHelper" xml:space="preserve">
+    <value>표시하기/숨기기BPHelper</value>
   </data>
 </root>
