@@ -8,7 +8,7 @@
 
         public const string LOCAL_WEB_FILE_DIR = "WebFiles";
 
-        public const string PATCH = "17083101";
+        public const string PATCH = "17091401";
 
         public const string HEROES_PROCESS_NAME = "HeroesOfTheStorm";
 
