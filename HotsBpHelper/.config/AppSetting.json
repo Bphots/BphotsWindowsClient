@@ -170,6 +170,27 @@
       }
     },
     {
+      "Width": 2715,
+      "Height": 1527,
+      "BpHelperPosition": "665,1300",
+      "BpHelperSize": "425,150",
+      "MapSelectorPosition": "1357,220",
+      "Left": {
+        "Ban1": "690, 17",
+        "Ban2": "690, 70",
+        "Pick1": "295, 200",
+        "Dx": 140,
+        "Dy": 238
+      },
+      "Right": {
+        "Ban1": "2025, 17",
+        "Ban2": "2025, 70",
+        "Pick1": "2420, 200",
+        "Dx": -140,
+        "Dy": 238
+      }
+    },
+    {
       "Width": 3840,
       "Height": 2160,
       "BpHelperPosition": "1120,1875",

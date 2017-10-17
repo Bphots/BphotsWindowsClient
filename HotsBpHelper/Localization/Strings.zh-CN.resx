@@ -219,4 +219,16 @@
   <data name="StartedTips" xml:space="preserve">
     <value>助手会自动检测是否进入bp界面，也可通过Ctrl+Shift+B手动控制显隐。</value>
   </data>
+  <data name="About" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="AutoDetect" xml:space="preserve">
+    <value>自动识别</value>
+  </data>
+  <data name="AutoDetectHeroAndMap" xml:space="preserve">
+    <value>自动识别英雄和地图</value>
+  </data>
+  <data name="ShowHideHelper" xml:space="preserve">
+    <value>显示/隐藏背锅助手</value>
+  </data>
 </root>

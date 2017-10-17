@@ -15,5 +15,7 @@ namespace HotsBpHelper.Utils
         bool IsSimilarColor(Color color1, Color color2);
 
         Bitmap CaptureScreen(int x1, int y1, int x2, int y2);
+
+        Bitmap CaptureWindow(int hwnd);
     }
 }
