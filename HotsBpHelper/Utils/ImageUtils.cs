@@ -26,6 +26,11 @@ namespace HotsBpHelper.Utils
             }
         }
 
+        public Bitmap CaptureWindow(int hwnd)
+        {
+            throw new NotImplementedException();
+        }
+
         public Bitmap CaptureArea(Bitmap bmp, Rectangle rect, Point[] clipPoints)
         {
             var areaBmp = new Bitmap(

@@ -32,5 +32,14 @@ namespace HotsBpHelper.Pages
                 e.Handled = true;
             }
         }
+
+        protected override void OnDeactivated(EventArgs e)
+        {
+            if (Visibility == Visibility.Visible)
+            {
+                this.Topmost = true;
+                this.Activate();
+            }
+        }
     }
 }
