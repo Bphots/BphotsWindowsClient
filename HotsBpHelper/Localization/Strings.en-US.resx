@@ -219,4 +219,7 @@
   <data name="StartedTips" xml:space="preserve">
     <value>Bphelper will automatically detect and show if in BP mode. Press Ctrl+Shift+B to manually control Bphelper Hide/Show.</value>
   </data>
+  <data name="Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
 </root>

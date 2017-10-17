@@ -23,8 +23,11 @@
                     <MenuItem Header="{lex:Loc AutoDetectHeroAndMap}" IsEnabled="False" />
                 </MenuItem>
                 <MenuItem Header="{lex:Loc ShowHideHelper}" Command="{s:Action ManuallyShowHideHelper}" InputGestureText="Ctrl+Shift+B" />
-                
+
+                <MenuItem Header="{lex:Loc Help}" Command="{s:Action ShowHelp}"/>
+
                 <MenuItem Header="{lex:Loc About}" Command="{s:Action ShowAbout}"/>
+
                 <Separator />
                 <MenuItem Header="{lex:Loc Exit}" Command="{s:Action Exit}" />
             </ContextMenu>

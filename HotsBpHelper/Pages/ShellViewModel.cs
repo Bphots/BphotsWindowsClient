@@ -296,6 +296,11 @@ namespace HotsBpHelper.Pages
             Process.Start(Const.ABOUT_URL);
         }
 
+        public void ShowHelp()
+        {
+            Process.Start(Const.HELP_URL);
+        }
+
         public interface IBpViewModelFactory
         {
             BpViewModel CreateViewModel();

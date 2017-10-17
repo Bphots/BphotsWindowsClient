@@ -219,4 +219,7 @@
   <data name="StartedTips" xml:space="preserve">
     <value>助手會自動檢測是否進入bp介面，也可通過Ctrl+Shift+B手動控制顯隱。</value>
   </data>
+  <data name="String1" xml:space="preserve">
+    <value>幫助</value>
+  </data>
 </root>
