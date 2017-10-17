@@ -228,4 +228,7 @@
   <data name="ShowHideHelper" xml:space="preserve">
     <value>표시하기/숨기기BPHelper</value>
   </data>
+  <data name="Help" xml:space="preserve">
+    <value>돕다</value>
+  </data>
 </root>

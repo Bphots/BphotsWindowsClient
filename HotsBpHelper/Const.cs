@@ -8,12 +8,14 @@
 
         public const string LOCAL_WEB_FILE_DIR = "WebFiles";
 
-        public const string PATCH = "17091401";
+        public const string PATCH = "17101701";
 
         public const string HEROES_PROCESS_NAME = "HeroesOfTheStorm";
 
         public const string HOTSBPHELPER_PROCESS_NAME = "HotsBpHelper";
 
-        public const string ABOUT_URL = "https://www.bphots.com/articles/about";
+        public const string ABOUT_URL = "https://www.bphots.com/articles/base/about";
+
+        public const string HELP_URL = "https://www.bphots.com/articles/base/help";
     }
 }
