@@ -26,10 +26,10 @@ namespace HotsBpHelper.Pages
             notifyIcon1.BalloonTipText = ViewModelBase.L("UpdateFullText")+"——"+ percent.ToString() + "%";
             notifyIcon1.BalloonTipTitle = ViewModelBase.L("HotsBpHelper");
             //notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
-            if (notifyIcon1.BalloonTipText == "" || notifyIcon1.BalloonTipText == "")
+            if (notifyIcon1.BalloonTipText == null || notifyIcon1.BalloonTipText == null)
             {
-                notifyIcon1.BalloonTipText = "3";
-                notifyIcon1.BalloonTipTitle = "3";
+                notifyIcon1.BalloonTipText = "Updating..";
+                notifyIcon1.BalloonTipTitle = "Updating..";
             }
 
             notifyIcon1.ShowBalloonTip(2000);
@@ -39,17 +39,14 @@ namespace HotsBpHelper.Pages
         {
             notifyIcon1.Visible = true;
             //设置托盘的各个属性
-            if (text == "" || title == "")
-            {
-                notifyIcon1.BalloonTipText = "1";
-                notifyIcon1.BalloonTipTitle = "1";
-            }
-            else
-            {
                 notifyIcon1.BalloonTipText = text;
                 notifyIcon1.BalloonTipTitle = title;
+            if (notifyIcon1.BalloonTipText == null || notifyIcon1.BalloonTipText == null)
+            {
+                notifyIcon1.BalloonTipText = "Updating..";
+                notifyIcon1.BalloonTipTitle = "Updating..";
             }
-            
+
             //notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
             notifyIcon1.ShowBalloonTip(2000);
             notifyIcon1.Visible = false;
@@ -62,10 +59,10 @@ namespace HotsBpHelper.Pages
             notifyIcon1.Visible = true;
             notifyIcon1.BalloonTipText = ViewModelBase.L("UpdateFullText");
             notifyIcon1.BalloonTipTitle = ViewModelBase.L("HotsBpHelper");
-            if (notifyIcon1.BalloonTipText == "" || notifyIcon1.BalloonTipText == "")
+            if (notifyIcon1.BalloonTipText == null || notifyIcon1.BalloonTipText == null)
             {
-                notifyIcon1.BalloonTipText = "2";
-                notifyIcon1.BalloonTipTitle = "2";
+                notifyIcon1.BalloonTipText = "Updating..";
+                notifyIcon1.BalloonTipTitle = "Updating..";
             }
            
             //notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
