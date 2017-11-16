@@ -137,7 +137,8 @@ namespace HotsBpHelper.Pages
                 //                Logger.Trace("process: {0}, foundBpUi: {1}, showed: {2}", p.ProcessName, foundBpUi, helperShowed);
                 if (foundBpUi && !helperShowed || !foundBpUi && helperShowed)
                 {
-                    ToggleVisible(inHotsGame && !foundBpUi);
+                    //ToggleVisible(inHotsGame && !foundBpUi);
+                    ToggleVisible(false);
                 }
                 Thread.Sleep(1500);
             }
