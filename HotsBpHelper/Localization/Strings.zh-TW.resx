@@ -175,7 +175,7 @@
     <value>退出</value>
   </data>
   <data name="AutoShowHideHelper" xml:space="preserve">
-    <value>顯示/隱藏</value>
+    <value>自動顯示/隱藏助手</value>
   </data>
   <data name="RegisterHotKeyFailed" xml:space="preserve">
     <value>熱鍵註冊失敗,請使用托盤菜單顯示/隱藏助手</value>
@@ -221,5 +221,20 @@
   </data>
   <data name="String1" xml:space="preserve">
     <value>幫助</value>
+  </data>
+  <data name="About" xml:space="preserve">
+    <value>關於</value>
+  </data>
+  <data name="AutoDetect" xml:space="preserve">
+    <value>自動識別</value>
+  </data>
+  <data name="AutoDetectHeroAndMap" xml:space="preserve">
+    <value>自動識別英雄和地圖</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>幫助</value>
+  </data>
+  <data name="ShowHideHelper" xml:space="preserve">
+    <value>顯示/隱藏背鍋助手</value>
   </data>
 </root>
