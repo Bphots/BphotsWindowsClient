@@ -192,4 +192,7 @@
   <data name="ShowHideHelper" xml:space="preserve">
     <value>Show / Hide BPHelper</value>
   </data>
+  <data name="Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
 </root>
