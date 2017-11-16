@@ -1,6 +1,6 @@
-﻿using System;
+﻿using HashLib;
+using System;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace HotsBpHelper.Utils
@@ -9,21 +9,19 @@ namespace HotsBpHelper.Utils
     {
         public static string CaculateFileMd5(string filename)
         {
-            using (var md5 = MD5.Create())
+            var hash = HashFactory.Crypto.CreateMD5();
+            using (var stream = File.OpenRead(filename))
             {
-                using (var stream = File.OpenRead(filename))
-                {
-                    return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", String.Empty);
-                }
+                var result = hash.ComputeStream(stream);
+                return result.ToString().Replace("-", String.Empty);
             }
         }
 
-        public static string CaculateStringMd5(string filename)
+        public static string CaculateStringMd5(string str)
         {
-            using (var md5 = MD5.Create())
-            {
-                return BitConverter.ToString(md5.ComputeHash(Encoding.Default.GetBytes(filename))).Replace("-", String.Empty);
-            }
+            var hash = HashFactory.Crypto.CreateMD5();
+            var result = hash.ComputeBytes(Encoding.Default.GetBytes(str));
+            return result.ToString().Replace("-", String.Empty);
         }
     }
 }
