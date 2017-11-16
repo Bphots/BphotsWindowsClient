@@ -75,7 +75,7 @@ namespace HotsBpHelper.Pages
             {
                 if (FileUpdateInfos.Any(fui => fui.FileStatus == L("UpdateFailed")))
                 {
-                    ErrorView _errorView = new ErrorView(L("FileUpdateFail"), L("FilesNotReady"), "http://www.bphots.com/articles/errors/");
+                    ErrorView _errorView = new ErrorView(L("FileUpdateFail"), L("FilesNotReady"), "https://www.bphots.com/articles/errors/");
                     _errorView.ShowDialog();
                     //ShowMessageBox(L("FilesNotReady"),  MessageBoxButton.OK, MessageBoxImage.Exclamation);
                     RequestClose(false);
@@ -84,7 +84,7 @@ namespace HotsBpHelper.Pages
             catch (Exception e)
             {
                 Logger.Error(e);
-                ErrorView _errorView = new ErrorView(L("FilesNotReady"), e.Message, "http://www.bphots.com/articles/errors/");
+                ErrorView _errorView = new ErrorView(L("FilesNotReady"), e.Message, "https://www.bphots.com/articles/errors/");
                 RequestClose(false);
                 return;
             }
@@ -102,7 +102,7 @@ namespace HotsBpHelper.Pages
             catch (Exception e)
             {
                 Logger.Error(e);
-                ErrorView _errorView = new ErrorView(L("FilesNotReady"), e.Message, "http://www.bphots.com/articles/errors/");
+                ErrorView _errorView = new ErrorView(L("FilesNotReady"), e.Message, "https://www.bphots.com/articles/errors/");
                 //ShowMessageBox(L("FilesNotReady"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 RequestClose(false);
                 return;
@@ -113,7 +113,7 @@ namespace HotsBpHelper.Pages
                 Url = fi.Url,
                 RemoteMD5 = fi.MD5,
                 LocalFilePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, fi.Name.TrimStart('/')),
-                Path=fi.Url.Remove(0,24),//移去http://static.bphots.com/
+                Path=fi.Url.Remove(0,24),//移去https://static.bphots.com/
                 FileStatus = L("Updating"),
             }));
         }
