@@ -86,25 +86,29 @@
       }
     },
     {
-      "Width": 1920,
-      "Height": 1080,
-      "BpHelperPosition": "322,906",
-      "BpHelperSize": "425,150",
-      "MapSelectorPosition": "961,157",
-      "Left": {
-        "Ban1": "479, 17",
-        "Ban2": "479, 70",
-        "Pick1": "213, 143",
-        "Dx": 99,
-        "Dy": 170
-      },
-      "Right": {
-        "Ban1": "1438, 17",
-        "Ban2": "1438, 70",
-        "Pick1": "1707, 143",
-        "Dx": -97,
-        "Dy": 170
-      }
+        "Width": 1920,
+        "Height": 1080,
+        "BpHelperPosition": "322,906",
+        "BpHelperSize": "425,150",
+        "MapSelectorPosition": "961,157",
+        "HeroWidth": 108,
+        "HeroHeight": 90,
+        "Left": {
+            "Ban1": "479, 17",
+            "Ban2": "479, 70",
+            "Pick1": "213, 143",
+            "Dx": 99,
+            "Dy": 170,
+            "HeroPathPoints": [ "1,1", "1, 23", "107, 89", "107, 67" ]
+        },
+        "Right": {
+            "Ban1": "1438, 17",
+            "Ban2": "1438, 70",
+            "Pick1": "1707, 143",
+            "Dx": -97,
+            "Dy": 170,
+            "HeroPathPoints": [ "106,5", "106,27", "1,93", "1,71" ]
+        }
     },
     {
       "Width": 1920,

@@ -24,6 +24,10 @@ namespace HotsBpHelper.Settings
         public SidePosition Left { get; set; }
 
         public SidePosition Right { get; set; }
+
+        public int HeroWidth { get; set; }
+
+        public int HeroHeight { get; set; }
     }
 
     public class SidePosition
@@ -37,5 +41,7 @@ namespace HotsBpHelper.Settings
         public int Dx { get; set; }
 
         public int Dy { get; set; }
+
+        public Point[] HeroPathPoints { get; set; }
     }
 }
