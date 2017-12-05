@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using HotsBpHelper.Api.Model;
+﻿using System.Collections.ObjectModel;
+using System.Drawing;
 using HotsBpHelper.Messages;
 using HotsBpHelper.Utils;
 using HotsBpHelper.Utils.ComboBoxItemUtil;

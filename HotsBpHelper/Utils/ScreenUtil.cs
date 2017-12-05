@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Windows;
 
 namespace HotsBpHelper.Utils
 {
@@ -243,14 +243,14 @@ namespace HotsBpHelper.Utils
         {
             double unitX, unitY;
             TransformFromPixels((int)pixelPoint.X, (int)pixelPoint.Y, out unitX, out unitY);
-            return new Point(unitX, unitY);
+            return new Point((int) unitX, (int) unitY);
 
         }
         public static Size ToUnitSize(this Size pixelSize)
         {
             double unitWidth, unitHeight;
             TransformFromPixels((int)pixelSize.Width, (int)pixelSize.Height, out unitWidth, out unitHeight);
-            return new Size(unitWidth, unitHeight);
+            return new Size((int) unitWidth, (int) unitHeight);
 
         }
 

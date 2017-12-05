@@ -3,9 +3,11 @@ using System.Globalization;
 using System.Linq;
 using HotsBpHelper.Api;
 using HotsBpHelper.Api.Security;
+using HotsBpHelper.HeroFinder;
 using Stylet;
 using StyletIoC;
 using HotsBpHelper.Pages;
+using HotsBpHelper.Settings;
 using HotsBpHelper.Utils;
 using HotsBpHelper.Utils.ComboBoxItemUtil;
 using WPFLocalizeExtension.Engine;
@@ -16,7 +18,10 @@ namespace HotsBpHelper
     {
         protected override void ConfigureIoC(IStyletIoCBuilder builder)
         {
-//            builder.Bind<IRestApi>().To<DummyRestApi>();
+            // AppSetting
+            var appSetting = Its.Configuration.Settings.Get<AppSetting>();
+            builder.Bind<AppSetting>().ToInstance(appSetting);
+
             builder.Bind<IRestApi>().To<RestApi>().InSingletonScope();
             builder.Bind<HeroItemUtil>().ToSelf().InSingletonScope();
             builder.Bind<MapItemUtil>().ToSelf().InSingletonScope();
@@ -26,6 +31,7 @@ namespace HotsBpHelper
             builder.Bind<ShellViewModel.IWebFileUpdaterViewModelFactory>().ToAbstractFactory();
             builder.Bind<ShellViewModel.IBpViewModelFactory>().ToAbstractFactory();
             builder.Bind<IImageUtil>().To<ImageUtils>();
+            builder.Bind<IHeroFinder>().To<AccordNetHeroFinder>().InSingletonScope();
         }
 
         protected override void Configure()

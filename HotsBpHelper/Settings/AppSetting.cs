@@ -1,4 +1,4 @@
-﻿using System.Windows;
+﻿using System.Drawing;
 
 namespace HotsBpHelper.Settings
 {

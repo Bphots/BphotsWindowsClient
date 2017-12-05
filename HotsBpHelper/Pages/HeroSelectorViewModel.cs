@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System.Drawing;
+using System.Linq;
+using System.Threading.Tasks;
+using HotsBpHelper.HeroFinder;
 using HotsBpHelper.Messages;
 using HotsBpHelper.Utils;
 using HotsBpHelper.Utils.ComboBoxItemUtil;
@@ -8,8 +11,11 @@ namespace HotsBpHelper.Pages
 {
     public class HeroSelectorViewModel : SelectorViewModel, IHandle<ItemSelectedMessage>
     {
-        public HeroSelectorViewModel(HeroItemUtil heroItemUtil, IEventAggregator eventAggregator) : base(heroItemUtil, eventAggregator)
+        private readonly IHeroFinder _heroFinder;
+
+        public HeroSelectorViewModel(HeroItemUtil heroItemUtil, IEventAggregator eventAggregator, IHeroFinder heroFinder) : base(heroItemUtil, eventAggregator)
         {
+            _heroFinder = heroFinder;
             Size = new Size(130, 20);
             EventAggregator.Subscribe(this);
         }
@@ -27,7 +33,24 @@ namespace HotsBpHelper.Pages
                     Acronym = "",
                 });
             }
+            StartFinding();
             base.OnViewLoaded();
+        }
+
+        private void StartFinding()
+        {
+            Task.Run(() =>
+            {
+                while (PSelectedItemInfo == null || string.IsNullOrEmpty(PSelectedItemInfo.Name))
+                {
+                    string name = _heroFinder.FindHero(Id, new Point(12, 182)); // TODO 计算真实的英雄名称左上角坐标
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        SelectedItemInfo = ItemsInfos.Single(item => item.Name == name);
+                    }
+                    Task.Delay(1000);
+                }
+            });
         }
 
         public void Handle(ItemSelectedMessage message)

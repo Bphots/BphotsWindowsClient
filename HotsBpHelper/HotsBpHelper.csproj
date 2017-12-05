@@ -77,10 +77,6 @@
       <HintPath>..\packages\Accord.Statistics.3.5.0\lib\net45\Accord.Statistics.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="dmnet">
-      <HintPath>..\..\..\DM6.1550\dmnet.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="GlobalHotKey, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GlobalHotKey.1.1.0\lib\GlobalHotKey.dll</HintPath>
       <Private>True</Private>
@@ -111,6 +107,9 @@
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.105.2.3\lib\net45\RestSharp.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Stylet">
+      <HintPath>C:\Users\WAKU\Desktop\bphelper\Client\lib\Stylet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -159,6 +158,8 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Const.cs" />
     <Compile Include="DateTimeUtils.cs" />
+    <Compile Include="HeroFinder\AccordNetHeroFinder.cs" />
+    <Compile Include="HeroFinder\IHeroFinder.cs" />
     <Compile Include="Messages\ItemSelectedMessage.cs" />
     <Compile Include="Messages\ShowWindow.cs" />
     <Compile Include="Messages\SideSelectedMessage.cs" />
@@ -324,12 +325,6 @@
     <Content Include="WebFiles\placeholder.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Github\Stylet\Stylet\Stylet.csproj">
-      <Project>{2435bd00-ac12-48b0-ad36-9bab2fdec3f5}</Project>
-      <Name>Stylet</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="NAppUpdate\" />

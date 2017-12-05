@@ -28,6 +28,7 @@ namespace HotsBpHelper.Pages
         private readonly IBpViewModelFactory _bpViewModelFactory;
 
         private readonly IImageUtil _imageUtil;
+        private readonly AppSetting _appSetting;
 
         private readonly HotKeyManager _hotKeyManager;
 
@@ -56,11 +57,13 @@ namespace HotsBpHelper.Pages
             }
         }
 
-        public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory, IImageUtil imageUtil)
+        public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory, IImageUtil imageUtil,
+            AppSetting appSetting)
         {
             _webFileUpdaterViewModelFactory = webFileUpdaterViewModelFactory;
             _bpViewModelFactory = bpViewModelFactory;
             _imageUtil = imageUtil;
+            _appSetting = appSetting;
             _hotKeyManager = new HotKeyManager();
         }
 
@@ -257,9 +260,8 @@ namespace HotsBpHelper.Pages
         {
             try
             {
-                var appSetting = Its.Configuration.Settings.Get<AppSetting>();
                 var screenSize = ScreenUtil.GetScreenResolution();
-                var position = appSetting.Positions.SingleOrDefault(s => s.Width == (int)screenSize.Width && s.Height == (int)screenSize.Height);
+                var position = _appSetting.Positions.SingleOrDefault(s => s.Width == (int)screenSize.Width && s.Height == (int)screenSize.Height);
                 if (position == null)
                 {
                     Pages.ErrorView _errorView = new Pages.ErrorView(L("NoMatchResolution"), L("MSG_NoMatchResolution"));
