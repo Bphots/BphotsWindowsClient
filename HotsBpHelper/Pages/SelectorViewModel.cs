@@ -34,7 +34,7 @@ namespace HotsBpHelper.Pages
             }
         }
 
-        public void ConfirmSelection()
+        public virtual void ConfirmSelection()
         {
             EventAggregator.Publish(new ItemSelectedMessage
             {

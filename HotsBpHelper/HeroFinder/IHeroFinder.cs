@@ -18,5 +18,7 @@
         /// 
         ///  </remarks>
         string FindHero(int id);
+
+        void AddNewTemplate(int id, string heroName);
     }
 }

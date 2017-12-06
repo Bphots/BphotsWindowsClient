@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using Accord.Imaging;
 using Accord.Imaging.Filters;
-using HotsBpHelper.Settings;
 using HotsBpHelper.Utils;
 
 namespace HotsBpHelper.HeroFinder
@@ -19,15 +18,32 @@ namespace HotsBpHelper.HeroFinder
             public string HeroName { get; set; }
         }
 
+        private struct PositionInfo
+        {
+            /// <summary>
+            /// 文件夹分类
+            /// </summary>
+            public string DirStr { get; set; }
+
+            /// <summary>
+            /// 英雄名称框矩形
+            /// </summary>
+            public Rectangle Rectangle { get; set; }
+
+            /// <summary>
+            /// 英雄名字框的剪切坐标
+            /// </summary>
+            public Point[] ClipPoints { get; set; }
+        }
+
         private readonly IImageUtil _imageUtil;
-        private readonly AppSetting _appSetting;
         private const int MAX_HERO_IMAGES_COUNT = 3;
+        private const string IMAGES_HEROES = @"Images\Heroes";
         private IDictionary<string, IDictionary<string, IList<TemplateInfo>>> _templatesDict;
 
-        public AccordNetHeroFinder(IImageUtil imageUtil, AppSetting appSetting)
+        public AccordNetHeroFinder(IImageUtil imageUtil)
         {
             _imageUtil = imageUtil;
-            _appSetting = appSetting;
             LoadImages();
         }
 
@@ -36,7 +52,8 @@ namespace HotsBpHelper.HeroFinder
         /// </summary>
         private void LoadImages()
         {
-            string heroesDir = Path.Combine(App.AppPath, @"Images\Heroes");
+            string[] dirStrs = { "left", "right", "ban" };
+            string heroesDir = Path.Combine(App.AppPath, IMAGES_HEROES);
             string resolution = $"{App.MyPosition.Width}x{App.MyPosition.Height}";
             string leftDir = Path.Combine(heroesDir, resolution, "left");
             string rightDir = Path.Combine(heroesDir, resolution, "right");
@@ -53,7 +70,7 @@ namespace HotsBpHelper.HeroFinder
 
             // 分别将各个文件夹下的图片,生成匹配用的模板,放到dict中
             _templatesDict = new Dictionary<string, IDictionary<string, IList<TemplateInfo>>>();
-            foreach (var dirStr in new[] { "left", "right", "ban" })
+            foreach (var dirStr in dirStrs)
             {
                 var heroTemplateDict = new Dictionary<string, IList<TemplateInfo>>();
                 _templatesDict.Add(dirStr, heroTemplateDict);
@@ -111,43 +128,86 @@ namespace HotsBpHelper.HeroFinder
         ///  </remarks>
         public string FindHero(int id)
         {
-            string dirStr;      // 文件夹分类
-            Point heroNamePoint;    // 英雄名字框的左上角坐标
-            Point[] clipPoints;     // 英雄名字框的剪切坐标
-            int x, y;
-            if (id == 0 || id == 1 || id == 7 || id == 8)
-            {
-                dirStr = "ban";
-                clipPoints = null; // TODO: 处理禁选
-                heroNamePoint = Point.Empty;
-            }
-            else if (id >= 2 && id <= 6)
-            {
-                dirStr = "left";
-                clipPoints = App.MyPosition.Left.HeroPathPoints;
-                x = App.MyPosition.Left.HeroName1.X + (id % 2) * App.MyPosition.Left.Dx;
-                y = App.MyPosition.Left.HeroName1.Y + (id - 2) * App.MyPosition.Left.Dy;
-                heroNamePoint = new Point(x, y);
-            }
-            else
-            {
-                dirStr = "right";
-                clipPoints = App.MyPosition.Right.HeroPathPoints;
-                x = App.MyPosition.Right.HeroName1.X + ((id + 1) % 2) * App.MyPosition.Right.Dx;
-                y = App.MyPosition.Right.HeroName1.Y + (id - 9) * App.MyPosition.Right.Dy;
-                heroNamePoint = new Point(x, y);
-            }
+            var pi = CaculatePositionInfo(id);
 
             // TODO: ban处理
-            if (clipPoints == null) return null;
+            if (pi.ClipPoints == null) return null;
 
             using (var screenBmp = _imageUtil.CaptureScreen())
             {
-                var rect = new Rectangle((int)heroNamePoint.X, (int)heroNamePoint.Y, App.MyPosition.HeroWidth, App.MyPosition.HeroHeight);
-                using (var bmp = _imageUtil.CaptureArea(screenBmp, rect, clipPoints))
+                using (var bmp = _imageUtil.CaptureArea(screenBmp, pi.Rectangle, pi.ClipPoints))
                 {
-                    var ti = GetMostSimpilarHeroTemplateInfo(bmp, dirStr);
+                    var ti = GetMostSimpilarHeroTemplateInfo(bmp, pi.DirStr);
                     return ti?.HeroName;
+                }
+            }
+        }
+
+        private PositionInfo CaculatePositionInfo(int id)
+        {
+            PositionInfo result = new PositionInfo();
+            int x, y;
+            if (id == 0 || id == 1 || id == 7 || id == 8)
+            {
+                result.DirStr = "ban";
+                result.ClipPoints = null; // TODO: 处理禁选
+                result.Rectangle = Rectangle.Empty;
+            }
+            else if (id >= 2 && id <= 6)
+            {
+                result.DirStr = "left";
+                result.ClipPoints = App.MyPosition.Left.HeroPathPoints;
+                x = App.MyPosition.Left.HeroName1.X + (id % 2) * App.MyPosition.Left.Dx;
+                y = App.MyPosition.Left.HeroName1.Y + (id - 2) * App.MyPosition.Left.Dy;
+                if (id == 5 || id == 6)
+                {
+                    // 5和6需要再向下偏移一个像素
+                    y++;
+                }
+                result.Rectangle = new Rectangle(x, y, App.MyPosition.HeroWidth, App.MyPosition.HeroHeight);
+            }
+            else
+            {
+                result.DirStr = "right";
+                result.ClipPoints = App.MyPosition.Right.HeroPathPoints;
+                x = App.MyPosition.Right.HeroName1.X + ((id + 1) % 2) * App.MyPosition.Right.Dx;
+                y = App.MyPosition.Right.HeroName1.Y + (id - 9) * App.MyPosition.Right.Dy;
+                if (id == 12 || id == 13)
+                {
+                    // 12和13需要再向下偏移一个像素
+                    y++;
+                }
+                result.Rectangle = new Rectangle(x - App.MyPosition.HeroWidth, y, App.MyPosition.HeroWidth, App.MyPosition.HeroHeight);
+            }
+            return result;
+        }
+
+        public void AddNewTemplate(int id, string heroName)
+        {
+            var pi = CaculatePositionInfo(id);
+            // TODO: ban处理
+            if (pi.ClipPoints == null) return;
+
+            string heroesDir = Path.Combine(App.AppPath, IMAGES_HEROES);
+            string resolution = $"{App.MyPosition.Width}x{App.MyPosition.Height}";
+            string imageFile = Path.Combine(heroesDir, resolution, pi.DirStr, $"{heroName}_{DateTime.Now:yyyyMMddhhmmss}.bmp");
+
+            using (var screenBmp = _imageUtil.CaptureScreen())
+            {
+                using (var bmp = _imageUtil.CaptureArea(screenBmp, pi.Rectangle, pi.ClipPoints))
+                {
+                    bmp.Save(imageFile);
+                    var dict = _templatesDict[pi.DirStr];
+                    if (!dict.ContainsKey(heroName))
+                    {
+                        dict.Add(heroName, new List<TemplateInfo>());
+                    }
+                    dict[heroName].Add(new TemplateInfo
+                    {
+                        FilePathName = imageFile,
+                        HeroName = heroName,
+                        Template = Grayscale.CommonAlgorithms.BT709.Apply(bmp),
+                    });
                 }
             }
         }
@@ -173,7 +233,7 @@ namespace HotsBpHelper.HeroFinder
                         if (ti.Template.Size.Width > heroImage.Size.Width || ti.Template.Size.Height > heroImage.Size.Height)
                             continue;
                         var tm = etm.ProcessImage(heroImage, ti.Template);
-                        if (tm[0].Similarity > similarity && tm[0].Similarity > 0.9)
+                        if (tm[0].Similarity > similarity && tm[0].Similarity > 0.99)
                         {
                             similarity = tm[0].Similarity;
                             result = ti;

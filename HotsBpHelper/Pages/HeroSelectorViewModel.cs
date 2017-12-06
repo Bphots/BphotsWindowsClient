@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using HotsBpHelper.HeroFinder;
 using HotsBpHelper.Messages;
@@ -37,6 +38,15 @@ namespace HotsBpHelper.Pages
             base.OnViewLoaded();
         }
 
+        public new ComboBoxItemInfo SelectedItemInfo
+        {
+            get { return base.SelectedItemInfo; }
+            set
+            {
+                SetAndNotify(ref PSelectedItemInfo, value);
+            }
+        }
+
         private void StartFinding()
         {
             Task.Run(() =>
@@ -46,17 +56,25 @@ namespace HotsBpHelper.Pages
                     string name = _heroFinder.FindHero(Id);
                     if (!string.IsNullOrEmpty(name))
                     {
-                        SelectedItemInfo = ItemsInfos.Single(item => item.Name == name);
+                        SetAndNotify(ref PSelectedItemInfo, ItemsInfos.Single(item => item.Name == name), nameof(SelectedItemInfo));
+                        Thread.Sleep(1500);
+                        Execute.OnUIThread(base.ConfirmSelection);
                     }
-                    Task.Delay(1000);
+                    Thread.Sleep(1000);
                 }
             });
+        }
+
+        public override void ConfirmSelection()
+        {
+            base.ConfirmSelection();
+            // 手动选择,增加新模板
+            _heroFinder.AddNewTemplate(Id, SelectedItemInfo.Name);
         }
 
         public void Handle(ItemSelectedMessage message)
         {
             // TODO 将已选的英雄移除(又改了之前的选择需要恢复)
-
         }
     }
 }

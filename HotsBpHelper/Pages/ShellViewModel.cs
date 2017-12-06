@@ -11,6 +11,7 @@ using System.Windows.Input;
 using Accord.Imaging;
 using Accord.Imaging.Filters;
 using GlobalHotKey;
+using HotsBpHelper.HeroFinder;
 using HotsBpHelper.Settings;
 using HotsBpHelper.Utils;
 using NAppUpdate.Framework;
@@ -153,6 +154,7 @@ namespace HotsBpHelper.Pages
             {
                 _hotKeyManager.Register(Key.B, ModifierKeys.Control | ModifierKeys.Shift);
                 _hotKeyManager.Register(Key.C, ModifierKeys.Control | ModifierKeys.Shift);
+                _hotKeyManager.Register(Key.H, ModifierKeys.Control | ModifierKeys.Shift);
                 _hotKeyManager.KeyPressed += HotKeyManagerPressed;
             }
             catch (Exception e)
@@ -177,6 +179,14 @@ namespace HotsBpHelper.Pages
             {
                 string captureName = Path.Combine(App.AppPath, "Screenshots", DateTime.Now.ToString("yyyyMMdd_hhmmss") + ".bmp");
                 _imageUtil.CaptureScreen().Save(captureName);
+            }
+            else if (e.HotKey.Key == Key.H)
+            {
+                var finder = new AccordNetHeroFinder(_imageUtil);
+                for (int i = 0; i <= 13; i++)
+                {
+                    finder.AddNewTemplate(i, i.ToString());
+                }
             }
         }
 

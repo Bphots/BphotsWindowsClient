@@ -18,21 +18,23 @@ namespace HotsBpHelper.Pages
 
         }
 
-        protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
-        {
-            base.OnPreviewMouseLeftButtonUp(e);
-            isPressed = true;
-        }
+        /*
+                protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
+                {
+                    base.OnPreviewMouseLeftButtonUp(e);
+                    isPressed = true;
+                }
 
-        protected override void OnMouseLeave(MouseEventArgs e)
-        {
-            base.OnMouseLeave(e);
-            if (isPressed)
-            {
-                Confirm();
-                isPressed = false;
-            }
-        }
+                protected override void OnMouseLeave(MouseEventArgs e)
+                {
+                    base.OnMouseLeave(e);
+                    if (isPressed)
+                    {
+                        Confirm();
+                        isPressed = false;
+                    }
+                }
+        */
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
@@ -58,7 +60,7 @@ namespace HotsBpHelper.Pages
         public void Cancel()
         {
             var vm = (HeroSelectorViewModel)DataContext;
-                vm.CancelSelection();
+            vm.CancelSelection();
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)

@@ -91,15 +91,15 @@
             "BpHelperPosition": "322,906",
             "BpHelperSize": "425,150",
             "MapSelectorPosition": "961,157",
-            "HeroWidth": 108,
-            "HeroHeight": 90,
+            "HeroWidth": 55,
+            "HeroHeight": 55,
             "Left": {
                 "Ban1": "479, 17",
                 "Ban2": "479, 70",
                 "Pick1": "213, 143",
                 "Dx": 99,
-                "Dy": 170,
-                "HeroPathPoints": [ "1,1", "1, 23", "107, 89", "107, 67" ],
+                "Dy": 169,
+                "HeroPathPoints": [ "1,3", "1, 23", "55, 55", "55, 35" ],
                 "HeroName1": "13, 182"
             },
             "Right": {
@@ -107,9 +107,9 @@
                 "Ban2": "1438, 70",
                 "Pick1": "1707, 143",
                 "Dx": -97,
-                "Dy": 170,
-                "HeroPathPoints": [ "106,5", "106,27", "1,93", "1,71" ],
-                "HeroName1": "1910, 182"
+                "Dy": 169,
+                "HeroPathPoints": [ "55,6", "55,26", "1,58", "1,38" ],
+                "HeroName1": "1908, 182"
             }
         },
         {
