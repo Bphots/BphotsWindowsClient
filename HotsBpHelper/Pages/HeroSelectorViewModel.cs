@@ -43,7 +43,7 @@ namespace HotsBpHelper.Pages
             {
                 while (PSelectedItemInfo == null || string.IsNullOrEmpty(PSelectedItemInfo.Name))
                 {
-                    string name = _heroFinder.FindHero(Id, new Point(12, 182)); // TODO 计算真实的英雄名称左上角坐标
+                    string name = _heroFinder.FindHero(Id);
                     if (!string.IsNullOrEmpty(name))
                     {
                         SelectedItemInfo = ItemsInfos.Single(item => item.Name == name);

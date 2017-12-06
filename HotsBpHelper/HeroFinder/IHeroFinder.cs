@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace HotsBpHelper.HeroFinder
+﻿namespace HotsBpHelper.HeroFinder
 {
     public interface IHeroFinder
     {
@@ -8,7 +6,6 @@ namespace HotsBpHelper.HeroFinder
         /// 根据ID识别英雄
         /// </summary>
         /// <param name="id">BP用ID</param>
-        /// <param name="rect">标识英雄名字的矩形范围</param>
         /// <returns>英雄名字</returns>
         /// <remarks>
         ///  ID示意图
@@ -20,6 +17,6 @@ namespace HotsBpHelper.HeroFinder
         ///  6          13
         /// 
         ///  </remarks>
-        string FindHero(int id, Point heroNamePoint);
+        string FindHero(int id);
     }
 }

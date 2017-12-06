@@ -43,5 +43,7 @@ namespace HotsBpHelper.Settings
         public int Dy { get; set; }
 
         public Point[] HeroPathPoints { get; set; }
+
+        public Point HeroName1 { get; set; }
     }
 }
