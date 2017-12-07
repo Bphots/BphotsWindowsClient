@@ -37,7 +37,7 @@ namespace HotsBpHelper.HeroFinder
         }
 
         private readonly IImageUtil _imageUtil;
-        private const int MAX_HERO_IMAGES_COUNT = 3;
+        private const int MAX_HERO_IMAGES_COUNT = 5;
         private const string IMAGES_HEROES = @"Images\Heroes";
         private IDictionary<string, IDictionary<string, IList<TemplateInfo>>> _templatesDict;
 

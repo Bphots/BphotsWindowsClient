@@ -49,7 +49,6 @@ namespace HotsBpHelper.Pages
 
         public void Confirm()
         {
-
             var vm = (HeroSelectorViewModel)DataContext;
             if (vm.SelectedItemInfo != null)
             {
@@ -75,6 +74,12 @@ namespace HotsBpHelper.Pages
         {
             if (keyEventArgs.Key == Key.Enter)
             {
+                var vm = (HeroSelectorViewModel)DataContext;
+                if (vm.SelectedItemInfo == null && (vm.Id == 0 || vm.Id == 1 || vm.Id == 7 || vm.Id == 8))
+                {
+                    // 如果禁选选择器未选择的话,则选择第一项[不选择]
+                    vm.SelectedItemInfo = vm.ItemsInfos[0];
+                }
                 Confirm();
             }
         }
