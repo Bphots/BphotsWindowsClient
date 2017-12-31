@@ -1,4 +1,6 @@
-﻿namespace HotsBpHelper
+﻿using System.IO;
+
+namespace HotsBpHelper
 {
     public class Const
     {
@@ -17,5 +19,8 @@
         public const string ABOUT_URL = "https://www.bphots.com/articles/base/about";
 
         public const string HELP_URL = "https://www.bphots.com/articles/base/help";
+
+        public static readonly string BattleLobbyPath = Path.Combine(Path.GetTempPath(), @"Heroes of the Storm\TempWriteReplayP1\replay.server.battlelobby");
+
     }
 }

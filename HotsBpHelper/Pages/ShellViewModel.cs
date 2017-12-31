@@ -18,6 +18,7 @@ using NAppUpdate.Framework.Common;
 using NAppUpdate.Framework.Sources;
 using NAppUpdate.Framework.Tasks;
 using Stylet;
+using StatsFetcher;
 
 namespace HotsBpHelper.Pages
 {
@@ -37,6 +38,8 @@ namespace HotsBpHelper.Pages
 
         private Form1 form1 = new Form1();
 
+        private Game _game;
+
         private bool _autoShowHideHelper;
         public bool AutoShowHideHelper
         {
@@ -55,6 +58,27 @@ namespace HotsBpHelper.Pages
                 }
             }
         }
+
+        private bool _autoShowMMR;
+
+        public bool AutoShowMmr
+        {
+            get { return _autoShowMMR; }
+            set
+            {
+                if (SetAndNotify(ref _autoShowMMR, value))
+                {
+                    if (AutoShowMmr)
+                    {
+                        Task.Run(() =>
+                        {
+                            MonitorLobbyFile();
+                        });
+                    }
+                }
+            }
+        }
+
 
         public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory, IImageUtil imageUtil)
         {
@@ -96,13 +120,13 @@ namespace HotsBpHelper.Pages
             form1.ShowBallowNotify(L("Started"), L("StartedTips"));
             //form1.kill();
             AutoShowHideHelper = true; // 默认启用自动显隐
+            AutoShowMmr = true; // 默认启用自动显示MMR
             isLoaded = true;
             base.OnViewLoaded();
         }
 
         private void CheckBpUi()
         {
-
             var etm = new ExhaustiveTemplateMatching(0.9f);
             var grayLockImages = Directory.GetFiles(Path.Combine(App.AppPath, @"Images\lock"))
                 .Select(file => new Bitmap(file))
@@ -143,6 +167,22 @@ namespace HotsBpHelper.Pages
                 Thread.Sleep(1500);
             }
         }
+
+        private void MonitorLobbyFile()
+        {
+            DateTime lobbyLastModified = DateTime.MinValue;
+            while (AutoShowMmr)
+            {
+                if (File.Exists(Const.BattleLobbyPath) && File.GetLastWriteTime(Const.BattleLobbyPath) != lobbyLastModified)
+                {
+                    lobbyLastModified = File.GetLastWriteTime(Const.BattleLobbyPath);
+                    var game = FileProcessor.ProcessLobbyFile(Const.BattleLobbyPath);
+                }
+                Thread.Sleep(1000);
+
+            }
+        }
+
 
         private void RegisterHotKey()
         {

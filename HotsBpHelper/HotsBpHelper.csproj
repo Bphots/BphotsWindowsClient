@@ -77,10 +77,6 @@
       <HintPath>..\packages\Accord.Statistics.3.5.0\lib\net45\Accord.Statistics.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="dmnet">
-      <HintPath>..\..\..\DM6.1550\dmnet.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="GlobalHotKey, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GlobalHotKey.1.1.0\lib\GlobalHotKey.dll</HintPath>
       <Private>True</Private>
@@ -329,6 +325,10 @@
     <ProjectReference Include="..\..\..\Github\Stylet\Stylet\Stylet.csproj">
       <Project>{2435bd00-ac12-48b0-ad36-9bab2fdec3f5}</Project>
       <Name>Stylet</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Documents\Programs\HotsStats\StatsFetcher\StatsFetcher.csproj">
+      <Project>{9d065a48-71d9-4f83-8428-2ee88405f05b}</Project>
+      <Name>StatsFetcher</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
