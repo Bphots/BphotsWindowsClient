@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Windows;
-using Heroes.ReplayParser;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using StatsFetcher;

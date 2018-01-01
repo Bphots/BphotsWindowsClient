@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -13,6 +12,7 @@ namespace HotsBpHelper.UserControls
         public WebKitBrowser()
         {
             InitializeComponent();
+            Browser.ObjectForScripting = new ScriptingHelper(this);
         }
 
         public object InvokeScript(InvokeScriptMessage message)
