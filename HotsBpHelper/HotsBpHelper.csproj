@@ -333,6 +333,10 @@
       <Project>{2435bd00-ac12-48b0-ad36-9bab2fdec3f5}</Project>
       <Name>Stylet</Name>
     </ProjectReference>
+    <ProjectReference Include="D:\Documents\Programs\Heroes.ReplayParser\Heroes.ReplayParser\Heroes.ReplayParser.csproj">
+      <Project>{AAF78D53-A1DA-424A-B1AA-09895EAB3B2B}</Project>
+      <Name>Heroes.ReplayParser</Name>
+    </ProjectReference>
     <ProjectReference Include="D:\Documents\Programs\HotsStats\StatsFetcher\StatsFetcher.csproj">
       <Project>{9d065a48-71d9-4f83-8428-2ee88405f05b}</Project>
       <Name>StatsFetcher</Name>

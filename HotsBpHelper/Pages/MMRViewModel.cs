@@ -2,7 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Windows;
+using Heroes.ReplayParser;
 using HotsBpHelper.UserControls;
+using HotsBpHelper.Utils;
 using StatsFetcher;
 using Stylet;
 
@@ -19,8 +21,9 @@ namespace HotsBpHelper.Pages
         public MMRViewModel(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
-            Width = 300;
-            Height = 200;
+            var size = new Size(450, 230).ToUnitSize();
+            Width = (int) size.Width;
+            Height = (int) size.Height;
 
             string filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "mmr.html#") + App.Language;
             LocalFileUri = new Uri(filePath, UriKind.Absolute);
@@ -43,23 +46,26 @@ namespace HotsBpHelper.Pages
 
         public void FillMMR(Game game)
         {
-            string regionId = ((int) game.Region).ToString();
+            // 取得地区ID
+            string regionId = ((int)game.Region).ToString();
+            // 左侧玩家BattleTags
             string leftBattleTags = string.Join("|", game.Players
                 .Where(p => p.Team == 0)
                 .Select(p => p.BattleTag));
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
                 ScriptName = "setPlayer",
-                Args = new []{regionId, "left", leftBattleTags}
+                Args = new[] { regionId, "left", leftBattleTags }
             }, "MMRChanel");
 
+            // 右侧玩家BattleTags
             string rightBattleTags = string.Join("|", game.Players
                 .Where(p => p.Team == 1)
                 .Select(p => p.BattleTag));
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
                 ScriptName = "setPlayer",
-                Args = new []{regionId, "right", rightBattleTags }
+                Args = new[] { regionId, "right", rightBattleTags }
             }, "MMRChanel");
         }
     }
