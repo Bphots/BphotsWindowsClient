@@ -25,6 +25,7 @@ namespace HotsBpHelper
             builder.Bind<IMapSelectorViewModelFactory>().ToAbstractFactory();
             builder.Bind<ShellViewModel.IWebFileUpdaterViewModelFactory>().ToAbstractFactory();
             builder.Bind<ShellViewModel.IBpViewModelFactory>().ToAbstractFactory();
+            builder.Bind<ShellViewModel.IMMRViewModelFactory>().ToAbstractFactory();
             builder.Bind<IImageUtil>().To<ImageUtils>();
         }
 

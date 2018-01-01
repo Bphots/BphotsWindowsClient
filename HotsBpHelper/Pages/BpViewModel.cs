@@ -60,7 +60,7 @@ namespace HotsBpHelper.Pages
             Width = (int)unitSize.Width;
             Height = (int)unitSize.Height;
 
-            string filePath = @Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "index.html#") + App.Language;
+            string filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "index.html#") + App.Language;
             LocalFileUri = new Uri(filePath, UriKind.Absolute);
         }
 
@@ -166,7 +166,7 @@ namespace HotsBpHelper.Pages
             {
                 ScriptName = scriptName,
                 Args = args
-            });
+            }, "BpChanel");
         }
 
         private void InvokeScript(string scriptName, IList<Tuple<string, string>> parameters)
@@ -208,7 +208,8 @@ namespace HotsBpHelper.Pages
                     //重新推进一步
                     ProcessStep();
                 }
-                else {
+                else
+                {
                     //移除本次bp框
                     HeroSelectorViewModels[BpStatus.CurrentStep].RequestClose();
                     HeroSelectorViewModels.Remove(HeroSelectorViewModels[BpStatus.CurrentStep]);

@@ -13,7 +13,7 @@ namespace HotsBpHelper.Pages
         {
 //            InitializeComponent();
             KeyDown += OnKeyDown;
-            eventAggregator.Subscribe(this);
+            eventAggregator.Subscribe(this, "BpChanel");
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)

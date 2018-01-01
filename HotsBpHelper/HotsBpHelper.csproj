@@ -181,6 +181,10 @@
       <DependentUpon>MapSelectorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\MapSelectorViewModel.cs" />
+    <Compile Include="Pages\MMRView.xaml.cs">
+      <DependentUpon>MMRView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MMRViewModel.cs" />
     <Compile Include="Pages\SelectorViewModel.cs" />
     <Compile Include="Pages\ViewModelBase.cs" />
     <Compile Include="Settings\AppSetting.cs" />
@@ -296,6 +300,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\MapSelectorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\MMRView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
