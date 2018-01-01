@@ -27,12 +27,14 @@ namespace HotsBpHelper.Pages
         private readonly IWebFileUpdaterViewModelFactory _webFileUpdaterViewModelFactory;
 
         private readonly IBpViewModelFactory _bpViewModelFactory;
+        private readonly IMMRViewModelFactory _mmrViewModelFactory;
 
         private readonly IImageUtil _imageUtil;
 
         private readonly HotKeyManager _hotKeyManager;
 
         private BpViewModel _bpViewModel;
+        private MMRViewModel _mmrViewModel;
 
         private bool isLoaded = false;
 
@@ -80,10 +82,11 @@ namespace HotsBpHelper.Pages
         }
 
 
-        public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory, IImageUtil imageUtil)
+        public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory, IMMRViewModelFactory mmrViewModelFactory, IImageUtil imageUtil)
         {
             _webFileUpdaterViewModelFactory = webFileUpdaterViewModelFactory;
             _bpViewModelFactory = bpViewModelFactory;
+            _mmrViewModelFactory = mmrViewModelFactory;
             _imageUtil = imageUtil;
             _hotKeyManager = new HotKeyManager();
         }
@@ -110,13 +113,15 @@ namespace HotsBpHelper.Pages
             }
             InitSettings();
             RegisterHotKey();
-            if (WindowManager.ShowDialog(_webFileUpdaterViewModelFactory.CreateViewModel()) != true)
+            if (!App.Debug && WindowManager.ShowDialog(_webFileUpdaterViewModelFactory.CreateViewModel()) != true)
             {
                 Application.Current.Shutdown();
                 return;
             }
             _bpViewModel = _bpViewModelFactory.CreateViewModel();
             WindowManager.ShowWindow(_bpViewModel);
+            _mmrViewModel = _mmrViewModelFactory.CreateViewModel();
+            WindowManager.ShowWindow(_mmrViewModel);
             form1.ShowBallowNotify(L("Started"), L("StartedTips"));
             //form1.kill();
             AutoShowHideHelper = true; // 默认启用自动显隐
@@ -161,8 +166,8 @@ namespace HotsBpHelper.Pages
                 //                Logger.Trace("process: {0}, foundBpUi: {1}, showed: {2}", p.ProcessName, foundBpUi, helperShowed);
                 if (foundBpUi && !helperShowed || !foundBpUi && helperShowed)
                 {
-                    //ToggleVisible(inHotsGame && !foundBpUi);
-                    ToggleVisible(false);
+                    //ToggleBpVisible(inHotsGame && !foundBpUi);
+                    ToggleBpVisible(false);
                 }
                 Thread.Sleep(1500);
             }
@@ -177,6 +182,13 @@ namespace HotsBpHelper.Pages
                 {
                     lobbyLastModified = File.GetLastWriteTime(Const.BattleLobbyPath);
                     var game = FileProcessor.ProcessLobbyFile(Const.BattleLobbyPath);
+                    _mmrViewModel.FillMMR(game);
+/*
+                    Execute.OnUIThread(() =>
+                    {
+                        _mmrViewModel.ToggleVisible();
+                    });
+*/
                 }
                 Thread.Sleep(1000);
 
@@ -220,10 +232,10 @@ namespace HotsBpHelper.Pages
         public void ManuallyShowHideHelper()
         {
             AutoShowHideHelper = false;
-            ToggleVisible(true);
+            ToggleBpVisible(true);
         }
 
-        private void ToggleVisible(bool clear)
+        private void ToggleBpVisible(bool clear)
         {
             if (!isLoaded)
             {
@@ -350,6 +362,11 @@ namespace HotsBpHelper.Pages
         public interface IWebFileUpdaterViewModelFactory
         {
             WebFileUpdaterViewModel CreateViewModel();
+        }
+
+        public interface IMMRViewModelFactory
+        {
+            MMRViewModel CreateViewModel();
         }
     }
 }
