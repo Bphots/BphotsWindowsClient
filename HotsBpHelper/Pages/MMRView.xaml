@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:HotsBpHelper.Pages"
         xmlns:userControls="clr-namespace:HotsBpHelper.UserControls"
         mc:Ignorable="d"
-        Visibility="Visible"
+        Visibility="Hidden"
         ShowInTaskbar="False"
         Topmost="True"
         WindowStyle="None"
