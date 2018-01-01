@@ -188,6 +188,7 @@
     <Compile Include="Pages\SelectorViewModel.cs" />
     <Compile Include="Pages\ViewModelBase.cs" />
     <Compile Include="Settings\AppSetting.cs" />
+    <Compile Include="UserControls\ScriptingHelper.cs" />
     <Compile Include="UserControls\WebKitBrowser.xaml.cs">
       <DependentUpon>WebKitBrowser.xaml</DependentUpon>
     </Compile>
