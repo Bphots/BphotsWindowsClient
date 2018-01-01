@@ -183,12 +183,10 @@ namespace HotsBpHelper.Pages
                     lobbyLastModified = File.GetLastWriteTime(Const.BattleLobbyPath);
                     var game = FileProcessor.ProcessLobbyFile(Const.BattleLobbyPath);
                     _mmrViewModel.FillMMR(game);
-/*
                     Execute.OnUIThread(() =>
                     {
                         _mmrViewModel.ToggleVisible();
                     });
-*/
                 }
                 Thread.Sleep(1000);
 
