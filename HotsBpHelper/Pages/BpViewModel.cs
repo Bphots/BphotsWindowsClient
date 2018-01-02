@@ -52,11 +52,11 @@ namespace HotsBpHelper.Pages
 
             _eventAggregator.Subscribe(this);
 
-            var unitPos = App.MyPosition.BpHelperPosition.ToUnitPoint();
+            var unitPos = App.AppSetting.MyPosition.BpHelperPosition.ToUnitPoint();
             Left = (int)unitPos.X;
             Top = (int)unitPos.Y;
 
-            var unitSize = App.MyPosition.BpHelperSize.ToUnitSize();
+            var unitSize = App.AppSetting.MyPosition.BpHelperSize.ToUnitSize();
             Width = (int)unitSize.Width;
             Height = (int)unitSize.Height;
 
@@ -75,7 +75,7 @@ namespace HotsBpHelper.Pages
         {
             _mapSelectorViewModel = _mapSelectorViewModelFactory.CreateViewModel();
             _mapSelectorViewModel.Id = 0;
-            _mapSelectorViewModel.SetCenterAndTop(App.MyPosition.MapSelectorPosition);
+            _mapSelectorViewModel.SetCenterAndTop(App.AppSetting.MyPosition.MapSelectorPosition);
             WindowManager.ShowWindow(_mapSelectorViewModel);
             ((Window)_mapSelectorViewModel.View).Owner = (Window)this.View;
             /*
@@ -120,7 +120,7 @@ namespace HotsBpHelper.Pages
             _listPositions = new List<Point>(14); // BP总共14个选择
 
             // Left
-            sidePosition = App.MyPosition.Left;
+            sidePosition = App.AppSetting.MyPosition.Left;
             _listPositions.Add(sidePosition.Ban1);
             _listPositions.Add(sidePosition.Ban2);
             x = sidePosition.Pick1.X;
@@ -135,7 +135,7 @@ namespace HotsBpHelper.Pages
                 dx = -dx;
             }
             // Right
-            sidePosition = App.MyPosition.Right;
+            sidePosition = App.AppSetting.MyPosition.Right;
             _listPositions.Add(sidePosition.Ban1);
             _listPositions.Add(sidePosition.Ban2);
             x = sidePosition.Pick1.X;

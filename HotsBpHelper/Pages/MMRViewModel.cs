@@ -20,7 +20,7 @@ namespace HotsBpHelper.Pages
         public MMRViewModel(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
-            var size = new Size(450, 230).ToUnitSize();
+            var size = new Size(450, 270).ToUnitSize();
             Width = (int) size.Width;
             Height = (int) size.Height;
 
@@ -45,6 +45,12 @@ namespace HotsBpHelper.Pages
 
         public void FillMMR(Game game)
         {
+            _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
+            {
+                ScriptName = "setAutoCloseSeconds",
+                Args = new[] { App.AppSetting.MMRAutoCloseSeconds.ToString()},
+            }, "MMRChanel");
+
             // 取得地区ID
             string regionId = ((int)game.Region).ToString();
             // 左侧玩家BattleTags

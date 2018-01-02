@@ -9,7 +9,7 @@ namespace HotsBpHelper.Utils
     {
         public Bitmap CaptureScreen()
         {
-            var screenBmp = new Bitmap(App.MyPosition.Width, App.MyPosition.Height, PixelFormat.Format32bppRgb);
+            var screenBmp = new Bitmap(App.AppSetting.MyPosition.Width, App.AppSetting.MyPosition.Height, PixelFormat.Format32bppRgb);
             using (var bmpGraphics = Graphics.FromImage(screenBmp))
             {
                 bmpGraphics.CopyFromScreen(0, 0, 0, 0, screenBmp.Size);
