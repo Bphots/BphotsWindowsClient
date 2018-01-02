@@ -22,6 +22,7 @@
                     <MenuItem Header="{lex:Loc AutoShowHideHelper}" IsCheckable="True" IsChecked="{Binding AutoShowHideHelper}" />
                     <MenuItem Header="{lex:Loc AutoDetectHeroAndMap}" IsEnabled="False" />
                 </MenuItem>
+                <MenuItem Header="{lex:Loc AutoShowMMR}" IsCheckable="True" IsChecked="{Binding AutoShowMmr}" />
                 <MenuItem Header="{lex:Loc ShowHideHelper}" Command="{s:Action ManuallyShowHideHelper}" InputGestureText="Ctrl+Shift+B" />
 
                 <MenuItem Header="{lex:Loc Help}" Command="{s:Action ShowHelp}"/>

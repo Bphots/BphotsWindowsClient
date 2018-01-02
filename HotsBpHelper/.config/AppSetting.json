@@ -1,6 +1,6 @@
 ﻿{
   "DefaultBpHelperSize": "425,150",
-  "MMRAutoCloseSeconds": 0,
+  "MMRAutoCloseSeconds": 20,
   "Positions": [
     {
       "Width": 1366,
