@@ -7,6 +7,8 @@ namespace HotsBpHelper.Settings
         public Position[] Positions { get; set; }
 
         public Position MyPosition { get; set; }
+
+        public int MMRAutoCloseSeconds { get; set; }
     }
 
     public class Position

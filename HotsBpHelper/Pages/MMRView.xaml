@@ -6,14 +6,15 @@
         xmlns:local="clr-namespace:HotsBpHelper.Pages"
         xmlns:userControls="clr-namespace:HotsBpHelper.UserControls"
         mc:Ignorable="d"
-        Visibility="Hidden"
+        Visibility="Visible"
         ShowInTaskbar="False"
         Topmost="True"
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         SizeToContent="WidthAndHeight"
-        Title="MMRView">
+        Title="MMRView"
+        d:DataContext="{d:DesignInstance local:MMRViewModel}">
     <DockPanel>
         <userControls:WebKitBrowser x:Name="Browser" DockPanel.Dock="Top" Width="{Binding Width}"
                                     Height="{Binding Height}" Source="{Binding LocalFileUri}" />

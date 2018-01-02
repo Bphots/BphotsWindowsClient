@@ -107,6 +107,9 @@
       <HintPath>..\packages\RestSharp.105.2.3\lib\net45\RestSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Stylet">
+      <HintPath>C:\Users\WAKU\Desktop\bphelper\Client\lib\Stylet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -330,10 +333,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Github\Stylet\Stylet\Stylet.csproj">
-      <Project>{2435bd00-ac12-48b0-ad36-9bab2fdec3f5}</Project>
-      <Name>Stylet</Name>
-    </ProjectReference>
     <ProjectReference Include="D:\Documents\Programs\Heroes.ReplayParser\Heroes.ReplayParser\Heroes.ReplayParser.csproj">
       <Project>{AAF78D53-A1DA-424A-B1AA-09895EAB3B2B}</Project>
       <Name>Heroes.ReplayParser</Name>

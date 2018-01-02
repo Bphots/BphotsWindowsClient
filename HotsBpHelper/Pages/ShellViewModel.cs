@@ -146,7 +146,7 @@ namespace HotsBpHelper.Pages
                 bool inHotsGame = p.ProcessName.StartsWith(Const.HEROES_PROCESS_NAME);
                 if (inHotsGame || p.ProcessName.StartsWith(Const.HOTSBPHELPER_PROCESS_NAME) || App.NotCheckProcess)
                 {
-                    using (var topScreenImage = _imageUtil.CaptureScreen(0, 0, App.MyPosition.Width, App.MyPosition.Height / 4))
+                    using (var topScreenImage = _imageUtil.CaptureScreen(0, 0, App.AppSetting.MyPosition.Width, App.AppSetting.MyPosition.Height / 4))
                     {
                         using (var grayScreen = Grayscale.CommonAlgorithms.BT709.Apply(topScreenImage))
                         {
@@ -185,7 +185,7 @@ namespace HotsBpHelper.Pages
                     _mmrViewModel.FillMMR(game);
                     Execute.OnUIThread(() =>
                     {
-                        _mmrViewModel.ToggleVisible();
+                        _mmrViewModel.View.Visibility = Visibility.Visible;
                     });
                 }
                 Thread.Sleep(1000);
@@ -307,9 +307,9 @@ namespace HotsBpHelper.Pages
         {
             try
             {
-                var appSetting = Its.Configuration.Settings.Get<AppSetting>();
+                App.AppSetting = Its.Configuration.Settings.Get<AppSetting>();
                 var screenSize = ScreenUtil.GetScreenResolution();
-                var position = appSetting.Positions.SingleOrDefault(s => s.Width == (int)screenSize.Width && s.Height == (int)screenSize.Height);
+                var position = App.AppSetting.Positions.SingleOrDefault(s => s.Width == (int)screenSize.Width && s.Height == (int)screenSize.Height);
                 if (position == null)
                 {
                     Pages.ErrorView _errorView = new Pages.ErrorView(L("NoMatchResolution"), L("MSG_NoMatchResolution"));
@@ -320,7 +320,7 @@ namespace HotsBpHelper.Pages
                     //Application.Current.Shutdown();
                     return;
                 }
-                App.MyPosition = position;
+                App.AppSetting.MyPosition = position;
             }
             catch (Exception e)
             {
