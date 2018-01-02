@@ -234,4 +234,7 @@
   <data name="Help" xml:space="preserve">
     <value>帮助</value>
   </data>
+  <data name="AutoShowMMR" xml:space="preserve">
+    <value>自动显示MMR</value>
+  </data>
 </root>
