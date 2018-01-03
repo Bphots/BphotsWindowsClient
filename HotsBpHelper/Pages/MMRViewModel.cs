@@ -59,24 +59,13 @@ namespace HotsBpHelper.Pages
 
             // 取得地区ID
             string regionId = ((int)game.Region).ToString();
-            // 左侧玩家BattleTags
-            string leftBattleTags = string.Join("|", game.Players
-                .Where(p => p.Team == 0)
+            // 玩家BattleTags
+            string battleTags = string.Join("|", game.Players
                 .Select(p => p.BattleTag));
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
-                ScriptName = "setPlayer",
-                Args = new[] { regionId, "left", leftBattleTags }
-            }, "MMRChanel");
-
-            // 右侧玩家BattleTags
-            string rightBattleTags = string.Join("|", game.Players
-                .Where(p => p.Team == 1)
-                .Select(p => p.BattleTag));
-            _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
-            {
-                ScriptName = "setPlayer",
-                Args = new[] { regionId, "right", rightBattleTags }
+                ScriptName = "setPlayers",
+                Args = new[] { regionId, "left", battleTags }
             }, "MMRChanel");
         }
     }
