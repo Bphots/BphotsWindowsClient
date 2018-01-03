@@ -180,7 +180,7 @@ namespace HotsBpHelper.Pages
             {
                 ScriptName = scriptName,
                 Args = parameters.Select(tuple => tuple.Item2).ToArray()
-            });
+            }, "BpChanel");
         }
 
         protected override void OnClose()
