@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,11 +13,11 @@ using GlobalHotKey;
 using HotsBpHelper.Settings;
 using HotsBpHelper.Utils;
 using NAppUpdate.Framework;
-using NAppUpdate.Framework.Common;
 using NAppUpdate.Framework.Sources;
 using NAppUpdate.Framework.Tasks;
-using Stylet;
 using StatsFetcher;
+using Stylet;
+using Point = System.Drawing.Point;
 
 namespace HotsBpHelper.Pages
 {
@@ -36,11 +35,9 @@ namespace HotsBpHelper.Pages
         private BpViewModel _bpViewModel;
         private MMRViewModel _mmrViewModel;
 
-        private bool isLoaded = false;
+        private bool _isLoaded;
 
-        private Form1 form1 = new Form1();
-
-        private Game _game;
+        private readonly Form1 _form1 = new Form1();
 
         private bool _autoShowHideHelper;
         public bool AutoShowHideHelper
@@ -122,11 +119,11 @@ namespace HotsBpHelper.Pages
             WindowManager.ShowWindow(_bpViewModel);
             _mmrViewModel = _mmrViewModelFactory.CreateViewModel();
             WindowManager.ShowWindow(_mmrViewModel);
-            form1.ShowBallowNotify(L("Started"), L("StartedTips"));
+            _form1.ShowBallowNotify(L("Started"), L("StartedTips"));
             //form1.kill();
             AutoShowHideHelper = true; // 默认启用自动显隐
             AutoShowMmr = true; // 默认启用自动显示MMR
-            isLoaded = true;
+            _isLoaded = true;
             base.OnViewLoaded();
         }
 
@@ -235,7 +232,7 @@ namespace HotsBpHelper.Pages
 
         private void ToggleBpVisible(bool clear)
         {
-            if (!isLoaded)
+            if (!_isLoaded)
             {
                 return;
             }
@@ -281,7 +278,7 @@ namespace HotsBpHelper.Pages
                 }
                 //ShowMessageBox(L("UpdatesAvailable"), MessageBoxButton.OK, MessageBoxImage.Information);
 
-                form1.ShowBallowNotify();
+                _form1.ShowBallowNotify();
                 try
                 {
                     foreach (var updateTask in updManager.Tasks)
@@ -309,25 +306,72 @@ namespace HotsBpHelper.Pages
             {
                 App.AppSetting = Its.Configuration.Settings.Get<AppSetting>();
                 var screenSize = ScreenUtil.GetScreenResolution();
-                var position = App.AppSetting.Positions.SingleOrDefault(s => s.Width == (int)screenSize.Width && s.Height == (int)screenSize.Height);
-                if (position == null)
-                {
-                    Pages.ErrorView _errorView = new Pages.ErrorView(L("NoMatchResolution"), L("MSG_NoMatchResolution"));
-                    _errorView.ShowDialog();
-                    _errorView.isShutDown = true;
-                    _errorView.Pause();
-                    //ShowMessageBox(L("MSG_NoMatchResolution"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                    //Application.Current.Shutdown();
-                    return;
-                }
-                App.AppSetting.MyPosition = position;
+                App.AppSetting.MyPosition = CaculatePosition((int) screenSize.Width, (int) screenSize.Height);
             }
             catch (Exception e)
             {
-                Pages.ErrorView _errorView = new Pages.ErrorView(e.Message);
+                ErrorView _errorView = new ErrorView(e.Message);
                 _errorView.ShowDialog();
                 _errorView.Pause();
             }
+        }
+
+        /// <summary>
+        /// 根据分辨率动态计算各个位置和尺寸
+        /// </summary>
+        private Position CaculatePosition(int width, int height)
+        {
+            var bpHelperSize = App.AppSetting.DefaultBpHelperSize;
+            int heroWidth = (int)(0.08125 * height);
+            var heroHeight = (int)(0.0632 * height);
+            var position = new Position
+            {
+                Width = width,
+                Height = height,
+                BpHelperSize = bpHelperSize,
+                BpHelperPosition = new Point((int) (0.31*height),
+                    0.852*height + bpHelperSize.Height > height ? (height - bpHelperSize.Height) : (int) (0.852*height)),
+                MapSelectorPosition = new Point((int) (0.5*width), (int) (0.146*height)),
+                HeroWidth = heroWidth,
+                HeroHeight = heroHeight,
+                Left = new SidePosition
+                {
+                    Ban1 = new Point((int) (0.45*height), (int) (0.016*height)),
+                    Ban2 =
+                        new Point((int) (0.45*height),
+                            (int) (0.016*height) + (int) (0.023*height) + (int) (0.015*height)),
+                    Pick1 = new Point((int) (0.195*height), (int) (0.132*height)),
+                    Dx = (int) (0.0905*height),
+                    Dy = (int) (0.1565*height),
+                    HeroPathPoints =
+                        new[]
+                        {
+                            new Point(1, 1), new Point(1, (int) (0.0185*height)),
+                            new Point(heroWidth, heroHeight),
+                            new Point(heroWidth, heroHeight - (int) (0.0165*height))
+                        },
+                    HeroName1 = new Point((int) (0.013195*height), (int) (0.172222*height))
+                },
+                Right = new SidePosition
+                {
+                    Ban1 = new Point((int) (width - 0.45*height), (int) (0.016*height)),
+                    Ban2 =
+                        new Point((int) (width - 0.45*height),
+                            (int) (0.016*height) + (int) (0.023*height) + (int) (0.015*height)),
+                    Pick1 = new Point((int) (width - 0.195*height), (int) (0.132*height)),
+                    Dx = (int) (-0.0905*height),
+                    Dy = (int) (0.1565*height),
+                    HeroPathPoints =
+                        new[]
+                        {
+                            new Point(heroWidth, 1), new Point(heroWidth, 1 + (int) (0.0185*height)),
+                            new Point(1, heroHeight),
+                            new Point(1, heroHeight - (int) (0.0165*height))
+                        },
+                    HeroName1 = new Point((int) (width - 0.011195*height), (int) (0.172222*height))
+                }
+            };
+            return position;
         }
 
         public void Exit()

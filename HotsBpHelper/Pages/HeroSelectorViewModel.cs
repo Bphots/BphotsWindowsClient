@@ -1,4 +1,4 @@
-﻿using System.Windows;
+﻿using System.Drawing;
 using HotsBpHelper.Messages;
 using HotsBpHelper.Utils;
 using HotsBpHelper.Utils.ComboBoxItemUtil;
