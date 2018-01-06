@@ -6,6 +6,7 @@ using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using StatsFetcher;
 using Stylet;
+using Size = System.Drawing.Size;
 
 namespace HotsBpHelper.Pages
 {
@@ -21,8 +22,8 @@ namespace HotsBpHelper.Pages
         {
             _eventAggregator = eventAggregator;
             var size = new Size(450, 270).ToUnitSize();
-            Width = (int)size.Width;
-            Height = (int)size.Height;
+            Width = size.Width;
+            Height = size.Height;
 
             string filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "mmr.html#") + App.Language;
             LocalFileUri = new Uri(filePath, UriKind.Absolute);
@@ -54,7 +55,7 @@ namespace HotsBpHelper.Pages
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
                 ScriptName = "setAutoCloseSeconds",
-                Args = new[] { App.AppSetting.MMRAutoCloseSeconds.ToString() },
+                Args = new[] { App.AppSetting.MMRAutoCloseSeconds.ToString() }
             }, "MMRChanel");
 
             // 取得地区ID

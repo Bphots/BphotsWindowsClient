@@ -9,6 +9,7 @@ using HotsBpHelper.Settings;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using Stylet;
+using Point = System.Drawing.Point;
 
 namespace HotsBpHelper.Pages
 {
@@ -115,7 +116,7 @@ namespace HotsBpHelper.Pages
         private void FillPositions()
         {
             SidePosition sidePosition;
-            double x, y;
+            int x, y;
             int dx, dy;
             _listPositions = new List<Point>(14); // BP总共14个选择
 

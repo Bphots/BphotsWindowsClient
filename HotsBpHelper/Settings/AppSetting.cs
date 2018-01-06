@@ -1,4 +1,4 @@
-﻿using System.Windows;
+﻿using System.Drawing;
 
 namespace HotsBpHelper.Settings
 {
@@ -7,6 +7,8 @@ namespace HotsBpHelper.Settings
         public Position[] Positions { get; set; }
 
         public Position MyPosition { get; set; }
+
+        public Size DefaultBpHelperSize { get; set; }
 
         public int MMRAutoCloseSeconds { get; set; }
     }
@@ -26,6 +28,10 @@ namespace HotsBpHelper.Settings
         public SidePosition Left { get; set; }
 
         public SidePosition Right { get; set; }
+
+        public int HeroWidth { get; set; }
+
+        public int HeroHeight { get; set; }
     }
 
     public class SidePosition
@@ -39,5 +45,9 @@ namespace HotsBpHelper.Settings
         public int Dx { get; set; }
 
         public int Dy { get; set; }
+
+        public Point[] HeroPathPoints { get; set; }
+
+        public Point HeroName1 { get; set; }
     }
 }
