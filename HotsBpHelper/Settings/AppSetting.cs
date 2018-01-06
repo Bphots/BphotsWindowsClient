@@ -4,9 +4,7 @@ namespace HotsBpHelper.Settings
 {
     public class AppSetting
     {
-        public Position[] Positions { get; set; }
-
-        public Position MyPosition { get; set; }
+        public Position Position { get; set; }
 
         public Size DefaultBpHelperSize { get; set; }
 

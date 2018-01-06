@@ -143,7 +143,7 @@ namespace HotsBpHelper.Pages
                 bool inHotsGame = p.ProcessName.StartsWith(Const.HEROES_PROCESS_NAME);
                 if (inHotsGame || p.ProcessName.StartsWith(Const.HOTSBPHELPER_PROCESS_NAME) || App.NotCheckProcess)
                 {
-                    using (var topScreenImage = _imageUtil.CaptureScreen(0, 0, App.AppSetting.MyPosition.Width, App.AppSetting.MyPosition.Height / 4))
+                    using (var topScreenImage = _imageUtil.CaptureScreen(0, 0, App.AppSetting.Position.Width, App.AppSetting.Position.Height / 4))
                     {
                         using (var grayScreen = Grayscale.CommonAlgorithms.BT709.Apply(topScreenImage))
                         {
@@ -306,7 +306,7 @@ namespace HotsBpHelper.Pages
             {
                 App.AppSetting = Its.Configuration.Settings.Get<AppSetting>();
                 var screenSize = ScreenUtil.GetScreenResolution();
-                App.AppSetting.MyPosition = CaculatePosition((int) screenSize.Width, (int) screenSize.Height);
+                App.AppSetting.Position = CaculatePosition((int) screenSize.Width, (int) screenSize.Height);
             }
             catch (Exception e)
             {
