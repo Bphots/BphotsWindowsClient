@@ -273,6 +273,7 @@
     <Content Include=".config\AppSetting.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="LICENSE.md" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
