@@ -1,0 +1,242 @@
+﻿{
+  "DefaultBpHelperSize": "425,150",
+  "Positions": [
+    {
+      "Width": 1366,
+      "Height": 768,
+      "BpHelperPosition": "228,642",
+      "BpHelperSize": "410,125",
+      "MapSelectorPosition": "683,113",
+      "Left": {
+        "Ban1": "362, 10",
+        "Ban2": "362, 50",
+        "Pick1": "151, 101",
+        "Dx": 70,
+        "Dy": 120
+      },
+      "Right": {
+        "Ban1": "1002, 10",
+        "Ban2": "1002, 50",
+        "Pick1": "1216, 101",
+        "Dx": -68,
+        "Dy": 120
+      }
+    },
+    {
+      "Width": 1440,
+      "Height": 900,
+      "BpHelperPosition": "263,753",
+      "BpHelperSize": "410,140",
+      "MapSelectorPosition": "720,129",
+      "Left": {
+        "Ban1": "400, 10",
+        "Ban2": "400, 50",
+        "Pick1": "174, 115",
+        "Dx": 82,
+        "Dy": 141
+      },
+      "Right": {
+        "Ban1": "1038, 10",
+        "Ban2": "1038, 50",
+        "Pick1": "1265, 115",
+        "Dx": -78,
+        "Dy": 141
+      }
+    },
+    {
+      "Width": 1600,
+      "Height": 900,
+      "BpHelperPosition": "263,758",
+      "BpHelperSize": "425,150",
+      "MapSelectorPosition": "799,129",
+      "Left": {
+        "Ban1": "400, 10",
+        "Ban2": "400, 50",
+        "Pick1": "174, 115",
+        "Dx": 82,
+        "Dy": 141
+      },
+      "Right": {
+        "Ban1": "1197, 10",
+        "Ban2": "1197, 50",
+        "Pick1": "1424, 115",
+        "Dx": -80,
+        "Dy": 141
+      }
+    },
+    {
+      "Width": 1680,
+      "Height": 1050,
+      "BpHelperPosition": "310,885",
+      "BpHelperSize": "425,150",
+      "MapSelectorPosition": "840,152",
+      "Left": {
+        "Ban1": "479, 17",
+        "Ban2": "479, 70",
+        "Pick1": "203, 143",
+        "Dx": 97,
+        "Dy": 163
+      },
+      "Right": {
+        "Ban1": "1200, 17",
+        "Ban2": "1200, 70",
+        "Pick1": "1477, 143",
+        "Dx": -97,
+        "Dy": 163
+      }
+    },
+    {
+      "Width": 1920,
+      "Height": 1080,
+      "BpHelperPosition": "322,906",
+      "BpHelperSize": "425,150",
+      "MapSelectorPosition": "961,157",
+      "Left": {
+        "Ban1": "479, 17",
+        "Ban2": "479, 70",
+        "Pick1": "213, 143",
+        "Dx": 99,
+        "Dy": 170
+      },
+      "Right": {
+        "Ban1": "1438, 17",
+        "Ban2": "1438, 70",
+        "Pick1": "1707, 143",
+        "Dx": -97,
+        "Dy": 170
+      }
+    },
+    {
+      "Width": 1920,
+      "Height": 1200,
+      "BpHelperPosition": "355,1022",
+      "BpHelperSize": "425,150",
+      "MapSelectorPosition": "961,175",
+      "Left": {
+        "Ban1": "550, 17",
+        "Ban2": "550, 70",
+        "Pick1": "230, 160",
+        "Dx": 110,
+        "Dy": 190
+      },
+      "Right": {
+        "Ban1": "1370, 17",
+        "Ban2": "1370, 70",
+        "Pick1": "1810, 160",
+        "Dx": -110,
+        "Dy": 190
+      }
+    },
+    {
+      "Width": 2560,
+      "Height": 1080,
+      "BpHelperPosition": "690,915",
+      "BpHelperSize": "425,150",
+      "MapSelectorPosition": "1280,157",
+      "Left": {
+        "Ban1": "485, 17",
+        "Ban2": "485, 70",
+        "Pick1": "213, 143",
+        "Dx": 99,
+        "Dy": 170
+      },
+      "Right": {
+        "Ban1": "2076, 17",
+        "Ban2": "2076, 70",
+        "Pick1": "2347, 143",
+        "Dx": -97,
+        "Dy": 170
+      }
+    },
+    {
+      "Width": 2560,
+      "Height": 1440,
+      "BpHelperPosition": "490,1235",
+      "BpHelperSize": "425,150",
+      "MapSelectorPosition": "1280,210",
+      "Left": {
+        "Ban1": "655, 17",
+        "Ban2": "655, 70",
+        "Pick1": "283, 183",
+        "Dx": 129,
+        "Dy": 226
+      },
+      "Right": {
+        "Ban1": "1905, 17",
+        "Ban2": "1905, 70",
+        "Pick1": "2277, 183",
+        "Dx": -129,
+        "Dy": 226
+      }
+    },
+	  {
+      "Width": 3440,
+      "Height": 1440,
+      "BpHelperPosition": "460,1215",
+      "BpHelperSize": "425,150",
+      "MapSelectorPosition": "1720,210",
+      "HeroWidth": 117,
+      "HeroHeight": 91,
+      "Left": {
+        "Ban1": "660, 30",
+        "Ban2": "660, 80",
+        "Pick1": "280, 188",
+        "Dx": 132,
+        "Dy": 226,
+        "HeroPathPoints": [ "1,1", "1, 28", "117, 91", "117, 69" ],
+        "HeroName1": "19, 248"
+      },
+      "Right": {
+        "Ban1": "2680, 30",
+        "Ban2": "2680, 80",
+        "Pick1": "3060, 188",
+        "Dx": -132,
+        "Dy": 226,
+        "HeroPathPoints": [ "117,1", "117, 28", "1, 91", "1, 70" ],
+        "HeroName1": "3422, 251"
+      }
+    },
+    {
+      "Width": 2715,
+      "Height": 1527,
+      "BpHelperPosition": "665,1300",
+      "BpHelperSize": "425,150",
+      "MapSelectorPosition": "1357,220",
+      "Left": {
+        "Ban1": "690, 17",
+        "Ban2": "690, 70",
+        "Pick1": "295, 200",
+        "Dx": 140,
+        "Dy": 238
+      },
+      "Right": {
+        "Ban1": "2025, 17",
+        "Ban2": "2025, 70",
+        "Pick1": "2420, 200",
+        "Dx": -140,
+        "Dy": 238
+      }
+    },
+    {
+      "Width": 3840,
+      "Height": 2160,
+      "BpHelperPosition": "1120,1875",
+      "BpHelperSize": "425,150",
+      "MapSelectorPosition": "1920,320",
+      "Left": {
+        "Ban1": "1100, 30",
+        "Ban2": "1100, 80",
+        "Pick1": "420, 285",
+        "Dx": 200,
+        "Dy": 343
+      },
+      "Right": {
+        "Ban1": "2740, 30",
+        "Ban2": "1905, 80",
+        "Pick1": "2140, 285",
+        "Dx": -200,
+        "Dy": 343
+      }
+    }
+  ]
+}

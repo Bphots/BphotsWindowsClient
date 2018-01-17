@@ -1,0 +1,52 @@
+﻿<Window x:Class="HotsBpHelper.Pages.MapSelectorView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:pages="clr-namespace:HotsBpHelper.Pages"
+        xmlns:s="https://github.com/canton7/Stylet"
+        xmlns:wpf="clr-namespace:HotsBpHelper.WPF"
+        mc:Ignorable="d"
+          SizeToContent="WidthAndHeight"
+      Topmost="True"
+        WindowStartupLocation="Manual"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"       
+        d:DataContext="{d:DesignInstance pages:MapSelectorViewModel}"
+        Left="{Binding Left}"
+        Top="{Binding Top}"
+        ShowInTaskbar="False"
+        Opacity="0.8"
+        Width="{Binding Size.Width}" Height="{Binding Size.Height}"
+        >
+    <DockPanel Visibility="{Binding Visibility}">
+        <DockPanel.Resources>
+            <Style TargetType="Button">
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="True">
+                        <Trigger.EnterActions>
+                            <BeginStoryboard Name="Flash" Storyboard="{StaticResource FlashAnimation}"></BeginStoryboard>
+                        </Trigger.EnterActions>
+                        <Trigger.ExitActions>
+                            <StopStoryboard  BeginStoryboardName="Flash"></StopStoryboard>
+                        </Trigger.ExitActions>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </DockPanel.Resources>
+        <Button DockPanel.Dock="Left" Content="←" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Left}" Width="24" Visibility="{Binding ButtonVisibility}"/>
+        <Button DockPanel.Dock="Right" Content="→" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Right}" Width="24"  Visibility="{Binding ButtonVisibility}"/>
+        <wpf:FilteredComboBox VerticalAlignment="Stretch" MinWidth="130" BorderThickness="1" BorderBrush="#1C1239" ItemsSource="{Binding ItemsInfos}"
+                                        IsEditable="True" 
+                                        IsTextSearchEnabled="False" 
+                                        StaysOpenOnEdit="True"
+                                        FontSize="14"
+                                       DisplayMemberPath="Name" SelectedItem="{Binding SelectedItemInfo}" Opacity="0.6" 
+                              >
+            <wpf:FilteredComboBox.Effect>
+                <DropShadowEffect Color="#FF51FF00" ShadowDepth="0"/>
+            </wpf:FilteredComboBox.Effect>
+        </wpf:FilteredComboBox>
+    </DockPanel>
+</Window>

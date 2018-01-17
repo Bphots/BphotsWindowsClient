@@ -1,0 +1,35 @@
+<Window x:Class="HotsBpHelper.Pages.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HotsBpHelper.Pages"
+        lex:ResxLocalizationProvider.DefaultAssembly="HotsBpHelper"
+        lex:ResxLocalizationProvider.DefaultDictionary="Strings"
+        WindowState="Minimized"
+        Visibility="Hidden"
+        ShowInTaskbar="False"
+        mc:Ignorable="d"
+        Title="{lex:Loc HotsBpHelper}" Height="0" Width="0"
+        xmlns:lex="http://wpflocalizeextension.codeplex.com"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        xmlns:s="https://github.com/canton7/Stylet"
+        d:DataContext="{d:DesignInstance local:ShellViewModel}">
+    <tb:TaskbarIcon IconSource="/Images/hots.ico" ToolTipText="{lex:Loc HotsBpHelper}">
+        <tb:TaskbarIcon.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="{lex:Loc AutoShowHideHelper}" IsCheckable="True" IsChecked="{Binding AutoShowHideHelper}" />
+                <MenuItem Header="{lex:Loc AutoDetectHeroAndMap}" IsCheckable="True" IsChecked="{Binding AutoDetect}" InputGestureText="Ctrl+Shift+R"/>
+                <Separator />
+                <MenuItem Header="{lex:Loc ShowHideHelper}" Command="{s:Action ManuallyShowHideHelper}" InputGestureText="Ctrl+Shift+B" />
+                <MenuItem Header="{lex:Loc SwitchVisibility}" Command="{s:Action SwitchVisibility}" InputGestureText="Ctrl+Shift+M" />
+                <MenuItem Header="{lex:Loc ResetHelper}" Command="{s:Action ResetHelper}" InputGestureText="Ctrl+Shift+N" />
+                <MenuItem Header="{lex:Loc Help}" Command="{s:Action ShowHelp}"/>
+                <MenuItem Header="{lex:Loc About}" Command="{s:Action ShowAbout}"/>
+
+                <Separator />
+                <MenuItem Header="{lex:Loc Exit}" Command="{s:Action Exit}" />
+            </ContextMenu>
+        </tb:TaskbarIcon.ContextMenu>
+    </tb:TaskbarIcon>
+</Window>
