@@ -13,10 +13,13 @@
                         <local:Bootstrapper />
                     </s:ApplicationLoader.Bootstrapper>
                 </s:ApplicationLoader>
+                <ResourceDictionary Source="pack://application:,,,/ToastNotifications.Messages;component/Themes/Default.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Storyboard x:Key="FlashAnimation" >
                 <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" AutoReverse="True" Duration="0:0:0.3" RepeatBehavior="3x" />
             </Storyboard>
+            
         </ResourceDictionary>
+        
     </Application.Resources>
 </Application>

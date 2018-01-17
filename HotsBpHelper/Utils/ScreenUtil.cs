@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Drawing;
 
 namespace HotsBpHelper.Utils
 {
@@ -210,7 +210,7 @@ namespace HotsBpHelper.Utils
         public static Point ToPixelPoint(this Point unitPoint)
         {
             int pixelX, pixelY;
-            TransformToPixels(unitPoint.X, unitPoint.Y, out pixelX, out pixelY);
+            TransformToPixels((int)unitPoint.X, (int)unitPoint.Y, out pixelX, out pixelY);
             return new Point(pixelX, pixelY);
         }
 
@@ -222,7 +222,7 @@ namespace HotsBpHelper.Utils
         /// <param name="pixelY">returns the Y value in pixels</param>
         /// <param name="unitX">a device independent unit value X</param>
         /// <param name="unitY">a device independent unit value Y</param>
-        public static void TransformFromPixels(int pixelX, int pixelY, out int unitX, out int unitY)
+        public static void TransformFromPixels(int pixelX, int pixelY, out double unitX, out double unitY)
         {
             IntPtr hDc = GetDC(IntPtr.Zero);
             if (hDc != IntPtr.Zero)
@@ -232,8 +232,8 @@ namespace HotsBpHelper.Utils
 
                 ReleaseDC(IntPtr.Zero, hDc);
 
-                unitX = (int) (pixelX * 96 / (double)dpiX);
-                unitY = (int) (pixelY * 96 / (double)dpiY);
+                unitX = pixelX * 96 / (double)dpiX;
+                unitY = pixelY * 96 / (double)dpiY;
             }
             else
                 throw new ArgumentNullException("Failed to get DC.");
@@ -241,16 +241,16 @@ namespace HotsBpHelper.Utils
 
         public static Point ToUnitPoint(this Point pixelPoint)
         {
-            int unitX, unitY;
-            TransformFromPixels(pixelPoint.X, pixelPoint.Y, out unitX, out unitY);
-            return new Point(unitX, unitY);
+            double unitX, unitY;
+            TransformFromPixels((int)pixelPoint.X, (int)pixelPoint.Y, out unitX, out unitY);
+            return new Point((int)unitX, (int)unitY);
 
         }
         public static Size ToUnitSize(this Size pixelSize)
         {
-            int unitWidth, unitHeight;
-            TransformFromPixels(pixelSize.Width, pixelSize.Height, out unitWidth, out unitHeight);
-            return new Size(unitWidth, unitHeight);
+            double unitWidth, unitHeight;
+            TransformFromPixels((int)pixelSize.Width, (int)pixelSize.Height, out unitWidth, out unitHeight);
+            return new Size((int)unitWidth, (int)unitHeight);
 
         }
 

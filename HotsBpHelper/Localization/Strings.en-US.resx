@@ -163,7 +163,7 @@
     <value>No match resolution, cannot start the client.</value>
   </data>
   <data name="NO_CHOOSE" xml:space="preserve">
-    <value>[NoChose]</value>
+    <value>[Please Select]</value>
   </data>
   <data name="UpdatesAvailable" xml:space="preserve">
     <value>Find new version, ready to update.</value>
@@ -175,7 +175,7 @@
     <value>Exit</value>
   </data>
   <data name="AutoShowHideHelper" xml:space="preserve">
-    <value>Auto show/hide helper</value>
+    <value>Enable match detection</value>
   </data>
   <data name="RegisterHotKeyFailed" xml:space="preserve">
     <value>Register hotkey failed, please use system tray.</value>
@@ -224,5 +224,50 @@
   </data>
   <data name="AutoShowMMR" xml:space="preserve">
     <value>Auto show MMR</value>
+  </data>
+  <data name="AutoBpScreenModeOnToolTip" xml:space="preserve">
+    <value>Press Ctrl+Shit+B to launch the tool manually. To enable automatic match detection please select 'Auto detect match' from the tray menu. </value>
+  </data>
+  <data name="AutoDetect" xml:space="preserve">
+    <value>Enable character recognition</value>
+  </data>
+  <data name="AutoDetectHeroAndMap" xml:space="preserve">
+    <value>Enable character&amp;map recognition</value>
+  </data>
+  <data name="AutoShowHideModeOffToolTip" xml:space="preserve">
+    <value>Automatic match detection has been diabled. To enable please visit the tray menu options.</value>
+  </data>
+  <data name="IncompatibleResolution" xml:space="preserve">
+    <value>Automatic map&amp;character recognition has been disabled due to imcompatible screen resolution.</value>
+  </data>
+  <data name="LanguageUnavailable" xml:space="preserve">
+    <value>Cannot enable automatic map&amp;character recognition. Please make sure the language pack and Microsift Visual C++ Redistributable for Visual Studio 2015 has been installed.</value>
+  </data>
+  <data name="MatchDetectOffTitle" xml:space="preserve">
+    <value>Match detection disabled</value>
+  </data>
+  <data name="MatchDetectOnTitle" xml:space="preserve">
+    <value>Match detection enabled</value>
+  </data>
+  <data name="OcrModeOffTitle" xml:space="preserve">
+    <value>Hero detection disabled</value>
+  </data>
+  <data name="OcrModeOffToolTip" xml:space="preserve">
+    <value>Please select the corresponding hero&amp;map manually. Press Ctrl+Shift+R to switch to automatic detection.</value>
+  </data>
+  <data name="OcrModeOnTitle" xml:space="preserve">
+    <value>Hero detection enabled</value>
+  </data>
+  <data name="OcrModeOnToolTip" xml:space="preserve">
+    <value>Hero and map names will be automaticaly recognized. Press Ctrl+Shift+R to switch to manually selection mode.</value>
+  </data>
+  <data name="OcrModeToolTipTitle" xml:space="preserve">
+    <value>BpHelper is running</value>
+  </data>
+  <data name="TessdataQuestion" xml:space="preserve">
+    <value>The auto detection language pack has not been installed. Would you like to download?</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Loading... Please wait</value>
   </data>
 </root>

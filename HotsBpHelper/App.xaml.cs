@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using HotsBpHelper.Settings;
+using ImageProcessor.Ocr;
 
 namespace HotsBpHelper
 {
@@ -17,24 +18,35 @@ namespace HotsBpHelper
     public partial class App : Application
     {
         public static string AppPath;
-        public static AppSetting AppSetting;
+        public static Position MyPosition;
 
+        public static bool DynamicPosition;
         public static bool Debug;
         public static bool NotCheckProcess;
 
         public static string Language = CultureInfo.CurrentCulture.Name;
 
+        public static OcrLanguage OcrLanguage;
+
         private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             Pages.ErrorView _errorView;
-            if (e.Exception.Message.ToLower().Contains("lang")) {
-                _errorView = new Pages.ErrorView(e.Exception.Message + "\nApplication language=" + App.Language);
+            try
+            {
+                if (e.Exception.Message.ToLower().Contains("lang"))
+                {
+                    _errorView = new Pages.ErrorView(e.Exception.Message + "\nApplication language=" + App.Language);
+                }
+                else _errorView = new Pages.ErrorView(e.Exception.Message);
+                _errorView.ShowDialog();
+                _errorView.Pause();
+                //MessageBox.Show(e.Exception.Message, "", MessageBoxButton.OK, MessageBoxImage.Error);
+                e.Handled = true;
             }
-            else _errorView = new Pages.ErrorView(e.Exception.Message);
-            _errorView.ShowDialog();
-            _errorView.Pause();
-            //MessageBox.Show(e.Exception.Message, "", MessageBoxButton.OK, MessageBoxImage.Error);
-            e.Handled = true;
+            catch (Exception)
+            {
+                // ignored
+            }
             //Current.Shutdown();
         }
     }

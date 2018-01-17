@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using HotsBpHelper.Api;
 using HotsBpHelper.Api.Model;
+using ImageProcessor.Ocr;
 
 namespace HotsBpHelper.Utils.ComboBoxItemUtil
 {
@@ -29,6 +30,11 @@ namespace HotsBpHelper.Utils.ComboBoxItemUtil
                         Acronym = hi.Acronym,
                     })
                     .OrderBy(item => item.Name);
+
+                foreach (var heroInfo in _heroInfos)
+                {
+                    OcrEngine.CandidateHeroes.Add(heroInfo.Name);
+                }
             }
             return _heroInfos;
         }

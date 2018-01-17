@@ -237,7 +237,4 @@
   <data name="ShowHideHelper" xml:space="preserve">
     <value>顯示/隱藏背鍋助手</value>
   </data>
-  <data name="AutoShowMMR" xml:space="preserve">
-    <value>自動顯示MMR</value>
-  </data>
 </root>

@@ -1,13 +1,18 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using HotsBpHelper.Api;
 using HotsBpHelper.Api.Security;
+using HotsBpHelper.Factories;
 using Stylet;
 using StyletIoC;
 using HotsBpHelper.Pages;
+using HotsBpHelper.Services;
+using HotsBpHelper.Settings;
 using HotsBpHelper.Utils;
 using HotsBpHelper.Utils.ComboBoxItemUtil;
+using ImageProcessor.Ocr;
 using WPFLocalizeExtension.Engine;
 
 namespace HotsBpHelper
@@ -16,17 +21,34 @@ namespace HotsBpHelper
     {
         protected override void ConfigureIoC(IStyletIoCBuilder builder)
         {
-//            builder.Bind<IRestApi>().To<DummyRestApi>();
+            //            builder.Bind<IRestApi>().To<DummyRestApi>();
             builder.Bind<IRestApi>().To<RestApi>().InSingletonScope();
             builder.Bind<HeroItemUtil>().ToSelf().InSingletonScope();
             builder.Bind<MapItemUtil>().ToSelf().InSingletonScope();
             builder.Bind<ISecurityProvider>().To<SecurityProvider>().InSingletonScope();
-            builder.Bind<IHeroSelectorViewModelFactory>().ToAbstractFactory();
-            builder.Bind<IMapSelectorViewModelFactory>().ToAbstractFactory();
-            builder.Bind<ShellViewModel.IWebFileUpdaterViewModelFactory>().ToAbstractFactory();
-            builder.Bind<ShellViewModel.IBpViewModelFactory>().ToAbstractFactory();
-            builder.Bind<ShellViewModel.IMMRViewModelFactory>().ToAbstractFactory();
+            builder.Bind<IToastService>().To<ToastService>().InSingletonScope();
+
+            RegisterViewModelFactories(builder);
+
             builder.Bind<IImageUtil>().To<ImageUtils>();
+        }
+
+        private static void RegisterViewModelFactories(IStyletIoCBuilder builder)
+        {
+            var vmTypeList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
+                from assemblyType in domainAssembly.GetTypes()
+                where typeof (ViewModelBase).IsAssignableFrom(assemblyType)
+                select assemblyType).Where(vmType => !vmType.IsGenericType && !vmType.IsAbstract).ToArray();
+
+            var method = typeof (IStyletIoCBuilder).GetMethod("Bind", new Type[] {});
+            foreach (var vm in vmTypeList)
+            {
+                var generic = method?.MakeGenericMethod(vm);
+                var bindTo = generic?.Invoke(builder, null) as IBindTo;
+                bindTo?.ToSelf();
+            }
+
+            builder.Bind<ViewModelFactory>().ToSelf().InSingletonScope();
         }
 
         protected override void Configure()
@@ -35,10 +57,7 @@ namespace HotsBpHelper
             App.AppPath = AppDomain.CurrentDomain.BaseDirectory;
 
             var args = Environment.GetCommandLineArgs();
-            if (args.Any(arg => arg.ToLower() == "/debug"))
-            {
-                App.Debug = true;
-            }
+			
             if (args.Any(arg => arg.ToLower() == "/notcheckprocess"))
             {
                 App.NotCheckProcess = true;
@@ -82,18 +101,27 @@ namespace HotsBpHelper
                     break;
                 case "zh-CHS":
                     App.Language = "zh-CN";
+                    LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN");
                     break;
                 case "zh-HK":
-                    App.Language = "zh-TW";
-                    break;
                 case "zh-CHT":
                     App.Language = "zh-TW";
+                    LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-TW");
                     break;
                 default:
-                    App.Language = "en-US";
+                    App.Language = "zh-CN";
+                    LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN");
                     break;
             }
-            
+
+            App.Language = "zh-CN";
+            LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN"); //TODO REMOVE
+
+            App.OcrLanguage = OcrLanguage.English;
+            if (App.Language.Contains(@"CN"))
+                App.OcrLanguage = OcrLanguage.SimplifiedChinese;
+            if (App.Language.Contains(@"TW"))
+                App.OcrLanguage = OcrLanguage.TraditionalChinese;
         }
     }
 }

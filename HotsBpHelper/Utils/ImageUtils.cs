@@ -9,13 +9,14 @@ namespace HotsBpHelper.Utils
     {
         public Bitmap CaptureScreen()
         {
-            var screenBmp = new Bitmap(App.AppSetting.Position.Width, App.AppSetting.Position.Height, PixelFormat.Format32bppRgb);
-            using (var bmpGraphics = Graphics.FromImage(screenBmp))
+            Bitmap bitmap = new Bitmap(App.MyPosition.Width, App.MyPosition.Height, PixelFormat.Format32bppRgb);
+            using (Graphics graphics = Graphics.FromImage(bitmap))
             {
-                bmpGraphics.CopyFromScreen(0, 0, 0, 0, screenBmp.Size);
-                return screenBmp;
+                graphics.CopyFromScreen(0, 0, 0, 0, bitmap.Size);
             }
+            return bitmap;
         }
+
         public Bitmap CaptureScreen(int x1, int y1, int x2, int y2)
         {
             var screenBmp = new Bitmap(x2 - x1, y2 - y1, PixelFormat.Format32bppRgb);
@@ -33,24 +34,21 @@ namespace HotsBpHelper.Utils
 
         public Bitmap CaptureArea(Bitmap bmp, Rectangle rect, Point[] clipPoints)
         {
-            var areaBmp = new Bitmap(
-                rect.Width,
-                rect.Height,
-                PixelFormat.Format24bppRgb);
-            using (var g = Graphics.FromImage(areaBmp))
+            Bitmap bitmap = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppRgb);
+            using (Graphics graphics = Graphics.FromImage(bitmap))
             {
-                g.FillRectangle(Brushes.Fuchsia, 0, 0, rect.Width, rect.Height);
-                using (var path = new GraphicsPath())
+                graphics.FillRectangle(Brushes.Black, 0, 0, rect.Width, rect.Height);
+                using (GraphicsPath graphicsPath = new GraphicsPath())
                 {
-                    if (clipPoints.Length > 0)
+                    if (clipPoints.Length != 0)
                     {
-                        path.AddPolygon(clipPoints);
-                        g.SetClip(path);
+                        graphicsPath.AddPolygon(clipPoints);
+                        graphics.SetClip(graphicsPath);
                     }
                 }
-                g.DrawImage(bmp, 0, 0, rect, GraphicsUnit.Pixel);
-                return areaBmp;
+                graphics.DrawImage(bmp, 0, 0, rect, GraphicsUnit.Pixel);
             }
+            return bitmap;
         }
 
         public Bitmap CopBitmap(Bitmap bmp, Rectangle cropArea)
