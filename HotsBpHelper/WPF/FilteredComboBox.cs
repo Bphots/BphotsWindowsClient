@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Effects;
 using HotsBpHelper.Pages;
 
 namespace HotsBpHelper.WPF
@@ -22,10 +24,16 @@ namespace HotsBpHelper.WPF
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
             //取消高光效果
         {
-            if (string.IsNullOrEmpty(Text))
-                Effect = null;
-
+            Effect = null;
+            if (e.AddedItems.Count == 0 && e.RemovedItems.Count > 0)
+                Focus();
             base.OnSelectionChanged(e);
+        }
+
+        protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        {
+            Effect = new DropShadowEffect() {Color = Color.FromArgb(255, 81, 255, 0), ShadowDepth = 0};
+            base.OnGotKeyboardFocus(e);
         }
 
         protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)

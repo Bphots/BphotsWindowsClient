@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using HotsBpHelper.Api.Security;
 using HotsBpHelper.HeroFinder;
 using HotsBpHelper.Messages;
@@ -13,6 +14,7 @@ using HotsBpHelper.Settings;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using Stylet;
+using MessageBox = System.Windows.MessageBox;
 using Point = System.Drawing.Point;
 
 namespace HotsBpHelper.Pages
@@ -24,6 +26,7 @@ namespace HotsBpHelper.Pages
         private readonly List<HeroSelectorViewModel> _cachedHeroSelectorViewModels = new List<HeroSelectorViewModel>();
         private readonly IEventAggregator _eventAggregator;
         private readonly IHeroSelectorViewModelFactory _heroSelectorViewModelFactory;
+        private readonly IHeroSelectorWindowViewModelFactory _heroSelectorWindowViewModelFactory;
 
         private readonly IMapSelectorViewModelFactory _mapSelectorViewModelFactory;
 
@@ -36,6 +39,7 @@ namespace HotsBpHelper.Pages
 
         private bool _hasLookedForMap;
         private int _height;
+        private HeroSelectorWindowViewModel _heroSelectorWindowViewModel;
 
         private bool _isAutoMode;
 
@@ -55,10 +59,9 @@ namespace HotsBpHelper.Pages
 
         private Visibility _visibility;
         private int _width;
-        private HeroSelectorWindowViewModel _heroSelectorWindowViewModel;
-        private readonly IHeroSelectorWindowViewModelFactory _heroSelectorWindowViewModelFactory;
 
-        public BpViewModel(IHeroSelectorWindowViewModelFactory heroSelectorWindowViewModelFactory, IHeroSelectorViewModelFactory heroSelectorViewModelFactory,
+        public BpViewModel(IHeroSelectorWindowViewModelFactory heroSelectorWindowViewModelFactory,
+            IHeroSelectorViewModelFactory heroSelectorViewModelFactory,
             IMapSelectorViewModelFactory mapSelectorViewModelFactory,
             IEventAggregator eventAggregator, ISecurityProvider securityProvider)
         {
@@ -83,7 +86,7 @@ namespace HotsBpHelper.Pages
         }
 
         public BindableCollection<HeroSelectorViewModel> HeroSelectorViewModels =>
-                _heroSelectorWindowViewModel?.HeroSelectorViewModels;
+            _heroSelectorWindowViewModel?.HeroSelectorViewModels;
 
         public int Left { get; set; }
 
@@ -220,36 +223,46 @@ namespace HotsBpHelper.Pages
             {
                 if (message.ItemInfo == null)
                 {
-                    // 回退一步
-                    //if (BpStatus.CurrentStep > 0)
-                    //{
-                    //    //移除本次bp框
-                    //    HeroSelectorViewModels[BpStatus.CurrentStep].RequestClose();
-                    //    HeroSelectorViewModels.Remove(HeroSelectorViewModels[BpStatus.CurrentStep]);
-                    //    BpStatus.CurrentStep--;
-                    //    //移除上一步bp框
-                    //    HeroSelectorViewModels[BpStatus.CurrentStep].RequestClose();
-                    //    HeroSelectorViewModels.Remove(HeroSelectorViewModels[BpStatus.CurrentStep]);
-                    //    //重新推进一步
-                    //    ProcessStep();
-                    //}
-                    //else
-                    //{
-                    //    //移除本次bp框
-                    //    HeroSelectorViewModels[BpStatus.CurrentStep].RequestClose();
-                    //    HeroSelectorViewModels.Remove(HeroSelectorViewModels[BpStatus.CurrentStep]);
-                    //    //重新推进一步
-                    //    ProcessStep();
-                    //}
-                    //InvokeScript("update", new List<Tuple<string, string>>
-                    //{
-                    //    Tuple.Create("chose", string.Join("|",
-                    //        HeroSelectorViewModels
-                    //            .Where(vm => vm.SelectedItemInfo != null)
-                    //            .Select(vm => vm.SelectedItemInfo.Id))),
-                    //    Tuple.Create("map", BpStatus.Map),
-                    //    Tuple.Create("lang", App.Language)
-                    //});
+                    if (IsAutoMode || BpStatus.CurrentStep <= 0)
+                        return;
+
+                    if (BpStatus.StepSelectedIndex.Any())
+                    {
+                        foreach (var i in _listBpSteps[BpStatus.CurrentStep])
+                        {
+                            var vm = HeroSelectorViewModels.First(v => v.Id == i);
+                            vm.Selected = false;
+                            vm.SelectedItemInfo = null;
+                        }
+                        BpStatus.StepSelectedIndex.Clear();
+                    }
+                    else
+                    {
+                        foreach (var i in _listBpSteps[BpStatus.CurrentStep])
+                        {
+                            var vm = HeroSelectorViewModels.First(v => v.Id == i);
+                            vm.InteractionVisible = false;
+                        }
+
+                        BpStatus.CurrentStep--;
+
+                        foreach (var i in _listBpSteps[BpStatus.CurrentStep])
+                        {
+                            var vm = HeroSelectorViewModels.First(v => v.Id == i);
+                            vm.Selected = false;
+                            vm.SelectedItemInfo = null;
+                        }
+                    }
+                    
+                    InvokeScript("update", new List<Tuple<string, string>>
+                    {
+                        Tuple.Create("chose", string.Join("|",
+                            HeroSelectorViewModels
+                                .Where(vm => vm.SelectedItemInfo != null)
+                                .Select(vm => vm.SelectedItemInfo.Id))),
+                        Tuple.Create("map", BpStatus.Map),
+                        Tuple.Create("lang", App.Language)
+                    });
                     return;
                 }
 
@@ -382,6 +395,7 @@ namespace HotsBpHelper.Pages
             ProcessStep();
         }
 
+        public event EventHandler TurnOffAutoDetectMode;
         public event EventHandler RemindDetectMode;
         public event EventHandler RemindBpStart;
 
@@ -416,7 +430,6 @@ namespace HotsBpHelper.Pages
             FillPositions();
             InitializeMapSelector();
             InitializeAllHeroSelector();
-
         }
 
         public void SelectMap(string map)
@@ -455,7 +468,7 @@ namespace HotsBpHelper.Pages
 
             _heroSelectorWindowViewModel = _heroSelectorWindowViewModelFactory.CreateViewModel();
             WindowManager.ShowWindow(_heroSelectorWindowViewModel);
-            ((Window)_heroSelectorWindowViewModel.View).Owner = (Window)View;
+            ((Window) _heroSelectorWindowViewModel.View).Owner = (Window) View;
 
             for (var i = 0; i <= 13; ++i)
             {
@@ -692,7 +705,7 @@ namespace HotsBpHelper.Pages
             _scanningCancellationToken?.Cancel();
             MapOnlyCancellationToken?.Cancel();
         }
-        
+
         private async Task OcrAsync(IEnumerable<int> steps, CancellationToken cancellationToken)
         {
             var stepToProcess = new List<int>();
@@ -715,9 +728,9 @@ namespace HotsBpHelper.Pages
             try
             {
                 if (stepToProcess[0] <= 6)
-                    await OcrUtil.ScanLeftAsync(stepToProcess, this, cancellationToken).ConfigureAwait(false);
+                    await OcrUtil.ScanLabelAsync(stepToProcess, this, OcrUtil.ScanSide.Left, cancellationToken).ConfigureAwait(false);
                 else
-                    await OcrUtil.ScanRightAsync(stepToProcess, this, cancellationToken).ConfigureAwait(false);
+                    await OcrUtil.ScanLabelAsync(stepToProcess, this, OcrUtil.ScanSide.Right, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -866,7 +879,7 @@ namespace HotsBpHelper.Pages
 
                 if (!IsAutoMode)
                     Execute.OnUIThread(() => { BpScreenLoaded = true; });
-                
+
                 Execute.OnUIThread(() => SwitchMapSelector(true, false));
                 if (!string.IsNullOrEmpty(map))
                     Execute.OnUIThread(() => SelectMap(map));
@@ -1065,12 +1078,23 @@ namespace HotsBpHelper.Pages
         {
             RemindBpStart?.Invoke(this, EventArgs.Empty);
         }
+
+        public void CancelScan()
+        {
+            OnTurnOffAutoDetectMode();
+        }
+
+        protected virtual void OnTurnOffAutoDetectMode()
+        {
+            TurnOffAutoDetectMode?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     public interface IHeroSelectorViewModelFactory
     {
         HeroSelectorViewModel CreateViewModel();
     }
+
     public interface IHeroSelectorWindowViewModelFactory
     {
         HeroSelectorWindowViewModel CreateViewModel();

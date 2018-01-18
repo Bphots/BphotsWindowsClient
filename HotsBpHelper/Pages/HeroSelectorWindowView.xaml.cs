@@ -100,16 +100,17 @@ namespace HotsBpHelper.Pages
                 return;
 
             _filteredComboBoxes.Add(filteredComboBox);
-            if (_filteredComboBoxes.All(c => c.SelectedIndex != -1))
-                filteredComboBox.Focus();
         }
 
         private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var filteredComboBox = sender as FilteredComboBox;
-            if (filteredComboBox == null || !filteredComboBox.IsFocused)
+            if (filteredComboBox == null)
                 return;
             
+            if (!filteredComboBox.IsFocused)
+                return;
+
             var index = _filteredComboBoxes.IndexOf(filteredComboBox);
             if (index == -1)
                 return;

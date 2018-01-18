@@ -151,6 +151,7 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Const.cs" />
     <Compile Include="DateTimeUtils.cs" />
+    <Compile Include="HeroFinder\FrameFinder.cs" />
     <Compile Include="HeroFinder\Finder.cs" />
     <Compile Include="HeroFinder\StageFinder.cs" />
     <Compile Include="Messages\ItemSelectedMessage.cs" />

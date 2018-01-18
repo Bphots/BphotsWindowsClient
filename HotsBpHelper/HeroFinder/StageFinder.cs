@@ -219,13 +219,13 @@ namespace HotsBpHelper.HeroFinder
         private static void InitializeCircles(List<Bitmap> circleBitmaps, List<FastBitmap> circles,
             Bitmap screenshotBitmap)
         {
-            float dpiX, dpiY;
-            using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
-            {
-                dpiX = graphics.DpiX;
-                dpiY = graphics.DpiY;
-            }
-            screenshotBitmap.SetResolution(dpiX, dpiY);
+            //float dpiX, dpiY;
+            //using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
+            //{
+            //    dpiX = graphics.DpiX;
+            //    dpiY = graphics.DpiY;
+            //}
+            //screenshotBitmap.SetResolution(dpiX, dpiY);
             int width = screenshotBitmap.Width;
             int height = screenshotBitmap.Height;
             var imageUtil = new ImageUtils();

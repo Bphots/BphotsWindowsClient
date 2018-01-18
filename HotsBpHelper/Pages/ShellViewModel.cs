@@ -146,6 +146,7 @@ namespace HotsBpHelper.Pages
 
             _bpViewModel.RemindDetectMode += BpViewModelOnRemindDetectMode;
             _bpViewModel.RemindBpStart += BpViewModelOnRemindGameStart;
+            _bpViewModel.TurnOffAutoDetectMode += BpViewModelOnTurnOffAutoDetectMode;
 
             _notificationManager = new Notifier(cfg =>
             {
@@ -170,6 +171,11 @@ namespace HotsBpHelper.Pages
             Task.Run(CheckFocusAsync).ConfigureAwait(false);
         }
 
+        private void BpViewModelOnTurnOffAutoDetectMode(object sender, EventArgs e)
+        {
+            Execute.OnUIThread(() => AutoDetect = false);
+        }
+
         private void BpViewModelOnRemindDetectMode(object sender, EventArgs eventArgs)
         {
             var onText = "已开启英雄识别" + Environment.NewLine + L("OcrModeOnToolTip");
@@ -185,6 +191,7 @@ namespace HotsBpHelper.Pages
                 _notificationManager.ShowInformation(offText, _toastOptions);
             }
         }
+
         private void BpViewModelOnRemindBpMode(object sender, EventArgs eventArgs)
         {
             var onText = "已开启比赛检测" + Environment.NewLine + L("StartedTips");
