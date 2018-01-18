@@ -56,7 +56,7 @@ namespace HotsBpHelper.Pages
         private Visibility _visibility;
         private int _width;
         private HeroSelectorWindowViewModel _heroSelectorWindowViewModel;
-        private IHeroSelectorWindowViewModelFactory _heroSelectorWindowViewModelFactory;
+        private readonly IHeroSelectorWindowViewModelFactory _heroSelectorWindowViewModelFactory;
 
         public BpViewModel(IHeroSelectorWindowViewModelFactory heroSelectorWindowViewModelFactory, IHeroSelectorViewModelFactory heroSelectorViewModelFactory,
             IMapSelectorViewModelFactory mapSelectorViewModelFactory,
