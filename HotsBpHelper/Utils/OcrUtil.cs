@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -200,14 +201,20 @@ namespace HotsBpHelper.Utils
         {
             try
             {
+                var bpVm = new Dictionary<int, HeroSelectorViewModel>();
+                var checkedDic = new Dictionary<int, bool>();
+                foreach (var id in ids)
+                {
+                    bpVm[id] = bpViewModel.HeroSelectorViewModels.First(vm => vm.Id == id);
+                    checkedDic[id] = false;
+                }
+
                 var finder = new Finder();
                 var fileDic = new Dictionary<int, string>();
 
                 var logUtil = new LogUtil(@".\logLeftPick" + string.Join("&", ids) + ".txt");
                 logUtil.Log("PickChecked");
-                var checkedTag = 0;
-                var checkedDic = new Dictionary<int, bool>();
-                while (checkedTag < ids.Count)
+                while (checkedDic.Any(c => !c.Value))
                 {
                     var sb = new StringBuilder();
                     var sbConfirm = new StringBuilder();
@@ -215,6 +222,12 @@ namespace HotsBpHelper.Utils
                     {
                         if (checkedDic.ContainsKey(i) && checkedDic[i])
                             continue;
+
+                        if (bpVm[ids[i]].Selected)
+                        {
+                            checkedDic[i] = true;
+                            continue;
+                        }
 
                         if (cancellationToken.IsCancellationRequested)
                             return;
@@ -286,6 +299,12 @@ namespace HotsBpHelper.Utils
                             continue;
                         }
 
+                        if (bpVm[ids[i]].Selected)
+                        {
+                            checkedDic[i] = true;
+                            continue;
+                        }
+
                         if ((alreadyTrustable || sb.ToString() == sbConfirm.ToString()) &&
                             !cancellationToken.IsCancellationRequested)
                         {
@@ -293,7 +312,6 @@ namespace HotsBpHelper.Utils
                             var index = ids[i];
                             Execute.OnUIThread(() => { bpViewModel.ShowHeroSelector(index, text); });
                             checkedDic[i] = true;
-                            checkedTag++;
                             logUtil.Log("Confirmed " + index + " " + text);
                         }
                     }
@@ -312,14 +330,21 @@ namespace HotsBpHelper.Utils
         {
             try
             {
+                var bpVm = new Dictionary<int, HeroSelectorViewModel>();
+                var checkedDic = new Dictionary<int, bool>();
+                foreach (var id in ids)
+                {
+                    bpVm[id] = bpViewModel.HeroSelectorViewModels.First(vm => vm.Id == id);
+                    checkedDic[id] = false;
+                }
+
                 var finder = new Finder();
                 var fileDic = new Dictionary<int, string>();
 
                 var logUtil = new LogUtil(@".\logRightPick" + string.Join("&", ids) + ".txt");
                 logUtil.Log("PickChecked");
-                var checkedTag = 0;
-                var checkedDic = new Dictionary<int, bool>();
-                while (checkedTag < ids.Count)
+
+                while (checkedDic.Any(c => !c.Value))
                 {
                     var sb = new StringBuilder();
                     var sbConfirm = new StringBuilder();
@@ -330,6 +355,12 @@ namespace HotsBpHelper.Utils
 
                         if (cancellationToken.IsCancellationRequested)
                             return;
+
+                        if (bpVm[ids[i]].Selected)
+                        {
+                            checkedDic[i] = true;
+                            continue;
+                        }
 
                         if (SuspendScanning)
                         {
@@ -394,6 +425,12 @@ namespace HotsBpHelper.Utils
                             }
                         }
 
+                        if (bpVm[ids[i]].Selected)
+                        {
+                            checkedDic[i] = true;
+                            continue;
+                        }
+
                         if ((alreadyTrustable || sb.ToString() == sbConfirm.ToString()) &&
                             !cancellationToken.IsCancellationRequested)
                         {
@@ -407,7 +444,6 @@ namespace HotsBpHelper.Utils
                             var index = ids[i];
                             Execute.OnUIThread(() => { bpViewModel.ShowHeroSelector(index, text); });
                             checkedDic[i] = true;
-                            checkedTag++;
                             logUtil.Log("Confirmed " + index + " " + text);
                         }
                     }

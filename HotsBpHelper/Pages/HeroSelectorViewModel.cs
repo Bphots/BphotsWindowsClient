@@ -14,22 +14,36 @@ namespace HotsBpHelper.Pages
 {
     public class HeroSelectorViewModel : SelectorViewModel, IHandle<ItemSelectedMessage>
     {
-        private Visibility _visibility = Visibility.Visible;
+        private bool _interactionVisible = true;
+        private bool _layerVisible = true;
 
         public HeroSelectorViewModel(HeroItemUtil heroItemUtil, IEventAggregator eventAggregator) : base(heroItemUtil, eventAggregator)
         {
             Size = new Size(130, 20);
             EventAggregator.Subscribe(this);
         }
-
-        public Visibility Visibility
+        
+        public bool InteractionVisible
         {
-            get { return _visibility; }
+            get { return _interactionVisible; }
             set
             {
-                SetAndNotify(ref _visibility, value);
+                SetAndNotify(ref _interactionVisible, value);
+                NotifyOfPropertyChange(() => UserVisibility);
             }
         }
+
+        public bool LayerVisible
+        {
+            get { return _layerVisible; }
+            set
+            {
+                SetAndNotify(ref _layerVisible, value);
+                NotifyOfPropertyChange(() => UserVisibility);
+            }
+        }
+
+        public Visibility UserVisibility => LayerVisible && InteractionVisible ? Visibility.Visible : Visibility.Hidden;
         
         protected override void OnViewLoaded()
         {

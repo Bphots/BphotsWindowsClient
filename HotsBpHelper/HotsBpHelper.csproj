@@ -172,9 +172,10 @@
     <Compile Include="Pages\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Pages\HeroSelectorView.xaml.cs">
-      <DependentUpon>HeroSelectorView.xaml</DependentUpon>
+    <Compile Include="Pages\HeroSelectorWindowView.xaml.cs">
+      <DependentUpon>HeroSelectorWindowView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\HeroSelectorWindowViewMode.cs" />
     <Compile Include="Pages\HeroSelectorViewModel.cs" />
     <Compile Include="Pages\MapSelectorView.xaml.cs">
       <DependentUpon>MapSelectorView.xaml</DependentUpon>
@@ -293,9 +294,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\HeroSelectorView.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Pages\HeroSelectorWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\MapSelectorView.xaml">
       <SubType>Designer</SubType>

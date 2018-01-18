@@ -23,6 +23,7 @@ namespace HotsBpHelper
             builder.Bind<MapItemUtil>().ToSelf().InSingletonScope();
             builder.Bind<ISecurityProvider>().To<SecurityProvider>().InSingletonScope();
             builder.Bind<IHeroSelectorViewModelFactory>().ToAbstractFactory();
+            builder.Bind<IHeroSelectorWindowViewModelFactory>().ToAbstractFactory();
             builder.Bind<IMapSelectorViewModelFactory>().ToAbstractFactory();
             builder.Bind<ShellViewModel.IWebFileUpdaterViewModelFactory>().ToAbstractFactory();
             builder.Bind<ShellViewModel.IBpViewModelFactory>().ToAbstractFactory();
