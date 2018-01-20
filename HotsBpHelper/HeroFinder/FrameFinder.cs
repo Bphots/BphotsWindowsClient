@@ -53,7 +53,7 @@ namespace HotsBpHelper.HeroFinder
             var skillFramePoint = is1080 ? new Point(77, 833) : new Point(121, 1111);
             var hasSkilFrame = true;
             sampleColor = screenshotBitmap.GetPixel(skillFramePoint.X, skillFramePoint.Y);
-            for (var x = skillFramePoint.X + 1; x <= skillFramePoint.X + 250; ++x)
+            for (var x = skillFramePoint.X + 1; x <= skillFramePoint.X * 4; ++x)
             {
                 var color = screenshotBitmap.GetPixel(x, skillFramePoint.Y);
                 if (Math.Abs(color.R - sampleColor.R) + Math.Abs(color.G - sampleColor.G) +
@@ -68,7 +68,7 @@ namespace HotsBpHelper.HeroFinder
             var talentFramePoint = is1080 ? new Point(147, 319) : new Point(213, 425);
             var hasTalentFrame = true;
             sampleColor = screenshotBitmap.GetPixel(talentFramePoint.X, talentFramePoint.Y);
-            for (var x = talentFramePoint.X + 1; x <= talentFramePoint.X + 250; ++x)
+            for (var x = talentFramePoint.X + 1; x <= talentFramePoint.X * 2; ++x)
             {
                 var color = screenshotBitmap.GetPixel(x, talentFramePoint.Y);
                 if (Math.Abs(color.R - sampleColor.R) + Math.Abs(color.G - sampleColor.G) +

@@ -53,7 +53,7 @@ namespace ImageProcessor
             var tempPath = TempDirectoryPath + "temp.tiff";
             using (var image = ImageProcessingHelper.GetCroppedMap(file))
                 image.Save(tempPath);
-
+            
             var pendingMatchResult = _engine.ProcessOcr(tempPath, OcrEngine.CandidateMaps);
             if (!pendingMatchResult.Results.Any() || !pendingMatchResult.Values.First().Trustable)
             {
@@ -91,6 +91,9 @@ namespace ImageProcessor
                 image.Save(TempDirectoryPath + "CroppedImage.bmp");
 
             var count = (double)image.Width / sampleWidth * 7.5 + 0.1;
+
+            if (_engine is OcrEngineAsian)
+                _engine.Engine.SetVariable(@"textord_min_xheight", 25);
 
             string pendingMatchResult = string.Empty;
 

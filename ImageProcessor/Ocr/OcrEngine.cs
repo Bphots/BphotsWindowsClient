@@ -14,7 +14,7 @@ namespace ImageProcessor.Ocr
     {
         public static bool Debug = false;
 
-        protected TesseractEngine Engine;
+        public TesseractEngine Engine;
 
         protected OcrEngine()
         {

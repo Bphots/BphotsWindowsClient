@@ -14,10 +14,6 @@ namespace ImageProcessor.ImageProcessing
         {
             Engine = new TesseractEngine(@".\tessdata\zhCN", "chi_hots+chi_sim", EngineMode.TesseractOnly);
             Engine.DefaultPageSegMode = PageSegMode.SingleWord;
-            //Engine.SetVariable(@"load_system_dawg", "F");
-            //Engine.SetVariable(@"load_freq_dawg", "F");
-            //Engine.SetVariable(@"user_words_suffix", "user-words");
-            Engine.SetVariable(@"textord_min_xheight", 25);
             PickingText = "正在选择中";
             CandidateHeroes.Add(PickingText);
         }
