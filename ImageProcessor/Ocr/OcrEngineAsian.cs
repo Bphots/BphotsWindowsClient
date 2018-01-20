@@ -7,27 +7,16 @@ using Tesseract;
 
 namespace ImageProcessor.ImageProcessing
 {
-    public class MatchResult
-    {
-        public string Key { get; set; }
-
-        public string Value { get; set; }
-
-        public bool InDoubt { get; set; }
-
-        public int Score { get; set; }
-
-        public bool Trustable { get; set; }
-
-        public bool FullyTruestable { get; set; }
-    }
 
     public class OcrEngineSimplifiedChinese : OcrEngineAsian
     {
         public OcrEngineSimplifiedChinese()
         {
-            Engine = new TesseractEngine(@".\tessdata\zhCN", "chi_sim", EngineMode.TesseractOnly);
+            Engine = new TesseractEngine(@".\tessdata\zhCN", "chi_hots+chi_sim", EngineMode.TesseractOnly);
             Engine.DefaultPageSegMode = PageSegMode.SingleWord;
+            //Engine.SetVariable(@"load_system_dawg", "F");
+            //Engine.SetVariable(@"load_freq_dawg", "F");
+            //Engine.SetVariable(@"user_words_suffix", "user-words");
             Engine.SetVariable(@"textord_min_xheight", 25);
             PickingText = "正在选择中";
             CandidateHeroes.Add(PickingText);
@@ -90,61 +79,62 @@ namespace ImageProcessor.ImageProcessing
             return text.Contains("VA");
         }
 
-        public override MatchResult ProcessOcr(double count, string path, HashSet<string> candidates)
+        
+
+        public override OcrResult ProcessOcr(double count, string path, HashSet<string> candidates)
         {
-            //try
+            var ocrResult = new OcrResult();
+
+            bool checkDva = false;
+            int textCount = (int)count;
+            var heroesSet = new HashSet<char>();
+            foreach (char character in candidates.Where(c => c.Count() == textCount).SelectMany(c => c))
+                heroesSet.Add(character);
+            if (textCount == 2 && Math.Abs(count - 2.5) < 0.3)
             {
-                    bool checkDva = false;
-                    int textCount = (int)count;
-                    var heroesSet = new HashSet<char>();
-                    foreach (char character in candidates.Where(c => c.Count() == textCount).SelectMany(c => c))
-                        heroesSet.Add(character);
-                    if (textCount == 2 && Math.Abs(count - 2.5) < 0.3)
-                    {
-                        checkDva = true;
-                        heroesSet.Add('D');
-                        heroesSet.Add('V');
-                        heroesSet.Add('A');
-                    }
-                    if (!heroesSet.Any())
-                        return new MatchResult { Key = string.Empty, Value = string.Empty, InDoubt = true, Score = 0, Trustable = false };
+                checkDva = true;
+                heroesSet.Add('D');
+                heroesSet.Add('V');
+                heroesSet.Add('A');
+            }
+            if (!heroesSet.Any())
+                return ocrResult;
 
-                    string whiteList = heroesSet.Aggregate(string.Empty, (current, character) => current + character);
-                    Engine.SetVariable("tessedit_char_whitelist", whiteList);
+            string whiteList = heroesSet.Aggregate(string.Empty, (current, character) => current + character);
+            Engine.SetVariable("tessedit_char_whitelist", whiteList);
 
-                    var inDoubt = false;
-                    using (Pix pix = Pix.LoadFromFile(path))
-                    using (Page page = Engine.Process(pix))
-                    {
-                        string text = page.GetText();
-                        if (checkDva && IsMathcingDva(text))
-                            return new MatchResult { Key = text, Value = "D.Va", InDoubt = false, Score = 6, Trustable = true, FullyTruestable = true };
-
-                        string match = string.Empty;
-                        var maxScore = 0;
-                        foreach (string hero in candidates.Where(s => s.Length == textCount))
-                        {
-                            int score = CalculateScore(text, hero);
-                            if (maxScore == score)
-                                inDoubt = true;
-                            if (maxScore < score)
-                            {
-                                maxScore = score;
-                                match = hero;
-                            }
-                        }
-                        return new MatchResult { Key = text, Value = match, InDoubt = inDoubt || (maxScore / (double)(textCount * 2)) <= 0.5, Score = maxScore, Trustable = (maxScore / (double)(textCount * 2)) > 0.66, FullyTruestable = textCount >= 2 && maxScore == textCount * 2};
-                    }
+            var inDoubt = false;
+            using (Pix pix = Pix.LoadFromFile(path))
+            using (Page page = Engine.Process(pix))
+            {
+                string text = page.GetText();
+                if (checkDva && IsMathcingDva(text))
+                {
+                    ocrResult.Results["D.Va"] = new MatchResult { Key = text, Value = "D.Va", InDoubt = false, Score = 6, Trustable = true, FullyTruestable = true };
+                    return ocrResult;
+                }
+                
+                foreach (string hero in candidates.Where(s => s.Length == textCount))
+                {
+                    int score = CalculateScore(text, hero);
+                    if (score > 0)
+                        ocrResult.Results[hero] = new MatchResult() { Key = text, Value = hero, InDoubt = score / (double)(textCount * 2) <= 0.5, Score = score, Trustable = (score / (double)(textCount * 2)) > 0.66, FullyTruestable = textCount >= 2 && score == textCount * 2 };
+                        
+                }
+                return ocrResult;
             }
         }
 
-        public override MatchResult ProcessOcr(string path, HashSet<string> candidates)
+        public override OcrResult ProcessOcr(string path, HashSet<string> candidates)
         {
+            var ocrResult = new OcrResult();
+
             var heroesSet = new HashSet<char>();
             foreach (char character in candidates.SelectMany(c => c))
                 heroesSet.Add(character);
             if (!heroesSet.Any())
-                return new MatchResult { Key = string.Empty, Value = string.Empty, InDoubt = true, Score = 0, Trustable = false };
+                return ocrResult; 
+
             string whiteList = heroesSet.Aggregate(string.Empty, (current, character) => current + character);
             Engine.SetVariable("tessedit_char_whitelist", whiteList);
             
@@ -166,7 +156,8 @@ namespace ImageProcessor.ImageProcessing
                         match = candidate;
                     }
                 }
-                return new MatchResult { Key = text, Value = match, InDoubt = inDoubt, Score = maxScore, Trustable = (maxScore / (double)(match.Length * 2)) > 0.66 };
+                ocrResult.Results[match] = new MatchResult { Key = text, Value = match, InDoubt = inDoubt, Score = maxScore, Trustable = (maxScore / (double)(match.Length * 2)) > 0.66 };
+                return ocrResult;
             }
         }
 

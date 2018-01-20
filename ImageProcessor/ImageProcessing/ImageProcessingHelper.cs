@@ -392,7 +392,7 @@ namespace ImageProcessor.ImageProcessing
             int maxColumn = minColumn;
             for (int x = histo.Length - 1; x > minColumn; --x)
             {
-                if (histo[x] > 2)
+                if (histo[x] > 1)
                 {
                     maxColumn = x;
                     break;

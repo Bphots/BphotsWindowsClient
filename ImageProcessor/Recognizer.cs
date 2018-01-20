@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using DotNetHelper;
 using ImageProcessor.ImageProcessing;
@@ -12,18 +14,18 @@ namespace ImageProcessor
         private const int DarkModeThreshold = 60;
         private const int LightModeThreshold = 115;
 
-        private readonly OcrEngine m_engine;
+        private readonly OcrEngine _engine;
 
         public static DirPath TempDirectoryPath;
 
         private bool m_isDarkMode;
 
-        public string PickingText => m_engine.PickingText;
+        public string PickingText => _engine.PickingText;
 
 
         public Recognizer(OcrLanguage language, string sourceDirectory = null)
         {
-            m_engine = OcrEngine.CreateEngine(language);
+            _engine = OcrEngine.CreateEngine(language);
             
             TempDirectoryPath = sourceDirectory + @"\Test\";
             if (!Directory.Exists(TempDirectoryPath))
@@ -32,7 +34,7 @@ namespace ImageProcessor
 
         public void Dispose()
         {
-            m_engine.Dispose();
+            _engine.Dispose();
         }
 
         /// <summary>
@@ -41,9 +43,9 @@ namespace ImageProcessor
         /// <param name="file"></param>
         /// <param name="angle"></param>
         /// <param name="sb"></param>
-        public bool Recognize(string file, float angle, StringBuilder sb, string tempId)
+        public bool Recognize(string file, float angle, StringBuilder sb, int offset)
         {
-            return ProcessHero(file, angle, sb, tempId);
+            return ProcessHero(file, angle, sb, offset);
         }
 
         public void ProcessMap(FilePath file, StringBuilder sb)
@@ -52,99 +54,132 @@ namespace ImageProcessor
             using (var image = ImageProcessingHelper.GetCroppedMap(file))
                 image.Save(tempPath);
 
-            var pendingMatchResult = m_engine.ProcessOcr(tempPath, OcrEngine.CandidateMaps);
-            if (!pendingMatchResult.Trustable)
+            var pendingMatchResult = _engine.ProcessOcr(tempPath, OcrEngine.CandidateMaps);
+            if (!pendingMatchResult.Results.Any() || !pendingMatchResult.Values.First().Trustable)
             {
                 ResetFlags();
                 return;
             }
 
             var i = 0;
-            var path = TempDirectoryPath + pendingMatchResult.Value + ".tiff";
+            var path = TempDirectoryPath + pendingMatchResult.Values.First().Value + ".tiff";
             while (File.Exists(path))
             {
                 ++i;
-                path = TempDirectoryPath + pendingMatchResult.Value + i + ".tiff";
+                path = TempDirectoryPath + pendingMatchResult.Values.First().Value + i + ".tiff";
             }
 
-            sb.Append(pendingMatchResult.Value);
+            sb.Append(pendingMatchResult.Values.First().Value);
 
             File.Move(file, path);
             ResetFlags();
         }
 
-        private bool ProcessHero(FilePath file, float rotationAngle, StringBuilder sb, string tempId)
+        private bool ProcessHero(FilePath file, float rotationAngle, StringBuilder sb, int offset)
         {
-            var tempPath = TempDirectoryPath + "temp" + tempId + ".tiff";
-            int startThresholding;
-            double count;
+            var tempPath = TempDirectoryPath + "temp.tiff";
             var mode = ImageProcessingHelper.CheckMode(file, rotationAngle);
             if (mode == -1)
                 return false;
 
             m_isDarkMode = mode == 0;
-            startThresholding = m_isDarkMode ? DarkModeThreshold : LightModeThreshold;
+            var startThresholding = m_isDarkMode ? DarkModeThreshold : LightModeThreshold;
 
             int sampleWidth;
             var image = ImageProcessingHelper.GetCroppedImage(rotationAngle, file, m_isDarkMode, out sampleWidth);
             if (OcrEngine.Debug)
                 image.Save(TempDirectoryPath + "CroppedImage.bmp");
-            //image.Save(@"D:\qqytqqyt\Documents\HeroesBpProject\OcrHelper\HotsBpHelper\bin\Debug\Images\Heroes\5.bmp");
-            //image.SaveImage(m_tempDirectoryPath + file.GetFileNameWithoutExtension() + "rotated.tiff");
-            var segmentationCount = ImageProcessingHelper.ProcessOnce(startThresholding + 15, image, tempPath);
-            count = (double) image.Width/sampleWidth*7.5 + 0.1;
 
+            var count = (double)image.Width / sampleWidth * 7.5 + 0.1;
 
-            var pendingMatchResult = m_engine.ProcessOcr(Math.Min(count, segmentationCount), tempPath,
-                 OcrEngine.CandidateHeroes);
-            if (!pendingMatchResult.FullyTruestable)
+            string pendingMatchResult = string.Empty;
+
+            var scoreDictionary = new Dictionary<string, int>();
+
+            // 130 - 135 - 125 - 140 - 120 - 145 - 115
+            // 75 - 80 - 70 - 85 - 65 - 90 - 60
+            var switcher = 0;
+            int faultCount = 0;
+            for (var index = startThresholding + 15; index <= startThresholding + 30; index += switcher)
             {
-                // 130 - 135 - 125 - 140 - 120 - 145 - 115
-                // 75 - 80 - 70 - 85 - 65 - 90 - 60
-                var switcher = 0;
-                for (var index = startThresholding + 15; index <= startThresholding + 30; index += switcher)
-                {
-                    var segmentationCountNew = ImageProcessingHelper.ProcessOnce(index, image, tempPath);
-                    var result = m_engine.ProcessOcr(Math.Min(count, segmentationCountNew), tempPath,
+                switcher = -switcher;
+                if (switcher > 0)
+                    switcher += offset;
+                else
+                    switcher -= offset;
+
+                var segmentationCount = ImageProcessingHelper.ProcessOnce(index, image, tempPath);
+                var newCount = count;
+                if (segmentationCount < count && count - segmentationCount >= 2)
+                    newCount = segmentationCount;
+
+                var result = _engine.ProcessOcr(newCount, tempPath,
                         OcrEngine.CandidateHeroes);
 
-                    if (OcrEngine.Debug)
-                        Console.WriteLine(@"Thresdhold " + index + @" : " + result.Key.Replace("\n", string.Empty) + @" => " + result.Value);
-                    // File.Copy(m_tempPath, m_tempPath.GetDirPath() + index + " " + result.Key.Replace("\n", string.Empty) + "_" + result.Value + ".tiff", true);
-                    if (!result.InDoubt && string.IsNullOrEmpty(result.Value))
-                    {
-                        pendingMatchResult = result;
-                        break;
-                    }
-                    if (result.Score > pendingMatchResult.Score)
-                        pendingMatchResult = result;
+                // 100% match case
+                if (result.Values.Any(v => v.FullyTruestable))
+                {
+                    scoreDictionary[result.Values.First(v => v.FullyTruestable).Value] = int.MaxValue;
+                    break;
+                }
 
-                    if (result.Trustable)
+                // emptry case
+                if (!result.Values.Any())
+                {
+                    faultCount++;
+                    if (faultCount > 3)
                         break;
 
-                    if (switcher > 0)
-                        switcher += 5;
+                    continue;
+                }
+
+                var maxScoreInSuite = result.Values.Max(c => c.Score);
+                var matchResultsWithMaxScore = result.Values.Where(c => c.Score == maxScoreInSuite).ToList();
+
+                // unique 60%+ case
+                if (matchResultsWithMaxScore.Count == 1 && !matchResultsWithMaxScore[0].InDoubt)
+                {
+                    scoreDictionary[matchResultsWithMaxScore[0].Value] = int.MaxValue / 2;
+                    break;
+                }
+
+                // normal case
+                foreach (var matchResultWithMaxScore in matchResultsWithMaxScore)
+                {
+                    if (scoreDictionary.ContainsKey(matchResultWithMaxScore.Value))
+                        scoreDictionary[matchResultWithMaxScore.Value] += matchResultWithMaxScore.Score;
                     else
-                        switcher -= 5;
+                        scoreDictionary[matchResultWithMaxScore.Value] = matchResultWithMaxScore.Score;
 
-                    switcher = -switcher;
+                    if (OcrEngine.Debug)
+                        Console.WriteLine(@"Thresdhold " + index + @" : " + matchResultWithMaxScore.Key.Replace("\n", string.Empty) + @" => " + matchResultWithMaxScore.Value);
+                }
+            }
+
+            int maxValue = 0;
+            foreach (var scorePair in scoreDictionary)
+            {
+                if (scorePair.Value > maxValue)
+                {
+                    pendingMatchResult = scorePair.Key;
+                    maxValue = scorePair.Value;
                 }
             }
 
             var i = 0;
-            var path = TempDirectoryPath + pendingMatchResult.Key.Replace("\n", string.Empty) + " - " + pendingMatchResult.Value + ".tiff";
+            var path = TempDirectoryPath + pendingMatchResult + ".tiff";
             while (File.Exists(path))
             {
                 ++i;
-                path = TempDirectoryPath + pendingMatchResult.Key.Replace("\n", string.Empty) + " - " + pendingMatchResult.Value + i + ".tiff";
+                path = TempDirectoryPath + pendingMatchResult + i + ".tiff";
             }
 
-            sb.Append(pendingMatchResult.Value);
+            sb.Append(pendingMatchResult);
             image.Dispose();
             File.Copy(file, path, true);
             ResetFlags();
 
-            return pendingMatchResult.FullyTruestable;
+            return maxValue == int.MaxValue;
         }
 
         private void ResetFlags()

@@ -25,9 +25,9 @@ namespace ImageProcessor.Ocr
             Engine.Dispose();
         }
 
-        public abstract MatchResult ProcessOcr(string path, HashSet<string> candidates);
+        public abstract OcrResult ProcessOcr(string path, HashSet<string> candidates);
 
-        public abstract MatchResult ProcessOcr(double count, string path, HashSet<string> candidates);
+        public abstract OcrResult ProcessOcr(double count, string path, HashSet<string> candidates);
 
         public static OcrEngine CreateEngine(OcrLanguage language)
         {
@@ -49,6 +49,33 @@ namespace ImageProcessor.Ocr
         public static readonly HashSet<string> CandidateMaps = new HashSet<string>();
 
         public string PickingText { get; set; }
+    }
+
+    public class OcrResult
+    {
+        public OcrResult()
+        {
+            Results = new Dictionary<string, MatchResult>();
+        }
+
+        public Dictionary<string, MatchResult> Results { get; set; }
+
+        public List<MatchResult> Values => Results.Select(r => r.Value).ToList();
+    }
+
+    public class MatchResult
+    {
+        public string Key { get; set; }
+
+        public string Value { get; set; }
+
+        public bool InDoubt { get; set; }
+
+        public int Score { get; set; }
+
+        public bool Trustable { get; set; }
+
+        public bool FullyTruestable { get; set; }
     }
 
     public enum OcrLanguage

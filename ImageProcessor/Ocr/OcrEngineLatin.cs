@@ -37,8 +37,10 @@ namespace ImageProcessor.Ocr
             return bitmap;
         }
 
-        public override MatchResult ProcessOcr(string path, HashSet<string> candidates)
+        public override OcrResult ProcessOcr(string path, HashSet<string> candidates)
         {
+            var ocrResult = new OcrResult();
+            
             var inDoubt = false;
             FilePath filePath = path;
             using (var bitMap = new Bitmap(filePath))
@@ -69,7 +71,7 @@ namespace ImageProcessor.Ocr
                         match = candidate;
                     }
                 }
-                return new MatchResult
+                ocrResult.Results[match] = new MatchResult
                 {
                     Key = text,
                     Value = match,
@@ -78,10 +80,11 @@ namespace ImageProcessor.Ocr
                     Trustable = maxScore > 0.9,
                     FullyTruestable = maxScore > 0.95
                 };
+                return ocrResult;
             }
         }
 
-        public override MatchResult ProcessOcr(double count, string path, HashSet<string> candidates)
+        public override OcrResult ProcessOcr(double count, string path, HashSet<string> candidates)
         {
             return ProcessOcr(path, candidates);
         }

@@ -141,7 +141,7 @@ namespace HotsBpHelper.Utils
             {
                 finder.AddNewTemplate(ids[0], ids[0].ToString(), fileDic);
                 logUtil.Log("Capture Complete " + ids[0]);
-                _recognizer.Recognize(fileDic[ids[0]], rotation, sb, ids[0].ToString());
+                _recognizer.Recognize(fileDic[ids[0]], rotation, sb, 5);
                 if (sb.ToString() == _recognizer.PickingText)
                     break;
 
@@ -158,7 +158,9 @@ namespace HotsBpHelper.Utils
             sb.Clear();
             finder.AddNewTemplate(ids[1], ids[1].ToString(), fileDic);
             logUtil.Log("Second Capture Complete " + ids[0]);
-            _recognizer.Recognize(fileDic[ids[1]], rotation, sb, ids[1].ToString());
+            _recognizer.Recognize(fileDic[ids[1]], rotation, sb, 5);
+            logUtil.Log(sb.ToString());
+            logUtil.Flush();
             return sb.ToString() == _recognizer.PickingText;
         }
 
@@ -274,7 +276,7 @@ namespace HotsBpHelper.Utils
                         {
                             finder.AddNewTemplate(ids[i], ids[i].ToString(), fileDic);
                             logUtil.Log("Capture Complete " + ids[i]);
-                            alreadyTrustable = _recognizer.Recognize(fileDic[ids[i]], rotation, sb, ids[i].ToString());
+                            alreadyTrustable = _recognizer.Recognize(fileDic[ids[i]], rotation, sb, App.MyPosition.Height > 1200 ? 5 : 3);
                         }
                         finally
                         {
@@ -314,7 +316,7 @@ namespace HotsBpHelper.Utils
                                 tempscreenshotPath = finder.CaptureScreen();
                                 finder.AddNewTemplate(ids[i], ids[i].ToString(), fileDic, tempscreenshotPath);
                                 logUtil.Log("Capture Complete " + ids[i]);
-                                _recognizer.Recognize(fileDic[ids[i]], rotation, sbConfirm, ids[i].ToString());
+                                _recognizer.Recognize(fileDic[ids[i]], rotation, sbConfirm, App.MyPosition.Height > 1200 ? 5 : 3);
                             }
                             finally
                             {
