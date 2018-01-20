@@ -209,8 +209,8 @@ namespace HotsBpHelper.Pages
 
         private void BpViewModelOnRemindDetectMode(object sender, EventArgs eventArgs)
         {
-            var onText = "已开启英雄识别" + Environment.NewLine + L("OcrModeOnToolTip");
-            var offText = "已关闭英雄识别" + Environment.NewLine + L("OcrModeOffToolTip");
+            var onText = L("OcrModeOnTitle") + Environment.NewLine + L("OcrModeOnToolTip");
+            var offText = L("OcrModeOffTitle") + Environment.NewLine + L("OcrModeOffToolTip");
             if (AutoDetect)
             {
                 _notificationManager.ClearMessages(offText);
@@ -225,8 +225,8 @@ namespace HotsBpHelper.Pages
 
         private void BpViewModelOnRemindBpMode(object sender, EventArgs eventArgs)
         {
-            var onText = "已开启比赛检测" + Environment.NewLine + L("StartedTips");
-            var offText = "已关闭比赛检测" + Environment.NewLine + L("AutoBpScreenModeOnToolTip");
+            var onText = L("MatchDetectOnTitle") + Environment.NewLine + L("StartedTips");
+            var offText = L("MatchDetectOffTitle") + Environment.NewLine + L("AutoBpScreenModeOnToolTip");
             if (_autoShowHideHelper)
             {
                 _notificationManager.ClearMessages(offText);
@@ -243,11 +243,11 @@ namespace HotsBpHelper.Pages
         {
             if (_autoDetect)
             {
-                _notificationManager.ShowSuccess("背锅助手正在运行" + Environment.NewLine + L("OcrModeOnToolTip"), _toastOptions);
+                _notificationManager.ShowSuccess(L("OcrModeToolTipTitle") + Environment.NewLine + L("OcrModeOnToolTip"), _toastOptions);
             }
             else
             {
-                _notificationManager.ShowSuccess("背锅助手正在运行" + Environment.NewLine + L("OcrModeOffToolTip"), _toastOptions);
+                _notificationManager.ShowSuccess(L("OcrModeToolTipTitle") + Environment.NewLine + L("OcrModeOffToolTip"), _toastOptions);
             }
         }
 

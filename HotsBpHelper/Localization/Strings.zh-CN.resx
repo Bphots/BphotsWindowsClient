@@ -255,4 +255,19 @@
   <data name="AutoShowMMR" xml:space="preserve">
     <value>自动显示MMR</value>
   </data>
+  <data name="MatchDetectOffTitle" xml:space="preserve">
+    <value>已关闭比赛检测</value>
+  </data>
+  <data name="MatchDetectOnTitle" xml:space="preserve">
+    <value>已开启比赛检测</value>
+  </data>
+  <data name="OcrModeOffTitle" xml:space="preserve">
+    <value>已关闭英雄识别</value>
+  </data>
+  <data name="OcrModeOnTitle" xml:space="preserve">
+    <value>已开启英雄识别</value>
+  </data>
+  <data name="OcrModeToolTipTitle" xml:space="preserve">
+    <value>背锅助手正在运行</value>
+  </data>
 </root>
