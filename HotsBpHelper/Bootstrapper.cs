@@ -17,7 +17,6 @@ namespace HotsBpHelper
     {
         protected override void ConfigureIoC(IStyletIoCBuilder builder)
         {
-            //            builder.Bind<IRestApi>().To<DummyRestApi>();
             builder.Bind<IRestApi>().To<RestApi>().InSingletonScope();
             builder.Bind<HeroItemUtil>().ToSelf().InSingletonScope();
             builder.Bind<MapItemUtil>().ToSelf().InSingletonScope();
@@ -26,6 +25,7 @@ namespace HotsBpHelper
             builder.Bind<IHeroSelectorWindowViewModelFactory>().ToAbstractFactory();
             builder.Bind<IMapSelectorViewModelFactory>().ToAbstractFactory();
             builder.Bind<ShellViewModel.IWebFileUpdaterViewModelFactory>().ToAbstractFactory();
+            builder.Bind<ShellViewModel.IMMRViewModelFactory>().ToAbstractFactory();
             builder.Bind<ShellViewModel.IBpViewModelFactory>().ToAbstractFactory();
             builder.Bind<IImageUtil>().To<ImageUtils>();
         }
@@ -36,13 +36,10 @@ namespace HotsBpHelper
             App.AppPath = AppDomain.CurrentDomain.BaseDirectory;
 
             var args = Environment.GetCommandLineArgs();
+			
             App.Debug = true;
             // TODO Remove
-            App.DynamicPosition = true;
-            if (args.Any(arg => arg.ToLower() == "/dynamicposition"))
-            {
-                App.DynamicPosition = true;
-            }
+			
             if (args.Any(arg => arg.ToLower() == "/notcheckprocess"))
             {
                 App.NotCheckProcess = true;
@@ -94,12 +91,14 @@ namespace HotsBpHelper
                     LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-TW");
                     break;
                 default:
-                    App.Language = "zh-CN";
-                    LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN");
+                    App.Language = "en-US";
+                    LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("en-US"); 
                     break;
             }
-            //App.Language = "zh-TW";
-            //LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-TW");
+			
+            App.Language = "zh-CN";
+            LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN"); //TODO REMOVE
+
 
         }
     }

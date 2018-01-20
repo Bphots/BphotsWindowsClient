@@ -75,7 +75,7 @@ namespace HotsBpHelper.Pages
             _scanningCancellationToken = new CancellationTokenSource();
             OcrUtil = new OcrUtil();
 
-            var unitPos = App.MyPosition.BpHelperPosition.ToUnitPoint();
+            var unitPos = App.AppSetting.Position.BpHelperPosition.ToUnitPoint();
             Left = unitPos.X;
             Top = unitPos.Y;
 
@@ -443,7 +443,7 @@ namespace HotsBpHelper.Pages
             _mapSelectorViewModel = _mapSelectorViewModelFactory.CreateViewModel();
             _mapSelectorViewModel.ButtonVisibility = !IsAutoMode ? Visibility.Visible : Visibility.Hidden;
             _mapSelectorViewModel.Id = 0;
-            _mapSelectorViewModel.SetCenterAndTop(App.MyPosition.MapSelectorPosition);
+            _mapSelectorViewModel.SetCenterAndTop(App.AppSetting.Position.MapSelectorPosition);
 
             _mapSelectorViewModel.Visibility = Visibility.Hidden;
             WindowManager.ShowWindow(_mapSelectorViewModel);
@@ -610,7 +610,7 @@ namespace HotsBpHelper.Pages
             _listPositions = new List<Point>(14); // BP总共14个选择
 
             // Left
-            sidePosition = App.MyPosition.Left;
+            sidePosition = App.AppSetting.Position.Left;
             _listPositions.Add(sidePosition.Ban1);
             _listPositions.Add(sidePosition.Ban2);
             x = sidePosition.Pick1.X;
@@ -625,7 +625,7 @@ namespace HotsBpHelper.Pages
                 dx = -dx;
             }
             // Right
-            sidePosition = App.MyPosition.Right;
+            sidePosition = App.AppSetting.Position.Right;
             _listPositions.Add(sidePosition.Ban1);
             _listPositions.Add(sidePosition.Ban2);
             x = sidePosition.Pick1.X;
@@ -654,7 +654,7 @@ namespace HotsBpHelper.Pages
             {
                 ScriptName = scriptName,
                 Args = args
-            });
+            }, "BpChanel");
         }
 
         private void InvokeScript(string scriptName, IList<Tuple<string, string>> parameters)
@@ -796,7 +796,6 @@ namespace HotsBpHelper.Pages
 
         private void ProcessManualStep()
         {
-            var hasFocused = false;
             foreach (var i in _listBpSteps[BpStatus.CurrentStep])
             {
                 ShowHeroSelector(i);
@@ -1053,7 +1052,7 @@ namespace HotsBpHelper.Pages
         {
             if (display && Width == Height)
             {
-                var unitSize = App.MyPosition.BpHelperSize.ToUnitSize();
+                var unitSize = App.AppSetting.Position.BpHelperSize.ToUnitSize();
                 Width = unitSize.Width;
                 Height = unitSize.Height;
             }

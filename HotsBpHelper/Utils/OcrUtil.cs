@@ -112,13 +112,13 @@ namespace HotsBpHelper.Utils
             FilePath screenPath = finder.CaptureScreen();
             var points = ImageProcessingHelper.LookForPoints(screenPath);
             var height = ScreenUtil.GetScreenResolution().Height;
-            App.MyPosition.Left.HeroName1 = new Point(points[0] + (int) (0.0017*height),
+            App.AppSetting.Position.Left.HeroName1 = new Point(points[0] + (int) (0.0017*height),
                 points[1] + (int) (0.0035*ScreenUtil.GetScreenResolution().Height));
-            App.MyPosition.Right.HeroName1 = new Point(points[2] + (int) (0.0035*height),
+            App.AppSetting.Position.Right.HeroName1 = new Point(points[2] + (int) (0.0035*height),
                 points[3] + (int) (0.0045*ScreenUtil.GetScreenResolution().Height));
             File.WriteAllText(@".\coord.txt",
-                App.MyPosition.Left.HeroName1.X + @" " + App.MyPosition.Left.HeroName1.Y + " " +
-                App.MyPosition.Right.HeroName1.X + " " + App.MyPosition.Right.HeroName1.Y);
+                App.AppSetting.Position.Left.HeroName1.X + @" " + App.AppSetting.Position.Left.HeroName1.Y + " " +
+                App.AppSetting.Position.Right.HeroName1.X + " " + App.AppSetting.Position.Right.HeroName1.Y);
         }
 
       
@@ -276,7 +276,7 @@ namespace HotsBpHelper.Utils
                         {
                             finder.AddNewTemplate(ids[i], ids[i].ToString(), fileDic);
                             logUtil.Log("Capture Complete " + ids[i]);
-                            alreadyTrustable = _recognizer.Recognize(fileDic[ids[i]], rotation, sb, App.MyPosition.Height > 1200 ? 5 : 3);
+                            alreadyTrustable = _recognizer.Recognize(fileDic[ids[i]], rotation, sb, App.AppSetting.Position.Height > 1200 ? 5 : 3);
                         }
                         finally
                         {
@@ -316,7 +316,7 @@ namespace HotsBpHelper.Utils
                                 tempscreenshotPath = finder.CaptureScreen();
                                 finder.AddNewTemplate(ids[i], ids[i].ToString(), fileDic, tempscreenshotPath);
                                 logUtil.Log("Capture Complete " + ids[i]);
-                                _recognizer.Recognize(fileDic[ids[i]], rotation, sbConfirm, App.MyPosition.Height > 1200 ? 5 : 3);
+                                _recognizer.Recognize(fileDic[ids[i]], rotation, sbConfirm, App.AppSetting.Position.Height > 1200 ? 5 : 3);
                             }
                             finally
                             {

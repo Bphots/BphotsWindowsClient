@@ -41,7 +41,6 @@ namespace ImageProcessor.Ocr
         {
             var ocrResult = new OcrResult();
             
-            var inDoubt = false;
             FilePath filePath = path;
             using (var bitMap = new Bitmap(filePath))
             {

@@ -25,8 +25,8 @@
                 <MenuItem Header="{lex:Loc SwitchVisibility}" Command="{s:Action SwitchVisibility}" InputGestureText="Ctrl+Shift+M" />
                 <MenuItem Header="{lex:Loc ResetHelper}" Command="{s:Action ResetHelper}" InputGestureText="Ctrl+Shift+N" />
                 <MenuItem Header="{lex:Loc Help}" Command="{s:Action ShowHelp}"/>
+                <MenuItem Header="{lex:Loc AutoShowMMR}" IsCheckable="True" IsChecked="{Binding AutoShowMmr}" />
                 <MenuItem Header="{lex:Loc About}" Command="{s:Action ShowAbout}"/>
-
                 <Separator />
                 <MenuItem Header="{lex:Loc Exit}" Command="{s:Action Exit}" />
             </ContextMenu>

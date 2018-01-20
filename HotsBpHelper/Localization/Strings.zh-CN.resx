@@ -252,4 +252,7 @@
   <data name="AutoBpScreenModeOnToolTip" xml:space="preserve">
     <value>请在需要时通过Ctrl+Shift+B手动唤起。如要开启比赛检测请在托盘开启"自动检测比赛"。</value>
   </data>
+  <data name="AutoShowMMR" xml:space="preserve">
+    <value>自动显示MMR</value>
+  </data>
 </root>

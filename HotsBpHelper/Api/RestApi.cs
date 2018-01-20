@@ -114,10 +114,8 @@ namespace HotsBpHelper.Api
                 {
                     Tuple.Create("lang", language)
                 });
-
-            var result = Execute<List<HeroInfo>>(request);
-            var text = string.Join(Environment.NewLine, result.Select(c => c.Name));
-            return result;
+            
+            return Execute<List<HeroInfo>>(request);
         }
 
         public List<MapInfo> GetMapList(string language)
@@ -127,9 +125,8 @@ namespace HotsBpHelper.Api
                 {
                     Tuple.Create("lang", language)
                 });
-            var result = Execute<List<MapInfo>>(request);
-            var text = string.Join(Environment.NewLine, result.Select(c => c.Name));
-            return result;
+
+            return Execute<List<MapInfo>>(request);
         }
 
         public double GetTimestamp()

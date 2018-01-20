@@ -13,12 +13,12 @@ namespace HotsBpHelper.Pages
     {
         private Visibility _visibility;
         private Visibility _buttonVisibility;
-
+        
         public MapSelectorViewModel(MapItemUtil mapItemUtil, IEventAggregator eventAggregator) : base(mapItemUtil, eventAggregator)
         {
             Size = new Size(178, 24);//修改地图框大小后，需要修改此项进行匹配
         }
-
+        
         public void Select(string name)
         {
             var selectedItem = ItemsInfos.FirstOrDefault(c => c.Name == name);
@@ -35,7 +35,7 @@ namespace HotsBpHelper.Pages
                 SelectedItemInfo = ItemsInfos[0];
             }
         }
-
+        
         protected override void OnPropertyChanged(string propertyName)
         {
             if (propertyName == "CanSelectSide")
@@ -82,6 +82,6 @@ namespace HotsBpHelper.Pages
             set { SetAndNotify(ref _buttonVisibility, value); }
         }
 
-
+        
     }
 }

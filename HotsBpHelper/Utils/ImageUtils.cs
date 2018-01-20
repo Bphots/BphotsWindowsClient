@@ -9,12 +9,12 @@ namespace HotsBpHelper.Utils
     {
         public Bitmap CaptureScreen()
         {
-            Bitmap bitmap = new Bitmap(App.MyPosition.Width, App.MyPosition.Height, PixelFormat.Format32bppRgb);
-            using (Graphics graphics = Graphics.FromImage(bitmap))
+            var screenBmp = new Bitmap(App.AppSetting.Position.Width, App.AppSetting.Position.Height, PixelFormat.Format32bppRgb);
+            using (var bmpGraphics = Graphics.FromImage(screenBmp))
             {
-                graphics.CopyFromScreen(0, 0, 0, 0, bitmap.Size);
+                bmpGraphics.CopyFromScreen(0, 0, 0, 0, screenBmp.Size);
+                return screenBmp;
             }
-            return bitmap;
         }
 
         public Bitmap CaptureScreen(int x1, int y1, int x2, int y2)

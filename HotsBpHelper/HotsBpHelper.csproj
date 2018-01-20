@@ -35,7 +35,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -58,10 +57,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="dmnet">
-      <HintPath>..\..\..\DM6.1550\dmnet.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="GlobalHotKey, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GlobalHotKey.1.1.0\lib\GlobalHotKey.dll</HintPath>
       <Private>True</Private>
@@ -81,9 +76,8 @@
       <HintPath>..\packages\NAppUpdate.Framework.0.5.1.0\lib\net40\NAppUpdate.Framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.10\lib\net45\NLog.dll</HintPath>
@@ -182,9 +176,14 @@
       <DependentUpon>MapSelectorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\MapSelectorViewModel.cs" />
+    <Compile Include="Pages\MMRView.xaml.cs">
+      <DependentUpon>MMRView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MMRViewModel.cs" />
     <Compile Include="Pages\SelectorViewModel.cs" />
     <Compile Include="Pages\ViewModelBase.cs" />
     <Compile Include="Settings\AppSetting.cs" />
+    <Compile Include="UserControls\ScriptingHelper.cs" />
     <Compile Include="UserControls\WebKitBrowser.xaml.cs">
       <DependentUpon>WebKitBrowser.xaml</DependentUpon>
     </Compile>
@@ -269,6 +268,7 @@
     <Content Include=".config\AppSetting.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="LICENSE.md" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -303,6 +303,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\MMRView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\ShellView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -328,6 +332,10 @@
     <Folder Include="NAppUpdate\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\HotsStats-master\StatsFetcher\StatsFetcher.csproj">
+      <Project>{9d065a48-71d9-4f83-8428-2ee88405f05b}</Project>
+      <Name>StatsFetcher</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DotNetHelper\DotNetHelper.csproj">
       <Project>{353b6e1b-1415-4010-babf-924c7158fc58}</Project>
       <Name>DotNetHelper</Name>

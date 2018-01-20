@@ -6,7 +6,9 @@
 *.user
 *.userosscache
 *.sln.docstates
-*.traineddata
+chi_sim.traineddata
+chi_tra.traineddata
+eng.traineddata
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

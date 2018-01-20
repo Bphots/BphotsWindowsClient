@@ -12,7 +12,7 @@ namespace HotsBpHelper.Pages
         protected readonly IComboxItemUtil ComboxItemUtil;
 
         protected readonly IEventAggregator EventAggregator;
-
+        
         protected ComboBoxItemInfo PSelectedItemInfo;
 
         protected SelectorViewModel(IComboxItemUtil comboxItemUtil, IEventAggregator eventAggregator)
@@ -22,7 +22,7 @@ namespace HotsBpHelper.Pages
 
             ItemsInfos = new ObservableCollection<ComboBoxItemInfo>(ComboxItemUtil.GetComboxItemInfos());
         }
-
+        
         public int Id { get; set; }
 
         public int Left { get; set; }
@@ -32,7 +32,7 @@ namespace HotsBpHelper.Pages
         public Size Size { get; set; }
 
         public ObservableCollection<ComboBoxItemInfo> ItemsInfos { get; set; }
-
+        
         public ComboBoxItemInfo SelectedItemInfo
         {
             get { return PSelectedItemInfo; }
@@ -60,7 +60,7 @@ namespace HotsBpHelper.Pages
                 SelectorId = Id
             });
         }
-
+        
         public void SetLeftAndTop(Point position)
         {
             var pos = position.ToUnitPoint();
@@ -77,7 +77,8 @@ namespace HotsBpHelper.Pages
         public void SetCenterAndTop(Point position)
         {
             var unitPos = position.ToUnitPoint();
-            var pos = new Point(unitPos.X - Size.Width/2, unitPos.Y);
+
+            var pos = new Point(unitPos.X - Size.Width / 2, unitPos.Y);
             SetPosition(pos);
         }
 

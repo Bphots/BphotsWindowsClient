@@ -2,7 +2,7 @@
 
 namespace HotsBpHelper
 {
-    public static class Const
+    public class Const
     {
         public const string WEB_API_ROOT = "http://www.bphots.com/bp_helper/";
 
@@ -10,7 +10,8 @@ namespace HotsBpHelper
 
         public const string LOCAL_WEB_FILE_DIR = "WebFiles";
 
-        public const string PATCH = "17111701";
+
+        public const string PATCH = "18010601";
 
         public const string HEROES_PROCESS_NAME = "HeroesOfTheStorm";
 

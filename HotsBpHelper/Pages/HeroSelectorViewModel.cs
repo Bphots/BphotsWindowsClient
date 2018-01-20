@@ -16,13 +16,13 @@ namespace HotsBpHelper.Pages
     {
         private bool _interactionVisible = true;
         private bool _layerVisible = true;
-
+        
         public HeroSelectorViewModel(HeroItemUtil heroItemUtil, IEventAggregator eventAggregator) : base(heroItemUtil, eventAggregator)
         {
             Size = new Size(130, 20);
             EventAggregator.Subscribe(this);
         }
-        
+
         public bool InteractionVisible
         {
             get { return _interactionVisible; }
@@ -45,6 +45,7 @@ namespace HotsBpHelper.Pages
 
         public Visibility UserVisibility => LayerVisible && InteractionVisible ? Visibility.Visible : Visibility.Hidden;
         
+
         protected override void OnViewLoaded()
         {
             if (Id == 0 || Id == 1 || Id == 7 || Id == 8)
@@ -54,7 +55,7 @@ namespace HotsBpHelper.Pages
                 ItemsInfos.Insert(0, new ComboBoxItemInfo()
                 {
                     Id = "0",
-                    Name = "None",
+                    Name = L("NO_CHOOSE"),
                     Acronym = "",
                 });
             }
@@ -83,7 +84,5 @@ namespace HotsBpHelper.Pages
             // TODO 将已选的英雄移除(又改了之前的选择需要恢复)
 
         }
-
-
     }
 }

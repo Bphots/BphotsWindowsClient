@@ -15,7 +15,7 @@ namespace HotsBpHelper.HeroFinder
 
         public static bool CheckIfInRightFrame(Bitmap screenshotBitmap)
         {
-            var is1080 = App.MyPosition.Height == 1080;
+            var is1080 = App.AppSetting.Position.Height == 1080;
             var frameRightBorderPoint = is1080 ? new Point(1907, 938) : new Point(3423, 1241);
             var hasFrame = true;
             var sampleColor = screenshotBitmap.GetPixel(frameRightBorderPoint.X, frameRightBorderPoint.Y);
@@ -34,7 +34,7 @@ namespace HotsBpHelper.HeroFinder
 
         public static bool CheckIfInLeftFrame(Bitmap screenshotBitmap)
         {
-            var is1080 = App.MyPosition.Height == 1080;
+            var is1080 = App.AppSetting.Position.Height == 1080;
             var appearanceFramePoint = is1080 ? new Point(70, 457) : new Point(81, 521);
             var hasAppearanceFrame = true;
             var sampleColor = screenshotBitmap.GetPixel(appearanceFramePoint.X, appearanceFramePoint.Y);
@@ -85,7 +85,7 @@ namespace HotsBpHelper.HeroFinder
 
         public static ChatInfo CheckIfInChat(Bitmap screenshotBitmap)
         {
-            var is1080 = App.MyPosition.Height == 1080;
+            var is1080 = App.AppSetting.Position.Height == 1080;
             var fullHorizontalPoint = is1080 ? new Point(1173, 248) : new Point(1960, 331);
             var isFull = true;
             var sampleColor = screenshotBitmap.GetPixel(fullHorizontalPoint.X, fullHorizontalPoint.Y);

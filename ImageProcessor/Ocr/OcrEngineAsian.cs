@@ -98,8 +98,7 @@ namespace ImageProcessor.ImageProcessing
 
             string whiteList = heroesSet.Aggregate(string.Empty, (current, character) => current + character);
             Engine.SetVariable("tessedit_char_whitelist", whiteList);
-
-            var inDoubt = false;
+            
             using (Pix pix = Pix.LoadFromFile(path))
             using (Page page = Engine.Process(pix))
             {

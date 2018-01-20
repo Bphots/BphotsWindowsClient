@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -22,16 +22,19 @@ using ToastNotifications.Core;
 using ToastNotifications.Lifetime;
 using ToastNotifications.Messages;
 using ToastNotifications.Position;
+
+using StatsFetcher;
+
 using Point = System.Drawing.Point;
 
 namespace HotsBpHelper.Pages
 {
     public class ShellViewModel : ViewModelBase
     {
-
         private readonly IWebFileUpdaterViewModelFactory _webFileUpdaterViewModelFactory;
 
         private readonly IBpViewModelFactory _bpViewModelFactory;
+        private readonly IMMRViewModelFactory _mmrViewModelFactory;
 
         private readonly IImageUtil _imageUtil;
 
@@ -46,7 +49,9 @@ namespace HotsBpHelper.Pages
         private bool _autoShowHideHelper;
         private bool _autoDetect;
         private bool _initializeReset;
-
+        
+        private MMRViewModel _mmrViewModel;
+        
         public bool AutoShowHideHelper
         {
             get { return _autoShowHideHelper; }
@@ -69,7 +74,7 @@ namespace HotsBpHelper.Pages
                 }
             }
         }
-
+        
         public bool AutoDetect
         {
             get { return _autoDetect; }
@@ -86,15 +91,35 @@ namespace HotsBpHelper.Pages
                 _bpViewModel.IsAutoMode = value;
             }
         }
+        private bool _autoShowMMR;
 
-        public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory, IImageUtil imageUtil)
+        public bool AutoShowMmr
+        {
+            get { return _autoShowMMR; }
+            set
+            {
+                if (SetAndNotify(ref _autoShowMMR, value))
+                {
+                    if (AutoShowMmr)
+                    {
+                        Task.Run(() =>
+                        {
+                            MonitorLobbyFile();
+                        });
+                    }
+                }
+            }
+        }
+
+        public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory, IMMRViewModelFactory mmrViewModelFactory, IImageUtil imageUtil)
         {
             _webFileUpdaterViewModelFactory = webFileUpdaterViewModelFactory;
             _bpViewModelFactory = bpViewModelFactory;
+            _mmrViewModelFactory = mmrViewModelFactory;
             _imageUtil = imageUtil;
             _hotKeyManager = new HotKeyManager();
         }
-
+        
         readonly MessageOptions _toastOptions = new MessageOptions
         {
             ShowCloseButton = false,
@@ -105,7 +130,7 @@ namespace HotsBpHelper.Pages
                 n.Close();
             }
         };
-
+        
         protected override void OnViewLoaded()
         {
             using (Mutex mutex = new Mutex(false, "Global\\" + Const.HOTSBPHELPER_PROCESS_NAME))
@@ -141,8 +166,14 @@ namespace HotsBpHelper.Pages
             _bpViewModel.HideBrowser();
             WindowManager.ShowWindow(_bpViewModel);
             _bpViewModel.Hide();
+
+
+            _mmrViewModel = _mmrViewModelFactory.CreateViewModel();
+            WindowManager.ShowWindow(_mmrViewModel);
+
             AutoShowHideHelper = true;
             AutoDetect = true;
+            AutoShowMmr = true; // Ä¬ÈÏÆôÓÃ×Ô¶¯ÏÔÊ¾MMR
 
             _bpViewModel.RemindDetectMode += BpViewModelOnRemindDetectMode;
             _bpViewModel.RemindBpStart += BpViewModelOnRemindGameStart;
@@ -178,8 +209,8 @@ namespace HotsBpHelper.Pages
 
         private void BpViewModelOnRemindDetectMode(object sender, EventArgs eventArgs)
         {
-            var onText = "å·²å¼€å¯è‹±é›„è¯†åˆ«" + Environment.NewLine + L("OcrModeOnToolTip");
-            var offText = "å·²å…³é—­è‹±é›„è¯†åˆ«" + Environment.NewLine + L("OcrModeOffToolTip");
+            var onText = "ÒÑ¿ªÆôÓ¢ÐÛÊ¶±ð" + Environment.NewLine + L("OcrModeOnToolTip");
+            var offText = "ÒÑ¹Ø±ÕÓ¢ÐÛÊ¶±ð" + Environment.NewLine + L("OcrModeOffToolTip");
             if (AutoDetect)
             {
                 _notificationManager.ClearMessages(offText);
@@ -194,8 +225,8 @@ namespace HotsBpHelper.Pages
 
         private void BpViewModelOnRemindBpMode(object sender, EventArgs eventArgs)
         {
-            var onText = "å·²å¼€å¯æ¯”èµ›æ£€æµ‹" + Environment.NewLine + L("StartedTips");
-            var offText = "å·²å…³é—­æ¯”èµ›æ£€æµ‹" + Environment.NewLine + L("AutoBpScreenModeOnToolTip");
+            var onText = "ÒÑ¿ªÆô±ÈÈü¼ì²â" + Environment.NewLine + L("StartedTips");
+            var offText = "ÒÑ¹Ø±Õ±ÈÈü¼ì²â" + Environment.NewLine + L("AutoBpScreenModeOnToolTip");
             if (_autoShowHideHelper)
             {
                 _notificationManager.ClearMessages(offText);
@@ -212,14 +243,35 @@ namespace HotsBpHelper.Pages
         {
             if (_autoDetect)
             {
-                _notificationManager.ShowSuccess("èƒŒé”…åŠ©æ‰‹æ­£åœ¨è¿è¡Œ" + Environment.NewLine + L("OcrModeOnToolTip"), _toastOptions);
+                _notificationManager.ShowSuccess("±³¹øÖúÊÖÕýÔÚÔËÐÐ" + Environment.NewLine + L("OcrModeOnToolTip"), _toastOptions);
             }
             else
             {
-                _notificationManager.ShowSuccess("èƒŒé”…åŠ©æ‰‹æ­£åœ¨è¿è¡Œ" + Environment.NewLine + L("OcrModeOffToolTip"), _toastOptions);
+                _notificationManager.ShowSuccess("±³¹øÖúÊÖÕýÔÚÔËÐÐ" + Environment.NewLine + L("OcrModeOffToolTip"), _toastOptions);
             }
         }
 
+        
+      private void MonitorLobbyFile()
+        {
+            DateTime lobbyLastModified = DateTime.MinValue;
+            while (AutoShowMmr)
+            {
+                if (File.Exists(Const.BattleLobbyPath) && File.GetLastWriteTime(Const.BattleLobbyPath) != lobbyLastModified)
+                {
+                    lobbyLastModified = File.GetLastWriteTime(Const.BattleLobbyPath);
+                    var game = FileProcessor.ProcessLobbyFile(Const.BattleLobbyPath);
+                    _mmrViewModel.FillMMR(game);
+                    Execute.OnUIThread(() =>
+                    {
+                        _mmrViewModel.View.Visibility = Visibility.Visible;
+                    });
+                }
+                Thread.Sleep(1000);
+
+            }
+        }
+        
         private void RegisterHotKey()
         {
             try
@@ -228,7 +280,6 @@ namespace HotsBpHelper.Pages
                 _hotKeyManager.Register(Key.C, ModifierKeys.Control | ModifierKeys.Shift);
                 _hotKeyManager.Register(Key.M, ModifierKeys.Control | ModifierKeys.Shift);
                 _hotKeyManager.Register(Key.N, ModifierKeys.Control | ModifierKeys.Shift);
-                _hotKeyManager.Register(Key.L, ModifierKeys.Control | ModifierKeys.Shift);
                 _hotKeyManager.Register(Key.R, ModifierKeys.Control | ModifierKeys.Shift);
                 _hotKeyManager.KeyPressed += HotKeyManagerPressed;
             }
@@ -243,7 +294,7 @@ namespace HotsBpHelper.Pages
                 ShowMessageBox(L("RegisterHotKeyFailed"), MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
             }
         }
-
+        
         private async Task CheckFocusAsync()
         {
             int lastStatus = 0;
@@ -290,7 +341,7 @@ namespace HotsBpHelper.Pages
                 }
             }
         }
-
+        
         private void HotKeyManagerPressed(object sender, KeyPressedEventArgs e)
         {
             if (e.HotKey.Key == Key.B)
@@ -316,6 +367,7 @@ namespace HotsBpHelper.Pages
                 _imageUtil.CaptureScreen().Save(captureName);
             }
         }
+
         public void SwitchVisibility()
         {
             if (_bpViewModel == null)
@@ -361,7 +413,7 @@ namespace HotsBpHelper.Pages
                 _bpViewModel.ToggleVisible();
             });
         }
-        
+
         private void Update()
         {
 
@@ -392,6 +444,7 @@ namespace HotsBpHelper.Pages
                     return;
                 }
                 //ShowMessageBox(L("UpdatesAvailable"), MessageBoxButton.OK, MessageBoxImage.Information);
+
                 // TODO update success
                 //_notificationManager.Show(new NotificationContent
                 //{
@@ -419,97 +472,77 @@ namespace HotsBpHelper.Pages
             }
 
         }
-
+        
         private void ExpandHeroPropertiesForLatin()
         {
-            App.MyPosition.HeroWidth = (int) (App.MyPosition.HeroWidth * 1.25);
-            App.MyPosition.HeroHeight = (int) (App.MyPosition.HeroHeight * 1.25);
-            App.MyPosition.Left.HeroPathPoints =
+            App.AppSetting.Position.HeroWidth = (int) (App.AppSetting.Position.HeroWidth * 1.25);
+            App.AppSetting.Position.HeroHeight = (int) (App.AppSetting.Position.HeroHeight * 1.25);
+            App.AppSetting.Position.Left.HeroPathPoints =
                 new[]
                 {
-                    new Point(1, 1), new Point(1, (int) (0.0185*App.MyPosition.Height)),
-                    new Point(App.MyPosition.HeroWidth, App.MyPosition.HeroHeight),
-                    new Point(App.MyPosition.HeroWidth, App.MyPosition.HeroHeight - (int) (0.0165*App.MyPosition.Height))
+                    new Point(1, 1), new Point(1, (int) (0.0185*App.AppSetting.Position.Height)),
+                    new Point(App.AppSetting.Position.HeroWidth, App.AppSetting.Position.HeroHeight),
+                    new Point(App.AppSetting.Position.HeroWidth, App.AppSetting.Position.HeroHeight - (int) (0.0165*App.AppSetting.Position.Height))
                 };
-            App.MyPosition.Right.HeroPathPoints =
+            App.AppSetting.Position.Right.HeroPathPoints =
                 new[]
                 {
-                    new Point(App.MyPosition.HeroWidth, 1),
-                    new Point(App.MyPosition.HeroWidth, 1 + (int) (0.0185*App.MyPosition.Height)),
-                    new Point(1, App.MyPosition.HeroHeight),
-                    new Point(1, App.MyPosition.HeroHeight - (int) (0.0165*App.MyPosition.Height))
+                    new Point(App.AppSetting.Position.HeroWidth, 1),
+                    new Point(App.AppSetting.Position.HeroWidth, 1 + (int) (0.0185*App.AppSetting.Position.Height)),
+                    new Point(1, App.AppSetting.Position.HeroHeight),
+                    new Point(1, App.AppSetting.Position.HeroHeight - (int) (0.0165*App.AppSetting.Position.Height))
                 };
-            App.MyPosition.MapPosition = new MapPosition()
+            App.AppSetting.Position.MapPosition = new MapPosition()
                 {
-                    Location = new Point((int)(App.MyPosition.Width / 2 - 0.25 * App.MyPosition.Height), 0),
-                    Width = (int)(0.5 * App.MyPosition.Height),
-                    Height = (int)(0.03563 * App.MyPosition.Height)
+                    Location = new Point((int)(App.AppSetting.Position.Width / 2 - 0.25 * App.AppSetting.Position.Height), 0),
+                    Width = (int)(0.5 * App.AppSetting.Position.Height),
+                    Height = (int)(0.03563 * App.AppSetting.Position.Height)
                 };
         }
-
+        
         private void InitSettings()
         {
             try
             {
-                var appSetting = Its.Configuration.Settings.Get<AppSetting>();
+                App.AppSetting = Its.Configuration.Settings.Get<AppSetting>();
                 var screenSize = ScreenUtil.GetScreenResolution();
+                App.AppSetting.Position = CaculatePosition((int)screenSize.Width, (int)screenSize.Height);
                 
-                if (App.DynamicPosition)
+                // TODO remove
+                if (App.AppSetting.Position.Height == 1440 && App.AppSetting.Position.Width == 3440)
                 {
-                    App.MyPosition = new Position(screenSize.Width, screenSize.Height);
-
-                    // TODO remove
-                    if (App.MyPosition.Height == 1440 && App.MyPosition.Width == 3440)
+                    App.AppSetting.Position.Left.HeroName1 = new Point(19, 247);
+                    App.AppSetting.Position.Right.HeroName1 = new Point(3426, 252);
+                }
+                if (App.AppSetting.Position.Height > 1800 && App.AppSetting.Position.Width > 2700)
+                {
+                    App.AppSetting.Position.Left.HeroName1 = new Point(25, 313);
+                    try
                     {
-                        App.MyPosition.Left.HeroName1 = new Point(19, 247);
-                        App.MyPosition.Right.HeroName1 = new Point(3426, 252);
+                    var text = File.ReadAllLines(@".\rightTempConfig1824.txt")[0];
+                    var paramsTemp = text.Trim().Split(',');
+                    App.AppSetting.Position.Right.HeroName1 = new Point(int.Parse(paramsTemp[0]), int.Parse(paramsTemp[1]));
                     }
-                    if (App.MyPosition.Height > 1800 && App.MyPosition.Width > 2700)
+                    catch (Exception)
                     {
-                        App.MyPosition.Left.HeroName1 = new Point(25, 313);
-                        try
-                        {
-                        var text = File.ReadAllLines(@".\rightTempConfig1824.txt")[0];
+                        App.AppSetting.Position.Right.HeroName1 = new Point(2717, 317);
+                    }
+                }
+                if (App.AppSetting.Position.Height == 1080 && App.AppSetting.Position.Width == 1920)
+                {
+                    App.AppSetting.Position.Left.HeroName1 = new Point(15, 186);
+                    try
+                    {
+                        var text = File.ReadAllLines(@".\rightTempConfig1080.txt")[0];
                         var paramsTemp = text.Trim().Split(',');
-                        App.MyPosition.Right.HeroName1 = new Point(int.Parse(paramsTemp[0]), int.Parse(paramsTemp[1]));
-                        }
-                        catch (Exception)
-                        {
-                            App.MyPosition.Right.HeroName1 = new Point(2717, 317);
-                        }
+                        App.AppSetting.Position.Right.HeroName1 = new Point(int.Parse(paramsTemp[0]),
+                            int.Parse(paramsTemp[1]));
                     }
-                    if (App.MyPosition.Height == 1080 && App.MyPosition.Width == 1920)
+                    catch (Exception)
                     {
-                        App.MyPosition.Left.HeroName1 = new Point(15, 186);
-                        try
-                        {
-                            var text = File.ReadAllLines(@".\rightTempConfig1080.txt")[0];
-                            var paramsTemp = text.Trim().Split(',');
-                            App.MyPosition.Right.HeroName1 = new Point(int.Parse(paramsTemp[0]),
-                                int.Parse(paramsTemp[1]));
-                        }
-                        catch (Exception)
-                        {
-                            App.MyPosition.Right.HeroName1 = new Point(1907, 189);
-                        }
+                        App.AppSetting.Position.Right.HeroName1 = new Point(1907, 189);
                     }
-                    return;
                 }
-
-                var position = appSetting.Positions.SingleOrDefault(s => s.Width == (int)screenSize.Width && s.Height == (int)screenSize.Height);
-                if (position == null)
-                {
-                    Pages.ErrorView _errorView = new Pages.ErrorView(L("NoMatchResolution"), L("MSG_NoMatchResolution"));
-                    _errorView.ShowDialog();
-                    _errorView.isShutDown = true;
-                    _errorView.Pause();
-                    //ShowMessageBox(L("MSG_NoMatchResolution"), MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                    //Application.Current.Shutdown();
-                    return;
-                }
-
-                App.MyPosition = position;
-
             }
             catch (Exception e)
             {
@@ -519,9 +552,68 @@ namespace HotsBpHelper.Pages
             }
         }
 
+        /// <summary>
+        /// ¸ù¾Ý·Ö±æÂÊ¶¯Ì¬¼ÆËã¸÷¸öÎ»ÖÃºÍ³ß´ç
+        /// </summary>
+        private Position CaculatePosition(int width, int height)
+        {
+            var bpHelperSize = App.AppSetting.DefaultBpHelperSize;
+            int heroWidth = (int)(0.08125 * height);
+            var heroHeight = (int)(0.0632 * height);
+            var position = new Position
+            {
+                Width = width,
+                Height = height,
+                BpHelperSize = bpHelperSize,
+                BpHelperPosition = new Point((int) (0.31*height),
+                    0.852*height + bpHelperSize.Height > height ? (height - bpHelperSize.Height) : (int) (0.852*height)),
+                MapSelectorPosition = new Point((int) (0.5*width), (int) (0.146*height)),
+                HeroWidth = heroWidth,
+                HeroHeight = heroHeight,
+                Left = new SidePosition
+                {
+                    Ban1 = new Point((int)(0.45 * height), (int)(0.016 * height)),
+                    Ban2 = new Point((int)(0.45 * height), (int)(0.016 * height) + (int)(0.023 * height) + (int)(0.015 * height)),
+                    Pick1 = new Point((int)(0.195 * height), (int)(0.132 * height)),
+                    Dx = (int)(0.0905 * height),
+                    Dy = (int)(0.1565 * height),
+                    HeroPathPoints =
+                    new[]
+                    {
+                        new Point(1, 1), new Point(1, (int) (0.0185*height)),
+                        new Point(heroWidth, heroHeight),
+                        new Point(heroWidth, heroHeight - (int) (0.0165*height))
+                    },
+                    HeroName1 = new Point((int)(0.013195 * height), (int)(0.172222 * height))
+                },
+                Right = new SidePosition
+                {
+                    Ban1 = new Point((int)(width - 0.45 * height), (int)(0.016 * height)),
+                    Ban2 = new Point((int)(width - 0.45 * height), (int)(0.016 * height) + (int)(0.023 * height) + (int)(0.015 * height)),
+                    Pick1 = new Point((int)(width - 0.195 * height), (int)(0.132 * height)),
+                    Dx = (int)(-0.0905 * height),
+                    Dy = (int)(0.1565 * height),
+                    HeroPathPoints =
+                    new[]
+                    {
+                        new Point(heroWidth, 1), new Point(heroWidth, 1 + (int) (0.0185*height)),
+                        new Point(1, heroHeight),
+                        new Point(1, heroHeight - (int) (0.0165*height))
+                    },
+                    HeroName1 = new Point((int)(width - 0.011195 * height), (int)(0.172222 * height))
+                },
+                MapPosition = new MapPosition()
+                {
+                    Location = new Point((int)(width / 2 - 0.18 * height), 0),
+                    Width = (int)(0.36 * height),
+                    Height = (int)(0.03563 * height)
+                }
+            };
+            return position;
+        }
+
         public void Exit()
         {
-            RequestClose();
             Application.Current.Shutdown();
         }
 
@@ -551,6 +643,11 @@ namespace HotsBpHelper.Pages
         public interface IWebFileUpdaterViewModelFactory
         {
             WebFileUpdaterViewModel CreateViewModel();
+        }
+
+        public interface IMMRViewModelFactory
+        {
+            MMRViewModel CreateViewModel();
         }
     }
 }
