@@ -12,6 +12,7 @@ using HotsBpHelper.Services;
 using HotsBpHelper.Settings;
 using HotsBpHelper.Utils;
 using HotsBpHelper.Utils.ComboBoxItemUtil;
+using ImageProcessor.Ocr;
 using WPFLocalizeExtension.Engine;
 
 namespace HotsBpHelper
@@ -112,10 +113,14 @@ namespace HotsBpHelper
                     break;
             }
 
-            //App.Language = "zh-CN";
-            //LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN"); //TODO REMOVE
+            App.Language = "zh-CN";
+            LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN"); //TODO REMOVE
 
-
+            App.OcrLanguage = OcrLanguage.English;
+            if (App.Language.Contains(@"CN"))
+                App.OcrLanguage = OcrLanguage.SimplifiedChinese;
+            if (App.Language.Contains(@"TW"))
+                App.OcrLanguage = OcrLanguage.TraditionalChinese;
         }
     }
 }

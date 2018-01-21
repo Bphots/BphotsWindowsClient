@@ -1,32 +1,25 @@
 using System;
 using System.Diagnostics;
-using System.Drawing;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using GlobalHotKey;
 using HotsBpHelper.Factories;
-using HotsBpHelper.HeroFinder;
 using HotsBpHelper.Services;
 using HotsBpHelper.Settings;
 using HotsBpHelper.Utils;
-
+using ImageProcessor.Ocr;
 using NAppUpdate.Framework;
 using NAppUpdate.Framework.Sources;
 using NAppUpdate.Framework.Tasks;
 using Stylet;
-using ToastNotifications;
-using ToastNotifications.Core;
-using ToastNotifications.Lifetime;
-using ToastNotifications.Messages;
-using ToastNotifications.Position;
 
 using StatsFetcher;
-using StyletIoC;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.Forms.MessageBox;
 using Point = System.Drawing.Point;
 
 namespace HotsBpHelper.Pages
@@ -147,6 +140,12 @@ namespace HotsBpHelper.Pages
                 Application.Current.Shutdown();
                 return;
             }
+
+            if (!OcrEngine.IsTessDataAvailable(App.OcrLanguage))
+            {
+                 MessageBox.Show(@"Would you like to download language data for " + App.OcrLanguage, @"Warning", MessageBoxButtons.YesNo);
+            }
+
 
             _bpViewModel = _viewModelFactory.CreateViewModel<BpViewModel>(); 
 

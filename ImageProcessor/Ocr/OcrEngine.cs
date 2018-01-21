@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetHelper;
 using ImageProcessor.ImageProcessing;
 using Tesseract;
 
@@ -16,6 +18,14 @@ namespace ImageProcessor.Ocr
 
         public TesseractEngine Engine;
 
+        protected const string TessdataBasePath = @"./tessdata/";
+        
+
+        public static bool DataFileAvailable(List<string> tessdataFilePaths)
+        {
+            return tessdataFilePaths.Select(Path.GetFullPath).All(path => ((FilePath) path).Exists()); 
+        }
+        
         protected OcrEngine()
         {
         }
@@ -39,6 +49,21 @@ namespace ImageProcessor.Ocr
                     return new OcrEngineSimplifiedChinese();
                 case OcrLanguage.TraditionalChinese:
                     return new OcrEngineTraditionalChinese();
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public static bool IsTessDataAvailable(OcrLanguage language)
+        {
+            switch (language)
+            {
+                case OcrLanguage.English:
+                    return DataFileAvailable(OcrEngineEnglish.TessdataFilePaths);
+                case OcrLanguage.SimplifiedChinese:
+                    return DataFileAvailable(OcrEngineSimplifiedChinese.TessdataFilePaths);
+                case OcrLanguage.TraditionalChinese:
+                    return DataFileAvailable(OcrEngineTraditionalChinese.TessdataFilePaths);
                 default:
                     throw new ArgumentOutOfRangeException();
             }

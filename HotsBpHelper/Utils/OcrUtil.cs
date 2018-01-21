@@ -30,13 +30,7 @@ namespace HotsBpHelper.Utils
 
         public OcrUtil()
         {
-            var language = OcrLanguage.English;
-            if (App.Language.Contains(@"CN"))
-                language = OcrLanguage.SimplifiedChinese;
-            if (App.Language.Contains(@"TW"))
-                language = OcrLanguage.TraditionalChinese;
-                
-            _recognizer = new Recognizer(language, Path.Combine(App.AppPath, @"Images\Heroes\"));
+            _recognizer = new Recognizer(App.OcrLanguage, Path.Combine(App.AppPath, @"Images\Heroes\"));
         }
 
         public void Dispose()

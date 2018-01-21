@@ -14,6 +14,11 @@ namespace ImageProcessor.Ocr
 {
     public class OcrEngineEnglish : OcrEngineLatin
     {
+        public static List<string> TessdataFilePaths => new List<string>
+        {
+            TessdataBasePath + @"zhTW\tessdata\eng.traineddata"
+        };
+
         public OcrEngineEnglish()
         {
             Engine = new TesseractEngine(@".\tessdata\enUS", "eng", EngineMode.TesseractOnly);

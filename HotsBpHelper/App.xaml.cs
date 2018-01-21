@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using HotsBpHelper.Settings;
+using ImageProcessor.Ocr;
 
 namespace HotsBpHelper
 {
@@ -24,6 +25,8 @@ namespace HotsBpHelper
         public static bool NotCheckProcess;
 
         public static string Language = CultureInfo.CurrentCulture.Name;
+
+        public static OcrLanguage OcrLanguage;
 
         private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {

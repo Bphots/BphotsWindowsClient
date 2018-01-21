@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
+using DotNetHelper;
 using ImageProcessor.Ocr;
 using Tesseract;
 
@@ -10,6 +12,13 @@ namespace ImageProcessor.ImageProcessing
 
     public class OcrEngineSimplifiedChinese : OcrEngineAsian
     {
+        public static List<string> TessdataFilePaths => new List<string>
+        {
+            TessdataBasePath + @"zhCN\tessdata\chi_hots.traineddata",
+            TessdataBasePath + @"zhCN\tessdata\chi_sim.config",
+            TessdataBasePath + @"zhCN\tessdata\chi_sim.traineddata"
+        };
+
         public OcrEngineSimplifiedChinese()
         {
             Engine = new TesseractEngine(@".\tessdata\zhCN", "chi_hots+chi_sim", EngineMode.TesseractOnly);
@@ -18,8 +27,15 @@ namespace ImageProcessor.ImageProcessing
             CandidateHeroes.Add(PickingText);
         }
     }
+
     public class OcrEngineTraditionalChinese : OcrEngineAsian
     {
+        public static List<string> TessdataFilePaths => new List<string>
+        {
+            TessdataBasePath + @"zhTW\tessdata\chi_tra.config",
+            TessdataBasePath + @"zhTW\tessdata\chi_tra.traineddata"
+        };
+
         public OcrEngineTraditionalChinese()
         {
             Engine = new TesseractEngine(@".\tessdata\zhTW", "chi_tra", EngineMode.TesseractOnly);
