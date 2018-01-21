@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using GlobalHotKey;
+using HotsBpHelper.Factories;
 using HotsBpHelper.HeroFinder;
+using HotsBpHelper.Services;
 using HotsBpHelper.Settings;
 using HotsBpHelper.Utils;
 
@@ -24,27 +26,24 @@ using ToastNotifications.Messages;
 using ToastNotifications.Position;
 
 using StatsFetcher;
-
+using StyletIoC;
 using Point = System.Drawing.Point;
 
 namespace HotsBpHelper.Pages
 {
     public class ShellViewModel : ViewModelBase
     {
-        private readonly IWebFileUpdaterViewModelFactory _webFileUpdaterViewModelFactory;
-
-        private readonly IBpViewModelFactory _bpViewModelFactory;
-        private readonly IMMRViewModelFactory _mmrViewModelFactory;
+        private ViewModelFactory _viewModelFactory;
 
         private readonly IImageUtil _imageUtil;
 
         private readonly HotKeyManager _hotKeyManager;
 
+        private readonly IToastService _toastService;
+
         private BpViewModel _bpViewModel;
 
         private bool _isLoaded;
-
-        private Notifier _notificationManager;
 
         private bool _autoShowHideHelper;
         private bool _autoDetect;
@@ -111,27 +110,16 @@ namespace HotsBpHelper.Pages
             }
         }
 
-        public ShellViewModel(IWebFileUpdaterViewModelFactory webFileUpdaterViewModelFactory, IBpViewModelFactory bpViewModelFactory, IMMRViewModelFactory mmrViewModelFactory, IImageUtil imageUtil)
+        public ShellViewModel(ViewModelFactory viewModelFactory, IImageUtil imageUtil, IToastService toastService)
         {
-            _webFileUpdaterViewModelFactory = webFileUpdaterViewModelFactory;
-            _bpViewModelFactory = bpViewModelFactory;
-            _mmrViewModelFactory = mmrViewModelFactory;
+            _viewModelFactory = viewModelFactory;
+            
             _imageUtil = imageUtil;
+            _toastService = toastService;
             _hotKeyManager = new HotKeyManager();
         }
         
-        readonly MessageOptions _toastOptions = new MessageOptions
-        {
-            ShowCloseButton = false,
-            FreezeOnMouseEnter = true,
-            UnfreezeOnMouseLeave = false,
-            NotificationClickAction = n =>
-            {
-                n.Close();
-            }
-        };
-        
-        protected override void OnViewLoaded()
+      protected override void OnViewLoaded()
         {
             using (Mutex mutex = new Mutex(false, "Global\\" + Const.HOTSBPHELPER_PROCESS_NAME))
             {
@@ -152,13 +140,11 @@ namespace HotsBpHelper.Pages
                 Update();
             }
             InitSettings();
-            if (App.Language.Contains("en"))
-                ExpandHeroPropertiesForLatin();
 
             RegisterHotKey();
-            
-            _bpViewModel = _bpViewModelFactory.CreateViewModel();
-            
+
+          _bpViewModel = _viewModelFactory.CreateViewModel<BpViewModel>(); 
+
             // Ä¬ÈÏ½ûÓÃ×Ô¶¯ÏÔÒþ
             _isLoaded = true;
             base.OnViewLoaded();
@@ -168,7 +154,7 @@ namespace HotsBpHelper.Pages
             _bpViewModel.Hide();
 
 
-            _mmrViewModel = _mmrViewModelFactory.CreateViewModel();
+            _mmrViewModel = _viewModelFactory.CreateViewModel<MMRViewModel>(); 
             WindowManager.ShowWindow(_mmrViewModel);
 
             AutoShowHideHelper = true;
@@ -179,24 +165,7 @@ namespace HotsBpHelper.Pages
             _bpViewModel.RemindBpStart += BpViewModelOnRemindGameStart;
             _bpViewModel.TurnOffAutoDetectMode += BpViewModelOnTurnOffAutoDetectMode;
 
-            _notificationManager = new Notifier(cfg =>
-            {
-                cfg.PositionProvider = new PrimaryScreenPositionProvider(
-                    corner: Corner.BottomRight,
-                    offsetX: 5,
-                    offsetY: 65);
-
-                cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
-                    notificationLifetime: TimeSpan.FromSeconds(5),
-                    maximumNotificationCount: MaximumNotificationCount.FromCount(2));
-
-                cfg.Dispatcher = Application.Current.Dispatcher;
-                cfg.DisplayOptions.TopMost = true;
-                cfg.DisplayOptions.Width = 250;
-            });
-
-
-            _notificationManager.ShowInformation(L("Started") + Environment.NewLine + L("StartedTips"), _toastOptions);
+            _toastService.ShowInformation(L("Started") + Environment.NewLine + L("StartedTips"));
 
             _initializeReset = true;
             Task.Run(CheckFocusAsync).ConfigureAwait(false);
@@ -213,13 +182,13 @@ namespace HotsBpHelper.Pages
             var offText = L("OcrModeOffTitle") + Environment.NewLine + L("OcrModeOffToolTip");
             if (AutoDetect)
             {
-                _notificationManager.ClearMessages(offText);
-                _notificationManager.ShowSuccess(onText, _toastOptions);
+                _toastService.CloseMessages(offText);
+                _toastService.ShowSuccess(onText);
             }
             else
             {
-                _notificationManager.ClearMessages(onText);
-                _notificationManager.ShowInformation(offText, _toastOptions);
+                _toastService.CloseMessages(onText);
+                _toastService.ShowInformation(offText);
             }
         }
 
@@ -229,13 +198,13 @@ namespace HotsBpHelper.Pages
             var offText = L("MatchDetectOffTitle") + Environment.NewLine + L("AutoBpScreenModeOnToolTip");
             if (_autoShowHideHelper)
             {
-                _notificationManager.ClearMessages(offText);
-                _notificationManager.ShowSuccess(onText, _toastOptions);
+                _toastService.CloseMessages(offText);
+                _toastService.ShowSuccess(onText);
             }
             else
             {
-                _notificationManager.ClearMessages(onText);
-                _notificationManager.ShowInformation(offText, _toastOptions);
+                _toastService.CloseMessages(onText);
+                _toastService.ShowInformation(offText);
             }
         }
         
@@ -243,14 +212,13 @@ namespace HotsBpHelper.Pages
         {
             if (_autoDetect)
             {
-                _notificationManager.ShowSuccess(L("OcrModeToolTipTitle") + Environment.NewLine + L("OcrModeOnToolTip"), _toastOptions);
+                _toastService.ShowSuccess(L("OcrModeToolTipTitle") + Environment.NewLine + L("OcrModeOnToolTip"));
             }
             else
             {
-                _notificationManager.ShowSuccess(L("OcrModeToolTipTitle") + Environment.NewLine + L("OcrModeOffToolTip"), _toastOptions);
+                _toastService.ShowSuccess(L("OcrModeToolTipTitle") + Environment.NewLine + L("OcrModeOffToolTip"));
             }
         }
-
         
       private void MonitorLobbyFile()
         {
@@ -265,12 +233,13 @@ namespace HotsBpHelper.Pages
                     Execute.OnUIThread(() =>
                     {
                         _mmrViewModel.View.Visibility = Visibility.Visible;
+                        _bpViewModel.Reset();
                     });
                 }
                 Thread.Sleep(1000);
-
             }
         }
+        
         
         private void RegisterHotKey()
         {
@@ -543,6 +512,9 @@ namespace HotsBpHelper.Pages
                         App.AppSetting.Position.Right.HeroName1 = new Point(1907, 189);
                     }
                 }
+                
+                if (App.Language.Contains("en"))
+                    ExpandHeroPropertiesForLatin();
             }
             catch (Exception e)
             {
@@ -635,19 +607,6 @@ namespace HotsBpHelper.Pages
             Process.Start(Const.HELP_URL);
         }
 
-        public interface IBpViewModelFactory
-        {
-            BpViewModel CreateViewModel();
-        }
-
-        public interface IWebFileUpdaterViewModelFactory
-        {
-            WebFileUpdaterViewModel CreateViewModel();
-        }
-
-        public interface IMMRViewModelFactory
-        {
-            MMRViewModel CreateViewModel();
-        }
     }
+
 }

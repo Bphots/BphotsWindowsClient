@@ -1,11 +1,6 @@
-﻿using System;
-using System.Drawing;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows;
 using HotsBpHelper.Messages;
-using HotsBpHelper.Utils;
 using HotsBpHelper.Utils.ComboBoxItemUtil;
 using Stylet;
 using Size = System.Drawing.Size;
@@ -16,8 +11,9 @@ namespace HotsBpHelper.Pages
     {
         private bool _interactionVisible = true;
         private bool _layerVisible = true;
-        
-        public HeroSelectorViewModel(HeroItemUtil heroItemUtil, IEventAggregator eventAggregator) : base(heroItemUtil, eventAggregator)
+
+        public HeroSelectorViewModel(HeroItemUtil heroItemUtil, IEventAggregator eventAggregator)
+            : base(heroItemUtil, eventAggregator)
         {
             Size = new Size(130, 20);
             EventAggregator.Subscribe(this);
@@ -44,7 +40,12 @@ namespace HotsBpHelper.Pages
         }
 
         public Visibility UserVisibility => LayerVisible && InteractionVisible ? Visibility.Visible : Visibility.Hidden;
-        
+
+        public void Handle(ItemSelectedMessage message)
+        {
+            // TODO 将已选的英雄移除(又改了之前的选择需要恢复)
+        }
+
 
         protected override void OnViewLoaded()
         {
@@ -52,11 +53,11 @@ namespace HotsBpHelper.Pages
             {
                 // 禁选英雄选择,增加[未选择]
 
-                ItemsInfos.Insert(0, new ComboBoxItemInfo()
+                ItemsInfos.Insert(0, new ComboBoxItemInfo
                 {
                     Id = "0",
                     Name = L("NO_CHOOSE"),
-                    Acronym = "",
+                    Acronym = ""
                 });
             }
             base.OnViewLoaded();
@@ -69,20 +70,14 @@ namespace HotsBpHelper.Pages
                 SelectedItemInfo = selectedItem;
             else
             {
-                ItemsInfos.Insert(0, new ComboBoxItemInfo()
+                ItemsInfos.Insert(0, new ComboBoxItemInfo
                 {
                     Id = "",
                     Name = name,
-                    Acronym = "",
+                    Acronym = ""
                 });
                 SelectedItemInfo = ItemsInfos[0];
             }
-        }
-
-        public void Handle(ItemSelectedMessage message)
-        {
-            // TODO 将已选的英雄移除(又改了之前的选择需要恢复)
-
         }
     }
 }

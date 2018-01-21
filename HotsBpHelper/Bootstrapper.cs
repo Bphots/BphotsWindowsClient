@@ -1,11 +1,14 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using HotsBpHelper.Api;
 using HotsBpHelper.Api.Security;
+using HotsBpHelper.Factories;
 using Stylet;
 using StyletIoC;
 using HotsBpHelper.Pages;
+using HotsBpHelper.Services;
 using HotsBpHelper.Settings;
 using HotsBpHelper.Utils;
 using HotsBpHelper.Utils.ComboBoxItemUtil;
@@ -21,13 +24,29 @@ namespace HotsBpHelper
             builder.Bind<HeroItemUtil>().ToSelf().InSingletonScope();
             builder.Bind<MapItemUtil>().ToSelf().InSingletonScope();
             builder.Bind<ISecurityProvider>().To<SecurityProvider>().InSingletonScope();
-            builder.Bind<IHeroSelectorViewModelFactory>().ToAbstractFactory();
-            builder.Bind<IHeroSelectorWindowViewModelFactory>().ToAbstractFactory();
-            builder.Bind<IMapSelectorViewModelFactory>().ToAbstractFactory();
-            builder.Bind<ShellViewModel.IWebFileUpdaterViewModelFactory>().ToAbstractFactory();
-            builder.Bind<ShellViewModel.IMMRViewModelFactory>().ToAbstractFactory();
-            builder.Bind<ShellViewModel.IBpViewModelFactory>().ToAbstractFactory();
+            builder.Bind<IToastService>().To<ToastService>().InSingletonScope();
+
+            RegisterViewModelFactories(builder);
+
             builder.Bind<IImageUtil>().To<ImageUtils>();
+        }
+
+        private static void RegisterViewModelFactories(IStyletIoCBuilder builder)
+        {
+            var vmFactoriesList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
+                from assemblyType in domainAssembly.GetTypes()
+                where typeof (IViewModelFactory).IsAssignableFrom(assemblyType)
+                select assemblyType).ToArray();
+
+            var method = typeof (IStyletIoCBuilder).GetMethod("Bind", new Type[] {});
+            foreach (var vmFactory in vmFactoriesList)
+            {
+                var generic = method?.MakeGenericMethod(vmFactory);
+                var bindTo = generic?.Invoke(builder, null) as IBindTo;
+                bindTo?.ToAbstractFactory();
+            }
+
+            builder.Bind<ViewModelFactory>().ToSelf().InSingletonScope();
         }
 
         protected override void Configure()

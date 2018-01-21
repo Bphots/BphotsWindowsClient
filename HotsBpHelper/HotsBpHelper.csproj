@@ -145,6 +145,8 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Const.cs" />
     <Compile Include="DateTimeUtils.cs" />
+    <Compile Include="Factories\GenericViewModelFactory.cs" />
+    <Compile Include="Factories\ViewModelFactories.cs" />
     <Compile Include="HeroFinder\FrameFinder.cs" />
     <Compile Include="HeroFinder\Finder.cs" />
     <Compile Include="HeroFinder\StageFinder.cs" />
@@ -182,6 +184,7 @@
     <Compile Include="Pages\MMRViewModel.cs" />
     <Compile Include="Pages\SelectorViewModel.cs" />
     <Compile Include="Pages\ViewModelBase.cs" />
+    <Compile Include="Services\ToastService.cs" />
     <Compile Include="Settings\AppSetting.cs" />
     <Compile Include="UserControls\ScriptingHelper.cs" />
     <Compile Include="UserControls\WebKitBrowser.xaml.cs">

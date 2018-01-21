@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using HotsBpHelper.Api.Security;
+using HotsBpHelper.Factories;
 using HotsBpHelper.HeroFinder;
 using HotsBpHelper.Messages;
+using HotsBpHelper.Services;
 using HotsBpHelper.Settings;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
@@ -25,10 +27,8 @@ namespace HotsBpHelper.Pages
 
         private readonly List<HeroSelectorViewModel> _cachedHeroSelectorViewModels = new List<HeroSelectorViewModel>();
         private readonly IEventAggregator _eventAggregator;
-        private readonly IHeroSelectorViewModelFactory _heroSelectorViewModelFactory;
-        private readonly IHeroSelectorWindowViewModelFactory _heroSelectorWindowViewModelFactory;
 
-        private readonly IMapSelectorViewModelFactory _mapSelectorViewModelFactory;
+        private readonly ViewModelFactory _viewModelFactory;
 
         private readonly ISecurityProvider _securityProvider;
         private bool _autoShowHideHelper;
@@ -60,14 +60,10 @@ namespace HotsBpHelper.Pages
         private Visibility _visibility;
         private int _width;
 
-        public BpViewModel(IHeroSelectorWindowViewModelFactory heroSelectorWindowViewModelFactory,
-            IHeroSelectorViewModelFactory heroSelectorViewModelFactory,
-            IMapSelectorViewModelFactory mapSelectorViewModelFactory,
-            IEventAggregator eventAggregator, ISecurityProvider securityProvider)
+        public BpViewModel(ViewModelFactory viewModelFactory, IEventAggregator eventAggregator, ISecurityProvider securityProvider)
         {
-            _heroSelectorViewModelFactory = heroSelectorViewModelFactory;
-            _mapSelectorViewModelFactory = mapSelectorViewModelFactory;
-            _heroSelectorWindowViewModelFactory = heroSelectorWindowViewModelFactory;
+            _viewModelFactory = viewModelFactory;
+
             _eventAggregator = eventAggregator;
             _securityProvider = securityProvider;
 
@@ -79,7 +75,7 @@ namespace HotsBpHelper.Pages
             Left = unitPos.X;
             Top = unitPos.Y;
 
-            _heroSelectorWindowViewModel = _heroSelectorWindowViewModelFactory.CreateViewModel();
+            _heroSelectorWindowViewModel = _viewModelFactory.CreateViewModel<HeroSelectorWindowViewModel>();
 
             var filePath = @Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "index.html#") + App.Language;
             LocalFileUri = new Uri(filePath, UriKind.Absolute);
@@ -440,7 +436,7 @@ namespace HotsBpHelper.Pages
         public void InitializeMapSelector()
         {
             _mapSelectorViewModel?.RequestClose();
-            _mapSelectorViewModel = _mapSelectorViewModelFactory.CreateViewModel();
+            _mapSelectorViewModel = _viewModelFactory.CreateViewModel<MapSelectorViewModel>();
             _mapSelectorViewModel.ButtonVisibility = !IsAutoMode ? Visibility.Visible : Visibility.Hidden;
             _mapSelectorViewModel.Id = 0;
             _mapSelectorViewModel.SetCenterAndTop(App.AppSetting.Position.MapSelectorPosition);
@@ -466,13 +462,13 @@ namespace HotsBpHelper.Pages
             if (_cachedHeroSelectorViewModels.Any())
                 CloseHeroSelectorWindows();
 
-            _heroSelectorWindowViewModel = _heroSelectorWindowViewModelFactory.CreateViewModel();
+            _heroSelectorWindowViewModel = _viewModelFactory.CreateViewModel<HeroSelectorWindowViewModel>();
             WindowManager.ShowWindow(_heroSelectorWindowViewModel);
             ((Window) _heroSelectorWindowViewModel.View).Owner = (Window) View;
 
             for (var i = 0; i <= 13; ++i)
             {
-                var vm = _heroSelectorViewModelFactory.CreateViewModel();
+                var vm = _viewModelFactory.CreateViewModel<HeroSelectorViewModel>();
                 _cachedHeroSelectorViewModels.Add(vm);
                 vm.Id = i;
                 var position = _listPositions[i];
@@ -527,7 +523,7 @@ namespace HotsBpHelper.Pages
             {
                 if (HeroSelectorViewModels.First(v => v.Id == firstBanId).SelectedItemInfo == null)
                 {
-                    HeroSelectorViewModels.First(v => v.Id == firstBanId).Select("None");
+                    HeroSelectorViewModels.First(v => v.Id == firstBanId).Select(L("NO_CHOOSE"));
                     HeroSelectorViewModels.First(v => v.Id == firstBanId).ConfirmSelection();
                 }
             }
@@ -541,7 +537,7 @@ namespace HotsBpHelper.Pages
             {
                 if (HeroSelectorViewModels.First(v => v.Id == firstBanId).SelectedItemInfo == null)
                 {
-                    HeroSelectorViewModels.First(v => v.Id == firstBanId).Select("None");
+                    HeroSelectorViewModels.First(v => v.Id == firstBanId).Select(L("NO_CHOOSE"));
                     HeroSelectorViewModels.First(v => v.Id == firstBanId).ConfirmSelection();
                 }
             }
@@ -554,7 +550,7 @@ namespace HotsBpHelper.Pages
             {
                 if (HeroSelectorViewModels.First(v => v.Id == secondBanId).SelectedItemInfo == null)
                 {
-                    HeroSelectorViewModels.First(v => v.Id == secondBanId).Select("None");
+                    HeroSelectorViewModels.First(v => v.Id == secondBanId).Select(L("NO_CHOOSE"));
                     HeroSelectorViewModels.First(v => v.Id == secondBanId).ConfirmSelection();
                 }
             }
@@ -567,7 +563,7 @@ namespace HotsBpHelper.Pages
             {
                 if (HeroSelectorViewModels.First(v => v.Id == secondBanId).SelectedItemInfo == null)
                 {
-                    HeroSelectorViewModels.First(v => v.Id == secondBanId).Select("None");
+                    HeroSelectorViewModels.First(v => v.Id == secondBanId).Select(L("NO_CHOOSE"));
                     HeroSelectorViewModels.First(v => v.Id == secondBanId).ConfirmSelection();
                 }
             }
@@ -581,21 +577,21 @@ namespace HotsBpHelper.Pages
             {
                 var vm = HeroSelectorViewModels.First(v => v.Id == firstBanId);
                 vm.InteractionVisible = true;
-                vm.Select("None");
+                vm.Select(L("NO_CHOOSE"));
             }
             else if (HeroSelectorViewModels.First(v => v.Id == firstBanId).SelectedItemInfo == null)
             {
-                HeroSelectorViewModels.First(v => v.Id == firstBanId).Select("None");
+                HeroSelectorViewModels.First(v => v.Id == firstBanId).Select(L("NO_CHOOSE"));
             }
             if (!HeroSelectorViewModels.First(v => v.Id == secondBanId).InteractionVisible)
             {
                 var vm = HeroSelectorViewModels.First(v => v.Id == secondBanId);
                 vm.InteractionVisible = true;
-                vm.Select("None");
+                vm.Select(L("NO_CHOOSE"));
             }
             else if (HeroSelectorViewModels.First(v => v.Id == secondBanId).SelectedItemInfo == null)
             {
-                HeroSelectorViewModels.First(v => v.Id == secondBanId).Select("None");
+                HeroSelectorViewModels.First(v => v.Id == secondBanId).Select(L("NO_CHOOSE"));
             }
 
             BpStatus.CurrentStep = _listBpSteps[2].Contains(pointIndex) ? 2 : 7;
@@ -1087,21 +1083,6 @@ namespace HotsBpHelper.Pages
         {
             TurnOffAutoDetectMode?.Invoke(this, EventArgs.Empty);
         }
-    }
-
-    public interface IHeroSelectorViewModelFactory
-    {
-        HeroSelectorViewModel CreateViewModel();
-    }
-
-    public interface IHeroSelectorWindowViewModelFactory
-    {
-        HeroSelectorWindowViewModel CreateViewModel();
-    }
-
-    public interface IMapSelectorViewModelFactory
-    {
-        MapSelectorViewModel CreateViewModel();
     }
 
     public class BpStatus

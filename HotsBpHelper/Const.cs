@@ -9,8 +9,7 @@ namespace HotsBpHelper
         public const string UPDATE_FEED_XML = "http://www.bphots.com/bp_helper/get/update";
 
         public const string LOCAL_WEB_FILE_DIR = "WebFiles";
-
-
+        
         public const string PATCH = "18010601";
 
         public const string HEROES_PROCESS_NAME = "HeroesOfTheStorm";
