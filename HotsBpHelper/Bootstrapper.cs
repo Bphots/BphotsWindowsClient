@@ -33,17 +33,17 @@ namespace HotsBpHelper
 
         private static void RegisterViewModelFactories(IStyletIoCBuilder builder)
         {
-            var vmFactoriesList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
+            var vmTypeList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
                 from assemblyType in domainAssembly.GetTypes()
-                where typeof (IViewModelFactory).IsAssignableFrom(assemblyType)
-                select assemblyType).ToArray();
+                where typeof (ViewModelBase).IsAssignableFrom(assemblyType)
+                select assemblyType).Where(vmType => !vmType.IsGenericType && !vmType.IsAbstract).ToArray();
 
             var method = typeof (IStyletIoCBuilder).GetMethod("Bind", new Type[] {});
-            foreach (var vmFactory in vmFactoriesList)
+            foreach (var vm in vmTypeList)
             {
-                var generic = method?.MakeGenericMethod(vmFactory);
+                var generic = method?.MakeGenericMethod(vm);
                 var bindTo = generic?.Invoke(builder, null) as IBindTo;
-                bindTo?.ToAbstractFactory();
+                bindTo?.ToSelf();
             }
 
             builder.Bind<ViewModelFactory>().ToSelf().InSingletonScope();

@@ -146,7 +146,6 @@
     <Compile Include="Const.cs" />
     <Compile Include="DateTimeUtils.cs" />
     <Compile Include="Factories\GenericViewModelFactory.cs" />
-    <Compile Include="Factories\ViewModelFactories.cs" />
     <Compile Include="HeroFinder\FrameFinder.cs" />
     <Compile Include="HeroFinder\Finder.cs" />
     <Compile Include="HeroFinder\StageFinder.cs" />

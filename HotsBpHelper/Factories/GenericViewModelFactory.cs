@@ -10,36 +10,29 @@ namespace HotsBpHelper.Factories
 {
     public class ViewModelFactory
     {
-        private readonly List<IViewModelFactory> _facotries; // ReSharper disable SuggestBaseTypeForParameter
-        
+        private readonly IContainer _container;
+
         public ViewModelFactory(IContainer container)
         {
-            var vmFactoriesList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
-                                   from assemblyType in domainAssembly.GetTypes()
-                                   where typeof(IViewModelFactory).IsAssignableFrom(assemblyType)
-                                   select assemblyType).ToArray();
-
-            _facotries = new List<IViewModelFactory>();
-            foreach (var factoryType in vmFactoriesList.Where(f => !f.Name.StartsWith("Generated")))
-            {
-                var factory = container.Get(factoryType) as IViewModelFactory;
-                _facotries.Add(factory);
-            }
+            _container = container;
         }
 
-        public T CreateViewModel<T>()
-        {
-            foreach (var factory in _facotries)
+        public T CreateViewModel<T>() where T : ViewModelBase
+        { 
+            var vmList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
+                                   from assemblyType in domainAssembly.GetTypes()
+                                   where typeof(ViewModelBase).IsAssignableFrom(assemblyType)
+                                   select assemblyType).ToArray();
+            foreach (var vmType in vmList.Where(f => !f.Name.StartsWith("Generated")))
             {
-                var methodInfo = factory.GetType().GetMethod("CreateViewModel");
-                if (methodInfo != null && methodInfo.ReturnType == typeof (T))
+                if (vmType == typeof (T))
                 {
-                    var vm = methodInfo.Invoke(factory, null);
-                    return (T) vm;
+                    var vm = _container.Get(vmType);
+                    return (T)vm;
                 }
             }
-
-            throw new NotSupportedException($"The factory for type {typeof (T).Name} is not properly registered.");
+            
+            throw new NotSupportedException($"The type {typeof (T).Name} is not properly registered.");
         }
     }
 
