@@ -8,6 +8,7 @@ using System.Windows;
 using HotsBpHelper.Api;
 using HotsBpHelper.Api.Model;
 using HotsBpHelper.Models;
+using HotsBpHelper.Services;
 using HotsBpHelper.Utils;
 using RestSharp.Extensions;
 using Stylet;
@@ -17,16 +18,16 @@ namespace HotsBpHelper.Pages
     public class WebFileUpdaterViewModel : ViewModelBase
     {
         private readonly IRestApi _restApi;
-        private Form1 form1 = new Form1();//用于显示气泡通知
-        private bool isBallowShow = false;
+        private readonly IToastService _toastService;
 
         //private int percent,count=0, lastBalloon = 0;
 
         public BindableCollection<FileUpdateInfo> FileUpdateInfos { get; set; } = new BindableCollection<FileUpdateInfo>();
 
-        public WebFileUpdaterViewModel(IRestApi restApi)
+        public WebFileUpdaterViewModel(IRestApi restApi, IToastService toastSevice)
         {
             _restApi = restApi;
+            _toastService = toastSevice;
         }
 
         private void ReceiveBroadcast()
@@ -120,6 +121,7 @@ namespace HotsBpHelper.Pages
 
         private async Task DownloadNeededFiles()
         {
+            Execute.OnUIThread(() => _toastService.ShowInformation(L("UpdateFullText") + Environment.NewLine + L("HotsBpHelper")));
             await Task.Run(() =>
             {
                 
@@ -129,13 +131,6 @@ namespace HotsBpHelper.Pages
                     {
                         try
                         {
-                            //如果有文件在更新，延续气泡框的生命
-                            form1.xuMing();
-                            if (!isBallowShow)
-                            {
-                                form1.ShowBallowNotify();
-                                isBallowShow = true;
-                            }
                             Logger.Trace("Downloading file: {0}", fileUpdateInfo.FileName);
 
                             //防盗链算法

@@ -15,8 +15,10 @@ namespace HotsBpHelper.HeroFinder
 
         public static bool CheckIfInRightFrame(Bitmap screenshotBitmap)
         {
-            var is1080 = App.AppSetting.Position.Height == 1080;
-            var frameRightBorderPoint = is1080 ? new Point(1907, 938) : new Point(3423, 1241);
+            if (App.AppSetting.Position.OverlapPoints == null || App.AppSetting.Position.OverlapPoints.AppearanceFramePoint == Point.Empty)
+                return false;
+            
+            var frameRightBorderPoint = App.AppSetting.Position.OverlapPoints.FrameRightBorderPoint; 
             var hasFrame = true;
             var sampleColor = screenshotBitmap.GetPixel(frameRightBorderPoint.X, frameRightBorderPoint.Y);
             for (var y = frameRightBorderPoint.Y - 1; y >= frameRightBorderPoint.Y - 300; --y)
@@ -34,8 +36,10 @@ namespace HotsBpHelper.HeroFinder
 
         public static bool CheckIfInLeftFrame(Bitmap screenshotBitmap)
         {
-            var is1080 = App.AppSetting.Position.Height == 1080;
-            var appearanceFramePoint = is1080 ? new Point(70, 457) : new Point(81, 521);
+            if (App.AppSetting.Position.OverlapPoints == null || App.AppSetting.Position.OverlapPoints.AppearanceFramePoint == Point.Empty)
+                return false;
+            
+            var appearanceFramePoint = App.AppSetting.Position.OverlapPoints.AppearanceFramePoint;
             var hasAppearanceFrame = true;
             var sampleColor = screenshotBitmap.GetPixel(appearanceFramePoint.X, appearanceFramePoint.Y);
             for (var x = appearanceFramePoint.X + 1; x <= appearanceFramePoint.X + 250; ++x)
@@ -50,7 +54,7 @@ namespace HotsBpHelper.HeroFinder
             if (hasAppearanceFrame)
                 return true;
 
-            var skillFramePoint = is1080 ? new Point(77, 833) : new Point(121, 1111);
+            var skillFramePoint = App.AppSetting.Position.OverlapPoints.SkillFramePoint;
             var hasSkilFrame = true;
             sampleColor = screenshotBitmap.GetPixel(skillFramePoint.X, skillFramePoint.Y);
             for (var x = skillFramePoint.X + 1; x <= skillFramePoint.X * 4; ++x)
@@ -65,7 +69,7 @@ namespace HotsBpHelper.HeroFinder
             if (hasSkilFrame)
                 return true;
 
-            var talentFramePoint = is1080 ? new Point(147, 319) : new Point(213, 425);
+            var talentFramePoint = App.AppSetting.Position.OverlapPoints.TalentFramePoint;
             var hasTalentFrame = true;
             sampleColor = screenshotBitmap.GetPixel(talentFramePoint.X, talentFramePoint.Y);
             for (var x = talentFramePoint.X + 1; x <= talentFramePoint.X * 2; ++x)
@@ -85,8 +89,10 @@ namespace HotsBpHelper.HeroFinder
 
         public static ChatInfo CheckIfInChat(Bitmap screenshotBitmap)
         {
-            var is1080 = App.AppSetting.Position.Height == 1080;
-            var fullHorizontalPoint = is1080 ? new Point(1173, 248) : new Point(1960, 331);
+            if (App.AppSetting.Position.OverlapPoints == null || App.AppSetting.Position.OverlapPoints.AppearanceFramePoint == Point.Empty)
+                return ChatInfo.None;
+
+            var fullHorizontalPoint = App.AppSetting.Position.OverlapPoints.FullChatHorizontalPoint;
             var isFull = true;
             var sampleColor = screenshotBitmap.GetPixel(fullHorizontalPoint.X, fullHorizontalPoint.Y);
             for (var x = fullHorizontalPoint.X + 1; x <= fullHorizontalPoint.X + 600; ++x)
@@ -101,7 +107,7 @@ namespace HotsBpHelper.HeroFinder
             if (isFull)
                 return ChatInfo.Full;
 
-            var parialHorizontalPoint = is1080 ? new Point(1173, 632) : new Point(1960, 842);
+            var parialHorizontalPoint = App.AppSetting.Position.OverlapPoints.PartialChatlHorizontalPoint;
             var isPartial = true;
             sampleColor = screenshotBitmap.GetPixel(parialHorizontalPoint.X, parialHorizontalPoint.Y);
             for (var x = parialHorizontalPoint.X + 1; x <= parialHorizontalPoint.X + 600; ++x)

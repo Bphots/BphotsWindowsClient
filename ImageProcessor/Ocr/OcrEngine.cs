@@ -75,7 +75,7 @@ namespace ImageProcessor.Ocr
 
         public bool Trustable { get; set; }
 
-        public bool FullyTruestable { get; set; }
+        public bool FullyTrustable { get; set; }
     }
 
     public enum OcrLanguage

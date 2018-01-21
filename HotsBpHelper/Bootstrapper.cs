@@ -56,9 +56,6 @@ namespace HotsBpHelper
 
             var args = Environment.GetCommandLineArgs();
 			
-            App.Debug = true;
-            // TODO Remove
-			
             if (args.Any(arg => arg.ToLower() == "/notcheckprocess"))
             {
                 App.NotCheckProcess = true;
@@ -114,9 +111,9 @@ namespace HotsBpHelper
                     LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("en-US"); 
                     break;
             }
-			
-            App.Language = "zh-CN";
-            LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN"); //TODO REMOVE
+
+            //App.Language = "zh-CN";
+            //LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN"); //TODO REMOVE
 
 
         }

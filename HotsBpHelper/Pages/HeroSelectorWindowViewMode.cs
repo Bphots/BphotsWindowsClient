@@ -1,22 +1,20 @@
-﻿using System.Windows;
-using Stylet;
+﻿using Stylet;
 
 namespace HotsBpHelper.Pages
 {
     public class HeroSelectorWindowViewModel : ViewModelBase
     {
-        private Visibility _visibility = Visibility.Visible;
-        private BindableCollection<HeroSelectorViewModel> m_heroSelectorViewModels;
+        private BindableCollection<HeroSelectorViewModel> _HeroSelectorViewModels;
 
         public HeroSelectorWindowViewModel()
         {
-            m_heroSelectorViewModels = new BindableCollection<HeroSelectorViewModel>();
+            _HeroSelectorViewModels = new BindableCollection<HeroSelectorViewModel>();
         }
 
         public BindableCollection<HeroSelectorViewModel> HeroSelectorViewModels
         {
-            get { return m_heroSelectorViewModels; }
-            set { SetAndNotify(ref m_heroSelectorViewModels, value); }
+            get { return _HeroSelectorViewModels; }
+            set { SetAndNotify(ref _HeroSelectorViewModels, value); }
         }
     }
 }

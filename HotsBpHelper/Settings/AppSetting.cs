@@ -34,6 +34,23 @@ namespace HotsBpHelper.Settings
         public int HeroWidth { get; set; }
         
         public int HeroHeight { get; set; }
+
+        public OverlapPoints OverlapPoints { get; set; }
+    }
+
+    public class OverlapPoints
+    {
+        public Point FrameRightBorderPoint { get; set; }
+
+        public Point AppearanceFramePoint { get; set; }
+
+        public Point SkillFramePoint { get; set; }
+
+        public Point TalentFramePoint { get; set; }
+
+        public Point FullChatHorizontalPoint { get; set; }
+
+        public Point PartialChatlHorizontalPoint { get; set; }
     }
 
     public class MapPosition

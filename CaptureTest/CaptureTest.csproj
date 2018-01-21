@@ -70,6 +70,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DotNetHelper\DotNetHelper.csproj">
+      <Project>{353b6e1b-1415-4010-babf-924c7158fc58}</Project>
+      <Name>DotNetHelper</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ImageProcessor\ImageProcessor.csproj">
       <Project>{f726a9c5-3c1f-4082-aec2-8b642ab3ea69}</Project>
       <Name>ImageProcessor</Name>

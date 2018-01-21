@@ -120,9 +120,9 @@ namespace ImageProcessor
                         OcrEngine.CandidateHeroes);
 
                 // 100% match case
-                if (result.Values.Any(v => v.FullyTruestable))
+                if (result.Values.Any(v => v.FullyTrustable))
                 {
-                    scoreDictionary[result.Values.First(v => v.FullyTruestable).Value] = int.MaxValue;
+                    scoreDictionary[result.Values.First(v => v.FullyTrustable).Value] = int.MaxValue;
                     break;
                 }
 
@@ -140,7 +140,7 @@ namespace ImageProcessor
                 var matchResultsWithMaxScore = result.Values.Where(c => c.Score == maxScoreInSuite).ToList();
 
                 // unique 60%+ case
-                if (matchResultsWithMaxScore.Count == 1 && !matchResultsWithMaxScore[0].InDoubt)
+                if (matchResultsWithMaxScore.Count == 1 && matchResultsWithMaxScore[0].Trustable)
                 {
                     scoreDictionary[matchResultsWithMaxScore[0].Value] = int.MaxValue / 2;
                     break;
@@ -179,7 +179,13 @@ namespace ImageProcessor
 
             sb.Append(pendingMatchResult);
             image.Dispose();
-            File.Copy(file, path, true);
+
+            if (!string.IsNullOrEmpty(sb.ToString()) || sb.ToString() != PickingText)
+                File.Copy(file, path, true);
+
+            if (!OcrEngine.Debug)
+                file.DeleteIfExists();
+
             ResetFlags();
 
             return maxValue == int.MaxValue;

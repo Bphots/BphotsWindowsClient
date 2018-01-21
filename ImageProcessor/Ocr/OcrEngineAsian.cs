@@ -44,7 +44,7 @@ namespace ImageProcessor.ImageProcessing
                 for (var i = 0; i < original.Length; ++i)
                 {
                     if (original[i] == target[i])
-                        score += 2;
+                        score += FullyMatchScore;
                 }
             }
             else
@@ -105,7 +105,7 @@ namespace ImageProcessor.ImageProcessing
                 string text = page.GetText();
                 if (checkDva && IsMathcingDva(text))
                 {
-                    ocrResult.Results["D.Va"] = new MatchResult { Key = text, Value = "D.Va", InDoubt = false, Score = 6, Trustable = true, FullyTruestable = true };
+                    ocrResult.Results["D.Va"] = new MatchResult { Key = text, Value = "D.Va", InDoubt = false, Score = 6, Trustable = true, FullyTrustable = true };
                     return ocrResult;
                 }
                 
@@ -113,12 +113,14 @@ namespace ImageProcessor.ImageProcessing
                 {
                     int score = CalculateScore(text, hero);
                     if (score > 0)
-                        ocrResult.Results[hero] = new MatchResult() { Key = text, Value = hero, InDoubt = score / (double)(textCount * 2) <= 0.5, Score = score, Trustable = (score / (double)(textCount * 2)) > 0.66, FullyTruestable = textCount >= 2 && score == textCount * 2 };
+                        ocrResult.Results[hero] = new MatchResult() { Key = text, Value = hero, InDoubt = score / (double)(textCount * FullyMatchScore) <= 0.5 || textCount <= 1, Score = score, Trustable = (score / (double)(textCount * FullyMatchScore)) > 0.66 && count >= 2, FullyTrustable = textCount >= 2 && score == textCount * FullyMatchScore };
                         
                 }
                 return ocrResult;
             }
         }
+
+        private const int FullyMatchScore = 2;
 
         public override OcrResult ProcessOcr(string path, HashSet<string> candidates)
         {
@@ -151,7 +153,7 @@ namespace ImageProcessor.ImageProcessing
                         match = candidate;
                     }
                 }
-                ocrResult.Results[match] = new MatchResult { Key = text, Value = match, InDoubt = inDoubt, Score = maxScore, Trustable = (maxScore / (double)(match.Length * 2)) > 0.66 };
+                ocrResult.Results[match] = new MatchResult { Key = text, Value = match, InDoubt = inDoubt, Score = maxScore, Trustable = (maxScore / (double)(match.Length * FullyMatchScore)) > 0.66 };
                 return ocrResult;
             }
         }

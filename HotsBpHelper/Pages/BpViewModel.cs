@@ -60,6 +60,8 @@ namespace HotsBpHelper.Pages
         private Visibility _visibility;
         private int _width;
 
+        public readonly bool OcrAvailable = false;
+
         public BpViewModel(ViewModelFactory viewModelFactory, IEventAggregator eventAggregator, ISecurityProvider securityProvider)
         {
             _viewModelFactory = viewModelFactory;
@@ -69,7 +71,15 @@ namespace HotsBpHelper.Pages
 
             _eventAggregator.Subscribe(this);
             _scanningCancellationToken = new CancellationTokenSource();
-            OcrUtil = new OcrUtil();
+            try
+            {
+                OcrUtil = new OcrUtil();
+                OcrAvailable = true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
 
             var unitPos = App.AppSetting.Position.BpHelperPosition.ToUnitPoint();
             Left = unitPos.X;
@@ -301,10 +311,6 @@ namespace HotsBpHelper.Pages
                         {
                             BpStatus.CurrentStep++;
                             ProcessStep();
-                        }
-                        else
-                        {
-                            Task.Run(DelayedResetAsync);
                         }
                     }
                     //else if (_listBpSteps[BpStatus.CurrentStep].Count == 2 && !IsAutoMode)

@@ -77,7 +77,7 @@ namespace ImageProcessor.Ocr
                     InDoubt = maxScore < 0.9,
                     Score = (int)(maxScore * 100),
                     Trustable = maxScore > 0.9,
-                    FullyTruestable = maxScore > 0.95
+                    FullyTrustable = maxScore > 0.95
                 };
                 return ocrResult;
             }

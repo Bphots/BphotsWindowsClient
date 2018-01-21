@@ -2,10 +2,11 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-
+using DotNetHelper;
 using ImageProcessor;
 using ImageProcessor.Extensions;
 using ImageProcessor.ImageProcessing;
@@ -16,7 +17,16 @@ namespace CaptureTest
     {
         private static void Main(string[] args)
         {
-            var dir = @"D:\qqytqqyt\Documents\HeroesBpProject\OcrHelper\CaptureTest\bin\Debug\test\";
+            var dir = @"D:\qqytqqyt\Documents\HeroesBpProject\test\Heroes(8)\Test\left";
+            foreach (FilePath path in Directory.GetFiles(dir).ToList())
+            {
+                if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
+                {
+                    Guid guid = Guid.NewGuid();
+                    string str = guid.ToString();
+                    File.Move(path, path.GetDirPath() + path.GetFileNameWithoutExtension() + str + path.GetFileExt());
+                }
+            }
             //var dir = @"C:\Users\gdlcf\Desktop\HOS\客户端\HotsBpHelperOcr PoC version\第四版本\Debug\Debug\temp\";
             //using (var bitmap = new Bitmap(@"D:\qqytqqyt\Documents\HeroesBpProject\OcrHelper\HotsBpHelper\bin\Debug\Images\Heroes\3440x1440\color.bmp"))
             //using (var bitmapGray = bitmap.ToGrayscale())

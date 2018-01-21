@@ -270,4 +270,10 @@
   <data name="OcrModeToolTipTitle" xml:space="preserve">
     <value>背锅助手正在运行</value>
   </data>
+  <data name="LanguageUnavailable" xml:space="preserve">
+    <value>自动识别无法加载，请确保 chi_sim 语言包和微软 Visual C++ Redistributable for Visual Studio 2015 包已安装。</value>
+  </data>
+  <data name="IncompatibleResolution" xml:space="preserve">
+    <value>自动识别已关闭 （目前仅支持1080以上分辨率）</value>
+  </data>
 </root>

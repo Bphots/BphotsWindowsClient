@@ -21,26 +21,22 @@ namespace HotsBpHelper.Utils
     public class OcrUtil
     {
         private readonly Recognizer _recognizer;
+        
+        public static bool NotInFocus = false;
 
-        public static bool SuspendScanning = false;
+        public static bool InGame = false;
+
+        public static bool SuspendScanning => InGame || NotInFocus;
 
         public OcrUtil()
         {
-            try
-            {
-                var language = OcrLanguage.English;
-                if (App.Language.Contains(@"CN"))
-                    language = OcrLanguage.SimplifiedChinese;
-                if (App.Language.Contains(@"TW"))
-                    language = OcrLanguage.TraditionalChinese;
+            var language = OcrLanguage.English;
+            if (App.Language.Contains(@"CN"))
+                language = OcrLanguage.SimplifiedChinese;
+            if (App.Language.Contains(@"TW"))
+                language = OcrLanguage.TraditionalChinese;
                 
-                _recognizer = new Recognizer(language, Path.Combine(App.AppPath, @"Images\Heroes\"));
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.StackTrace);
-                throw;
-            }
+            _recognizer = new Recognizer(language, Path.Combine(App.AppPath, @"Images\Heroes\"));
         }
 
         public void Dispose()

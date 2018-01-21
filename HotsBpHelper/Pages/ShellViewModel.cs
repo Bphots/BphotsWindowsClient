@@ -137,13 +137,18 @@ namespace HotsBpHelper.Pages
             if (!App.Debug)
             {
                 // ²»ÊÇµ÷ÊÔÄ£Äâ,Ôò¼ì²é¸üÐÂ
-                Update();
+                // Update();
             }
             InitSettings();
 
             RegisterHotKey();
+            if (!App.Debug && WindowManager.ShowDialog(_viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>()) != true)
+            {
+                Application.Current.Shutdown();
+                return;
+            }
 
-          _bpViewModel = _viewModelFactory.CreateViewModel<BpViewModel>(); 
+            _bpViewModel = _viewModelFactory.CreateViewModel<BpViewModel>(); 
 
             // Ä¬ÈÏ½ûÓÃ×Ô¶¯ÏÔÒþ
             _isLoaded = true;
@@ -158,7 +163,13 @@ namespace HotsBpHelper.Pages
             WindowManager.ShowWindow(_mmrViewModel);
 
             AutoShowHideHelper = true;
-            AutoDetect = true;
+            NotifyOfPropertyChange(() => CanOcr);
+            if (!CanOcr)    
+                _toastService.ShowWarning(L("LanguageUnavailable"));
+            if (App.AppSetting.Position.Height < 1070)
+                _toastService.ShowWarning(L("IncompatibleResolution"));
+            
+            AutoDetect = _bpViewModel.OcrAvailable;
             AutoShowMmr = true; // Ĭ�������Զ���ʾMMR
 
             _bpViewModel.RemindDetectMode += BpViewModelOnRemindDetectMode;
@@ -169,7 +180,10 @@ namespace HotsBpHelper.Pages
 
             _initializeReset = true;
             Task.Run(CheckFocusAsync).ConfigureAwait(false);
+            Task.Run(MonitorInGameAsync).ConfigureAwait(false);
         }
+
+        public bool CanOcr => _bpViewModel != null && _bpViewModel.OcrAvailable;
 
         private void BpViewModelOnTurnOffAutoDetectMode(object sender, EventArgs e)
         {
@@ -239,7 +253,24 @@ namespace HotsBpHelper.Pages
                 Thread.Sleep(1000);
             }
         }
-        
+
+        private async Task MonitorInGameAsync()
+        {
+            while (true)
+            {
+                if (File.Exists(Const.BattleLobbyPath) && !OcrUtil.InGame)
+                {
+                    OcrUtil.InGame = true;
+                }
+
+                if (!File.Exists(Const.BattleLobbyPath) && OcrUtil.InGame)
+                {
+                    OcrUtil.InGame = false;
+                }
+
+                await Task.Delay(1000);
+            }
+        }
         
         private void RegisterHotKey()
         {
@@ -284,7 +315,7 @@ namespace HotsBpHelper.Pages
                     {
                         if (_bpViewModel.BpScreenLoaded)
                             Execute.OnUIThread(() => _bpViewModel.Show());
-                        OcrUtil.SuspendScanning = false;
+                        OcrUtil.NotInFocus = false;
                         lastStatus = 1;
                     }
                 }
@@ -299,12 +330,12 @@ namespace HotsBpHelper.Pages
                         var hwnd2 = Win32.GetForegroundWindow();
                         var pid2 = Win32.GetWindowProcessID(hwnd2);
                         Process process2 = Process.GetProcessById(pid2);
-                        bool inHotsGame2 = process.ProcessName.StartsWith(Const.HEROES_PROCESS_NAME);
-                        bool inHotsHelper2 = process.ProcessName.StartsWith(Const.HOTSBPHELPER_PROCESS_NAME);
+                        bool inHotsGame2 = process2.ProcessName.StartsWith(Const.HEROES_PROCESS_NAME);
+                        bool inHotsHelper2 = process2.ProcessName.StartsWith(Const.HOTSBPHELPER_PROCESS_NAME);
                         if (!inHotsHelper2 && !inHotsGame2 && _bpViewModel.BpScreenLoaded)
                             Execute.OnUIThread(() => _bpViewModel.Hide());
 
-                        OcrUtil.SuspendScanning = true;
+                        OcrUtil.NotInFocus = true;
                         lastStatus = 2;
                     }
                 }
@@ -323,7 +354,7 @@ namespace HotsBpHelper.Pages
             }
             if (e.HotKey.Key == Key.R)
             {
-                if (_bpViewModel != null)
+                if (CanOcr)
                     AutoDetect = !_bpViewModel.IsAutoMode;
             }
             if (e.HotKey.Key == Key.N)
@@ -412,15 +443,9 @@ namespace HotsBpHelper.Pages
                     Logger.Error(ex, "Preparing updates exception.");
                     return;
                 }
-                //ShowMessageBox(L("UpdatesAvailable"), MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // TODO update success
-                //_notificationManager.Show(new NotificationContent
-                //{
-                //    Title = L("UpdateFullText"),
-                //    Message = L("HotsBpHelper"),
-                //    Type = NotificationType.Information
-                //}, expirationTime: TimeSpan.FromSeconds(5));
+                _toastService.ShowInformation(L("UpdateFullText") + Environment.NewLine + L("HotsBpHelper"));
+
                 try
                 {
                     foreach (var updateTask in updManager.Tasks)
@@ -475,44 +500,11 @@ namespace HotsBpHelper.Pages
             {
                 App.AppSetting = Its.Configuration.Settings.Get<AppSetting>();
                 var screenSize = ScreenUtil.GetScreenResolution();
-                App.AppSetting.Position = CaculatePosition((int)screenSize.Width, (int)screenSize.Height);
+                App.AppSetting.Position = CaculatePosition(screenSize.Width, screenSize.Height);
                 
-                // TODO remove
-                if (App.AppSetting.Position.Height == 1440 && App.AppSetting.Position.Width == 3440)
-                {
-                    App.AppSetting.Position.Left.HeroName1 = new Point(19, 247);
-                    App.AppSetting.Position.Right.HeroName1 = new Point(3426, 252);
-                }
-                if (App.AppSetting.Position.Height > 1800 && App.AppSetting.Position.Width > 2700)
-                {
-                    App.AppSetting.Position.Left.HeroName1 = new Point(25, 313);
-                    try
-                    {
-                    var text = File.ReadAllLines(@".\rightTempConfig1824.txt")[0];
-                    var paramsTemp = text.Trim().Split(',');
-                    App.AppSetting.Position.Right.HeroName1 = new Point(int.Parse(paramsTemp[0]), int.Parse(paramsTemp[1]));
-                    }
-                    catch (Exception)
-                    {
-                        App.AppSetting.Position.Right.HeroName1 = new Point(2717, 317);
-                    }
-                }
-                if (App.AppSetting.Position.Height == 1080 && App.AppSetting.Position.Width == 1920)
-                {
-                    App.AppSetting.Position.Left.HeroName1 = new Point(15, 186);
-                    try
-                    {
-                        var text = File.ReadAllLines(@".\rightTempConfig1080.txt")[0];
-                        var paramsTemp = text.Trim().Split(',');
-                        App.AppSetting.Position.Right.HeroName1 = new Point(int.Parse(paramsTemp[0]),
-                            int.Parse(paramsTemp[1]));
-                    }
-                    catch (Exception)
-                    {
-                        App.AppSetting.Position.Right.HeroName1 = new Point(1907, 189);
-                    }
-                }
-                
+                // TODO dynamic support
+                ManualAdjustPosition();
+
                 if (App.Language.Contains("en"))
                     ExpandHeroPropertiesForLatin();
             }
@@ -522,6 +514,45 @@ namespace HotsBpHelper.Pages
                 _errorView.ShowDialog();
                 _errorView.Pause();
             }
+        }
+
+        private static void ManualAdjustPosition()
+        {
+            if (App.AppSetting.Position.Height == 1440 && App.AppSetting.Position.Width == 3440)
+            {
+                App.AppSetting.Position.Left.HeroName1 = new Point(19, 247);
+                App.AppSetting.Position.Right.HeroName1 = new Point(3426, 252);
+                App.AppSetting.Position.OverlapPoints = new OverlapPoints
+                {
+                    AppearanceFramePoint = new Point(81, 521),
+                    FrameRightBorderPoint = new Point(3423, 1241),
+                    SkillFramePoint = new Point(121, 1111),
+                    TalentFramePoint = new Point(213, 425),
+                    FullChatHorizontalPoint = new Point(1960, 331),
+                    PartialChatlHorizontalPoint = new Point(1960, 842)
+                };
+            }
+            if (App.AppSetting.Position.Height > 1800 && App.AppSetting.Position.Width > 2700)
+            {
+                App.AppSetting.Position.Left.HeroName1 = new Point(25, 313);
+                App.AppSetting.Position.Right.HeroName1 = new Point(2717, 317);
+            }
+            if (App.AppSetting.Position.Height == 1080 && App.AppSetting.Position.Width == 1920)
+            {
+                App.AppSetting.Position.Left.HeroName1 = new Point(15, 186);
+                App.AppSetting.Position.Right.HeroName1 = new Point(1907, 189);
+                App.AppSetting.Position.OverlapPoints = new OverlapPoints
+                {
+                    AppearanceFramePoint = new Point(70, 457),
+                    FrameRightBorderPoint = new Point(1907, 938),
+                    SkillFramePoint = new Point(77, 833),
+                    TalentFramePoint = new Point(147, 319),
+                    FullChatHorizontalPoint = new Point(1173, 248),
+                    PartialChatlHorizontalPoint = new Point(1173, 632)
+                };
+            }
+
+
         }
 
         /// <summary>
