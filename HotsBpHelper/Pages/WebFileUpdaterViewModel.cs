@@ -121,14 +121,19 @@ namespace HotsBpHelper.Pages
 
         private async Task DownloadNeededFiles()
         {
-            Execute.OnUIThread(() => _toastService.ShowInformation(L("UpdateFullText") + Environment.NewLine + L("HotsBpHelper")));
             await Task.Run(() =>
             {
-                
+                bool hasDisplayedMessage = false;
                 foreach (var fileUpdateInfo in FileUpdateInfos)
                 {
                     if (NeedUpdate(fileUpdateInfo))
                     {
+                        if (!hasDisplayedMessage)
+                        {
+                            hasDisplayedMessage = true;
+                            Execute.OnUIThread(() => _toastService.ShowInformation(L("UpdateFullText") + Environment.NewLine + L("HotsBpHelper")));
+                        }
+
                         try
                         {
                             Logger.Trace("Downloading file: {0}", fileUpdateInfo.FileName);

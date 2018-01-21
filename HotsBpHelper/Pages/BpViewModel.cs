@@ -1003,6 +1003,7 @@ namespace HotsBpHelper.Pages
         public void Show()
         {
             var visibility = Visibility.Visible;
+            _heroSelectorWindowViewModel.View.Visibility = visibility;
 
             if (_mapSelectorViewModel != null && _mapSelectorViewModel.View != null)
             {
@@ -1036,6 +1037,7 @@ namespace HotsBpHelper.Pages
         public void Hide()
         {
             var visibility = Visibility.Hidden;
+            _heroSelectorWindowViewModel.View.Visibility = visibility;
 
             if (_mapSelectorViewModel != null && _mapSelectorViewModel.View != null)
             {
