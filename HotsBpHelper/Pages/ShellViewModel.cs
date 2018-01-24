@@ -130,7 +130,7 @@ namespace HotsBpHelper.Pages
             if (!App.Debug)
             {
                 // ²»ÊÇµ÷ÊÔÄ£Äâ,Ôò¼ì²é¸üÐÂ
-                // Update();
+                Update();
             }
             InitSettings();
 
@@ -158,10 +158,9 @@ namespace HotsBpHelper.Pages
                 }
             }
             
-            _bpViewModel = _viewModelFactory.CreateViewModel<BpViewModel>(); 
+            _bpViewModel = _viewModelFactory.CreateViewModel<BpViewModel>();
 
             // Ä¬ÈÏ½ûÓÃ×Ô¶¯ÏÔÒþ
-            _isLoaded = true;
             base.OnViewLoaded();
 
             _bpViewModel.HideBrowser();
@@ -174,6 +173,7 @@ namespace HotsBpHelper.Pages
             ((Window) _mmrViewModel.View).Owner = (Window)View;
             _mmrViewModel.Hide();
 
+            IsLoaded = true;
             AutoShowHideHelper = true;
             NotifyOfPropertyChange(() => CanOcr);
             if (!CanOcr)    
@@ -196,6 +196,12 @@ namespace HotsBpHelper.Pages
         }
 
         public bool CanOcr => _bpViewModel != null && _bpViewModel.OcrAvailable;
+
+        public bool IsLoaded
+        {
+            get { return _isLoaded; }
+            set { SetAndNotify(ref _isLoaded, value); }
+        }
 
         private void BpViewModelOnTurnOffAutoDetectMode(object sender, EventArgs e)
         {
@@ -629,13 +635,20 @@ namespace HotsBpHelper.Pages
 
         public void Exit()
         {
-            Application.Current.Shutdown();
+            try
+            {
+                Application.Current.Shutdown();
+            }
+            finally
+            {
+                Environment.Exit(0);
+            }
         }
 
         protected override void OnClose()
         {
-            _hotKeyManager.Dispose();
-            _bpViewModel.OcrUtil?.Dispose();
+            _hotKeyManager?.Dispose();
+            _bpViewModel?.OcrUtil?.Dispose();
             AutoShowHideHelper = false;
             base.OnClose();
         }

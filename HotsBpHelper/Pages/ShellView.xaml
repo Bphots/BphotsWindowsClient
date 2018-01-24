@@ -14,19 +14,25 @@
         xmlns:lex="http://wpflocalizeextension.codeplex.com"
         xmlns:tb="http://www.hardcodet.net/taskbar"
         xmlns:s="https://github.com/canton7/Stylet"
+        xmlns:converters="clr-namespace:HotsBpHelper.WPF.Converters"
         d:DataContext="{d:DesignInstance local:ShellViewModel}">
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" TrueValue="Collapsed" FalseValue="Visible"/>
+    </Window.Resources>
     <tb:TaskbarIcon IconSource="/Images/hots.ico" ToolTipText="{lex:Loc HotsBpHelper}">
         <tb:TaskbarIcon.ContextMenu>
             <ContextMenu>
-                <MenuItem Header="{lex:Loc AutoShowHideHelper}" IsCheckable="True" IsChecked="{Binding AutoShowHideHelper}" />
-                <MenuItem Header="{lex:Loc AutoDetectHeroAndMap}" IsCheckable="True" IsChecked="{Binding AutoDetect}"  IsEnabled="{Binding CanOcr}" InputGestureText="Ctrl+Shift+R"/>
-                <Separator />
-                <MenuItem Header="{lex:Loc ShowHideHelper}" Command="{s:Action ManuallyShowHideHelper}" InputGestureText="Ctrl+Shift+B" />
-                <MenuItem Header="{lex:Loc SwitchVisibility}" Command="{s:Action SwitchVisibility}" InputGestureText="Ctrl+Shift+M" />
-                <MenuItem Header="{lex:Loc ResetHelper}" Command="{s:Action ResetHelper}" InputGestureText="Ctrl+Shift+N" />
-                <MenuItem Header="{lex:Loc Help}" Command="{s:Action ShowHelp}"/>
-                <MenuItem Header="{lex:Loc AutoShowMMR}" IsCheckable="True" IsChecked="{Binding AutoShowMmr}" />
-                <MenuItem Header="{lex:Loc About}" Command="{s:Action ShowAbout}"/>
+                <MenuItem Header="{lex:Loc AutoShowHideHelper}" IsCheckable="True" IsChecked="{Binding AutoShowHideHelper}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
+                <MenuItem Header="{lex:Loc AutoDetectHeroAndMap}" IsCheckable="True" IsChecked="{Binding AutoDetect}"  IsEnabled="{Binding CanOcr}" InputGestureText="Ctrl+Shift+R"  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
+                <Separator  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
+                <MenuItem Header="{lex:Loc ShowHideHelper}" Command="{s:Action ManuallyShowHideHelper}" InputGestureText="Ctrl+Shift+B"  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
+                <MenuItem Header="{lex:Loc SwitchVisibility}" Command="{s:Action SwitchVisibility}" InputGestureText="Ctrl+Shift+M"  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
+                <MenuItem Header="{lex:Loc ResetHelper}" Command="{s:Action ResetHelper}" InputGestureText="Ctrl+Shift+N" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
+                <MenuItem Header="{lex:Loc AutoShowMMR}" IsCheckable="True" IsChecked="{Binding AutoShowMmr}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"/>
+                <MenuItem Header="{lex:Loc Loading}" IsEnabled="False" Visibility="{Binding IsLoaded, Converter={StaticResource InverseBoolToVisibilityConverter} }"></MenuItem>
+                <MenuItem Header="{lex:Loc Help}" Command="{s:Action ShowHelp}" />
+                <MenuItem Header="{lex:Loc About}" Command="{s:Action ShowAbout}"  />
                 <Separator />
                 <MenuItem Header="{lex:Loc Exit}" Command="{s:Action Exit}" />
             </ContextMenu>

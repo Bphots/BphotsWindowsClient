@@ -204,6 +204,7 @@
     <Compile Include="Utils\OcrUtil.cs" />
     <Compile Include="Utils\ScreenUtil.cs" />
     <Compile Include="Utils\Win32.cs" />
+    <Compile Include="WPF\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="WPF\FilteredComboBox.cs" />
     <Compile Include="WPF\NotifyTaskCompletion.cs" />
   </ItemGroup>
