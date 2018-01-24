@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using DotNetHelper;
 using HotsBpHelper.Api;
 using HotsBpHelper.Api.Model;
 using HotsBpHelper.Models;
@@ -20,6 +22,10 @@ namespace HotsBpHelper.Pages
         private readonly IRestApi _restApi;
         private readonly IToastService _toastService;
 
+        private string _localDir;
+        private string _remoteUrl;
+        private Visibility _visibility;
+
         //private int percent,count=0, lastBalloon = 0;
 
         public BindableCollection<FileUpdateInfo> FileUpdateInfos { get; set; } = new BindableCollection<FileUpdateInfo>();
@@ -28,11 +34,34 @@ namespace HotsBpHelper.Pages
         {
             _restApi = restApi;
             _toastService = toastSevice;
+            _localDir = Const.LOCAL_WEB_FILE_DIR;
+            _remoteUrl = "get/filelist";
+            _visibility = Visibility.Hidden;
+        }
+
+        public void ProcessPostDownload()
+        {
+            foreach (var fileUpdateInfo in FileUpdateInfos.Where(f => f.LocalFilePath.EndsWith(@".zip")))
+            {
+                FilePath localPath = fileUpdateInfo.LocalFilePath;
+                if (!localPath.Exists())
+                    return;
+
+                ZipFile.ExtractToDirectory(localPath, localPath.GetDirPath());
+                File.WriteAllText(fileUpdateInfo.RemoteMD5, localPath.GetDirPath() + localPath.GetFileNameWithoutExtension() + @".md5");
+                localPath.DeleteIfExists();
+            }
+        }
+
+        public void SetPaths(string localDir, string remoteUrl)
+        {
+            _localDir = localDir;
+            _remoteUrl = remoteUrl;
         }
 
         private void ReceiveBroadcast()
         {
-        //接收公告，并以对话框的形式显示
+            //接收公告，并以对话框的形式显示
             var BroadcastList = _restApi.GetBroadcastInfo("0", App.Language);
             if (BroadcastList != null)
             {
@@ -97,7 +126,7 @@ namespace HotsBpHelper.Pages
             List<RemoteFileInfo> remoteFileInfos;
             try
             {
-                remoteFileInfos = await _restApi.GetRemoteFileListAsync();
+                remoteFileInfos = await _restApi.GetRemoteFileListAsync(_remoteUrl);
                 Logger.Trace("Remote files:\r\n{0}", string.Join("\r\n", remoteFileInfos.Select(rfi => rfi.Name)));
             }
             catch (Exception e)
@@ -113,10 +142,16 @@ namespace HotsBpHelper.Pages
                 FileName = fi.Name,
                 Url = fi.Url,
                 RemoteMD5 = fi.MD5,
-                LocalFilePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, fi.Name.TrimStart('/')),
+                LocalFilePath = Path.Combine(App.AppPath, _localDir, fi.Name.TrimStart('/')),
                 Path=fi.Url.Remove(0,24),//移去https://static.bphots.com/
                 FileStatus = L("Updating"),
             }));
+        }
+
+        public Visibility Visibility
+        {
+            get { return _visibility; }
+            set { SetAndNotify(ref _visibility, value); }
         }
 
         private async Task DownloadNeededFiles()
@@ -128,6 +163,7 @@ namespace HotsBpHelper.Pages
                 {
                     if (NeedUpdate(fileUpdateInfo))
                     {
+                        Visibility = Visibility.Visible;
                         if (!hasDisplayedMessage)
                         {
                             hasDisplayedMessage = true;
@@ -168,12 +204,29 @@ namespace HotsBpHelper.Pages
 
         private bool NeedUpdate(FileUpdateInfo fileUpdateInfo)
         {
+            FilePath localPath = fileUpdateInfo.LocalFilePath;
+            if (localPath.GetFileExt() == @".zip")
+            {
+                FilePath zipMd5Path = localPath.GetDirPath() + localPath.GetFileNameWithoutExtension() + @".md5";
+                if (!File.Exists(zipMd5Path))
+                {
+                    // ReSharper disable once AssignNullToNotNullAttribute
+                    Directory.CreateDirectory(Path.GetDirectoryName(fileUpdateInfo.LocalFilePath));
+                    return true;
+                }
+
+                string localZipMd5 = zipMd5Path.ReadAsString();
+                string remoteZipMd5 = fileUpdateInfo.RemoteMD5.Trim().ToLower();
+                return localZipMd5 != remoteZipMd5;
+            }
+
             if (!File.Exists(fileUpdateInfo.LocalFilePath))
             {
                 // ReSharper disable once AssignNullToNotNullAttribute
                 Directory.CreateDirectory(Path.GetDirectoryName(fileUpdateInfo.LocalFilePath));
                 return true;
             }
+
             string localMd5 = Md5Util.CaculateFileMd5(fileUpdateInfo.LocalFilePath).ToLower();
             string remoteMd5 = fileUpdateInfo.RemoteMD5.Trim().ToLower();
             return localMd5 != remoteMd5;

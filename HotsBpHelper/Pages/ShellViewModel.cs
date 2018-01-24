@@ -135,18 +135,29 @@ namespace HotsBpHelper.Pages
             InitSettings();
 
             RegisterHotKey();
-            if (!App.Debug && WindowManager.ShowDialog(_viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>()) != true)
+            if (!App.Debug)
             {
-                Application.Current.Shutdown();
-                return;
+                var webUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
+                if (WindowManager.ShowDialog(webUpdateVm) != true)
+                {
+                    Application.Current.Shutdown();
+                    return;
+                }
             }
 
             if (!OcrEngine.IsTessDataAvailable(App.OcrLanguage))
             {
-                 MessageBox.Show(@"Would you like to download language data for " + App.OcrLanguage, @"Warning", MessageBoxButtons.YesNo);
+                if (MessageBox.Show(@"Would you like to download language data for " + App.OcrLanguage, @"Warning",
+                        MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    var tessdataWebUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
+                    var languageParams = OcrEngine.GetDirectory(App.OcrLanguage);
+                    tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
+                    if (WindowManager.ShowDialog(tessdataWebUpdateVm) == true)
+                        tessdataWebUpdateVm.ProcessPostDownload();
+                }
             }
-
-
+            
             _bpViewModel = _viewModelFactory.CreateViewModel<BpViewModel>(); 
 
             // Ä¬ÈÏ½ûÓÃ×Ô¶¯ÏÔÒþ
@@ -157,9 +168,11 @@ namespace HotsBpHelper.Pages
             WindowManager.ShowWindow(_bpViewModel);
             _bpViewModel.Hide();
 
-
-            _mmrViewModel = _viewModelFactory.CreateViewModel<MMRViewModel>(); 
+            _mmrViewModel = _viewModelFactory.CreateViewModel<MMRViewModel>();
+            _mmrViewModel.HideBrowser();
             WindowManager.ShowWindow(_mmrViewModel);
+            ((Window) _mmrViewModel.View).Owner = (Window)View;
+            _mmrViewModel.Hide();
 
             AutoShowHideHelper = true;
             NotifyOfPropertyChange(() => CanOcr);
@@ -245,7 +258,7 @@ namespace HotsBpHelper.Pages
                     _mmrViewModel.FillMMR(game);
                     Execute.OnUIThread(() =>
                     {
-                        _mmrViewModel.View.Visibility = Visibility.Visible;
+                        _mmrViewModel.Show(); 
                         _bpViewModel.Reset();
                     });
                 }

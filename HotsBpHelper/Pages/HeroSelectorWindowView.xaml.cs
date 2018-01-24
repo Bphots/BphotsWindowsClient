@@ -3,11 +3,12 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using HotsBpHelper.UserControls;
 using HotsBpHelper.WPF;
 
 namespace HotsBpHelper.Pages
 {
-    public partial class HeroSelectorWindowView : Window
+    public partial class HeroSelectorWindowView : TabSwitcherFreeWindow
     {
         private readonly List<FilteredComboBox> _filteredComboBoxes = new List<FilteredComboBox>();
 

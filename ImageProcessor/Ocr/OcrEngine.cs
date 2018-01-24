@@ -69,6 +69,21 @@ namespace ImageProcessor.Ocr
             }
         }
 
+        public static string[] GetDirectory(OcrLanguage language)
+        {
+            switch (language)
+            {
+                case OcrLanguage.English:
+                    return new [] {@"tessdata\enUS", @"get/tessdata/en-US" };
+                case OcrLanguage.SimplifiedChinese:
+                    return new [] { @"tessdata\enUS", @"get/tessdata/zh-CN" };
+                case OcrLanguage.TraditionalChinese:
+                    return new [] { @"tessdata\enUS", @"get/tessdata/zh-TW" };
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         public static readonly HashSet<string> CandidateHeroes = new HashSet<string>();
 
         public static readonly HashSet<string> CandidateMaps = new HashSet<string>();

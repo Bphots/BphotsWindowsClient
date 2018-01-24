@@ -7,7 +7,7 @@ using Stylet;
 
 namespace HotsBpHelper.Pages
 {
-    public partial class BpView : Window, IHandle<InvokeScriptMessage>, IHandle<ShowWindowMessage>
+    public partial class BpView : TabSwitcherFreeWindow, IHandle<InvokeScriptMessage>, IHandle<ShowWindowMessage>
     {
         public BpView(IEventAggregator eventAggregator)
         {

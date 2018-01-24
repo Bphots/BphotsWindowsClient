@@ -8,7 +8,7 @@ namespace HotsBpHelper.Api
 {
     public interface IRestApi
     {
-        Task<List<RemoteFileInfo>> GetRemoteFileListAsync();
+        Task<List<RemoteFileInfo>> GetRemoteFileListAsync(string url);
 
         byte[] DownloadFile(string filePath);
 

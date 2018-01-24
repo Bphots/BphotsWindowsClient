@@ -31,6 +31,12 @@ namespace HotsBpHelper.Pages
             return text;
         }
 
+        protected void ShowWindowAndSetOwner(ViewModelBase vm)
+        {
+            WindowManager.ShowWindow(vm);
+            ((Window)vm.View).Owner = (Window)View;
+        }
+
         protected MessageBoxResult ShowMessageBox(string messageBoxText,
             MessageBoxButton buttons = MessageBoxButton.OK,
             MessageBoxImage icon = MessageBoxImage.None,

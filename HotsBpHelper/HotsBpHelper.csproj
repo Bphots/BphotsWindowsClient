@@ -93,6 +93,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -186,6 +188,7 @@
     <Compile Include="Services\ToastService.cs" />
     <Compile Include="Settings\AppSetting.cs" />
     <Compile Include="UserControls\ScriptingHelper.cs" />
+    <Compile Include="UserControls\TabSwitcherFreeWindow.cs" />
     <Compile Include="UserControls\WebKitBrowser.xaml.cs">
       <DependentUpon>WebKitBrowser.xaml</DependentUpon>
     </Compile>

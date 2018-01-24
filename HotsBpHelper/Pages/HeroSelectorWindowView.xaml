@@ -1,10 +1,11 @@
-﻿<Window x:Class="HotsBpHelper.Pages.HeroSelectorWindowView"
+﻿<userControls:TabSwitcherFreeWindow x:Class="HotsBpHelper.Pages.HeroSelectorWindowView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:pages="clr-namespace:HotsBpHelper.Pages"
         xmlns:wpf="clr-namespace:HotsBpHelper.WPF"
+        xmlns:userControls="clr-namespace:HotsBpHelper.UserControls"
         ResizeMode="NoResize"
         mc:Ignorable="d"
         Topmost="True"
@@ -62,4 +63,4 @@
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>
-</Window>
+</userControls:TabSwitcherFreeWindow>

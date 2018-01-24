@@ -1,18 +1,20 @@
-﻿<Window x:Class="HotsBpHelper.Pages.WebFileUpdaterView"
+﻿<userControls:TabSwitcherFreeWindow x:Class="HotsBpHelper.Pages.WebFileUpdaterView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HotsBpHelper.Pages"
         xmlns:lex="http://wpflocalizeextension.codeplex.com"
+        xmlns:userControls="clr-namespace:HotsBpHelper.UserControls"
         mc:Ignorable="d"
         lex:ResxLocalizationProvider.DefaultAssembly="HotsBpHelper"
         lex:ResxLocalizationProvider.DefaultDictionary="Strings"
         ResizeMode="NoResize"
         SizeToContent="Width"
+        Topmost="True"
         Title="{lex:Loc FileUpdate}" Height="200" 
-        d:DataContext="{d:DesignInstance local:WebFileUpdaterViewModel}" Visibility="Visible" IsEnabled="False" Focusable="False" IsTabStop="False" IsHitTestVisible="False" ShowActivated="False" TabIndex="-1" ShowInTaskbar="False" Opacity="0" AllowsTransparency="True" WindowStyle="None">
-    <DockPanel>
+        d:DataContext="{d:DesignInstance local:WebFileUpdaterViewModel}" IsEnabled="True" Focusable="True" IsTabStop="True" IsHitTestVisible="True" ShowActivated="False" TabIndex="-1" ShowInTaskbar="False" AllowsTransparency="True" Background="Transparent" WindowStyle="None">
+    <DockPanel Visibility="{Binding Visibility}">
         <ListView ItemsSource="{Binding FileUpdateInfos}">
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
@@ -22,4 +24,4 @@
             </ListView.View>
         </ListView>
     </DockPanel>
-</Window>
+</userControls:TabSwitcherFreeWindow>

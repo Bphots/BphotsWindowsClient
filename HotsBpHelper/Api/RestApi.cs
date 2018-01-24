@@ -93,9 +93,9 @@ namespace HotsBpHelper.Api
             return response.Data;
         }
 
-        public async Task<List<RemoteFileInfo>> GetRemoteFileListAsync()
+        public async Task<List<RemoteFileInfo>> GetRemoteFileListAsync(string url)
         {
-            var request = CreateRequest("get/filelist", new List<Tuple<string, string>>());
+            var request = CreateRequest(url, new List<Tuple<string, string>>());
             return await ExecuteAsync<List<RemoteFileInfo>>(request);
         }
 
