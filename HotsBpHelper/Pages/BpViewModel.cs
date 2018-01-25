@@ -15,6 +15,7 @@ using HotsBpHelper.Services;
 using HotsBpHelper.Settings;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
+using ImageProcessor.Ocr;
 using Stylet;
 using MessageBox = System.Windows.MessageBox;
 using Point = System.Drawing.Point;
@@ -70,14 +71,18 @@ namespace HotsBpHelper.Pages
             _securityProvider = securityProvider;
             _eventAggregator.Subscribe(this);
             _scanningCancellationToken = new CancellationTokenSource();
-            try
+            if (OcrEngine.IsTessDataAvailable(App.OcrLanguage))
             {
-                OcrUtil = new OcrUtil();
-                OcrAvailable = true;
-            }
-            catch (Exception)
-            {
-                // ignored
+
+                try
+                {
+                    OcrUtil = new OcrUtil();
+                    OcrAvailable = true;
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
 
             var unitPos = App.AppSetting.Position.BpHelperPosition.ToUnitPoint();

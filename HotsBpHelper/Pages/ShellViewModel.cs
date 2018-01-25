@@ -108,18 +108,10 @@ namespace HotsBpHelper.Pages
                         {
                             var tessdataWebUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
                             var languageParams = OcrEngine.GetDirectory(App.OcrLanguage);
+                            tessdataWebUpdateVm.ShellViewModel = this;
+                            tessdataWebUpdateVm.UpdateCompleted += OnTessdataFileReinitializeCompleted;
                             tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
-                            if (WindowManager.ShowDialog(tessdataWebUpdateVm) == true)
-                            {
-                                tessdataWebUpdateVm.ProcessPostDownload();
-                                _bpViewModel.ReInitializeOcr();
-                                IsLoaded = true;
-                            }
-                            else
-                            {
-                                IsLoaded = true;
-                                return;
-                            }
+                            WindowManager.ShowDialog(tessdataWebUpdateVm);
                         }
                         else
                         {
@@ -133,6 +125,12 @@ namespace HotsBpHelper.Pages
 
                 _bpViewModel.IsAutoMode = value;
             }
+        }
+
+        private void OnTessdataFileReinitializeCompleted(object sender, EventArgs e)
+        {
+            _bpViewModel.ReInitializeOcr();
+            IsLoaded = true;
         }
 
         public bool AutoShowMmr
@@ -269,6 +267,8 @@ namespace HotsBpHelper.Pages
                     tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
                     WindowManager.ShowDialog(tessdataWebUpdateVm);
                 }
+                else
+                    OnTessdataFileUpdateCompleted(this, EventArgs.Empty);
             }
             else
             {
