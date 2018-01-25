@@ -76,9 +76,9 @@ namespace ImageProcessor.Ocr
                 case OcrLanguage.English:
                     return new [] {@"tessdata\enUS", @"get/tessdata/en-US" };
                 case OcrLanguage.SimplifiedChinese:
-                    return new [] { @"tessdata\enUS", @"get/tessdata/zh-CN" };
+                    return new [] { @"tessdata\zhCN", @"get/tessdata/zh-CN" };
                 case OcrLanguage.TraditionalChinese:
-                    return new [] { @"tessdata\enUS", @"get/tessdata/zh-TW" };
+                    return new [] { @"tessdata\zhTW", @"get/tessdata/zh-TW" };
                 default:
                     throw new ArgumentOutOfRangeException();
             }

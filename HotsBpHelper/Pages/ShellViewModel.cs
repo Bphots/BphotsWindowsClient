@@ -7,17 +7,19 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using GlobalHotKey;
+using HotsBpHelper.Api;
+using HotsBpHelper.Api.Security;
 using HotsBpHelper.Factories;
 using HotsBpHelper.Services;
 using HotsBpHelper.Settings;
 using HotsBpHelper.Utils;
+using HotsBpHelper.WPF;
 using ImageProcessor.Ocr;
 using NAppUpdate.Framework;
 using NAppUpdate.Framework.Sources;
 using NAppUpdate.Framework.Tasks;
-using Stylet;
-
 using StatsFetcher;
+using Stylet;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.Forms.MessageBox;
 using Point = System.Drawing.Point;
@@ -26,24 +28,43 @@ namespace HotsBpHelper.Pages
 {
     public class ShellViewModel : ViewModelBase
     {
-        private ViewModelFactory _viewModelFactory;
-
-        private readonly IImageUtil _imageUtil;
-
         private readonly HotKeyManager _hotKeyManager;
 
+        private readonly IImageUtil _imageUtil;
+        private readonly NotifyTaskCompletion<double> _notifyGetTimeStampTaskCompleted;
+        private readonly ISecurityProvider _securityProvider;
+
         private readonly IToastService _toastService;
+        private bool _autoDetect;
+
+        private bool _autoShowHideHelper;
+        private bool _autoShowMMR;
 
         private BpViewModel _bpViewModel;
+        private bool _initializeReset;
 
         private bool _isLoaded;
 
-        private bool _autoShowHideHelper;
-        private bool _autoDetect;
-        private bool _initializeReset;
-        
         private MMRViewModel _mmrViewModel;
-        
+        private string _percentageInfo;
+        private readonly ViewModelFactory _viewModelFactory;
+
+        public ShellViewModel(ViewModelFactory viewModelFactory, IImageUtil imageUtil, IToastService toastService,
+            IRestApi restApi, ISecurityProvider securityProvider)
+        {
+            _viewModelFactory = viewModelFactory;
+
+            _imageUtil = imageUtil;
+            _toastService = toastService;
+            _securityProvider = securityProvider;
+            _hotKeyManager = new HotKeyManager();
+            PercentageInfo = L("Loading");
+            _notifyGetTimeStampTaskCompleted = new NotifyTaskCompletion<double>(restApi.GetTimestamp());
+            _notifyGetTimeStampTaskCompleted.TaskStopped += OnTimeStampCompleted;
+            if (_notifyGetTimeStampTaskCompleted.IsCompleted)
+                OnTimeStampCompleted(this, EventArgs.Empty);
+        }
+
         public bool AutoShowHideHelper
         {
             get { return _autoShowHideHelper; }
@@ -54,7 +75,7 @@ namespace HotsBpHelper.Pages
 
                 if (_bpViewModel.AutoShowHideHelper == value)
                     return;
-                
+
                 _bpViewModel.AutoShowHideHelper = value;
                 if (SetAndNotify(ref _autoShowHideHelper, value))
                 {
@@ -66,7 +87,7 @@ namespace HotsBpHelper.Pages
                 }
             }
         }
-        
+
         public bool AutoDetect
         {
             get { return _autoDetect; }
@@ -78,12 +99,41 @@ namespace HotsBpHelper.Pages
                 if (_bpViewModel.IsAutoMode == value)
                     return;
 
+                if (value)
+                {
+                    if (!OcrEngine.IsTessDataAvailable(App.OcrLanguage))
+                    {
+                        IsLoaded = false;
+                        if (DialogResult.Yes == DialogResult.Yes)
+                        {
+                            var tessdataWebUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
+                            var languageParams = OcrEngine.GetDirectory(App.OcrLanguage);
+                            tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
+                            if (WindowManager.ShowDialog(tessdataWebUpdateVm) == true)
+                            {
+                                tessdataWebUpdateVm.ProcessPostDownload();
+                                _bpViewModel.ReInitializeOcr();
+                                IsLoaded = true;
+                            }
+                            else
+                            {
+                                IsLoaded = true;
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            IsLoaded = true;
+                            return;
+                        }
+                    }
+                }
+
                 SetAndNotify(ref _autoDetect, value);
 
                 _bpViewModel.IsAutoMode = value;
             }
         }
-        private bool _autoShowMMR;
 
         public bool AutoShowMmr
         {
@@ -94,27 +144,55 @@ namespace HotsBpHelper.Pages
                 {
                     if (AutoShowMmr)
                     {
-                        Task.Run(() =>
-                        {
-                            MonitorLobbyFile();
-                        });
+                        Task.Run(() => { MonitorLobbyFile(); });
                     }
                 }
             }
         }
 
-        public ShellViewModel(ViewModelFactory viewModelFactory, IImageUtil imageUtil, IToastService toastService)
+        public string PercentageInfo
         {
-            _viewModelFactory = viewModelFactory;
-            
-            _imageUtil = imageUtil;
-            _toastService = toastService;
-            _hotKeyManager = new HotKeyManager();
+            get { return _percentageInfo; }
+            set { SetAndNotify(ref _percentageInfo, value); }
         }
-        
-      protected override void OnViewLoaded()
+
+        public bool CanOcr => _bpViewModel != null && _bpViewModel.OcrAvailable;
+
+        public bool IsLoaded
         {
-            using (Mutex mutex = new Mutex(false, "Global\\" + Const.HOTSBPHELPER_PROCESS_NAME))
+            get { return _isLoaded; }
+            set { SetAndNotify(ref _isLoaded, value); }
+        }
+
+        private void OnTimeStampCompleted(object sender, EventArgs e)
+        {
+            if (!_notifyGetTimeStampTaskCompleted.IsSuccessfullyCompleted)
+            {
+                Exit();
+                return;
+            }
+
+            Execute.OnUIThread(() =>
+            {
+                _securityProvider.SetServerTimestamp(_notifyGetTimeStampTaskCompleted.Result);
+                if (!App.Debug)
+                {
+                    var webUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
+                    webUpdateVm.ShellViewModel = this;
+                    webUpdateVm.UpdateCompleted += OnWebFileUpdateCompleted;
+                    if (WindowManager.ShowDialog(webUpdateVm) != true)
+                    {
+                        Exit();
+                    }
+                }
+                else
+                    OnWebFileUpdateCompleted(this, EventArgs.Empty);
+            });
+        }
+
+        protected override void OnViewLoaded()
+        {
+            using (var mutex = new Mutex(false, "Global\\" + Const.HOTSBPHELPER_PROCESS_NAME))
             {
                 if (!mutex.WaitOne(0, false))
                 {
@@ -130,39 +208,18 @@ namespace HotsBpHelper.Pages
             if (!App.Debug)
             {
                 // 虏禄脢脟碌梅脢脭脛拢脛芒,脭貌录矛虏茅赂眉脨脗
-                Update();
+                // Update();
             }
             InitSettings();
-
             RegisterHotKey();
-            if (!App.Debug)
-            {
-                var webUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
-                if (WindowManager.ShowDialog(webUpdateVm) != true)
-                {
-                    Application.Current.Shutdown();
-                    return;
-                }
-            }
-
-            if (!OcrEngine.IsTessDataAvailable(App.OcrLanguage))
-            {
-                if (MessageBox.Show(@"Would you like to download language data for " + App.OcrLanguage, @"Warning",
-                        MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    var tessdataWebUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
-                    var languageParams = OcrEngine.GetDirectory(App.OcrLanguage);
-                    tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
-                    if (WindowManager.ShowDialog(tessdataWebUpdateVm) == true)
-                        tessdataWebUpdateVm.ProcessPostDownload();
-                }
-            }
-            
-            _bpViewModel = _viewModelFactory.CreateViewModel<BpViewModel>();
-
-            // 脛卢脠脧陆没脫脙脳脭露炉脧脭脪镁
             base.OnViewLoaded();
 
+            _toastService.ShowInformation(L("Loading"));
+        }
+
+        private void OnTessdataFileUpdateCompleted(object sender, EventArgs e)
+        {
+            _bpViewModel = _viewModelFactory.CreateViewModel<BpViewModel>();
             _bpViewModel.HideBrowser();
             WindowManager.ShowWindow(_bpViewModel);
             _bpViewModel.Hide();
@@ -170,17 +227,17 @@ namespace HotsBpHelper.Pages
             _mmrViewModel = _viewModelFactory.CreateViewModel<MMRViewModel>();
             _mmrViewModel.HideBrowser();
             WindowManager.ShowWindow(_mmrViewModel);
-            ((Window) _mmrViewModel.View).Owner = (Window)View;
+            ((Window) _mmrViewModel.View).Owner = (Window) View;
             _mmrViewModel.Hide();
 
             IsLoaded = true;
             AutoShowHideHelper = true;
             NotifyOfPropertyChange(() => CanOcr);
-            if (!CanOcr)    
+            if (!CanOcr)
                 _toastService.ShowWarning(L("LanguageUnavailable"));
             if (App.AppSetting.Position.Height < 1070)
                 _toastService.ShowWarning(L("IncompatibleResolution"));
-            
+
             AutoDetect = _bpViewModel.OcrAvailable;
             AutoShowMmr = true; // 默认启用自动显示MMR
 
@@ -188,6 +245,7 @@ namespace HotsBpHelper.Pages
             _bpViewModel.RemindBpStart += BpViewModelOnRemindGameStart;
             _bpViewModel.TurnOffAutoDetectMode += BpViewModelOnTurnOffAutoDetectMode;
 
+            _toastService.CloseMessages(L("Loading"));
             _toastService.ShowInformation(L("Started") + Environment.NewLine + L("StartedTips"));
 
             _initializeReset = true;
@@ -195,12 +253,28 @@ namespace HotsBpHelper.Pages
             Task.Run(MonitorInGameAsync).ConfigureAwait(false);
         }
 
-        public bool CanOcr => _bpViewModel != null && _bpViewModel.OcrAvailable;
-
-        public bool IsLoaded
+        private void OnWebFileUpdateCompleted(object sender, EventArgs e)
         {
-            get { return _isLoaded; }
-            set { SetAndNotify(ref _isLoaded, value); }
+            var tessdataWebUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
+            tessdataWebUpdateVm.ShellViewModel = this;
+            tessdataWebUpdateVm.UpdateCompleted += OnTessdataFileUpdateCompleted;
+
+            var languageParams = OcrEngine.GetDirectory(App.OcrLanguage);
+            if (!OcrEngine.IsTessDataAvailable(App.OcrLanguage))
+            {
+                if (
+                    MessageBox.Show(@"Would you like to download language data for " + App.OcrLanguage, @"Warning",
+                        MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
+                    WindowManager.ShowDialog(tessdataWebUpdateVm);
+                }
+            }
+            else
+            {
+                tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
+                WindowManager.ShowDialog(tessdataWebUpdateVm);
+            }
         }
 
         private void BpViewModelOnTurnOffAutoDetectMode(object sender, EventArgs e)
@@ -239,7 +313,7 @@ namespace HotsBpHelper.Pages
                 _toastService.ShowInformation(offText);
             }
         }
-        
+
         private void BpViewModelOnRemindGameStart(object sender, EventArgs eventArgs)
         {
             if (_autoDetect)
@@ -251,20 +325,21 @@ namespace HotsBpHelper.Pages
                 _toastService.ShowSuccess(L("OcrModeToolTipTitle") + Environment.NewLine + L("OcrModeOffToolTip"));
             }
         }
-        
-      private void MonitorLobbyFile()
+
+        private void MonitorLobbyFile()
         {
-            DateTime lobbyLastModified = DateTime.MinValue;
+            var lobbyLastModified = DateTime.MinValue;
             while (AutoShowMmr)
             {
-                if (File.Exists(Const.BattleLobbyPath) && File.GetLastWriteTime(Const.BattleLobbyPath) != lobbyLastModified)
+                if (File.Exists(Const.BattleLobbyPath) &&
+                    File.GetLastWriteTime(Const.BattleLobbyPath) != lobbyLastModified)
                 {
                     lobbyLastModified = File.GetLastWriteTime(Const.BattleLobbyPath);
                     var game = FileProcessor.ProcessLobbyFile(Const.BattleLobbyPath);
                     _mmrViewModel.FillMMR(game);
                     Execute.OnUIThread(() =>
                     {
-                        _mmrViewModel.Show(); 
+                        _mmrViewModel.Show();
                         _bpViewModel.Reset();
                     });
                 }
@@ -289,7 +364,7 @@ namespace HotsBpHelper.Pages
                 await Task.Delay(1000);
             }
         }
-        
+
         private void RegisterHotKey()
         {
             try
@@ -309,13 +384,14 @@ namespace HotsBpHelper.Pages
                 _errorView.isShutDown = false;
                 _errorView.ShowDialog();
                 */
-                ShowMessageBox(L("RegisterHotKeyFailed"), MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+                ShowMessageBox(L("RegisterHotKeyFailed"), MessageBoxButton.OK, MessageBoxImage.Exclamation,
+                    MessageBoxResult.OK);
             }
         }
-        
+
         private async Task CheckFocusAsync()
         {
-            int lastStatus = 0;
+            var lastStatus = 0;
             while (true)
             {
                 await Task.Delay(1000);
@@ -324,9 +400,10 @@ namespace HotsBpHelper.Pages
 
                 var hwnd = Win32.GetForegroundWindow();
                 var pid = Win32.GetWindowProcessID(hwnd);
-                Process process = Process.GetProcessById(pid);
-                bool inHotsGame = process.ProcessName.StartsWith(Const.HEROES_PROCESS_NAME);
-                bool inHotsHelper = process.ProcessName.StartsWith(Const.HOTSBPHELPER_PROCESS_NAME) || process.ProcessName.StartsWith("iexplore");
+                var process = Process.GetProcessById(pid);
+                var inHotsGame = process.ProcessName.StartsWith(Const.HEROES_PROCESS_NAME);
+                var inHotsHelper = process.ProcessName.StartsWith(Const.HOTSBPHELPER_PROCESS_NAME) ||
+                                   process.ProcessName.StartsWith("iexplore");
                 if (inHotsGame)
                 {
                     if (OcrUtil.SuspendScanning && lastStatus != 1)
@@ -347,9 +424,9 @@ namespace HotsBpHelper.Pages
                         await Task.Delay(1000);
                         var hwnd2 = Win32.GetForegroundWindow();
                         var pid2 = Win32.GetWindowProcessID(hwnd2);
-                        Process process2 = Process.GetProcessById(pid2);
-                        bool inHotsGame2 = process2.ProcessName.StartsWith(Const.HEROES_PROCESS_NAME);
-                        bool inHotsHelper2 = process2.ProcessName.StartsWith(Const.HOTSBPHELPER_PROCESS_NAME);
+                        var process2 = Process.GetProcessById(pid2);
+                        var inHotsGame2 = process2.ProcessName.StartsWith(Const.HEROES_PROCESS_NAME);
+                        var inHotsHelper2 = process2.ProcessName.StartsWith(Const.HOTSBPHELPER_PROCESS_NAME);
                         if (!inHotsHelper2 && !inHotsGame2 && _bpViewModel.BpScreenLoaded)
                             Execute.OnUIThread(() => _bpViewModel.Hide());
 
@@ -359,7 +436,7 @@ namespace HotsBpHelper.Pages
                 }
             }
         }
-        
+
         private void HotKeyManagerPressed(object sender, KeyPressedEventArgs e)
         {
             if (e.HotKey.Key == Key.B)
@@ -381,7 +458,8 @@ namespace HotsBpHelper.Pages
             }
             else if (e.HotKey.Key == Key.C)
             {
-                string captureName = Path.Combine(App.AppPath, "Screenshots", DateTime.Now.ToString("yyyyMMdd_hhmmss") + ".bmp");
+                var captureName = Path.Combine(App.AppPath, "Screenshots",
+                    DateTime.Now.ToString("yyyyMMdd_hhmmss") + ".bmp");
                 _imageUtil.CaptureScreen().Save(captureName);
             }
         }
@@ -403,10 +481,10 @@ namespace HotsBpHelper.Pages
 
         public void ResetHelper()
         {
-            _bpViewModel?.Hide(); 
+            _bpViewModel?.Hide();
             _bpViewModel?.Reset();
         }
-        
+
         public void ManuallyShowHideHelper()
         {
             var wasAuto = AutoShowHideHelper;
@@ -434,8 +512,7 @@ namespace HotsBpHelper.Pages
 
         private void Update()
         {
-
-            UpdateManager updManager = UpdateManager.Instance;
+            var updManager = UpdateManager.Instance;
             try
             {
                 updManager.ReinstateIfRestarted();
@@ -468,33 +545,34 @@ namespace HotsBpHelper.Pages
                 {
                     foreach (var updateTask in updManager.Tasks)
                     {
-                        Logger.Trace(((FileUpdateTask)updateTask).LocalPath);
+                        Logger.Trace(((FileUpdateTask) updateTask).LocalPath);
                     }
                     updManager.ApplyUpdates(true);
                 }
                 catch (Exception ex)
                 {
                     Logger.Error(ex, "Applying updates exception.");
-                    ShowMessageBox(string.Format(L("UpdatesFailed"), ex.Message), MessageBoxButton.OK, MessageBoxImage.Information);
+                    ShowMessageBox(string.Format(L("UpdatesFailed"), ex.Message), MessageBoxButton.OK,
+                        MessageBoxImage.Information);
                 }
             }
             finally
             {
                 updManager.CleanUp();
             }
-
         }
-        
+
         private void ExpandHeroPropertiesForLatin()
         {
-            App.AppSetting.Position.HeroWidth = (int) (App.AppSetting.Position.HeroWidth * 1.25);
-            App.AppSetting.Position.HeroHeight = (int) (App.AppSetting.Position.HeroHeight * 1.25);
+            App.AppSetting.Position.HeroWidth = (int) (App.AppSetting.Position.HeroWidth*1.25);
+            App.AppSetting.Position.HeroHeight = (int) (App.AppSetting.Position.HeroHeight*1.25);
             App.AppSetting.Position.Left.HeroPathPoints =
                 new[]
                 {
                     new Point(1, 1), new Point(1, (int) (0.0185*App.AppSetting.Position.Height)),
                     new Point(App.AppSetting.Position.HeroWidth, App.AppSetting.Position.HeroHeight),
-                    new Point(App.AppSetting.Position.HeroWidth, App.AppSetting.Position.HeroHeight - (int) (0.0165*App.AppSetting.Position.Height))
+                    new Point(App.AppSetting.Position.HeroWidth,
+                        App.AppSetting.Position.HeroHeight - (int) (0.0165*App.AppSetting.Position.Height))
                 };
             App.AppSetting.Position.Right.HeroPathPoints =
                 new[]
@@ -504,14 +582,14 @@ namespace HotsBpHelper.Pages
                     new Point(1, App.AppSetting.Position.HeroHeight),
                     new Point(1, App.AppSetting.Position.HeroHeight - (int) (0.0165*App.AppSetting.Position.Height))
                 };
-            App.AppSetting.Position.MapPosition = new MapPosition()
-                {
-                    Location = new Point((int)(App.AppSetting.Position.Width / 2 - 0.25 * App.AppSetting.Position.Height), 0),
-                    Width = (int)(0.5 * App.AppSetting.Position.Height),
-                    Height = (int)(0.03563 * App.AppSetting.Position.Height)
-                };
+            App.AppSetting.Position.MapPosition = new MapPosition
+            {
+                Location = new Point((int) (App.AppSetting.Position.Width/2 - 0.25*App.AppSetting.Position.Height), 0),
+                Width = (int) (0.5*App.AppSetting.Position.Height),
+                Height = (int) (0.03563*App.AppSetting.Position.Height)
+            };
         }
-        
+
         private void InitSettings()
         {
             try
@@ -519,7 +597,7 @@ namespace HotsBpHelper.Pages
                 App.AppSetting = Its.Configuration.Settings.Get<AppSetting>();
                 var screenSize = ScreenUtil.GetScreenResolution();
                 App.AppSetting.Position = CaculatePosition(screenSize.Width, screenSize.Height);
-                
+
                 // TODO dynamic support
                 ManualAdjustPosition();
 
@@ -528,7 +606,7 @@ namespace HotsBpHelper.Pages
             }
             catch (Exception e)
             {
-                Pages.ErrorView _errorView = new Pages.ErrorView(e.Message);
+                var _errorView = new ErrorView(e.Message);
                 _errorView.ShowDialog();
                 _errorView.Pause();
             }
@@ -569,65 +647,67 @@ namespace HotsBpHelper.Pages
                     PartialChatlHorizontalPoint = new Point(1173, 632)
                 };
             }
-
-
         }
 
         /// <summary>
-        /// 根据分辨率动态计算各个位置和尺寸
+        ///     根据分辨率动态计算各个位置和尺寸
         /// </summary>
         private Position CaculatePosition(int width, int height)
         {
             var bpHelperSize = App.AppSetting.DefaultBpHelperSize;
-            int heroWidth = (int)(0.08125 * height);
-            var heroHeight = (int)(0.0632 * height);
+            var heroWidth = (int) (0.08125*height);
+            var heroHeight = (int) (0.0632*height);
             var position = new Position
             {
                 Width = width,
                 Height = height,
                 BpHelperSize = bpHelperSize,
                 BpHelperPosition = new Point((int) (0.31*height),
-                    0.852*height + bpHelperSize.Height > height ? (height - bpHelperSize.Height) : (int) (0.852*height)),
+                    0.852*height + bpHelperSize.Height > height ? height - bpHelperSize.Height : (int) (0.852*height)),
                 MapSelectorPosition = new Point((int) (0.5*width), (int) (0.146*height)),
                 HeroWidth = heroWidth,
                 HeroHeight = heroHeight,
                 Left = new SidePosition
                 {
-                    Ban1 = new Point((int)(0.45 * height), (int)(0.016 * height)),
-                    Ban2 = new Point((int)(0.45 * height), (int)(0.016 * height) + (int)(0.023 * height) + (int)(0.015 * height)),
-                    Pick1 = new Point((int)(0.195 * height), (int)(0.132 * height)),
-                    Dx = (int)(0.0905 * height),
-                    Dy = (int)(0.1565 * height),
+                    Ban1 = new Point((int) (0.45*height), (int) (0.016*height)),
+                    Ban2 =
+                        new Point((int) (0.45*height),
+                            (int) (0.016*height) + (int) (0.023*height) + (int) (0.015*height)),
+                    Pick1 = new Point((int) (0.195*height), (int) (0.132*height)),
+                    Dx = (int) (0.0905*height),
+                    Dy = (int) (0.1565*height),
                     HeroPathPoints =
-                    new[]
-                    {
-                        new Point(1, 1), new Point(1, (int) (0.0185*height)),
-                        new Point(heroWidth, heroHeight),
-                        new Point(heroWidth, heroHeight - (int) (0.0165*height))
-                    },
-                    HeroName1 = new Point((int)(0.013195 * height), (int)(0.172222 * height))
+                        new[]
+                        {
+                            new Point(1, 1), new Point(1, (int) (0.0185*height)),
+                            new Point(heroWidth, heroHeight),
+                            new Point(heroWidth, heroHeight - (int) (0.0165*height))
+                        },
+                    HeroName1 = new Point((int) (0.013195*height), (int) (0.172222*height))
                 },
                 Right = new SidePosition
                 {
-                    Ban1 = new Point((int)(width - 0.45 * height), (int)(0.016 * height)),
-                    Ban2 = new Point((int)(width - 0.45 * height), (int)(0.016 * height) + (int)(0.023 * height) + (int)(0.015 * height)),
-                    Pick1 = new Point((int)(width - 0.195 * height), (int)(0.132 * height)),
-                    Dx = (int)(-0.0905 * height),
-                    Dy = (int)(0.1565 * height),
+                    Ban1 = new Point((int) (width - 0.45*height), (int) (0.016*height)),
+                    Ban2 =
+                        new Point((int) (width - 0.45*height),
+                            (int) (0.016*height) + (int) (0.023*height) + (int) (0.015*height)),
+                    Pick1 = new Point((int) (width - 0.195*height), (int) (0.132*height)),
+                    Dx = (int) (-0.0905*height),
+                    Dy = (int) (0.1565*height),
                     HeroPathPoints =
-                    new[]
-                    {
-                        new Point(heroWidth, 1), new Point(heroWidth, 1 + (int) (0.0185*height)),
-                        new Point(1, heroHeight),
-                        new Point(1, heroHeight - (int) (0.0165*height))
-                    },
-                    HeroName1 = new Point((int)(width - 0.011195 * height), (int)(0.172222 * height))
+                        new[]
+                        {
+                            new Point(heroWidth, 1), new Point(heroWidth, 1 + (int) (0.0185*height)),
+                            new Point(1, heroHeight),
+                            new Point(1, heroHeight - (int) (0.0165*height))
+                        },
+                    HeroName1 = new Point((int) (width - 0.011195*height), (int) (0.172222*height))
                 },
-                MapPosition = new MapPosition()
+                MapPosition = new MapPosition
                 {
-                    Location = new Point((int)(width / 2 - 0.18 * height), 0),
-                    Width = (int)(0.36 * height),
-                    Height = (int)(0.03563 * height)
+                    Location = new Point((int) (width/2 - 0.18*height), 0),
+                    Width = (int) (0.36*height),
+                    Height = (int) (0.03563*height)
                 }
             };
             return position;
@@ -635,14 +715,8 @@ namespace HotsBpHelper.Pages
 
         public void Exit()
         {
-            try
-            {
-                Application.Current.Shutdown();
-            }
-            finally
-            {
-                Environment.Exit(0);
-            }
+            OnClose();
+            Environment.Exit(0);
         }
 
         protected override void OnClose()
@@ -662,7 +736,5 @@ namespace HotsBpHelper.Pages
         {
             Process.Start(Const.HELP_URL);
         }
-
     }
-
 }

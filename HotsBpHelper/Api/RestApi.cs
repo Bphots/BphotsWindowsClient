@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using HotsBpHelper.Api.Model;
 using HotsBpHelper.Api.Security;
 using RestSharp;
 using RestSharp.Deserializers;
+using Stylet;
 
 namespace HotsBpHelper.Api
 {
@@ -14,10 +16,9 @@ namespace HotsBpHelper.Api
     {
         private readonly ISecurityProvider _securityProvider;
 
-        public RestApi(ISecurityProvider securityProvider)
+        public RestApi(ISecurityProvider securityProvider, IEventAggregator eventAggregator)
         {
             _securityProvider = securityProvider;
-            _securityProvider.SetServerTimestamp(GetTimestamp());
         }
 
         private RestRequest CreateRequest(string method, IList<Tuple<string, string>> parameters)
@@ -107,6 +108,14 @@ namespace HotsBpHelper.Api
             }
         }
 
+        public void DownloadFileWithHander(string url, DownloadProgressChangedEventHandler downloadProgressChanged, DownloadDataCompletedEventHandler downloadCompleted)
+        {
+            var client = new WebClient();
+            client.DownloadProgressChanged += downloadProgressChanged; 
+            client.DownloadDataCompleted += downloadCompleted;
+            client.DownloadDataAsync(new Uri(url));
+        }
+        
         public List<HeroInfo> GetHeroList(string language)
         {
             var request = CreateRequest("get/herolist",
@@ -129,10 +138,10 @@ namespace HotsBpHelper.Api
             return Execute<List<MapInfo>>(request);
         }
 
-        public double GetTimestamp()
+        public async Task<double> GetTimestamp()
         {
             var request = CreateRequest("get/timestamp");
-            return Execute<double>(request);
+            return await Task.Run(() => Execute<double>(request)).ConfigureAwait(false);
         }
 
         public List<BroadcastInfo> GetBroadcastInfo(string mode,string lang)

@@ -60,7 +60,7 @@ namespace HotsBpHelper.Pages
         private Visibility _visibility;
         private int _width;
 
-        public readonly bool OcrAvailable = false;
+        public bool OcrAvailable { get; set; }
 
         public BpViewModel(ViewModelFactory viewModelFactory, IEventAggregator eventAggregator, ISecurityProvider securityProvider)
         {
@@ -68,7 +68,6 @@ namespace HotsBpHelper.Pages
 
             _eventAggregator = eventAggregator;
             _securityProvider = securityProvider;
-
             _eventAggregator.Subscribe(this);
             _scanningCancellationToken = new CancellationTokenSource();
             try
@@ -93,6 +92,19 @@ namespace HotsBpHelper.Pages
 
         public BindableCollection<HeroSelectorViewModel> HeroSelectorViewModels =>
             _heroSelectorWindowViewModel?.HeroSelectorViewModels;
+
+        internal void ReInitializeOcr()
+        {
+            try
+            {
+                OcrUtil = new OcrUtil();
+                OcrAvailable = true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
 
         public int Left { get; set; }
 
