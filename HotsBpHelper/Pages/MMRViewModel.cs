@@ -2,9 +2,13 @@
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Drawing;
 using HotsBpHelper.UserControls;
+using HotsBpHelper.Utils;
 using StatsFetcher;
 using Stylet;
+using Point = System.Drawing.Point;
+using Size = System.Drawing.Size;
 
 namespace HotsBpHelper.Pages
 {
@@ -18,13 +22,11 @@ namespace HotsBpHelper.Pages
         public MMRViewModel(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
-            Left = App.AppSetting.Position.Width/2 - 225;
-            Top = App.AppSetting.Position.Height/2 - 135;
 
-            //var unitPos = App.AppSetting.Position.BpHelperPosition.ToUnitPoint();
-            //Left = unitPos.X;
-            //Top = unitPos.Y;
-
+            var location = new Point(App.AppSetting.Position.Width / 2 - 225, App.AppSetting.Position.Height / 2 - 135).ToUnitPoint();
+            Left = location.X;
+            Top = location.Y;
+            
             var filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "mmr.html#") + App.Language;
             LocalFileUri = new Uri(filePath, UriKind.Absolute);
         }
@@ -90,8 +92,9 @@ namespace HotsBpHelper.Pages
 
         public void Show()
         {
-            Width = 450;
-            Height = 270;
+            var size = new Size(450, 270).ToUnitSize();
+            Width = size.Width;
+            Height = size.Height;
             Visibility = Visibility.Visible;
             View.Visibility = Visibility.Visible;
         }
