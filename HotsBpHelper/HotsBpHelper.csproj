@@ -56,6 +56,33 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Deploy|AnyCPU'">
+    <OutputPath>bin\Deploy\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Deploy|x86'">
+    <OutputPath>bin\x86\Deploy\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="GlobalHotKey, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GlobalHotKey.1.1.0\lib\GlobalHotKey.dll</HintPath>
@@ -87,6 +114,9 @@
       <HintPath>..\packages\RestSharp.105.2.3\lib\net45\RestSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="StatsFetcher">
+      <HintPath>.\StatsFetcher.dll</HintPath>
+    </Reference>
     <Reference Include="Stylet">
       <HintPath>H:\Project\HotsBpHelper-find_heroe\HotsBpHelper-find_heroe\Stylet.dll</HintPath>
     </Reference>
@@ -98,11 +128,7 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -164,9 +190,7 @@
     <Compile Include="Pages\ErrorView.xaml.cs">
       <DependentUpon>ErrorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Pages\Form1.cs" />
     <Compile Include="Pages\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
@@ -261,6 +285,8 @@
     <Resource Include="imageres_00080.png" />
     <Resource Include="imageres_00077.png" />
     <Resource Include="Images\hots.ico" />
+    <Resource Include="icon.ico" />
+    <Resource Include="Images\icon.ico" />
     <Content Include="Images\lock\1366x768.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -338,10 +364,6 @@
     <Folder Include="NAppUpdate\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\HotsStats-master\StatsFetcher\StatsFetcher.csproj">
-      <Project>{9d065a48-71d9-4f83-8428-2ee88405f05b}</Project>
-      <Name>StatsFetcher</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DotNetHelper\DotNetHelper.csproj">
       <Project>{353b6e1b-1415-4010-babf-924c7158fc58}</Project>
       <Name>DotNetHelper</Name>

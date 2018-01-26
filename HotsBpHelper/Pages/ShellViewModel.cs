@@ -31,7 +31,7 @@ namespace HotsBpHelper.Pages
         private readonly HotKeyManager _hotKeyManager;
 
         private readonly IImageUtil _imageUtil;
-        private readonly NotifyTaskCompletion<double> _notifyGetTimeStampTaskCompleted;
+        private NotifyTaskCompletion<double> _notifyGetTimeStampTaskCompleted;
         private readonly ISecurityProvider _securityProvider;
 
         private readonly IToastService _toastService;
@@ -48,6 +48,8 @@ namespace HotsBpHelper.Pages
         private MMRViewModel _mmrViewModel;
         private string _percentageInfo;
         private readonly ViewModelFactory _viewModelFactory;
+        private readonly IRestApi _restApi;
+        private NotifyTaskCompletion<bool> _notifyUpdateTaskCompleted;
 
         public ShellViewModel(ViewModelFactory viewModelFactory, IImageUtil imageUtil, IToastService toastService,
             IRestApi restApi, ISecurityProvider securityProvider)
@@ -57,8 +59,13 @@ namespace HotsBpHelper.Pages
             _imageUtil = imageUtil;
             _toastService = toastService;
             _securityProvider = securityProvider;
+            _restApi = restApi;
+
             _hotKeyManager = new HotKeyManager();
+
             PercentageInfo = L("Loading");
+
+
             using (var mutex = new Mutex(false, "Global\\" + Const.HOTSBPHELPER_PROCESS_NAME))
             {
                 if (!mutex.WaitOne(0, false))
@@ -72,11 +79,6 @@ namespace HotsBpHelper.Pages
                 Exit();
                 return;
             }
-
-            _notifyGetTimeStampTaskCompleted = new NotifyTaskCompletion<double>(restApi.GetTimestamp());
-            _notifyGetTimeStampTaskCompleted.TaskStopped += OnTimeStampCompleted;
-            if (_notifyGetTimeStampTaskCompleted.IsCompleted)
-                OnTimeStampCompleted(this, EventArgs.Empty);
         }
 
         public bool AutoShowHideHelper
@@ -208,13 +210,26 @@ namespace HotsBpHelper.Pages
             if (!App.Debug)
             {
                 // ²»ÊÇµ÷ÊÔÄ£Äâ,Ôò¼ì²é¸üÐÂ
-                // Update();
+                _notifyUpdateTaskCompleted = new NotifyTaskCompletion<bool>(UpdateAsync());
+                _notifyUpdateTaskCompleted.TaskStopped += OnFeedUpdateCompleted;
+                if (_notifyUpdateTaskCompleted.IsCompleted)
+                    OnFeedUpdateCompleted(this, EventArgs.Empty);
             }
             InitSettings();
+            
             base.OnViewLoaded();
 
             _toastService.ShowInformation(L("Loading"));
         }
+
+        private void OnFeedUpdateCompleted(object sender, EventArgs e)
+        {
+            _notifyGetTimeStampTaskCompleted = new NotifyTaskCompletion<double>(_restApi.GetTimestamp());
+            _notifyGetTimeStampTaskCompleted.TaskStopped += OnTimeStampCompleted;
+            if (_notifyGetTimeStampTaskCompleted.IsCompleted)
+                OnTimeStampCompleted(this, EventArgs.Empty);
+        }
+
 
         private void OnTessdataFileUpdateCompleted(object sender, EventArgs e)
         {
@@ -513,8 +528,15 @@ namespace HotsBpHelper.Pages
             });
         }
 
+        private async Task<bool> UpdateAsync()
+        {
+            await Task.Run(() => Update());
+            return true;
+        }
+
         private void Update()
         {
+            return; // TODO Remove
             var updManager = UpdateManager.Instance;
             try
             {

@@ -2,6 +2,7 @@
 using System.Windows;
 using DotNetHelper.Properties;
 using HotsBpHelper.Pages;
+using Stylet;
 using StyletIoC;
 using ToastNotifications;
 using ToastNotifications.Core;
@@ -59,27 +60,32 @@ namespace HotsBpHelper.Services
 
         public void ShowInformation(string message)
         {
-            _notificationManager.ShowInformation(message, _toastOptions);
+            Execute.OnUIThread(() =>
+            _notificationManager.ShowInformation(message, _toastOptions));
         }
 
         public void ShowSuccess(string message)
         {
-            _notificationManager.ShowSuccess(message, _toastOptions);
+            Execute.OnUIThread(() =>
+               _notificationManager.ShowSuccess(message, _toastOptions));
         }
 
         public void ShowError(string message)
         {
-            _notificationManager.ShowError(message, _toastOptions);
+            Execute.OnUIThread(() =>
+               _notificationManager.ShowError(message, _toastOptions));
         }
 
         public void ShowWarning(string message)
         {
-            _notificationManager.ShowWarning(message, _toastOptions);
+            Execute.OnUIThread(() =>
+               _notificationManager.ShowWarning(message, _toastOptions));
         }
 
         public void CloseMessages(string message)
         {
-            _notificationManager.ClearMessages(message);
+            Execute.OnUIThread(() =>
+               _notificationManager.ClearMessages(message));
         }
     }
 

@@ -851,7 +851,10 @@ namespace HotsBpHelper.Pages
                 stageInfo = finder.GetStageInfo();
 
                 if (stageInfo.Step != -1 || warned)
+                {
+                    inBpFail = 0;
                     continue;
+                }
 
                 bool isBp;
                 lock (ImageProcessingHelper.GDILock)
