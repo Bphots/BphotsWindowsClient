@@ -108,7 +108,7 @@ namespace HotsBpHelper.Api
             }
         }
 
-        public void DownloadFileWithHander(string url, DownloadProgressChangedEventHandler downloadProgressChanged, DownloadDataCompletedEventHandler downloadCompleted)
+        public void DownloadFileAsync(string url, DownloadProgressChangedEventHandler downloadProgressChanged, DownloadDataCompletedEventHandler downloadCompleted)
         {
             var client = new WebClient();
             client.DownloadProgressChanged += downloadProgressChanged; 

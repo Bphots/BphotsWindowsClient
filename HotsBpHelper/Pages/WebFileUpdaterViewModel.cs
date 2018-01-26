@@ -169,6 +169,8 @@ namespace HotsBpHelper.Pages
             RequestClose(true);
         }
 
+        private long _totalBytes = 0;
+
         private async Task GetFileList()
         {
             List<RemoteFileInfo> remoteFileInfos;
@@ -185,6 +187,8 @@ namespace HotsBpHelper.Pages
                 RequestClose(false);
                 return;
             }
+
+            remoteFileInfos.ForEach(r => _totalBytes += long.Parse(r.Size));
             FileUpdateInfos.AddRange(remoteFileInfos.Select(fi => new FileUpdateInfo
             {
                 FileName = fi.Name,
@@ -222,10 +226,10 @@ namespace HotsBpHelper.Pages
 
                     //防盗链算法
                     var T = ((int) DateTime.Now.AddMinutes(1).ToUnixTimestamp()).ToString("x8").ToLower();
-                    var S = SecurityProvider.UrlKey + HttpUtility.UrlEncode(fileUpdateInfo.Path).Replace("%2f", "/") + T;
+                    var S = UrlKey + HttpUtility.UrlEncode(fileUpdateInfo.Path).Replace("%2f", "/") + T;
                     var SIGN = FormsAuthentication.HashPasswordForStoringInConfigFile(S, "MD5").ToLower();
 
-                    _restApi.DownloadFileWithHander(fileUpdateInfo.Url + "?sign=" + SIGN + "&t=" + T,
+                    _restApi.DownloadFileAsync(fileUpdateInfo.Url + "?sign=" + SIGN + "&t=" + T,
                         DownloadProgressChanged, DownloadFileCompleted);
                 }
                 catch (Exception e)
@@ -245,16 +249,15 @@ namespace HotsBpHelper.Pages
         private void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             var bytesIn = double.Parse(e.BytesReceived.ToString());
-            var bytesToReceive = double.Parse(e.TotalBytesToReceive.ToString());
-            _downloadedBytes += bytesIn;
-            var percentage = (int) (_downloadedBytes / bytesToReceive * 100);
-            ShellViewModel.PercentageInfo = "Downloading... " + percentage + @"%";
+            var currentBytes = _downloadedBytes + bytesIn;
+            var percentage = (int) (currentBytes / _totalBytes * 100);
+            ShellViewModel.PercentageInfo = L("Updating") + @" " + percentage + @"%";
         }
 
         private void DownloadFileCompleted(object sender, DownloadDataCompletedEventArgs e)
         {
             var webClient = (WebClient) sender;
-
+            _downloadedBytes += e.Result.Length;
             var fileUpdateInfo = FileUpdateInfos[_currentIndex];
             var content = e.Result;
 
@@ -309,5 +312,7 @@ namespace HotsBpHelper.Pages
         {
             UpdateCompleted?.Invoke(this, EventArgs.Empty);
         }
+
+        private const string UrlKey = "a1aa6c9a469a3eab8a88f79950a96699109aac99";
     }
 }

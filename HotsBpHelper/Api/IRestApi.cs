@@ -14,7 +14,7 @@ namespace HotsBpHelper.Api
 
         byte[] DownloadFile(string filePath);
 
-        void DownloadFileWithHander(string url, DownloadProgressChangedEventHandler downloadProgressChanged,
+        void DownloadFileAsync(string url, DownloadProgressChangedEventHandler downloadProgressChanged,
             DownloadDataCompletedEventHandler downloadCompleted);
 
         List<HeroInfo> GetHeroList(string name);

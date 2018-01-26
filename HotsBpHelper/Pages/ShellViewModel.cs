@@ -59,6 +59,20 @@ namespace HotsBpHelper.Pages
             _securityProvider = securityProvider;
             _hotKeyManager = new HotKeyManager();
             PercentageInfo = L("Loading");
+            using (var mutex = new Mutex(false, "Global\\" + Const.HOTSBPHELPER_PROCESS_NAME))
+            {
+                if (!mutex.WaitOne(0, false))
+                {
+                    Application.Current.Shutdown();
+                    return;
+                }
+            }
+            if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
+            {
+                Exit();
+                return;
+            }
+
             _notifyGetTimeStampTaskCompleted = new NotifyTaskCompletion<double>(restApi.GetTimestamp());
             _notifyGetTimeStampTaskCompleted.TaskStopped += OnTimeStampCompleted;
             if (_notifyGetTimeStampTaskCompleted.IsCompleted)
@@ -104,7 +118,8 @@ namespace HotsBpHelper.Pages
                     if (!OcrEngine.IsTessDataAvailable(App.OcrLanguage))
                     {
                         IsLoaded = false;
-                        if (DialogResult.Yes == DialogResult.Yes)
+                        if (TopMostMessageBox.Show(L("TessdataQuestion"), @"Warning",
+                         MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
                             var tessdataWebUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
                             var languageParams = OcrEngine.GetDirectory(App.OcrLanguage);
@@ -190,26 +205,12 @@ namespace HotsBpHelper.Pages
 
         protected override void OnViewLoaded()
         {
-            using (var mutex = new Mutex(false, "Global\\" + Const.HOTSBPHELPER_PROCESS_NAME))
-            {
-                if (!mutex.WaitOne(0, false))
-                {
-                    Application.Current.Shutdown();
-                    return;
-                }
-            }
-            if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
-            {
-                Application.Current.Shutdown();
-                return;
-            }
             if (!App.Debug)
             {
                 // ²»ÊÇµ÷ÊÔÄ£Äâ,Ôò¼ì²é¸üÐÂ
                 // Update();
             }
             InitSettings();
-            RegisterHotKey();
             base.OnViewLoaded();
 
             _toastService.ShowInformation(L("Loading"));
@@ -228,6 +229,7 @@ namespace HotsBpHelper.Pages
             ((Window) _mmrViewModel.View).Owner = (Window) View;
             _mmrViewModel.Hide();
 
+            RegisterHotKey();
             IsLoaded = true;
             AutoShowHideHelper = true;
             NotifyOfPropertyChange(() => CanOcr);
@@ -260,8 +262,7 @@ namespace HotsBpHelper.Pages
             var languageParams = OcrEngine.GetDirectory(App.OcrLanguage);
             if (!OcrEngine.IsTessDataAvailable(App.OcrLanguage))
             {
-                if (
-                    MessageBox.Show(@"Would you like to download language data for " + App.OcrLanguage, @"Warning",
+                if (TopMostMessageBox.Show(L("TessdataQuestion"), @"Warning",
                         MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
@@ -439,6 +440,9 @@ namespace HotsBpHelper.Pages
 
         private void HotKeyManagerPressed(object sender, KeyPressedEventArgs e)
         {
+            if (!IsLoaded)
+                return;
+            
             if (e.HotKey.Key == Key.B)
             {
                 ManuallyShowHideHelper();
@@ -715,8 +719,14 @@ namespace HotsBpHelper.Pages
 
         public void Exit()
         {
-            OnClose();
-            Environment.Exit(0);
+            try
+            {
+                Application.Current.Shutdown();
+            }
+            catch (Exception)
+            {
+                Environment.Exit(0);
+            }
         }
 
         protected override void OnClose()

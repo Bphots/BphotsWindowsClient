@@ -280,6 +280,6 @@
     <value>正在加载中，请稍候...</value>
   </data>
   <data name="TessdataQuestion" xml:space="preserve">
-    <value>自动识别库未安装，需要下载吗</value>
+    <value>自动识别库未安装，是否需要下载以启用</value>
   </data>
 </root>
