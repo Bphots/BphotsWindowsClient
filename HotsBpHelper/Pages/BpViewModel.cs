@@ -15,6 +15,7 @@ using HotsBpHelper.Services;
 using HotsBpHelper.Settings;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
+using ImageProcessor.ImageProcessing;
 using ImageProcessor.Ocr;
 using Stylet;
 using MessageBox = System.Windows.MessageBox;
@@ -60,14 +61,16 @@ namespace HotsBpHelper.Pages
 
         private Visibility _visibility;
         private int _width;
+        private IToastService _toastService;
 
         public bool OcrAvailable { get; set; }
 
-        public BpViewModel(ViewModelFactory viewModelFactory, IEventAggregator eventAggregator, ISecurityProvider securityProvider)
+        public BpViewModel(ViewModelFactory viewModelFactory, IEventAggregator eventAggregator, ISecurityProvider securityProvider, IToastService toastService)
         {
             _viewModelFactory = viewModelFactory;
 
             _eventAggregator = eventAggregator;
+            _toastService = toastService;
             _securityProvider = securityProvider;
             _eventAggregator.Subscribe(this);
             _scanningCancellationToken = new CancellationTokenSource();
@@ -826,24 +829,47 @@ namespace HotsBpHelper.Pages
             _isThirdAndFourthBanProcessing = true;
             var finder = new Finder();
             var stageInfo = new StageInfo();
-            while (stageInfo.Step < 6 && !_scanningCancellationToken.IsCancellationRequested)
-            {
-                await Task.Delay(500);
-                stageInfo = finder.GetStageInfo();
-            }
+            await AwaitStageAsync(stageInfo, finder, 6);
 
             if (!_scanningCancellationToken.IsCancellationRequested)
                 Execute.OnUIThread(ForceFourthBanProcess);
 
-            while (stageInfo.Step < 7 && !_scanningCancellationToken.IsCancellationRequested)
-            {
-                await Task.Delay(500);
-                stageInfo = finder.GetStageInfo();
-            }
+            await AwaitStageAsync(stageInfo, finder, 7);
             if (!_scanningCancellationToken.IsCancellationRequested)
                 Execute.OnUIThread(ForceFourthPickProcess);
 
             _isThirdAndFourthBanProcessing = false;
+        }
+
+        private async Task AwaitStageAsync(StageInfo stageInfo, Finder finder, int stage)
+        {
+            bool warned = false;
+            int inBpFail = 0;
+            while (stageInfo.Step < stage && !_scanningCancellationToken.IsCancellationRequested)
+            {
+                await Task.Delay(500);
+                stageInfo = finder.GetStageInfo();
+
+                if (stageInfo.Step != -1 || warned)
+                    continue;
+
+                bool isBp;
+                lock (ImageProcessingHelper.GDILock)
+                {
+                    var screenPath = finder.CaptureScreen();
+                    isBp = ImageProcessingHelper.CheckIfInBp(screenPath);
+                }
+
+                if (isBp)
+                    continue;
+
+                inBpFail++;
+                if (inBpFail != 5)
+                    continue;
+
+                warned = true;
+                WarnNotInBp();
+            }
         }
 
         private async Task LookForBpScreen()
@@ -974,27 +1000,12 @@ namespace HotsBpHelper.Pages
             _isFirstAndSecondBanProcessing = true;
             var finder = new Finder();
             var stageInfo = new StageInfo {Step = -1};
-            while (stageInfo.Step < 1 && !_scanningCancellationToken.IsCancellationRequested)
-            {
-                await Task.Delay(500);
-                stageInfo = finder.GetStageInfo();
-            }
-
-            //if (BpStatus.FirstSide == BpStatus.Side.Right)
-            //{
-            //    await Task.Delay(3000);
-            //    if (!_scanningCancellationToken.IsCancellationRequested)
-            //        OcrUtil.AdjustPlaceHolderPosition();
-            //}
+            await AwaitStageAsync(stageInfo, finder, 1);
 
             if (!_scanningCancellationToken.IsCancellationRequested)
                 Execute.OnUIThread(ForceSecondBanProcess);
-
-            while (stageInfo.Step < 2 && !_scanningCancellationToken.IsCancellationRequested)
-            {
-                await Task.Delay(500);
-                stageInfo = finder.GetStageInfo();
-            }
+            
+            await AwaitStageAsync(stageInfo, finder, 2);
 
             if (!_scanningCancellationToken.IsCancellationRequested)
                 Execute.OnUIThread(ForceFirstPickProcess);
@@ -1107,6 +1118,11 @@ namespace HotsBpHelper.Pages
         protected virtual void OnTurnOffAutoDetectMode()
         {
             TurnOffAutoDetectMode?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void WarnNotInBp()
+        {
+            Execute.OnUIThread(() => _toastService.ShowWarning(L("NotInBpQuestion")));
         }
     }
 

@@ -403,8 +403,7 @@ namespace HotsBpHelper.Pages
                 var pid = Win32.GetWindowProcessID(hwnd);
                 var process = Process.GetProcessById(pid);
                 var inHotsGame = process.ProcessName.StartsWith(Const.HEROES_PROCESS_NAME);
-                var inHotsHelper = process.ProcessName.StartsWith(Const.HOTSBPHELPER_PROCESS_NAME) ||
-                                   process.ProcessName.StartsWith("iexplore");
+                var inHotsHelper = process.ProcessName.StartsWith(Const.HOTSBPHELPER_PROCESS_NAME);
                 if (inHotsGame)
                 {
                     if (OcrUtil.SuspendScanning && lastStatus != 1)

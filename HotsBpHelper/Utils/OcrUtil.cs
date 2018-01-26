@@ -52,7 +52,7 @@ namespace HotsBpHelper.Utils
                 lock (ImageProcessingHelper.GDILock)
                 {
                     var screenPath = finder.CaptureScreen();
-                    var isBp = ImageProcessingHelper.LookForBpStats(screenPath);
+                    var isBp = ImageProcessingHelper.CheckIfInBp(screenPath);
                     if (isBp)
                         return;
                 }
@@ -196,6 +196,9 @@ namespace HotsBpHelper.Utils
 
                 var logUtil = new LogUtil(@".\logPick" + string.Join("&", ids) + ".txt");
                 logUtil.Log("PickChecked");
+
+                int bpScreenFail = 0;
+                bool warned = false;
                 while (checkedDic.Any(c => !c.Value))
                 {
                     var sb = new StringBuilder();
@@ -224,6 +227,16 @@ namespace HotsBpHelper.Utils
                         logUtil.Log("Starting detect overlap");
                         using (var bitmap = new ImageUtils().CaptureScreen())
                         {
+                            if (!warned && !ImageProcessingHelper.CheckIfInBp(bitmap))
+                            {
+                                bpScreenFail++;
+                                if (bpScreenFail == 5)
+                                {
+                                    warned = true;
+                                    bpViewModel.WarnNotInBp();
+                                }
+                            }
+                            
                             if (side == ScanSide.Right)
                             {
                                 logUtil.Log("Starting right");
@@ -275,6 +288,9 @@ namespace HotsBpHelper.Utils
 
 
                         logUtil.Log("Checked " + ids[i]);
+                        if (sb.ToString() == _recognizer.PickingText)
+                            bpScreenFail = 0;
+
                         if (sb.ToString() == _recognizer.PickingText || string.IsNullOrEmpty(sb.ToString()))
                             continue;
 
@@ -300,18 +316,13 @@ namespace HotsBpHelper.Utils
                                 continue;
                             }
 
-                            Monitor.Enter(ImageProcessingHelper.GDILock);
-                            try
+                            lock (ImageProcessingHelper.GDILock)
                             {
                                 tempscreenshotPath = finder.CaptureScreen();
                                 finder.AddNewTemplate(ids[i], ids[i].ToString(), fileDic, tempscreenshotPath);
                                 logUtil.Log("Capture Complete " + ids[i]);
                                 _recognizer.Recognize(fileDic[ids[i]], rotation, sbConfirm, App.AppSetting.Position.Height > 1200 ? 5 : 3);
-                            }
-                            finally
-                            {
-                                Monitor.Exit(ImageProcessingHelper.GDILock);
-                            }
+                            } 
                         }
 
                         if (SuspendScanning)
@@ -325,6 +336,9 @@ namespace HotsBpHelper.Utils
                             checkedDic[i] = true;
                             continue;
                         }
+
+                        if (alreadyTrustable)
+                            bpScreenFail = 0;
 
                         if ((alreadyTrustable || sb.ToString() == sbConfirm.ToString()) &&
                             !cancellationToken.IsCancellationRequested)

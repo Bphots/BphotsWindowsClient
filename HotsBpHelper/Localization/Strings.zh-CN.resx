@@ -282,4 +282,7 @@
   <data name="TessdataQuestion" xml:space="preserve">
     <value>自动识别库未安装，是否需要下载以启用</value>
   </data>
+  <data name="NotInBpQuestion" xml:space="preserve">
+    <value>您是否仍在BP中？如已离开游戏可使用Ctrl+Shit+N重置。</value>
+  </data>
 </root>

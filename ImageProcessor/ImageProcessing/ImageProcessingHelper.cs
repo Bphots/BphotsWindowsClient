@@ -13,19 +13,15 @@ namespace ImageProcessor.ImageProcessing
     {
         public static object GDILock = new object();
 
-        //private static void RotateImage(Mat src, Mat dst, float angle, double scale)
-        //{
-        //    var imageCenter = new Point2f(src.Cols / 2f, src.Rows / 2f);
-        //    Mat rotationMat = Cv2.GetRotationMatrix2D(imageCenter, angle, scale);
-        //    Rect bbox = new RotatedRect(imageCenter, new Size2f(src.Size().Width, src.Size().Height), angle).BoundingRect();
-        //    rotationMat.Set(0, 2, rotationMat.Get<double>(0, 2) + bbox.Width / 2.0 - imageCenter.X);
-        //    rotationMat.Set(1, 2, rotationMat.Get<double>(1, 2) + bbox.Height / 2.0 - imageCenter.Y);
-        //    Cv2.WarpAffine(src, dst, rotationMat, bbox.Size);
-        //}
 
-        public static bool LookForBpStats(string file)
+        public static bool CheckIfInBp(string file)
         {
             using (var bitmap = new Bitmap(file))
+            return CheckIfInBp(bitmap);
+        }
+
+        public static bool CheckIfInBp(Bitmap bitmap)
+        {
             using (var bitmapGray = bitmap.ToGrayscale())
             using (var binarySample = bitmapGray.Binarilization(75))
             {
@@ -35,9 +31,9 @@ namespace ImageProcessor.ImageProcessing
                 // var mat = new Mat(file, ImreadModes.GrayScale);
                 //Mat thresholdedSample = mat.Threshold(75, 255, ThresholdTypes.BinaryInv);
                 //Mat.Indexer<Vec3b> indexer = thresholdedSample.GetGenericIndexer<Vec3b>();
-                var sampleLeft = (int)(0.007 * binarySample.Height);
+                var sampleLeft = (int) (0.007*binarySample.Height);
                 var sum = 0;
-                for (var y = 0; y < binarySample.Height * 0.130; y++)
+                for (var y = 0; y < binarySample.Height*0.130; y++)
                 {
                     int grayScale = matrix[y, sampleLeft];
                     if (grayScale != 255)
@@ -47,17 +43,17 @@ namespace ImageProcessor.ImageProcessing
                     return false;
 
                 sum = 0;
-                for (int y = (int)(binarySample.Height * 0.130); y < binarySample.Height * 0.168; y++)
+                for (int y = (int) (binarySample.Height*0.130); y < binarySample.Height*0.168; y++)
                 {
                     int grayScale = matrix[y, sampleLeft];
                     if (grayScale != 255)
                         ++sum;
                 }
-                if (sum < 0.2 * binarySample.Height * 0.038)
+                if (sum < 0.2*binarySample.Height*0.038)
                     return false;
 
                 sum = 0;
-                for (int y = (int)(binarySample.Height * 0.168); y < binarySample.Height * 0.441; y++)
+                for (int y = (int) (binarySample.Height*0.168); y < binarySample.Height*0.441; y++)
                 {
                     int grayScale = matrix[y, sampleLeft];
                     if (grayScale != 255)
@@ -67,17 +63,17 @@ namespace ImageProcessor.ImageProcessing
                     return false;
 
                 sum = 0;
-                for (int y = (int)(binarySample.Height * 0.441); y < binarySample.Height * 0.482; y++)
+                for (int y = (int) (binarySample.Height*0.441); y < binarySample.Height*0.482; y++)
                 {
                     int grayScale = matrix[y, sampleLeft];
                     if (grayScale != 255)
                         ++sum;
                 }
-                if (sum < 0.2 * binarySample.Height * 0.038)
+                if (sum < 0.2*binarySample.Height*0.038)
                     return false;
 
                 sum = 0;
-                for (int y = (int)(binarySample.Height * 0.482); y < binarySample.Height * 0.757; y++)
+                for (int y = (int) (binarySample.Height*0.482); y < binarySample.Height*0.757; y++)
                 {
                     int grayScale = matrix[y, sampleLeft];
                     if (grayScale != 255)
@@ -87,23 +83,23 @@ namespace ImageProcessor.ImageProcessing
                     return false;
 
                 sum = 0;
-                for (int y = (int)(binarySample.Height * 0.757); y < binarySample.Height * 0.795; y++)
+                for (int y = (int) (binarySample.Height*0.757); y < binarySample.Height*0.795; y++)
                 {
                     int grayScale = matrix[y, sampleLeft];
                     if (grayScale != 255)
                         ++sum;
                 }
-                if (sum < 0.2 * binarySample.Height * 0.038)
+                if (sum < 0.2*binarySample.Height*0.038)
                     return false;
 
                 sum = 0;
-                for (int y = (int)(binarySample.Height * 0.795); y < binarySample.Height; y++)
+                for (int y = (int) (binarySample.Height*0.795); y < binarySample.Height; y++)
                 {
                     int grayScale = matrix[y, sampleLeft];
                     if (grayScale != 255)
                         ++sum;
                 }
-                
+
                 return sum == 0;
             }
         }
