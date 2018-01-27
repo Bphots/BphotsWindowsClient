@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -403,6 +404,7 @@ namespace HotsBpHelper.Pages
         private async Task CheckFocusAsync()
         {
             var lastStatus = 0;
+            bool hotsClosed = false;
             while (true)
             {
                 await Task.Delay(1000);
@@ -412,11 +414,30 @@ namespace HotsBpHelper.Pages
                 var hwnd = Win32.GetForegroundWindow();
                 var pid = Win32.GetWindowProcessID(hwnd);
                 var process = Process.GetProcessById(pid);
+                var hotsProcess = Process.GetProcessesByName(Const.HEROES_PROCESS_NAME);
+                if (!hotsProcess.Any())
+                {
+                    if (!OcrUtil.NotInFocus && lastStatus != 2)
+                    {
+                        OcrUtil.NotInFocus = true;
+                        lastStatus = 2;
+                    }
+
+                    if (!hotsClosed && _bpViewModel.BpScreenLoaded)
+                    {
+                        Execute.OnUIThread(() => _bpViewModel.Reset());
+                        hotsClosed = true;
+                    }
+                    continue;
+                }
+
+                hotsClosed = false;
+
                 var inHotsGame = process.ProcessName.StartsWith(Const.HEROES_PROCESS_NAME);
                 var inHotsHelper = process.ProcessName.StartsWith(Const.HOTSBPHELPER_PROCESS_NAME);
                 if (inHotsGame)
                 {
-                    if (OcrUtil.SuspendScanning && lastStatus != 1)
+                    if (OcrUtil.NotInFocus && lastStatus != 1)
                     {
                         if (_bpViewModel.BpScreenLoaded)
                             Execute.OnUIThread(() => _bpViewModel.Show());
@@ -426,7 +447,7 @@ namespace HotsBpHelper.Pages
                 }
                 if (!inHotsHelper && !inHotsGame)
                 {
-                    if (!OcrUtil.SuspendScanning && lastStatus != 2)
+                    if (!OcrUtil.NotInFocus && lastStatus != 2)
                     {
                         if (_bpViewModel == null)
                             continue;
