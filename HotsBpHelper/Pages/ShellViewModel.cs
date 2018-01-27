@@ -155,13 +155,7 @@ namespace HotsBpHelper.Pages
             get { return _autoShowMMR; }
             set
             {
-                if (SetAndNotify(ref _autoShowMMR, value))
-                {
-                    if (AutoShowMmr)
-                    {
-                        Task.Run(() => { MonitorLobbyFile(); });
-                    }
-                }
+                SetAndNotify(ref _autoShowMMR, value);
             }
         }
 
@@ -266,6 +260,7 @@ namespace HotsBpHelper.Pages
             _initializeReset = true;
             Task.Run(CheckFocusAsync).ConfigureAwait(false);
             Task.Run(MonitorInGameAsync).ConfigureAwait(false);
+            Task.Run(MonitorLobbyFile).ConfigureAwait(false);
         }
 
         private void OnWebFileUpdateCompleted(object sender, EventArgs e)
@@ -342,7 +337,7 @@ namespace HotsBpHelper.Pages
             }
         }
 
-        private void MonitorLobbyFile()
+        private async Task MonitorLobbyFile()
         {
             var lobbyLastModified = DateTime.MinValue;
             while (AutoShowMmr)
@@ -359,7 +354,7 @@ namespace HotsBpHelper.Pages
                         _bpViewModel.Reset();
                     });
                 }
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
             }
         }
 

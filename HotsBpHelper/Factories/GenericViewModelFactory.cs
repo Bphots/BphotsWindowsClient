@@ -11,19 +11,21 @@ namespace HotsBpHelper.Factories
     public class ViewModelFactory
     {
         private readonly IContainer _container;
+        private readonly Type[] _vmList;
 
         public ViewModelFactory(IContainer container)
         {
             _container = container;
+            _vmList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
+                          from assemblyType in domainAssembly.GetTypes()
+                          where typeof(ViewModelBase).IsAssignableFrom(assemblyType)
+                          select assemblyType).ToArray();
         }
 
         public T CreateViewModel<T>() where T : ViewModelBase
         { 
-            var vmList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
-                                   from assemblyType in domainAssembly.GetTypes()
-                                   where typeof(ViewModelBase).IsAssignableFrom(assemblyType)
-                                   select assemblyType).ToArray();
-            foreach (var vmType in vmList.Where(f => !f.Name.StartsWith("Generated")))
+            
+            foreach (var vmType in _vmList.Where(f => !f.Name.StartsWith("Generated")))
             {
                 if (vmType == typeof (T))
                 {
