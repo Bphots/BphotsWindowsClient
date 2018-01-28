@@ -294,7 +294,9 @@
     <Resource Include="imageres_00077.png" />
     <Resource Include="Images\hots.ico" />
     <Resource Include="icon.ico" />
-    <Resource Include="Images\icon.ico" />
+    <Resource Include="Images\icon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Content Include="cef\Cfx\BrowserSubProcess.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -576,6 +578,9 @@
     </Content>
     <Content Include="cef\Release\widevinecdmadapter.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\browser.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\lock\1366x768.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -1023,6 +1028,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Icon.ico" />
     <Content Include="Screenshots\placeholder.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

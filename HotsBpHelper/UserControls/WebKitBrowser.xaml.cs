@@ -2,16 +2,25 @@
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
+using System.Windows.Forms.Integration;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Chromium;
+using Chromium.Event;
 using Chromium.Remote.Event;
 using Chromium.WebBrowser;
 using Chromium.WebBrowser.Event;
 using Stylet;
+using Orientation = System.Windows.Forms.Orientation;
 using Point = Hardcodet.Wpf.TaskbarNotification.Interop.Point;
+using UserControl = System.Windows.Controls.UserControl;
+using WebBrowser = System.Windows.Controls.WebBrowser;
 using WindowStyle = System.Windows.WindowStyle;
 
 namespace HotsBpHelper.UserControls
@@ -25,9 +34,65 @@ namespace HotsBpHelper.UserControls
         {
             InitializeComponent();
             Browser.BrowserCreated += BrowserOnBrowserCreated;
+            Browser.LifeSpanHandler.OnBeforePopup += LifeSpanHandlerOnOnBeforePopup;
 
             Browser.GlobalObject.AddFunction("HideWindow").Execute += HideWindow;
             //Browser.ObjectForScripting = new ScriptingHelper(this);
+        }
+
+
+        private void LifeSpanHandlerOnOnBeforePopup(object sender, CfxOnBeforePopupEventArgs e)
+        {
+            var url = e.TargetUrl;
+           
+            Execute.OnUIThread(() =>
+            {
+                BitmapImage img = new BitmapImage();
+                img.BeginInit(); 
+                img.UriSource = new Uri(@".\Images\browser.ico", UriKind.Relative);
+                img.EndInit();
+                Window popupBrowserForm = new Window()
+                {
+                    Icon = img,
+                    Width = App.AppSetting.Position.Width * 0.5,
+                    Height = App.AppSetting.Position.Height * 0.5
+                };
+                var winformsHost = new WindowsFormsHost();
+
+                ChromiumWebBrowser popupBrowser = new ChromiumWebBrowser()
+                {
+                    Margin = new Padding(0),
+                    Name = Name,
+                    Dock = DockStyle.Fill
+                };
+
+                popupBrowser.DisplayHandler.OnTitleChange += (s, e2) =>
+                {
+                    var title = e2.Title;
+                    Execute.OnUIThread(
+                        () =>
+                            popupBrowserForm.Title =
+                                @"HotsBpHelper - " + title);
+                };
+
+                popupBrowser.LifeSpanHandler.OnBeforePopup += (s, e2) =>
+                {
+                    var newTarget = e2.TargetUrl;
+                   Execute.OnUIThread(
+                       () =>
+                       {
+                           popupBrowser.LoadUrl(newTarget);
+                       });
+                    e2.SetReturnValue(true);
+                };
+
+                popupBrowser.LoadUrl(url);
+                popupBrowserForm.Content = winformsHost;
+                winformsHost.Child = popupBrowser;
+                popupBrowserForm.Show();
+            });
+
+            e.SetReturnValue(true);
         }
 
         private void HideWindow(object sender, CfrV8HandlerExecuteEventArgs e)
@@ -39,8 +104,13 @@ namespace HotsBpHelper.UserControls
             }
         }
 
+        private bool _isInitialized = false;
+
         private void BrowserOnBrowserCreated(object sender, BrowserCreatedEventArgs browserCreatedEventArgs)
         {
+            if (_isInitialized)
+                return;
+
             Execute.OnUIThread(() =>
             {
                 var dpiPoint = GetSystemDpi();
@@ -52,6 +122,7 @@ namespace HotsBpHelper.UserControls
             {
                 Browser.LoadUrl(PendingSource);
             });
+            _isInitialized = true;
         }
 
         #region Get Font DPI

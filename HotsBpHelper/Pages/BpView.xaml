@@ -18,6 +18,6 @@
         Top ="{Binding Top}"
         >
     <DockPanel>
-        <userControls:WebKitBrowser x:Name="Browser" DockPanel.Dock="Top" Width="{Binding Width}" Height="{Binding Height}" Source="{Binding LocalFileUri}"/>
+        <userControls:WebKitBrowser x:Name="Browser" DockPanel.Dock="Top" Width="{Binding Width}" Height="{Binding Height}" ShowDevTool="{Binding ShowDevTool}" Source="{Binding LocalFileUri}"/>
     </DockPanel>
 </userControls:TabSwitcherFreeWindow>
