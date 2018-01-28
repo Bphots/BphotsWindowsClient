@@ -95,7 +95,7 @@ namespace HotsBpHelper.HeroFinder
             var fullHorizontalPoint = App.AppSetting.Position.OverlapPoints.FullChatHorizontalPoint;
             var isFull = true;
             var sampleColor = screenshotBitmap.GetPixel(fullHorizontalPoint.X, fullHorizontalPoint.Y);
-            for (var x = fullHorizontalPoint.X + 1; x <= fullHorizontalPoint.X + 600; ++x)
+            for (var x = fullHorizontalPoint.X; x >= fullHorizontalPoint.X - 300; --x)
             {
                 var color = screenshotBitmap.GetPixel(x, fullHorizontalPoint.Y);
                 if (Math.Abs(color.R - sampleColor.R) + Math.Abs(color.G - sampleColor.G) +
@@ -110,7 +110,7 @@ namespace HotsBpHelper.HeroFinder
             var parialHorizontalPoint = App.AppSetting.Position.OverlapPoints.PartialChatlHorizontalPoint;
             var isPartial = true;
             sampleColor = screenshotBitmap.GetPixel(parialHorizontalPoint.X, parialHorizontalPoint.Y);
-            for (var x = parialHorizontalPoint.X + 1; x <= parialHorizontalPoint.X + 600; ++x)
+            for (var x = parialHorizontalPoint.X; x >= parialHorizontalPoint.X - 300; --x)
             {
                 var color = screenshotBitmap.GetPixel(x, parialHorizontalPoint.Y);
                 if (Math.Abs(color.R - sampleColor.R) + Math.Abs(color.G - sampleColor.G) +

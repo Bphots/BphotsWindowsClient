@@ -88,12 +88,6 @@
     <None Include="tessdata\zhTW\tessdata\chi_tra.traineddata" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="x64\liblept1742.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="x64\libtesseract3051.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="x86\liblept1742.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
