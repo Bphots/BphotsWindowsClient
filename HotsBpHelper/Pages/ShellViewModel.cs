@@ -239,7 +239,7 @@ namespace HotsBpHelper.Pages
             _bpViewModel = _viewModelFactory.CreateViewModel<BpViewModel>();
             WindowManager.ShowWindow(_bpViewModel);
             _bpViewModel.Hide();
-            
+
             RegisterHotKey();
             IsLoaded = true;
             AutoShowHideHelper = true;
@@ -406,7 +406,7 @@ namespace HotsBpHelper.Pages
         private async Task CheckFocusAsync()
         {
             var lastStatus = 0;
-            bool hotsClosed = false;
+            bool hotsClosed = true;
             while (true)
             {
                 await Task.Delay(1000);
@@ -416,7 +416,7 @@ namespace HotsBpHelper.Pages
                 var hwnd = Win32.GetForegroundWindow();
                 var pid = Win32.GetWindowProcessID(hwnd);
                 var process = Process.GetProcessById(pid);
-                var hotsProcess = Process.GetProcessesByName(Const.HEROES_PROCESS_NAME);
+                var hotsProcess = Process.GetProcessesByName(Const.HEROES_PROCESS_NAME).Union(Process.GetProcessesByName(Const.HEROES_PROCESS_NAME + "_x64"));
                 if (!hotsProcess.Any())
                 {
                     if (!OcrUtil.NotInFocus && lastStatus != 2)
@@ -427,7 +427,10 @@ namespace HotsBpHelper.Pages
 
                     if (!hotsClosed && _bpViewModel.BpScreenLoaded)
                     {
-                        Execute.OnUIThread(() => _bpViewModel.Reset());
+                        Execute.OnUIThread(() =>
+                        {
+                            _bpViewModel.Reset();
+                        });
                         hotsClosed = true;
                     }
                     continue;
@@ -524,7 +527,6 @@ namespace HotsBpHelper.Pages
 
         public void ResetHelper()
         {
-            _bpViewModel?.Hide();
             _bpViewModel?.Reset();
         }
 
@@ -547,7 +549,7 @@ namespace HotsBpHelper.Pages
                 if (clear)
                 {
                     _bpViewModel.CancelAllActiveScan();
-                    _bpViewModel.Reset();
+                    _bpViewModel.Reset(false);
                 }
                 _bpViewModel.ToggleVisible();
             });
@@ -664,39 +666,23 @@ namespace HotsBpHelper.Pages
 
         private static void ManualAdjustPosition()
         {
-            if (App.AppSetting.Position.Height == 1440 && App.AppSetting.Position.Width == 3440)
-            {
-                App.AppSetting.Position.Left.HeroName1 = new Point(19, 247);
-                App.AppSetting.Position.Right.HeroName1 = new Point(3426, 252);
-                App.AppSetting.Position.OverlapPoints = new OverlapPoints
-                {
-                    AppearanceFramePoint = new Point(81, 521),
-                    FrameRightBorderPoint = new Point(3423, 1241),
-                    SkillFramePoint = new Point(121, 1111),
-                    TalentFramePoint = new Point(213, 425),
-                    FullChatHorizontalPoint = new Point(1960, 331),
-                    PartialChatlHorizontalPoint = new Point(1960, 842)
-                };
-            }
-            if (App.AppSetting.Position.Height > 1800 && App.AppSetting.Position.Width > 2700)
-            {
-                App.AppSetting.Position.Left.HeroName1 = new Point(25, 313);
-                App.AppSetting.Position.Right.HeroName1 = new Point(2717, 317);
-            }
-            if (App.AppSetting.Position.Height == 1080 && App.AppSetting.Position.Width == 1920)
-            {
-                App.AppSetting.Position.Left.HeroName1 = new Point(15, 186);
-                App.AppSetting.Position.Right.HeroName1 = new Point(1907, 189);
-                App.AppSetting.Position.OverlapPoints = new OverlapPoints
-                {
-                    AppearanceFramePoint = new Point(70, 457),
-                    FrameRightBorderPoint = new Point(1907, 938),
-                    SkillFramePoint = new Point(77, 833),
-                    TalentFramePoint = new Point(147, 319),
-                    FullChatHorizontalPoint = new Point(1173, 248),
-                    PartialChatlHorizontalPoint = new Point(1173, 632)
-                };
-            }
+            //var height = App.AppSetting.Position.Height;
+            //var width = App.AppSetting.Position.Width;
+            //if (App.AppSetting.Position.Height == 1440 && App.AppSetting.Position.Width == 3440)
+            //{
+            //    App.AppSetting.Position.Left.HeroName1 = new Point(19, 247);
+            //    App.AppSetting.Position.Right.HeroName1 = new Point(3426, 252);
+            //}
+            //if (App.AppSetting.Position.Height > 1800 && App.AppSetting.Position.Width > 2700)
+            //{
+            //    App.AppSetting.Position.Left.HeroName1 = new Point(25, 313);
+            //    App.AppSetting.Position.Right.HeroName1 = new Point(2717, 317);
+            //}
+            //if (App.AppSetting.Position.Height == 1080 && App.AppSetting.Position.Width == 1920)
+            //{
+            //    App.AppSetting.Position.Left.HeroName1 = new Point(RoundUp(0.0138888888888889 * height), RoundUp(0.1722222222222222 * height));
+            //    App.AppSetting.Position.Right.HeroName1 = new Point(RoundUp(width - 0.012037037037037 * height), RoundUp(0.0175 * height)); 
+            //}
         }
 
         /// <summary>
@@ -733,7 +719,7 @@ namespace HotsBpHelper.Pages
                             new Point(heroWidth, heroHeight),
                             new Point(heroWidth, heroHeight - (int) (0.0165*height))
                         },
-                    HeroName1 = new Point((int) (0.013195*height), (int) (0.172222*height))
+                    HeroName1 = new Point(RoundUp(0.0138888888888889 * height), RoundUp(0.1722222222222222 * height))
                 },
                 Right = new SidePosition
                 {
@@ -751,16 +737,31 @@ namespace HotsBpHelper.Pages
                             new Point(1, heroHeight),
                             new Point(1, heroHeight - (int) (0.0165*height))
                         },
-                    HeroName1 = new Point((int) (width - 0.011195*height), (int) (0.172222*height))
+                    HeroName1 = new Point(RoundUp(width - 0.012037037037037 * height), RoundUp(0.175 * height))
                 },
                 MapPosition = new MapPosition
                 {
-                    Location = new Point((int) (width/2 - 0.18*height), 0),
+                    Location = new Point((int) (width * 0.5 - 0.18 * height), 0),
                     Width = (int) (0.36*height),
                     Height = (int) (0.03563*height)
+                },
+                OverlapPoints = new OverlapPoints()
+                {
+                    AppearanceFramePoint = new Point(RoundUp(0.0666666666666667 * height), RoundUp(0.4231481481481481 * height)),
+                    FrameRightBorderPoint = new Point(RoundUp(width - 0.012037037037037 * height), RoundUp(0.8685185185185185 * height)),
+                    SkillFramePoint = new Point(RoundUp(0.0740740740740741 * height), RoundUp(0.7712962962962963 * height)),
+                    TalentFramePoint = new Point(RoundUp(0.1435185185185185 * height), RoundUp(0.2953703703703704 * height)),
+                    FullChatHorizontalPoint = new Point(RoundUp(width - 0.0185185185185185 * height), RoundUp(0.2296296296296296 * height)),
+                    PartialChatlHorizontalPoint = new Point(RoundUp(width - 0.0185185185185185 * height), RoundUp(0.5851851851851852 * height))
                 }
             };
+            
             return position;
+        }
+
+        private static int RoundUp(double num)
+        {
+            return (int) (num + 0.5);
         }
 
         public void Exit()

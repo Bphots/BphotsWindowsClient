@@ -35,7 +35,7 @@ namespace HotsBpHelper.UserControls
             InitializeComponent();
             Browser.BrowserCreated += BrowserOnBrowserCreated;
             Browser.LifeSpanHandler.OnBeforePopup += LifeSpanHandlerOnOnBeforePopup;
-
+            
             Browser.GlobalObject.AddFunction("HideWindow").Execute += HideWindow;
             //Browser.ObjectForScripting = new ScriptingHelper(this);
         }
@@ -114,10 +114,11 @@ namespace HotsBpHelper.UserControls
             Execute.OnUIThread(() =>
             {
                 var dpiPoint = GetSystemDpi();
-                double zoom = 0 - (dpiPoint.X-96) / 24;
+                double zoom = 0 - (dpiPoint.X - 96) / 24;
                 if (Math.Abs(zoom) > 0.01)
-                    Browser.BrowserHost.ZoomLevel = zoom;
+                    Browser.BrowserHost.ZoomLevel = zoom * 0.94;
             });
+
             Execute.OnUIThread(() =>
             {
                 Browser.LoadUrl(PendingSource);

@@ -423,16 +423,17 @@ namespace HotsBpHelper.Pages
         {
             CancelAllActiveScan();
             await Task.Delay(15000);
-            Execute.OnUIThread(Reset);
+            Execute.OnUIThread(() => Reset());
         }
 
-        public void Reset()
+        public void Reset(bool hide = true)
         {
             CancelAllActiveScan();
             Init();
             InitializeAllHeroSelector();
             Reload();
-
+            if (hide)
+                Hide();
             if (AutoShowHideHelper)
             {
                 Task.Run(LookForBpScreen).ConfigureAwait(false);
@@ -910,7 +911,7 @@ namespace HotsBpHelper.Pages
                 // false positive
                 if (string.IsNullOrEmpty(map))
                 {
-                    Execute.OnUIThread(Reset);
+                    Execute.OnUIThread(() => Reset());
                     return;
                 }
 

@@ -224,10 +224,10 @@ namespace HotsBpHelper.Utils
                         }
 
                        
-                        logUtil.Log("Starting detect overlap");
+                        logUtil.Log("Starting detect quit");
                         using (var bitmap = new ImageUtils().CaptureScreen())
                         {
-                            if (!warned && !ImageProcessingHelper.CheckIfInBp(bitmap))
+                            if (!warned && StageFinder.ProcessStageInfo(bitmap).Step == -1)
                             {
                                 bpScreenFail++;
                                 if (bpScreenFail == 5)
@@ -236,7 +236,8 @@ namespace HotsBpHelper.Utils
                                     bpViewModel.WarnNotInBp();
                                 }
                             }
-                            
+
+                            logUtil.Log("Starting detect overlap");
                             if (side == ScanSide.Right)
                             {
                                 logUtil.Log("Starting right");
@@ -245,6 +246,7 @@ namespace HotsBpHelper.Utils
                                 if (chartInfo == FrameFinder.ChatInfo.Partial && ids[i] > 10 ||
                                     chartInfo == FrameFinder.ChatInfo.Full)
                                 {
+                                    logUtil.Log("Overlap detected");
                                     await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
                                     continue;
                                 }
@@ -253,6 +255,7 @@ namespace HotsBpHelper.Utils
                                 logUtil.Log("Detect right frame end");
                                 if (hasFrame)
                                 {
+                                    logUtil.Log("Overlap detected");
                                     await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
                                     continue;
                                 }
@@ -264,6 +267,7 @@ namespace HotsBpHelper.Utils
                                 logUtil.Log("Detect left frame end");
                                 if (hasFrame)
                                 {
+                                    logUtil.Log("Overlap detected");
                                     await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
                                     continue;
                                 }
@@ -362,6 +366,7 @@ namespace HotsBpHelper.Utils
                                         logUtil.Log("Detect right frame end");
                                         if (hasFrame)
                                         {
+                                            logUtil.Log("Overlap detected");
                                             await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
                                             continue;
                                         }
@@ -373,6 +378,7 @@ namespace HotsBpHelper.Utils
                                         logUtil.Log("Detect left frame end");
                                         if (hasFrame)
                                         {
+                                            logUtil.Log("Overlap detected");
                                             await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
                                             continue;
                                         }
