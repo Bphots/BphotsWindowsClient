@@ -17,7 +17,7 @@
         Left="{Binding Left}"
         Top ="{Binding Top}"
         >
-    <DockPanel Visibility="{Binding Visibility}">
+    <DockPanel>
         <userControls:WebKitBrowser x:Name="Browser" DockPanel.Dock="Top" Width="{Binding Width}" Height="{Binding Height}" Source="{Binding LocalFileUri}"/>
     </DockPanel>
 </userControls:TabSwitcherFreeWindow>
