@@ -83,6 +83,28 @@ namespace HotsBpHelper.HeroFinder
             }
         }
 
+        public void AddNewTemplate(int id, string heroName, Dictionary<int, string> fileDictionary, Bitmap screenshotBitmap)
+        {
+            var imageUtil = new ImageUtils();
+            var positionInfo = CalculatePositionInfo(id);
+
+            if (positionInfo.ClipPoints == null)
+                return;
+
+            var path = Path.Combine(App.AppPath, "Images\\Heroes");
+            var path2 = string.Format("{0}x{1}", App.AppSetting.Position.Width, App.AppSetting.Position.Height);
+            FilePath text = Path.Combine(path, path2, positionInfo.DirStr,
+                string.Format("{0}_{1:yyyyMMddhhmmss}.bmp", heroName, DateTime.Now));
+            if (!text.GetDirPath().Exists)
+                Directory.CreateDirectory(text.GetDirPath());
+            
+            using (var bitmap2 = imageUtil.CaptureArea(screenshotBitmap, positionInfo.Rectangle, positionInfo.ClipPoints))
+            {
+                bitmap2.Save(text);
+                fileDictionary[id] = text;
+            }
+        }
+
         public void AddNewTemplate(int id, string heroName, Dictionary<int, string> fileDictionary)
         {
             var imageUtil = new ImageUtils();

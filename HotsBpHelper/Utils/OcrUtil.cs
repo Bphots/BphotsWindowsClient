@@ -222,12 +222,14 @@ namespace HotsBpHelper.Utils
                             await Task.Delay(1000).ConfigureAwait(false);
                             continue;
                         }
-
-                       
+                        
                         logUtil.Log("Starting detect quit");
+                        var alreadyTrustable = false;
+
+                        // first attempt
                         using (var bitmap = new ImageUtils().CaptureScreen())
                         {
-                            if (!warned && StageFinder.ProcessStageInfo(bitmap).Step == -1)
+                            if (!warned && bpViewModel.BpStatus.CurrentStep < 9 && StageFinder.ProcessStageInfo(bitmap).Step == -1)
                             {
                                 bpScreenFail++;
                                 if (bpScreenFail == 5)
@@ -272,22 +274,16 @@ namespace HotsBpHelper.Utils
                                     continue;
                                 }
                             }
-                        }
 
-                        sb.Clear();
-                        sbConfirm.Clear();
-                        var alreadyTrustable = false;
+                            sb.Clear();
+                            sbConfirm.Clear();
 
-                        Monitor.Enter(ImageProcessingHelper.GDILock);
-                        try
-                        {
-                            finder.AddNewTemplate(ids[i], ids[i].ToString(), fileDic);
+                            lock (ImageProcessingHelper.GDILock)
+                            {
+                            finder.AddNewTemplate(ids[i], ids[i].ToString(), fileDic, bitmap);
                             logUtil.Log("Capture Complete " + ids[i]);
-                            alreadyTrustable = _recognizer.Recognize(fileDic[ids[i]], rotation, sb, App.MyPosition.Height > 1200 ? 5 : 3);
-                        }
-                        finally
-                        {
-                            Monitor.Exit(ImageProcessingHelper.GDILock);
+                            alreadyTrustable = _recognizer.Recognize(fileDic[ids[i]], rotation, sb, App.AppSetting.Position.Height > 1200 ? 5 : 3);
+                            }
                         }
 
 
@@ -307,6 +303,7 @@ namespace HotsBpHelper.Utils
                             continue;
                         }
 
+                        // second attempt
                         FilePath tempscreenshotPath = null; 
                         if (!alreadyTrustable)
                         {
@@ -347,47 +344,7 @@ namespace HotsBpHelper.Utils
                         if ((alreadyTrustable || sb.ToString() == sbConfirm.ToString()) &&
                             !cancellationToken.IsCancellationRequested)
                         {
-                            if (tempscreenshotPath != null)
-                            {
-                                using (var bitmap = new Bitmap(tempscreenshotPath))
-                                {
-                                    if (side == ScanSide.Right)
-                                    {
-                                        logUtil.Log("Starting right");
-                                        var chartInfo = FrameFinder.CheckIfInChat(bitmap);
-                                        if (chartInfo == FrameFinder.ChatInfo.Partial && ids[i] > 10 ||
-                                            chartInfo == FrameFinder.ChatInfo.Full)
-                                        {
-                                            tempscreenshotPath.DeleteIfExists();
-                                            continue;
-                                        }
-
-                                        var hasFrame = FrameFinder.CheckIfInRightFrame(bitmap);
-                                        logUtil.Log("Detect right frame end");
-                                        if (hasFrame)
-                                        {
-                                            logUtil.Log("Overlap detected");
-                                            await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
-                                            continue;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        logUtil.Log("Starting left");
-                                        var hasFrame = FrameFinder.CheckIfInLeftFrame(bitmap);
-                                        logUtil.Log("Detect left frame end");
-                                        if (hasFrame)
-                                        {
-                                            logUtil.Log("Overlap detected");
-                                            await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
-                                            continue;
-                                        }
-                                    }
-                                }
-                            }
-
                             tempscreenshotPath?.DeleteIfExists();
-
                             var text = sb.ToString();
                             var index = ids[i];
                             Execute.OnUIThread(() => { bpViewModel.ShowHeroSelector(index, text); });
