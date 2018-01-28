@@ -31,9 +31,6 @@ namespace HotsBpHelper.HeroFinder
                     var regular = IsColorConsistent(samples);
                     var matchingBorders = MatchingBorders(bitmap);
                     sb.Append(regular ? matchingBorders.ToString() : "0");
-                    var color = bitmap.GetPixel(bitmap.Width / 2, bitmap.Height / 2);
-                    //circleBitmaps[i].Save(@".\TestImages27\" + i + "(" + color.R + "," + color.G + "," + color.B +
-                    //              ")" + regular + " " + matchingBorders + ".bmp");
                 }
 
                 var tempCheckString = sb.ToString();
