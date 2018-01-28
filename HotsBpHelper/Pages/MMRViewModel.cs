@@ -28,10 +28,10 @@ namespace HotsBpHelper.Pages
             Top = location.Y;
             
             var filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "mmr.html#") + App.Language;
-            LocalFileUri = new Uri(filePath, UriKind.Absolute);
+            LocalFileUri = filePath;
         }
 
-        public Uri LocalFileUri { get; set; }
+        public string LocalFileUri { get; set; }
 
         public int Width
         {

@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using Chromium;
 using GlobalHotKey;
 using HotsBpHelper.Api;
 using HotsBpHelper.Api.Security;
 using HotsBpHelper.Factories;
 using HotsBpHelper.Services;
 using HotsBpHelper.Settings;
+using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using HotsBpHelper.WPF;
 using ImageProcessor.Ocr;
@@ -63,6 +65,7 @@ namespace HotsBpHelper.Pages
             _restApi = restApi;
 
             _hotKeyManager = new HotKeyManager();
+            CefInitializer.InitializeCef();
 
             PercentageInfo = L("Loading");
 
@@ -228,17 +231,15 @@ namespace HotsBpHelper.Pages
 
         private void OnTessdataFileUpdateCompleted(object sender, EventArgs e)
         {
-            _bpViewModel = _viewModelFactory.CreateViewModel<BpViewModel>();
-            _bpViewModel.HideBrowser();
-            WindowManager.ShowWindow(_bpViewModel);
-            _bpViewModel.Hide();
-
             _mmrViewModel = _viewModelFactory.CreateViewModel<MMRViewModel>();
             _mmrViewModel.HideBrowser();
             WindowManager.ShowWindow(_mmrViewModel);
-            ((Window) _mmrViewModel.View).Owner = (Window) View;
             _mmrViewModel.Hide();
 
+            _bpViewModel = _viewModelFactory.CreateViewModel<BpViewModel>();
+            WindowManager.ShowWindow(_bpViewModel);
+            _bpViewModel.Hide();
+            
             RegisterHotKey();
             IsLoaded = true;
             AutoShowHideHelper = true;
@@ -387,6 +388,7 @@ namespace HotsBpHelper.Pages
                 _hotKeyManager.Register(Key.N, ModifierKeys.Control | ModifierKeys.Shift);
                 _hotKeyManager.Register(Key.L, ModifierKeys.Control | ModifierKeys.Shift);
                 _hotKeyManager.Register(Key.R, ModifierKeys.Control | ModifierKeys.Shift);
+                _hotKeyManager.Register(Key.D, ModifierKeys.Control | ModifierKeys.Shift);
                 _hotKeyManager.KeyPressed += HotKeyManagerPressed;
             }
             catch (Exception e)
@@ -490,6 +492,13 @@ namespace HotsBpHelper.Pages
             if (e.HotKey.Key == Key.N)
             {
                 ResetHelper();
+            }
+            if (e.HotKey.Key == Key.D)
+            {
+                if (_bpViewModel == null)
+                    return; 
+
+                _bpViewModel.ShowDevTool = !_bpViewModel.ShowDevTool;
             }
             else if (e.HotKey.Key == Key.C)
             {
@@ -771,6 +780,7 @@ namespace HotsBpHelper.Pages
             _hotKeyManager?.Dispose();
             _bpViewModel?.OcrUtil?.Dispose();
             AutoShowHideHelper = false;
+            CfxRuntime.Shutdown();
             base.OnClose();
         }
 

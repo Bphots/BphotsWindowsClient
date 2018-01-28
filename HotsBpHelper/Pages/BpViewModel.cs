@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -62,6 +63,7 @@ namespace HotsBpHelper.Pages
         private Visibility _visibility;
         private int _width;
         private IToastService _toastService;
+        private bool _showDevTool;
 
         public bool OcrAvailable { get; set; }
 
@@ -95,7 +97,7 @@ namespace HotsBpHelper.Pages
             _heroSelectorWindowViewModel = _viewModelFactory.CreateViewModel<HeroSelectorWindowViewModel>();
 
             var filePath = @Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "index.html#") + App.Language;
-            LocalFileUri = new Uri(filePath, UriKind.Absolute);
+            LocalFileUri = filePath;
         }
 
         public BindableCollection<HeroSelectorViewModel> HeroSelectorViewModels =>
@@ -130,7 +132,9 @@ namespace HotsBpHelper.Pages
             set { SetAndNotify(ref _height, value); }
         }
 
-        public Uri LocalFileUri { get; set; }
+        public string LocalFileUri { get; set; }
+
+        public bool ShowDevTool { get { return _showDevTool; } set { SetAndNotify(ref _showDevTool, value); } }
 
         public BpStatus BpStatus { get; set; }
 
@@ -210,12 +214,6 @@ namespace HotsBpHelper.Pages
 
                 ProcessStep();
             }
-        }
-
-        public Visibility Visibility
-        {
-            get { return _visibility; }
-            set { SetAndNotify(ref _visibility, value); }
         }
 
         private CancellationTokenSource MapOnlyCancellationToken { get; set; }
@@ -439,11 +437,6 @@ namespace HotsBpHelper.Pages
             {
                 Task.Run(LookForBpScreen).ConfigureAwait(false);
             }
-        }
-
-        public void HideBrowser()
-        {
-            Visibility = Visibility.Hidden;
         }
 
         protected override void OnViewLoaded()
@@ -1092,11 +1085,6 @@ namespace HotsBpHelper.Pages
                 Width = unitSize.Width;
                 Height = unitSize.Height;
             }
-            if (!display)
-            {
-                Width = Height = 0;
-            }
-            Visibility = display ? Visibility.Visible : Visibility.Hidden;
         }
 
         private void SelectSide(BpStatus.Side side)
