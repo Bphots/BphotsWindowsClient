@@ -53,6 +53,7 @@ namespace HotsBpHelper.Pages
         private readonly ViewModelFactory _viewModelFactory;
         private readonly IRestApi _restApi;
         private NotifyTaskCompletion<bool> _notifyUpdateTaskCompleted;
+        private bool _canOcr;
 
         public ShellViewModel(ViewModelFactory viewModelFactory, IImageUtil imageUtil, IToastService toastService,
             IRestApi restApi, ISecurityProvider securityProvider)
@@ -169,7 +170,7 @@ namespace HotsBpHelper.Pages
             set { SetAndNotify(ref _percentageInfo, value); }
         }
 
-        public bool CanOcr => _bpViewModel != null && _bpViewModel.OcrAvailable;
+        public bool CanOcr { get { return _canOcr; } set { SetAndNotify(ref _canOcr, value); } }
 
         public bool IsLoaded
         {
@@ -185,6 +186,67 @@ namespace HotsBpHelper.Pages
                 return;
             }
 
+            ReceiveBroadcast();
+
+            if (!App.Debug)
+            {
+                // 虏禄脢脟碌梅脢脭脛拢脛芒,脭貌录矛虏茅赂眉脨脗
+                _notifyUpdateTaskCompleted = new NotifyTaskCompletion<bool>(UpdateAsync());
+                _notifyUpdateTaskCompleted.TaskStopped += OnFeedUpdateCompleted;
+                if (_notifyUpdateTaskCompleted.IsCompleted)
+                    OnFeedUpdateCompleted(this, EventArgs.Empty);
+            }
+            else
+                OnFeedUpdateCompleted(this, EventArgs.Empty);
+        }
+
+        protected override void OnViewLoaded()
+        {
+            _notifyGetTimeStampTaskCompleted = new NotifyTaskCompletion<double>(_restApi.GetTimestamp());
+            _notifyGetTimeStampTaskCompleted.TaskStopped += OnTimeStampCompleted;
+            if (_notifyGetTimeStampTaskCompleted.IsCompleted)
+                OnTimeStampCompleted(this, EventArgs.Empty);
+            
+            InitSettings();
+            
+            base.OnViewLoaded();
+
+            _toastService.ShowInformation(L("Loading"));
+        }
+
+        private void ReceiveBroadcast()
+        {
+            //接收公告，并以对话框的形式显示
+            var broadcastList = _restApi.GetBroadcastInfo("0", App.Language);
+            if (broadcastList != null)
+            {
+                foreach (var broadcast in broadcastList)
+                {
+                    if (broadcast.Type == 0)
+                    {
+                        var b = new BroadcastWindow(broadcast.Msg, broadcast.Url);
+                        b.Show();
+                    }
+                }
+                foreach (var broadcast in broadcastList)
+                {
+                    if (broadcast.Type == 1)
+                    {
+                        var e = new ErrorView(L("Reminder"), broadcast.Msg, broadcast.Url);
+                        e.ShowDialog();
+                    }
+                }
+            }
+        }
+
+        private void OnFeedUpdateCompleted(object sender, EventArgs e)
+        {
+            if (_notifyUpdateTaskCompleted != null && !_notifyUpdateTaskCompleted.IsSuccessfullyCompleted)
+            {
+                Exit();
+                return;
+            }
+
             Execute.OnUIThread(() =>
             {
                 _securityProvider.SetServerTimestamp(_notifyGetTimeStampTaskCompleted.Result);
@@ -194,38 +256,11 @@ namespace HotsBpHelper.Pages
                     webUpdateVm.ShellViewModel = this;
                     webUpdateVm.UpdateCompleted += OnWebFileUpdateCompleted;
                     if (WindowManager.ShowDialog(webUpdateVm) != true)
-                    {
                         Exit();
-                    }
                 }
                 else
                     OnWebFileUpdateCompleted(this, EventArgs.Empty);
             });
-        }
-
-        protected override void OnViewLoaded()
-        {
-            if (!App.Debug)
-            {
-                // 虏禄脢脟碌梅脢脭脛拢脛芒,脭貌录矛虏茅赂眉脨脗
-                _notifyUpdateTaskCompleted = new NotifyTaskCompletion<bool>(UpdateAsync());
-                _notifyUpdateTaskCompleted.TaskStopped += OnFeedUpdateCompleted;
-                if (_notifyUpdateTaskCompleted.IsCompleted)
-                    OnFeedUpdateCompleted(this, EventArgs.Empty);
-            }
-            InitSettings();
-            
-            base.OnViewLoaded();
-
-            _toastService.ShowInformation(L("Loading"));
-        }
-
-        private void OnFeedUpdateCompleted(object sender, EventArgs e)
-        {
-            _notifyGetTimeStampTaskCompleted = new NotifyTaskCompletion<double>(_restApi.GetTimestamp());
-            _notifyGetTimeStampTaskCompleted.TaskStopped += OnTimeStampCompleted;
-            if (_notifyGetTimeStampTaskCompleted.IsCompleted)
-                OnTimeStampCompleted(this, EventArgs.Empty);
         }
 
 
@@ -243,13 +278,21 @@ namespace HotsBpHelper.Pages
             RegisterHotKey();
             IsLoaded = true;
             AutoShowHideHelper = true;
-            NotifyOfPropertyChange(() => CanOcr);
-            if (!CanOcr)
-                _toastService.ShowWarning(L("LanguageUnavailable"));
-            if (App.AppSetting.Position.Height < 1070)
-                _toastService.ShowWarning(L("IncompatibleResolution"));
 
-            AutoDetect = _bpViewModel.OcrAvailable;
+            CanOcr = true;
+            if (!_bpViewModel.OcrAvailable)
+                _toastService.ShowWarning(L("LanguageUnavailable"));
+
+            if (App.AppSetting.Position.Height < 1070)
+            {
+                CanOcr = false;
+                _toastService.ShowWarning(L("IncompatibleResolution"));
+            }
+
+            if (App.OcrLanguage == OcrLanguage.Korean)
+                CanOcr = false;
+
+            AutoDetect = CanOcr && _bpViewModel.OcrAvailable;
             AutoShowMmr = true; // 默认启用自动显示MMR
 
             _bpViewModel.RemindDetectMode += BpViewModelOnRemindDetectMode;
@@ -267,6 +310,9 @@ namespace HotsBpHelper.Pages
 
         private void OnWebFileUpdateCompleted(object sender, EventArgs e)
         {
+            if (App.OcrLanguage == OcrLanguage.Korean)
+                OnTessdataFileUpdateCompleted(this, EventArgs.Empty);
+
             var tessdataWebUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
             tessdataWebUpdateVm.ShellViewModel = this;
             tessdataWebUpdateVm.UpdateCompleted += OnTessdataFileUpdateCompleted;
@@ -563,7 +609,6 @@ namespace HotsBpHelper.Pages
 
         private void Update()
         {
-            return; // TODO Remove
             var updManager = UpdateManager.Instance;
             try
             {
@@ -581,6 +626,9 @@ namespace HotsBpHelper.Pages
                 }
                 Logger.Trace("Need updates files: {0}", updManager.UpdatesAvailable);
                 if (updManager.UpdatesAvailable == 0) return;
+
+                Execute.OnUIThread(() => _toastService.ShowInformation(L("UpdateFullText") + Environment.NewLine + L("HotsBpHelper")));
+
                 try
                 {
                     updManager.PrepareUpdates();
@@ -590,8 +638,6 @@ namespace HotsBpHelper.Pages
                     Logger.Error(ex, "Preparing updates exception.");
                     return;
                 }
-
-                _toastService.ShowInformation(L("UpdateFullText") + Environment.NewLine + L("HotsBpHelper"));
 
                 try
                 {

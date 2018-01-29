@@ -26,11 +26,6 @@ namespace ImageProcessor.ImageProcessing
             using (var binarySample = bitmapGray.Binarilization(75))
             {
                 var matrix = binarySample.GetGrayScaleMatrix();
-                // bitMap.Save(@"D:\qqytqqyt\Documents\HeroesBpProject\OcrHelper\HotsBpHelper\bin\Debug\Images\Heroes\3440x1440\gray.bmp");
-                //binarySample.Save(@"D:\qqytqqyt\Documents\HeroesBpProject\OcrHelper\HotsBpHelper\bin\Debug\Images\Heroes\3440x1440\binary.bmp");
-                // var mat = new Mat(file, ImreadModes.GrayScale);
-                //Mat thresholdedSample = mat.Threshold(75, 255, ThresholdTypes.BinaryInv);
-                //Mat.Indexer<Vec3b> indexer = thresholdedSample.GetGenericIndexer<Vec3b>();
                 var sampleLeft = (int) (0.007*binarySample.Height);
                 var sum = 0;
                 for (var y = 0; y < binarySample.Height*0.130; y++)
@@ -110,8 +105,7 @@ namespace ImageProcessor.ImageProcessing
             using (var bitmapGray = bitmap.ToGrayscale())
             using (var binarySample = bitmapGray.Binarilization(75))
             {
-                //binarySample.Save(@"D:\qqytqqyt\Documents\HeroesBpProject\OcrHelper\HotsBpHelper\bin\Debug\Images\Heroes\3440x1440\z.bmp");
-                   var matrix = binarySample.GetGrayScaleMatrix();
+                var matrix = binarySample.GetGrayScaleMatrix();
                 var leftX = 0;
                 var sample = 0;
                 for (var x = 10; x < binarySample.Width; x++)
@@ -178,10 +172,6 @@ namespace ImageProcessor.ImageProcessing
 
                 return new[] { leftX, leftY, rightX, rightY };
             }
-            //var mat = new Mat(file, ImreadModes.GrayScale);
-            //Mat thresholdedSample = mat.Threshold(75, 255, ThresholdTypes.BinaryInv);
-            //// thresholdedSample.SaveImage(@"H:\Project\HotsBpHelper\HotsBpHelper\HotsBpHelper\bin\Debug\Images\Heroes\3440x1440\75.png");
-            //Mat.Indexer<Vec3b> indexer = thresholdedSample.GetGenericIndexer<Vec3b>();
         }
 
         public static int CheckMode(string file, float rotationAngle)
@@ -193,12 +183,10 @@ namespace ImageProcessor.ImageProcessing
                 {
                     if (OcrEngine.Debug)
                         rotatedImage.Save(Recognizer.TempDirectoryPath + "RotatedImage.bmp");
-                    // rotatedImage.Save(@"D:\qqytqqyt\Documents\HeroesBpProject\OcrHelper\HotsBpHelper\bin\Debug\Images\Heroes\234.bmp");
                     using (var thresholdedSample = rotatedImage.Binarilization(140))
                     {
                         if (OcrEngine.Debug)
                             thresholdedSample.Save(Recognizer.TempDirectoryPath + "Binary140CheckDarkMode.bmp");
-                        //thresholdedSample.Save(@"D:\qqytqqyt\Documents\HeroesBpProject\OcrHelper\HotsBpHelper\bin\Debug\Images\Heroes\567.bmp");
                         int sampleWidth = thresholdedSample.Width / 5;
                         double maxPoints = sampleWidth * thresholdedSample.Height;
                         double sumBlackPoint = GetBlackPointSample(rotationAngle, thresholdedSample, sampleWidth);
@@ -212,7 +200,6 @@ namespace ImageProcessor.ImageProcessing
                                 if (blackPoint / maxPoints < 0.01)
                                     return -1;
                             }
-                                //  mat3.SaveImage(@"H:\Project\HotsBpHelper\HotsBpHelper\HotsBpHelper\bin\Debug\Images\Heroes\Test\out.tiff");
 
                             return 0; // dark mode
                         }
@@ -223,31 +210,7 @@ namespace ImageProcessor.ImageProcessing
                     } 
                 }
             }
-            //    var mat = new Mat(file, ImreadModes.GrayScale);
-            //mat.ConvertTo(mat, -1, 1.1, 0); //TODO?
-
-            //var rotatedImage = new Mat();
-            //RotateImage(mat, rotatedImage, rotationAngle, 1);
-            //Mat thresholdedSample = rotatedImage.Threshold(140, 255, ThresholdTypes.BinaryInv);
-            //int sampleWidth = thresholdedSample.Width / 5;
-            //double maxPoints = sampleWidth * thresholdedSample.Height;
-            //double sumBlackPoint = GetBlackPointSample(rotationAngle, thresholdedSample, sampleWidth);
-
-            ////   thresholdedSample.SaveImage(@"H:\Project\HotsBpHelper\HotsBpHelper\HotsBpHelper\bin\Debug\Images\Heroes\Test\out.tiff");
-            //if (sumBlackPoint / maxPoints < 0.01)
-            //{
-            //    thresholdedSample = rotatedImage.Threshold(80, 255, ThresholdTypes.BinaryInv);
-            //    //  mat3.SaveImage(@"H:\Project\HotsBpHelper\HotsBpHelper\HotsBpHelper\bin\Debug\Images\Heroes\Test\out.tiff");
-            //    double blackPoint = GetBlackPointSample(rotationAngle, thresholdedSample, sampleWidth);
-            //    if (blackPoint / maxPoints < 0.01)
-            //        return -1;
-
-            //    return 0; // dark mode
-            //}
-            //if (sumBlackPoint / maxPoints > 0.3)
-            //    return -1; // suspicious...
-
-            //return 1; // light mode
+           
         }
 
         public static int ProcessOnce(int threshold, Bitmap croppedImage, FilePath tempFilePath)
@@ -255,21 +218,12 @@ namespace ImageProcessor.ImageProcessing
             using (var thresholdedCroppedImage = croppedImage.Binarilization(threshold))
             {
                 var count = GetSegmentation(thresholdedCroppedImage);
-
-                // thresholdedCroppedImage.SaveImage(tempFilePath.GetDirPath() + @"mat4after " + threshold + ".tiff");
+                
                 thresholdedCroppedImage.Save(tempFilePath);
                 if (OcrEngine.Debug)
                     thresholdedCroppedImage.Save(Recognizer.TempDirectoryPath + "Threshold" + threshold + ".bmp");
                 return count;
             }
-           //     Mat thresholdedCroppedImage = croppedImage.Threshold(threshold, 255, ThresholdTypes.BinaryInv);
-
-           // count = GetSegmentation(thresholdedCroppedImage);
-           
-           //// thresholdedCroppedImage.SaveImage(tempFilePath.GetDirPath() + @"mat4after " + threshold + ".tiff");
-           // thresholdedCroppedImage.SaveImage(tempFilePath);
-
-           // return true;
         }
 
         public static Bitmap GetCroppedMap(FilePath file)
@@ -281,13 +235,6 @@ namespace ImageProcessor.ImageProcessing
                 Bitmap croppedImage = CropImage(thresholdedSample, thresholdedSample);
                 return croppedImage;
             }
-            //    var mat = new Mat(file, ImreadModes.GrayScale);
-            ////mat3 = thresholdedSample.AdaptiveThreshold(255, AdaptiveThresholdTypes.MeanC, ThresholdTypes.BinaryInv, 9, 8);
-            //Mat thresholdedSample = mat.Threshold(125, 255, ThresholdTypes.BinaryInv);
-
-            ////   thresholdedSample.SaveImage(@"H:\Project\HotsBpHelper\HotsBpHelper\HotsBpHelper\bin\Debug\Images\Heroes\Test\mat3 " + threshold + ".tiff");
-            //Mat croppedImage = CropImage(thresholdedSample, thresholdedSample);
-            //return croppedImage;
         }
 
         public static Bitmap GetCroppedImage(float rotationAngle, FilePath file, bool isDarkMode, out int sampleWidth)
@@ -298,23 +245,10 @@ namespace ImageProcessor.ImageProcessing
             using (var rotatedImage = zoomedBitmapGray.RotateImage(rotationAngle))
             using (var thresholdedSample = rotatedImage.Binarilization(isDarkMode ? 80 : 125))
             {
-                //rotatedImage.Save(@"D:\qqytqqyt\Documents\HeroesBpProject\OcrHelper\HotsBpHelper\bin\Debug\Images\Heroes\123.bmp");
                 sampleWidth = rotatedImage.Width;
                 Bitmap croppedImage = CropImage(thresholdedSample, rotatedImage);
                 return croppedImage;
             }
-            //    var mat = new Mat(file, ImreadModes.GrayScale);
-            //mat.ConvertTo(mat, -1, 1.1, 0); // TODO?
-            //Cv2.PyrUp(mat, mat, new Size(mat.Cols * 2, mat.Rows * 2));
-            //var rotatedImage = new Mat();
-            //RotateImage(mat, rotatedImage, rotationAngle, 1);
-            ////mat3 = thresholdedSample.AdaptiveThreshold(255, AdaptiveThresholdTypes.MeanC, ThresholdTypes.BinaryInv, 9, 8);
-            //Mat thresholdedSample = rotatedImage.Threshold(isDarkMode ? 80 : 125, 255, ThresholdTypes.BinaryInv);
-
-            ////   thresholdedSample.SaveImage(@"H:\Project\HotsBpHelper\HotsBpHelper\HotsBpHelper\bin\Debug\Images\Heroes\Test\mat3 " + threshold + ".tiff");
-
-            //Mat croppedImage = CropImage(thresholdedSample, rotatedImage);
-            //return croppedImage;
         }
 
         private static int[] GetHisto(Bitmap sample, int[,] indexer, int minRow, int maxRow)
@@ -336,8 +270,6 @@ namespace ImageProcessor.ImageProcessing
 
         private static Bitmap CropImage(Bitmap thresholdedSample, Bitmap rotatedImage)
         {
-            // Cv2.FastNlMeansDenoising(thresholdedSample, thresholdedSample);
-
             var indexer = thresholdedSample.GetGrayScaleMatrix();
             var minRow = 0;
             for (int y = thresholdedSample.Height / 2; y > 0; --y)

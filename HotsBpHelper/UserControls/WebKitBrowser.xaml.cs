@@ -35,9 +35,28 @@ namespace HotsBpHelper.UserControls
             InitializeComponent();
             Browser.BrowserCreated += BrowserOnBrowserCreated;
             Browser.LifeSpanHandler.OnBeforePopup += LifeSpanHandlerOnOnBeforePopup;
-            
+            Browser.LoadHandler.OnLoadEnd += OnLoadEnd;
             Browser.GlobalObject.AddFunction("HideWindow").Execute += HideWindow;
             //Browser.ObjectForScripting = new ScriptingHelper(this);
+        }
+
+        private void OnLoadEnd(object sender, CfxOnLoadEndEventArgs e)
+        {
+            var url = Browser.Url;
+            if (url.AbsoluteUri.Contains("about:blank"))
+            {
+                Execute.OnUIThread(() =>
+                {
+                    Browser.LoadUrl(PendingSource);
+                });
+            }
+        }
+
+        private void OnRedirect(object sender, CfxOnResourceRedirectEventArgs e)
+        {
+            if (e.NewUrl.Contains("about:blank"))
+                e.NewUrl = PendingSource;
+
         }
 
 

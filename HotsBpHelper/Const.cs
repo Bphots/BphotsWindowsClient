@@ -4,13 +4,13 @@ namespace HotsBpHelper
 {
     public static class Const
     {
-        public const string WEB_API_ROOT = "http://www.bphots.com/bp_helper/";
-
-        public const string UPDATE_FEED_XML = "http://www.bphots.com/bp_helper/get/update";
+        public const string WEB_API_ROOT = "https://www.bphots.com/bp_helper/";
 
         public const string LOCAL_WEB_FILE_DIR = "WebFiles";
         
-        public const string PATCH = "18010601";
+        public const string PATCH = "18013002";
+
+        public const string UPDATE_FEED_XML = "https://www.bphots.com/bp_helper/get/update?patch=" + PATCH;
 
         public const string HEROES_PROCESS_NAME = "HeroesOfTheStorm";
 

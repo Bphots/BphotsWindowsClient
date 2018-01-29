@@ -241,7 +241,7 @@
     <value>Automatic map&amp;character recognition has been disabled due to imcompatible screen resolution.</value>
   </data>
   <data name="LanguageUnavailable" xml:space="preserve">
-    <value>Cannot enable automatic map&amp;character recognition. Please make sure the language pack and Microsift Visual C++ Redistributable for Visual Studio 2015 has been installed.</value>
+    <value>Cannot enable automatic map&amp;character recognition. Please make sure the language pack and Microsift Visual C++ Redistributable x86 for Visual Studio 2015 has been installed.</value>
   </data>
   <data name="MatchDetectOffTitle" xml:space="preserve">
     <value>Match detection disabled</value>
