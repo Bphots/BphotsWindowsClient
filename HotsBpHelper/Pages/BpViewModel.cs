@@ -59,10 +59,9 @@ namespace HotsBpHelper.Pages
         private ConcurrentDictionary<int, bool> _processingThreads;
 
         private CancellationTokenSource _scanningCancellationToken;
-
-        private Visibility _visibility;
+        
         private int _width;
-        private IToastService _toastService;
+        private readonly IToastService _toastService;
         private bool _showDevTool;
 
         public bool OcrAvailable { get; set; }

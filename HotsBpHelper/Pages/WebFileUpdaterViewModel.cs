@@ -33,9 +33,7 @@ namespace HotsBpHelper.Pages
 
         private int _currentIndex = -1;
         private double _downloadedBytes;
-
-        private readonly double TotalBytes = 0;
-
+        
         public WebFileUpdaterViewModel(IRestApi restApi, IToastService toastSevice)
         {
             _restApi = restApi;
@@ -95,7 +93,7 @@ namespace HotsBpHelper.Pages
                 var completeFileName = Path.Combine(destinationDirectoryName, file.FullName);
                 if (file.Name == "")
                 {
-// Assuming Empty for Directory
+                    // Assuming Empty for Directory
                     Directory.CreateDirectory(Path.GetDirectoryName(completeFileName));
                     continue;
                 }
@@ -109,39 +107,10 @@ namespace HotsBpHelper.Pages
             _remoteUrl = remoteUrl;
         }
 
-        private void ReceiveBroadcast()
-        {
-            //接收公告，并以对话框的形式显示
-            var BroadcastList = _restApi.GetBroadcastInfo("0", App.Language);
-            if (BroadcastList != null)
-            {
-                //MessageBox.Show("1");
-                foreach (var broadcast in BroadcastList)
-                {
-                    if (broadcast.Type == 0)
-                    {
-                        var b = new BroadcastWindow(broadcast.Msg, broadcast.Url);
-                        b.Show();
-                    }
-                }
-                foreach (var broadcast in BroadcastList)
-                {
-                    if (broadcast.Type == 1)
-                    {
-                        var e = new ErrorView(L("Reminder"), broadcast.Msg, broadcast.Url);
-                        //e.isShutDown = false;
-                        e.ShowDialog();
-                        //ShowMessageBox(broadcast.Msg+"\n"+ broadcast.Url, MessageBoxButton.OK, MessageBoxImage.Warning);
-                        //e.Pause();
-                    }
-                }
-            }
-        }
-
+      
         protected override async void OnViewLoaded()
         {
             base.OnViewLoaded();
-            ReceiveBroadcast();
             await GetFileList();
             Execute.OnUIThread(DownloadNextItem);
         }

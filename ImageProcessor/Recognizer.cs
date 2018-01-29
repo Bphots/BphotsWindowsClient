@@ -169,20 +169,25 @@ namespace ImageProcessor
                 }
             }
 
-            var i = 0;
-            var path = TempDirectoryPath + pendingMatchResult + ".tiff";
-            while (File.Exists(path))
+            if (OcrEngine.Debug)
             {
-                ++i;
-                path = TempDirectoryPath + pendingMatchResult + i + ".tiff";
+                var i = 0;
+                var path = TempDirectoryPath + pendingMatchResult + ".tiff";
+                while (File.Exists(path))
+                {
+                    ++i;
+                    path = TempDirectoryPath + pendingMatchResult + i + ".tiff";
+                }
+
+                if (!string.IsNullOrEmpty(sb.ToString()) || sb.ToString() != PickingText)
+                    File.Copy(file, path, true);
             }
+
 
             sb.Append(pendingMatchResult);
             image.Dispose();
 
-            if (!string.IsNullOrEmpty(sb.ToString()) || sb.ToString() != PickingText)
-                File.Copy(file, path, true);
-
+          
             if (!OcrEngine.Debug)
                 file.DeleteIfExists();
 

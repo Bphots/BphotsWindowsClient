@@ -231,13 +231,58 @@
   <data name="AutoDetectHeroAndMap" xml:space="preserve">
     <value>自動識別英雄和地圖</value>
   </data>
-  <data name="Help" xml:space="preserve">
-    <value>幫助</value>
+	<data name="ShowHideHelper" xml:space="preserve">
+    <value>手動重置/開啟背鍋助手</value>
   </data>
-  <data name="ShowHideHelper" xml:space="preserve">
-    <value>顯示/隱藏背鍋助手</value>
+  <data name="SwitchVisibility" xml:space="preserve">
+    <value>隱藏/顯示當前界面</value>
+  </data>
+  <data name="ResetHelper" xml:space="preserve">
+    <value>重置BP狀態</value>
+  </data>
+  <data name="AutoShowHideModeOffToolTip" xml:space="preserve">
+    <value>已關閉自動檢測bp界面，可以通過托盤菜單重新啟用自動。</value>
+  </data>
+  <data name="OcrModeOffToolTip" xml:space="preserve">
+    <value>請手動選擇英雄和地圖，可以通過Ctrl+Shift+R切換為自動識別。</value>
+  </data>
+  <data name="OcrModeOnToolTip" xml:space="preserve">
+    <value>背鍋助手將自動選擇英雄和地圖，可以通過Ctrl+Shift+R切換為手動輸入。</value>
+  </data>
+  <data name="AutoBpScreenModeOnToolTip" xml:space="preserve">
+    <value>請在需要時通過Ctrl+Shift+B手動喚起。如要開啟比賽檢測請在托盤開啟"自動檢測比賽"。</value>
   </data>
   <data name="AutoShowMMR" xml:space="preserve">
     <value>自動顯示MMR</value>
+  </data>
+  <data name="MatchDetectOffTitle" xml:space="preserve">
+    <value>已關閉比賽檢測</value>
+  </data>
+  <data name="MatchDetectOnTitle" xml:space="preserve">
+    <value>已開啟比賽檢測</value>
+  </data>
+  <data name="OcrModeOffTitle" xml:space="preserve">
+    <value>已關閉英雄識別</value>
+  </data>
+  <data name="OcrModeOnTitle" xml:space="preserve">
+    <value>已開啟英雄識別</value>
+  </data>
+  <data name="OcrModeToolTipTitle" xml:space="preserve">
+    <value>背鍋助手正在運行</value>
+  </data>
+  <data name="LanguageUnavailable" xml:space="preserve">
+    <value>自動識別無法加載，請確保 chi_sim 語言包和微軟 Visual C++ Redistributable x86 for Visual Studio 2015 包已成功安裝。</value>
+  </data>
+  <data name="IncompatibleResolution" xml:space="preserve">
+    <value>自動識別已關閉 （目前僅支持1080以上分辨率）</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>正在加載中，請稍候...</value>
+  </data>
+  <data name="TessdataQuestion" xml:space="preserve">
+    <value>自動識別庫未安裝，是否需要下載以啟用</value>
+  </data>
+  <data name="NotInBpQuestion" xml:space="preserve">
+    <value>您是否仍在BP中？如已離開遊戲可使用Ctrl+Shit+N重置。</value>
   </data>
 </root>

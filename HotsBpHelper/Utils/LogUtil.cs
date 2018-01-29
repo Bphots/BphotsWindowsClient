@@ -7,7 +7,7 @@ namespace HotsBpHelper.Utils
 {
     public class LogUtil
     {
-        public static bool NoLog = false;
+        public static bool NoLog = true;
         private readonly string _relativePath;
         private readonly StringBuilder _sb = new StringBuilder();
 
