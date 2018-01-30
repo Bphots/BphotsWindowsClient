@@ -730,10 +730,8 @@ namespace HotsBpHelper.Pages
                     continue;
 
                 if (HeroSelectorViewModels.Any(v => v.Id == i && v.Selected))
-                {
-                    File.WriteAllText(@".\leftTerminated" + i + ".txt", "terminate 2");
                     continue;
-                }
+
                 stepToProcess.Add(i);
                 _processingThreads[i] = true;
             }
@@ -755,7 +753,6 @@ namespace HotsBpHelper.Pages
             {
                 foreach (var i in stepToProcess)
                 {
-                    File.WriteAllText(@".\leftTerminated" + i + ".txt", "terminate 3");
                     _processingThreads[i] = false;
                 }
             }
