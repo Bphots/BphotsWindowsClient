@@ -61,17 +61,23 @@ namespace ImageProcessor
                 return;
             }
 
-            var i = 0;
-            var path = TempDirectoryPath + pendingMatchResult.Values.First().Value + ".tiff";
-            while (File.Exists(path))
+            if (OcrEngine.Debug)
             {
-                ++i;
-                path = TempDirectoryPath + pendingMatchResult.Values.First().Value + i + ".tiff";
+                var i = 0;
+                var path = TempDirectoryPath + pendingMatchResult.Values.First().Value + ".tiff";
+                while (File.Exists(path))
+                {
+                    ++i;
+                    path = TempDirectoryPath + pendingMatchResult.Values.First().Value + i + ".tiff";
+                }
+
+                File.Move(file, path);
             }
+            else
+                file.DeleteIfExists();
 
             sb.Append(pendingMatchResult.Values.First().Value);
 
-            File.Move(file, path);
             ResetFlags();
         }
 
@@ -80,7 +86,12 @@ namespace ImageProcessor
             var tempPath = TempDirectoryPath + "temp.tiff";
             var mode = ImageProcessingHelper.CheckMode(file, rotationAngle);
             if (mode == -1)
+            {
+                if (!OcrEngine.Debug)
+                    file.DeleteIfExists();
+
                 return false;
+            }
 
             m_isDarkMode = mode == 0;
             var startThresholding = m_isDarkMode ? DarkModeThreshold : LightModeThreshold;
