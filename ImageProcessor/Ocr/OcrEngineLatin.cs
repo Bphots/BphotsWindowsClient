@@ -16,7 +16,7 @@ namespace ImageProcessor.Ocr
     {
         public static List<string> TessdataFilePaths => new List<string>
         {
-            TessdataBasePath + @"zhTW\tessdata\eng.traineddata"
+            TessdataBasePath + @"enUS\tessdata\eng.traineddata"
         };
 
         public OcrEngineEnglish()
