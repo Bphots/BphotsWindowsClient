@@ -237,6 +237,17 @@ namespace ImageProcessor.ImageProcessing
             }
         }
 
+        public static Bitmap GetCroppeddHero(FilePath file)
+        {
+            using (var bitmap = new Bitmap(file))
+            using (var bitmapGray = bitmap.ToGrayscale())
+            using (var thresholdedSample = bitmapGray.Binarilization(225))
+            {
+                Bitmap croppedImage = CropImage(thresholdedSample, thresholdedSample);
+                return croppedImage;
+            }
+        }
+
         public static Bitmap GetCroppedImage(float rotationAngle, FilePath file, bool isDarkMode, out int sampleWidth)
         {
             using (var bitmap = new Bitmap(file))

@@ -95,7 +95,39 @@ namespace HotsBpHelper.Utils
             logUtil.Flush();
             return sb.ToString();
         }
-        
+
+        public async Task<List<string>> LookForLoadingLabels()
+        {
+            var finder = new Finder();
+            var sb = new StringBuilder();
+            var heroes = new List<string>();
+            var logUtil = new LogUtil(@".\logLookForLoadingLabels.txt");
+            logUtil.Log("Started");
+            
+            lock (ImageProcessingHelper.GDILock)
+            {
+                using (var bitMap = (new ImageUtils()).CaptureScreen())
+                {
+                    for (int i = 0; i < 5; ++i)
+                    {
+                        sb.Clear();
+                        _recognizer.ProcessLoadingHero(finder.CaptureLeftLoadingLabel(bitMap, i), sb);
+                        heroes.Add(sb.ToString());
+                    }
+
+                    for (int i = 0; i < 5; ++i)
+                    {
+                        sb.Clear();
+                        _recognizer.ProcessLoadingHero(finder.CaptureRightLoadingLabel(bitMap, i), sb);
+                        heroes.Add(sb.ToString());
+                    }
+                }
+            }
+
+            logUtil.Flush();
+            return heroes;
+        }
+
         public void AdjustPlaceHolderPosition()
         {
             var finder = new Finder();

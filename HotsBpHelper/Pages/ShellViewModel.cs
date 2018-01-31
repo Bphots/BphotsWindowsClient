@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -216,7 +216,7 @@ namespace HotsBpHelper.Pages
 
         private void ReceiveBroadcast()
         {
-            //½ÓÊÕ¹«¸æ£¬²¢ÒÔ¶Ô»°¿òµÄÐÎÊ½ÏÔÊ¾
+            //ï¿½ï¿½ï¿½Õ¹ï¿½ï¿½æ£¬ï¿½ï¿½ï¿½Ô¶Ô»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½Ê¾
             var broadcastList = _restApi.GetBroadcastInfo("0", App.Language);
             if (broadcastList != null)
             {
@@ -293,7 +293,7 @@ namespace HotsBpHelper.Pages
                 CanOcr = false;
 
             AutoDetect = CanOcr && _bpViewModel.OcrAvailable;
-            AutoShowMmr = true; // Ä¬ÈÏÆôÓÃ×Ô¶¯ÏÔÊ¾MMR
+            AutoShowMmr = true; // Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½Ê¾MMR
 
             _bpViewModel.RemindDetectMode += BpViewModelOnRemindDetectMode;
             _bpViewModel.RemindBpStart += BpViewModelOnRemindGameStart;
@@ -401,6 +401,8 @@ namespace HotsBpHelper.Pages
                         _mmrViewModel.Show();
                         _bpViewModel.Reset();
                     });
+                    var heroesList = await _bpViewModel.OcrUtil.LookForLoadingLabels();
+                    File.WriteAllText(@".\labels.txt", string.Join(@",", heroesList) + Environment.NewLine + string.Join(@",", _mmrViewModel.Players));
                 }
                 await Task.Delay(1000);
             }
@@ -732,7 +734,7 @@ namespace HotsBpHelper.Pages
         }
 
         /// <summary>
-        ///     ¸ù¾Ý·Ö±æÂÊ¶¯Ì¬¼ÆËã¸÷¸öÎ»ÖÃºÍ³ß´ç
+        ///     ï¿½ï¿½ï¿½Ý·Ö±ï¿½ï¿½Ê¶ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ÃºÍ³ß´ï¿½
         /// </summary>
         private Position CaculatePosition(int width, int height)
         {
@@ -799,6 +801,14 @@ namespace HotsBpHelper.Pages
                     TalentFramePoint = new Point(RoundUp(0.1435185185185185 * height), RoundUp(0.2953703703703704 * height)),
                     FullChatHorizontalPoint = new Point(RoundUp(width - 0.0185185185185185 * height), RoundUp(0.2296296296296296 * height)),
                     PartialChatlHorizontalPoint = new Point(RoundUp(width - 0.0185185185185185 * height), RoundUp(0.5851851851851852 * height))
+                },
+                LoadingPoints = new LoaddingPoints()
+                {
+                    LeftFirstPoint = new Point(RoundUp(0.1048611111111111 * height), RoundUp(0.2236111111111111 * height)),
+                    RightFirstPoint = new Point(RoundUp(width - 0.2770833333333333 * height), RoundUp(0.2236111111111111 * height)),
+                    Width = RoundUp(0.1694444444444444 * height),
+                    Height = RoundUp(0.0243055555555556 * height),
+                    Dy = RoundUp(0.1229166666666667 * height)
                 }
             };
             

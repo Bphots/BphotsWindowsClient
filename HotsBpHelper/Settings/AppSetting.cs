@@ -36,6 +36,21 @@ namespace HotsBpHelper.Settings
         public int HeroHeight { get; set; }
 
         public OverlapPoints OverlapPoints { get; set; }
+
+        public LoaddingPoints LoadingPoints { get; set; }
+    }
+
+    public class LoaddingPoints
+    {
+        public Point LeftFirstPoint { get; set; }
+
+        public Point RightFirstPoint { get; set; }
+
+        public int Width { get; set; }
+
+        public int Height { get; set; }
+
+        public int Dy { get; set; }
     }
 
     public class OverlapPoints
@@ -55,7 +70,7 @@ namespace HotsBpHelper.Settings
 
     public class MapPosition
     {
-        public System.Drawing.Point Location { get; set; }
+        public Point Location { get; set; }
 
         public int Width { get; set; }
 

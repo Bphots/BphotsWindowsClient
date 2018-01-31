@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -78,12 +79,15 @@ namespace HotsBpHelper.Pages
             // 玩家BattleTags
             var battleTags = string.Join("|", game.Players
                 .Select(p => p.BattleTag));
+            Players = game.Players.Select(p => p.BattleTag).ToList();
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
                 ScriptName = "setPlayers",
                 Args = new[] {regionId, "left", battleTags}
             }, "MMRChanel");
         }
+
+        public List<string> Players { get; set; }
 
         public void HideBrowser()
         {
