@@ -60,6 +60,62 @@ namespace HotsBpHelper.HeroFinder
             return text;
         }
 
+        public string CaptureLeftLoadingLabel(Bitmap bitmap, int index)
+        {
+            var imageUtil = new ImageUtils();
+
+            int left = App.AppSetting.Position.LoadingPoints.LeftFirstPoint.X;
+            int top = App.AppSetting.Position.LoadingPoints.LeftFirstPoint.Y +
+                      index*App.AppSetting.Position.LoadingPoints.Dy;
+
+
+            var positionInfo = new PositionInfo
+            {
+                Rectangle =
+                    new Rectangle(new Point(left, top), 
+                        new Size(App.AppSetting.Position.LoadingPoints.Width, App.AppSetting.Position.LoadingPoints.Height)),
+                ClipPoints = new Point[0]
+            };
+            var path = Path.Combine(App.AppPath, "Images\\Heroes");
+            var path2 = $"{App.AppSetting.Position.Width}x{App.AppSetting.Position.Height}";
+            FilePath text = Path.Combine(path, path2, "LoadingLeft" + index + ".bmp");
+            if (!text.GetDirPath().Exists)
+                Directory.CreateDirectory(text.GetDirPath());
+            
+            using (var bitmap2 = imageUtil.CaptureArea(bitmap, positionInfo.Rectangle, positionInfo.ClipPoints))
+            {
+                bitmap2.Save(text);
+            }
+            return text;
+        }
+
+        public string CaptureRightLoadingLabel(Bitmap bitmap, int index)
+        {
+            var imageUtil = new ImageUtils();
+            int left = App.AppSetting.Position.LoadingPoints.RightFirstPoint.X;
+            int top = App.AppSetting.Position.LoadingPoints.RightFirstPoint.Y +
+                      index * App.AppSetting.Position.LoadingPoints.Dy;
+
+            var positionInfo = new PositionInfo
+            {
+                Rectangle =
+                   new Rectangle(new Point(left, top),
+                        new Size(App.AppSetting.Position.LoadingPoints.Width, App.AppSetting.Position.LoadingPoints.Height)),
+                ClipPoints = new Point[0]
+            };
+            var path = Path.Combine(App.AppPath, "Images\\Heroes");
+            var path2 = $"{App.AppSetting.Position.Width}x{App.AppSetting.Position.Height}";
+            FilePath text = Path.Combine(path, path2, "LoadingRight" + index + ".bmp");
+            if (!text.GetDirPath().Exists)
+                Directory.CreateDirectory(text.GetDirPath());
+
+            using (var bitmap2 = imageUtil.CaptureArea(bitmap, positionInfo.Rectangle, positionInfo.ClipPoints))
+            {
+                bitmap2.Save(text);
+            }
+            return text;
+        }
+
         public void AddNewTemplate(int id, string heroName, Dictionary<int, string> fileDictionary, FilePath screenshotPath)
         {
             var imageUtil = new ImageUtils();

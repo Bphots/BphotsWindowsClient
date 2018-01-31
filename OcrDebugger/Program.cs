@@ -9,6 +9,7 @@ using DotNetHelper;
 using ImageProcessor;
 using ImageProcessor.ImageProcessing;
 using ImageProcessor.Ocr;
+using StatsFetcher;
 
 namespace OcrDebugger
 {
@@ -16,6 +17,8 @@ namespace OcrDebugger
     {
         static void Main(string[] args)
         {
+            FileProcessor.ProcessLobbyFile(@"D:\qqytqqyt\Documents\HeroesBpProject\TempWriteReplayP1\replay.server.battlelobby");
+
             string a = @"拉格纳罗斯阿巴瑟祖尔金加尔鲁什阿努巴拉克阿塔尼斯阿尔萨斯阿兹莫丹光明之翼陈迪亚波罗精英牛头人酋长弗斯塔德加兹鲁";
             var sb1 = new StringBuilder();
             for (int i = 0; i < 55; i++)

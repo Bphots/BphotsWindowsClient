@@ -81,6 +81,39 @@ namespace ImageProcessor
             ResetFlags();
         }
 
+        public void ProcessLoadingHero(FilePath file, StringBuilder sb)
+        {
+            var tempPath = TempDirectoryPath + "temp.tiff";
+            using (var image = ImageProcessingHelper.GetCroppeddHero(file))
+                image.Save(tempPath);
+
+            var pendingMatchResult = _engine.ProcessOcr(tempPath, OcrEngine.CandidateHeroes);
+            if (!pendingMatchResult.Results.Any() || !pendingMatchResult.Values.First().Trustable)
+            {
+                ResetFlags();
+                return;
+            }
+
+            if (OcrEngine.Debug)
+            {
+                var i = 0;
+                var path = TempDirectoryPath + pendingMatchResult.Values.First().Value + ".tiff";
+                while (File.Exists(path))
+                {
+                    ++i;
+                    path = TempDirectoryPath + pendingMatchResult.Values.First().Value + i + ".tiff";
+                }
+
+                File.Move(file, path);
+            }
+            else
+                file.DeleteIfExists();
+
+            sb.Append(pendingMatchResult.Values.First().Value);
+
+            ResetFlags();
+        }
+
         private bool ProcessHero(FilePath file, float rotationAngle, StringBuilder sb, int offset)
         {
             var tempPath = TempDirectoryPath + "temp.tiff";
