@@ -19,6 +19,8 @@ namespace HotsBpHelper.Api
 
         List<HeroInfo> GetHeroList(string name);
 
+        List<LobbyHeroInfo> GetLobbyHeroList(string name);
+
         List<MapInfo> GetMapList(string language);
 
         //String GetBroadcastInfo(string mode, string lang);

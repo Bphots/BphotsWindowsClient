@@ -18,10 +18,10 @@ using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using HotsBpHelper.WPF;
 using ImageProcessor.Ocr;
+using LobbyHeroParser;
 using NAppUpdate.Framework;
 using NAppUpdate.Framework.Sources;
 using NAppUpdate.Framework.Tasks;
-using StatsFetcher;
 using Stylet;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.Forms.MessageBox;
@@ -388,21 +388,21 @@ namespace HotsBpHelper.Pages
         private async Task MonitorLobbyFile()
         {
             var lobbyLastModified = DateTime.MinValue;
+            var lobbyHeroes = _restApi.GetLobbyHeroList(App.Language).Where(h => !h.IsNew).Select(h => h.Name).ToList();
             while (AutoShowMmr)
             {
                 if (File.Exists(Const.BattleLobbyPath) &&
                     File.GetLastWriteTime(Const.BattleLobbyPath) != lobbyLastModified)
                 {
                     lobbyLastModified = File.GetLastWriteTime(Const.BattleLobbyPath);
-                    var game = FileProcessor.ProcessLobbyFile(Const.BattleLobbyPath);
+                    var lobbyProcessor = new LobbyFileProcessor(Const.BattleLobbyPath, lobbyHeroes);
+                    var game = lobbyProcessor.ParseLobbyInfo();
                     _mmrViewModel.FillMMR(game);
                     Execute.OnUIThread(() =>
                     {
                         _mmrViewModel.Show();
                         _bpViewModel.Reset();
                     });
-                    var heroesList = await _bpViewModel.OcrUtil.LookForLoadingLabels();
-                    File.WriteAllText(@".\labels.txt", string.Join(@",", heroesList) + Environment.NewLine + string.Join(@",", _mmrViewModel.Players));
                 }
                 await Task.Delay(1000);
             }

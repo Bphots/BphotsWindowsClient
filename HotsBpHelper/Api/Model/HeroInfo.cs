@@ -10,4 +10,11 @@ namespace HotsBpHelper.Api.Model
 
         public string Acronym { get; set; }
     }
+
+    public class LobbyHeroInfo
+    {
+        public bool IsNew { get; set; }
+
+        public string Name { get; set; }
+    }
 }

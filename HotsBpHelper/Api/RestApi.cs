@@ -128,6 +128,16 @@ namespace HotsBpHelper.Api
             var text = string.Join(Environment.NewLine, result.Select(c => c.Name));
             return result;
         }
+        public List<LobbyHeroInfo> GetLobbyHeroList(string language)
+        {
+            var request = CreateRequest("get/herolist/lobby",
+                new List<Tuple<string, string>>
+                {
+                    Tuple.Create("lang", language)
+                });
+
+            return Execute<List<LobbyHeroInfo>>(request);
+        }
 
         public List<MapInfo> GetMapList(string language)
         {
