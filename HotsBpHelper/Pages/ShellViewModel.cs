@@ -697,10 +697,7 @@ namespace HotsBpHelper.Pages
                 App.AppSetting = Its.Configuration.Settings.Get<AppSetting>();
                 var screenSize = ScreenUtil.GetScreenResolution();
                 App.AppSetting.Position = CaculatePosition(screenSize.Width, screenSize.Height);
-
-                // TODO dynamic support
-                ManualAdjustPosition();
-
+                
                 if (App.Language.Contains("en"))
                     ExpandHeroPropertiesForLatin();
             }
@@ -710,27 +707,6 @@ namespace HotsBpHelper.Pages
                 _errorView.ShowDialog();
                 _errorView.Pause();
             }
-        }
-
-        private static void ManualAdjustPosition()
-        {
-            //var height = App.AppSetting.Position.Height;
-            //var width = App.AppSetting.Position.Width;
-            //if (App.AppSetting.Position.Height == 1440 && App.AppSetting.Position.Width == 3440)
-            //{
-            //    App.AppSetting.Position.Left.HeroName1 = new Point(19, 247);
-            //    App.AppSetting.Position.Right.HeroName1 = new Point(3426, 252);
-            //}
-            //if (App.AppSetting.Position.Height > 1800 && App.AppSetting.Position.Width > 2700)
-            //{
-            //    App.AppSetting.Position.Left.HeroName1 = new Point(25, 313);
-            //    App.AppSetting.Position.Right.HeroName1 = new Point(2717, 317);
-            //}
-            //if (App.AppSetting.Position.Height == 1080 && App.AppSetting.Position.Width == 1920)
-            //{
-            //    App.AppSetting.Position.Left.HeroName1 = new Point(RoundUp(0.0138888888888889 * height), RoundUp(0.1722222222222222 * height));
-            //    App.AppSetting.Position.Right.HeroName1 = new Point(RoundUp(width - 0.012037037037037 * height), RoundUp(0.0175 * height)); 
-            //}
         }
 
         /// <summary>
