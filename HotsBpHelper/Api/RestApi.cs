@@ -126,6 +126,16 @@ namespace HotsBpHelper.Api
             
             return Execute<List<HeroInfo>>(request);
         }
+        public List<LobbyHeroInfo> GetLobbyHeroList(string language)
+        {
+            var request = CreateRequest("get/herolist/lobby",
+                new List<Tuple<string, string>>
+                {
+                    Tuple.Create("lang", language)
+                });
+
+            return Execute<List<LobbyHeroInfo>>(request);
+        }
 
         public List<MapInfo> GetMapList(string language)
         {
