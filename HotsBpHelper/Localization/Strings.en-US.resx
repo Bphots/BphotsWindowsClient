@@ -273,6 +273,9 @@
   <data name="ResetHelper" xml:space="preserve">
     <value>Reset BP Status</value>
   </data>
+  <data name="ResolutionQuestion" xml:space="preserve">
+    <value>The OCR feature is designed for screen resolution with 1080 height above. It may not provide the best experience under your graphic resolution settings. You may need to manually correct the selection in case of wrong detection. Would you still like to enable Auto-Detection?</value>
+  </data>
   <data name="ShowHideHelper" xml:space="preserve">
     <value>Turn On/Off BpHelper Manually</value>
   </data>
