@@ -231,4 +231,7 @@
   <data name="Help" xml:space="preserve">
     <value>돕다</value>
   </data>
+  <data name="WindowlessWarning" xml:space="preserve">
+    <value>BpHelper is only compatible with Windowless (Maximized) mode. Please modify your in-game graphic settings for the best experience.</value>
+  </data>
 </root>

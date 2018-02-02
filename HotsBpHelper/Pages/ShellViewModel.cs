@@ -11,6 +11,7 @@ using Chromium;
 using GlobalHotKey;
 using HotsBpHelper.Api;
 using HotsBpHelper.Api.Security;
+using HotsBpHelper.Configuration;
 using HotsBpHelper.Factories;
 using HotsBpHelper.Services;
 using HotsBpHelper.Settings;
@@ -291,6 +292,10 @@ namespace HotsBpHelper.Pages
 
             if (App.OcrLanguage == OcrLanguage.Korean)
                 CanOcr = false;
+
+            var hotsConfig = new HotsVariableConfigParser();
+            if (!hotsConfig.CheckIfWindowlessMax())
+                TopMostMessageBox.Show(L("WindowlessWarning"), @"Warning");
 
             AutoDetect = CanOcr && _bpViewModel.OcrAvailable;
             AutoShowMmr = true; // 默认启用自动显示MMR
