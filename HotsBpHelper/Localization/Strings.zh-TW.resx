@@ -285,6 +285,9 @@
   <data name="NotInBpQuestion" xml:space="preserve">
     <value>您是否仍在BP中？如已離開遊戲可使用Ctrl+Shit+N重置。</value>
   </data>
+  <data name="PLZ_CHOOSE" xml:space="preserve">
+    <value>[請選擇]</value>
+  </data>
   <data name="ResolutionQuestion" xml:space="preserve">
     <value>背鍋助手的自動識別模塊目前僅完全支持1080以上解析度，自動識別在您的解析度下無法提供最佳體驗，可能存在較多誤識別現象，屆時需要您手動修改選擇。是否仍要開啟自動識別？</value>
   </data>
