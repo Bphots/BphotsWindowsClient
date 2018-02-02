@@ -163,7 +163,7 @@
     <value>No match resolution, cannot start the client.</value>
   </data>
   <data name="NO_CHOOSE" xml:space="preserve">
-    <value>[Please Select]</value>
+    <value>[None]</value>
   </data>
   <data name="UpdatesAvailable" xml:space="preserve">
     <value>Find new version, ready to update.</value>
@@ -269,6 +269,9 @@
   </data>
   <data name="Loading" xml:space="preserve">
     <value>Loading... Please wait</value>
+  </data>
+  <data name="PLZ_CHOOSE" xml:space="preserve">
+    <value>[Please select]</value>
   </data>
   <data name="ResetHelper" xml:space="preserve">
     <value>Reset BP Status</value>
