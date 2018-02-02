@@ -111,6 +111,9 @@
       <HintPath>..\packages\Its.Configuration.1.0.6\lib\net40\Its.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="LobbyHeroParser">
+      <HintPath>.\LobbyHeroParser.dll</HintPath>
+    </Reference>
     <Reference Include="NAppUpdate.Framework, Version=0.5.1.0, Culture=neutral, PublicKeyToken=d1f1d1f19f9e5a56, processorArchitecture=MSIL">
       <HintPath>..\packages\NAppUpdate.Framework.0.5.1.0\lib\net40\NAppUpdate.Framework.dll</HintPath>
       <Private>True</Private>
@@ -126,9 +129,6 @@
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.105.2.3\lib\net45\RestSharp.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="StatsFetcher">
-      <HintPath>.\StatsFetcher.dll</HintPath>
     </Reference>
     <Reference Include="Stylet">
       <HintPath>H:\Project\HotsBpHelper-find_heroe\HotsBpHelper-find_heroe\Stylet.dll</HintPath>
