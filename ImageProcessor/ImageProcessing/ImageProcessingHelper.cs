@@ -28,7 +28,7 @@ namespace ImageProcessor.ImageProcessing
                 var matrix = binarySample.GetGrayScaleMatrix();
                 var sampleLeft = (int) (0.007*binarySample.Height);
                 var sum = 0;
-                for (var y = 0; y < binarySample.Height*0.130; y++)
+                for (var y =(int) (binarySample.Height * 0.08); y < binarySample.Height*0.130; y++)
                 {
                     int grayScale = matrix[y, sampleLeft];
                     if (grayScale != 255)
