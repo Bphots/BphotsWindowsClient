@@ -288,4 +288,7 @@
   <data name="WindowlessWarning" xml:space="preserve">
     <value>背锅助手需要在窗口模式(最大化)下运行，请修改您的图形设定以获得最佳运行体验。</value>
   </data>
+  <data name="ResolutionQuestion" xml:space="preserve">
+    <value>背锅助手的自动识别功能目前仅完全支持1080以上分辨率，自动识别在您的分辨率下无法提供最佳体验，可能存在较多误识别现象，届时需要您手动修改选择。是否仍要开启自动识别？</value>
+  </data>
 </root>

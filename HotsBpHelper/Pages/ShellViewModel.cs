@@ -123,11 +123,15 @@ namespace HotsBpHelper.Pages
 
                 if (value)
                 {
+                    if (App.AppSetting.Position.Height < Const.BestExpericenResolutionHeight && TopMostMessageBox.Show(L("ResolutionQuestion"), @"Warning",
+                            MessageBoxButtons.YesNo) == DialogResult.No)
+                            return;
+
                     if (!OcrEngine.IsTessDataAvailable(App.OcrLanguage))
                     {
                         IsLoaded = false;
                         if (TopMostMessageBox.Show(L("TessdataQuestion"), @"Warning",
-                         MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
                             var tessdataWebUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
                             var languageParams = OcrEngine.GetDirectory(App.OcrLanguage);
@@ -284,7 +288,7 @@ namespace HotsBpHelper.Pages
             if (!_bpViewModel.OcrAvailable)
                 _toastService.ShowWarning(L("LanguageUnavailable"));
 
-            if (App.AppSetting.Position.Height < 1070)
+            if (App.AppSetting.Position.Height < Const.IncompatibleResolutionHeight)
             {
                 CanOcr = false;
                 _toastService.ShowWarning(L("IncompatibleResolution"));
@@ -297,7 +301,7 @@ namespace HotsBpHelper.Pages
             if (!hotsConfig.CheckIfWindowlessMax())
                 TopMostMessageBox.Show(L("WindowlessWarning"), @"Warning");
 
-            AutoDetect = CanOcr && _bpViewModel.OcrAvailable;
+            AutoDetect = CanOcr && _bpViewModel.OcrAvailable && App.AppSetting.Position.Height > Const.BestExpericenResolutionHeight;
             AutoShowMmr = true; // 默认启用自动显示MMR
 
             _bpViewModel.RemindDetectMode += BpViewModelOnRemindDetectMode;
