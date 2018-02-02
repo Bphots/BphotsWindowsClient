@@ -285,4 +285,7 @@
   <data name="NotInBpQuestion" xml:space="preserve">
     <value>您是否仍在BP中？如已离开游戏可使用Ctrl+Shit+N重置。</value>
   </data>
+  <data name="WindowlessWarning" xml:space="preserve">
+    <value>背锅助手需要在窗口模式(最大化)下运行，请修改您的图形设定以获得最佳运行体验。</value>
+  </data>
 </root>
