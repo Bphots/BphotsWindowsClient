@@ -195,7 +195,7 @@ namespace HotsBpHelper.Pages
 
                     //防盗链算法
                     var T = ((int) DateTime.Now.AddMinutes(1).ToUnixTimestamp()).ToString("x8").ToLower();
-                    var S = UrlKey + HttpUtility.UrlEncode(fileUpdateInfo.Path).Replace("%2f", "/") + T;
+                    var S = SecurityProvider.UrlKey + HttpUtility.UrlEncode(fileUpdateInfo.Path).Replace("%2f", "/") + T;
                     var SIGN = FormsAuthentication.HashPasswordForStoringInConfigFile(S, "MD5").ToLower();
 
                     _restApi.DownloadFileAsync(fileUpdateInfo.Url + "?sign=" + SIGN + "&t=" + T,
@@ -281,7 +281,5 @@ namespace HotsBpHelper.Pages
         {
             UpdateCompleted?.Invoke(this, EventArgs.Empty);
         }
-
-        private const string UrlKey = "a1aa6c9a469a3eab8a88f79950a96699109aac99";
     }
 }
