@@ -837,7 +837,7 @@ namespace HotsBpHelper.Pages
         {
             bool warned = false;
             int inBpFail = 0;
-            while (stageInfo.Step < stage && !_scanningCancellationToken.IsCancellationRequested)
+            while (stageInfo.Step < stage && stageInfo.Step < BpStatus.CurrentStep && !_scanningCancellationToken.IsCancellationRequested)
             {
                 await Task.Delay(500);
                 stageInfo = finder.GetStageInfo();

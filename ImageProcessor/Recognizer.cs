@@ -224,7 +224,7 @@ namespace ImageProcessor
                 }
 
                 if (!string.IsNullOrEmpty(sb.ToString()) || sb.ToString() != PickingText)
-                    File.Copy(file, path, true);
+                    File.Move(file, path);
             }
 
 
