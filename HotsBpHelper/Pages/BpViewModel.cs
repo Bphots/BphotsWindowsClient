@@ -835,36 +835,35 @@ namespace HotsBpHelper.Pages
 
         private async Task AwaitStageAsync(StageInfo stageInfo, Finder finder, int stage)
         {
-            bool warned = false;
-            int inBpFail = 0;
-            while (stageInfo.Step < stage && stageInfo.Step < BpStatus.CurrentStep && !_scanningCancellationToken.IsCancellationRequested)
+            try
             {
-                await Task.Delay(500);
-                stageInfo = finder.GetStageInfo();
-
-                if (stageInfo.Step != -1 || warned)
+                OcrAsyncChecker.CheckThread(OcrAsyncChecker.AwaitStagAsyncChecker);
+                bool warned = false;
+                int inBpFail = 0;
+                while (stageInfo.Step < stage && stage <= BpStatus.CurrentStep && !_scanningCancellationToken.IsCancellationRequested)
                 {
-                    inBpFail = 0;
-                    continue;
+                    await Task.Delay(500);
+                    stageInfo = finder.GetStageInfo();
+
+                    if (stageInfo.Step != -1 || warned)
+                    {
+                        inBpFail = 0;
+                        continue;
+                    }
+
+                    inBpFail++;
+                    if (inBpFail != 10)
+                        continue;
+
+                    warned = true;
+                    WarnNotInBp();
                 }
-
-                bool isBp;
-                lock (ImageProcessingHelper.GDILock)
-                {
-                    var screenPath = finder.CaptureScreen();
-                    isBp = ImageProcessingHelper.CheckIfInBp(screenPath);
-                }
-
-                if (isBp)
-                    continue;
-
-                inBpFail++;
-                if (inBpFail != 5)
-                    continue;
-
-                warned = true;
-                WarnNotInBp();
             }
+            finally 
+            {
+                OcrAsyncChecker.CleanThread(OcrAsyncChecker.AwaitStagAsyncChecker);
+            }
+            
         }
 
         private async Task LookForBpScreen()

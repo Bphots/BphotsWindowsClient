@@ -14,6 +14,7 @@ using HotsBpHelper.Pages;
 using ImageProcessor;
 using ImageProcessor.ImageProcessing;
 using ImageProcessor.Ocr;
+using NLog;
 using Stylet;
 
 namespace HotsBpHelper.Utils
@@ -40,60 +41,78 @@ namespace HotsBpHelper.Utils
 
         public async Task LookForBpScreen(CancellationToken cancellationToken)
         {
-            var finder = new Finder();
-            while (!cancellationToken.IsCancellationRequested)
+            try
             {
-                if (SuspendScanning)
-                {
-                    await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
-                    continue;
-                }
-                
-                lock (ImageProcessingHelper.GDILock)
-                {
-                    var screenPath = finder.CaptureScreen();
-                    var isBp = ImageProcessingHelper.CheckIfInBp(screenPath);
-                    if (isBp)
-                        return;
-                }
+                OcrAsyncChecker.CheckThread(OcrAsyncChecker.LookForBpScreenAsyncChecker);
 
-                await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
+                var finder = new Finder();
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    if (SuspendScanning)
+                    {
+                        await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
+                        continue;
+                    }
+
+                    lock (ImageProcessingHelper.GDILock)
+                    {
+                        var screenPath = finder.CaptureScreen();
+                        var isBp = ImageProcessingHelper.CheckIfInBp(screenPath);
+                        if (isBp)
+                            return;
+                    }
+
+                    await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
+                }
+            }
+            finally
+            {
+                OcrAsyncChecker.CleanThread(OcrAsyncChecker.LookForBpScreenAsyncChecker);
             }
         }
 
         public async Task<string> LookForMap(CancellationToken cancellationToken)
         {
-            var finder = new Finder();
-            var sb = new StringBuilder();
-            var logUtil = new LogUtil(@".\logLookForMap.txt");
-            logUtil.Log("Started");
-
-            int attempts = 0;
-            while (!cancellationToken.IsCancellationRequested)
+            try
             {
-                if (SuspendScanning)
+                OcrAsyncChecker.CheckThread(OcrAsyncChecker.LookForMapAsyncChecker);
+
+                var finder = new Finder();
+                var sb = new StringBuilder();
+                var logUtil = new LogUtil(@".\logLookForMap.txt");
+                logUtil.Log("Started");
+
+                int attempts = 0;
+                while (!cancellationToken.IsCancellationRequested)
                 {
+                    if (SuspendScanning)
+                    {
+                        await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
+                        continue;
+                    }
+
+                    lock (ImageProcessingHelper.GDILock)
+                    {
+                        var screenPath = finder.CaptureScreen();
+                        _recognizer.ProcessMap(finder.CaptureMapArea(screenPath), sb);
+                        if (!string.IsNullOrEmpty(sb.ToString()))
+                            break;
+                        attempts++;
+                    }
+                    if (attempts == 5)
+                    {
+                        return string.Empty;
+                    }
+
                     await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
-                    continue;
                 }
-
-                lock (ImageProcessingHelper.GDILock)
-                {
-                    var screenPath = finder.CaptureScreen();
-                    _recognizer.ProcessMap(finder.CaptureMapArea(screenPath), sb);
-                    if (!string.IsNullOrEmpty(sb.ToString()))
-                        break;
-                    attempts++;
-                }
-                if (attempts == 5)
-                {
-                    return string.Empty;
-                }
-
-                await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
+                logUtil.Flush();
+                return sb.ToString();
             }
-            logUtil.Flush();
-            return sb.ToString();
+            finally
+            {
+                OcrAsyncChecker.CleanThread(OcrAsyncChecker.LookForMapAsyncChecker);
+            }
         }
 
         public async Task<List<string>> LookForLoadingLabels()
@@ -171,7 +190,7 @@ namespace HotsBpHelper.Utils
                     break;
 
                 attempt++;
-                await Task.Delay(500);
+                await Task.Delay(500, cancellationToken);
             }
             if (attempt == 5)
             {
@@ -196,6 +215,8 @@ namespace HotsBpHelper.Utils
         {
             try
             {
+                OcrAsyncChecker.CheckThread(OcrAsyncChecker.ScanLabelAsyncChecker);
+
                 var finder = new Finder();
                 if (ids.Count == 1 && (ids[0] == 2 || ids[0] == 7))
                 {
@@ -217,7 +238,7 @@ namespace HotsBpHelper.Utils
                     }
                 }
 
-                float rotation = side == ScanSide.Left ? (float)29.7 : (float)-29.7;
+                float rotation = side == ScanSide.Left ? (float) 29.7 : (float) -29.7;
 
                 var bpVm = new Dictionary<int, HeroSelectorViewModel>();
                 var checkedDic = new Dictionary<int, bool>();
@@ -357,7 +378,7 @@ namespace HotsBpHelper.Utils
                         }
 
                         // second attempt
-                        FilePath tempscreenshotPath = null; 
+                        FilePath tempscreenshotPath = null;
                         if (!alreadyTrustable)
                         {
                             logUtil.Log("Delay 500 " + ids[i]);
@@ -375,8 +396,9 @@ namespace HotsBpHelper.Utils
                                 tempscreenshotPath = finder.CaptureScreen();
                                 finder.AddNewTemplate(ids[i], ids[i].ToString(), fileDic, tempscreenshotPath);
                                 logUtil.Log("Capture Complete " + ids[i]);
-                                _recognizer.Recognize(fileDic[ids[i]], rotation, sbConfirm, App.AppSetting.Position.Height > 1200 ? 5 : 3);
-                            } 
+                                _recognizer.Recognize(fileDic[ids[i]], rotation, sbConfirm,
+                                    App.AppSetting.Position.Height > 1200 ? 5 : 3);
+                            }
                         }
 
                         if (SuspendScanning)
@@ -414,8 +436,49 @@ namespace HotsBpHelper.Utils
                 File.WriteAllText(@".\error" + string.Join("&", ids) + ".txt", e.Message + e.StackTrace + e);
                 throw;
             }
+            finally
+            {
+                OcrAsyncChecker.CleanThread(OcrAsyncChecker.ScanLabelAsyncChecker);
+            }
+        }
+    }
+
+    public static class OcrAsyncChecker
+    {
+        public const int LookForBpScreenAsyncChecker = 0;
+        public const int LookForMapAsyncChecker = 1;
+        public const int ScanLabelAsyncChecker = 2;
+        public const int AwaitStagAsyncChecker = 3;
+
+        private static readonly List<bool> OcrAsyncThreads = new List<bool> {false, false, false, false};
+
+        public static void CheckThread(int threadId)
+        {
+            if (!App.Debug)
+                return;
+
+            Logger.Trace("Enter thread : {0}", threadId);
+            if (OcrAsyncThreads[threadId])
+                Logger.Trace("Duplicate thread detected : {0}", threadId);
+
+            for (int i = 0; i < OcrAsyncThreads.Count; ++i)
+            {
+                if (i != threadId && OcrAsyncThreads[i])
+                Logger.Trace("Parallel thread detected with thread : {0} , {1}", i, threadId);
+            }
+
+            OcrAsyncThreads[threadId] = true;
+        }
+
+        public static void CleanThread(int threadId)
+        {
+            if (!App.Debug)
+                return;
+
+            Logger.Trace("Exit thread: {0}", threadId);
+            OcrAsyncThreads[threadId] = false;
         }
         
-        
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     }
 }

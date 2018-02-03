@@ -118,29 +118,28 @@ namespace ImageProcessor.Extensions
                 newWidth = newHeight;
                 newHeight = temp;
             }
-            lock (ImageProcessingHelper.GDILock)
+
+            using (var bmp = new Bitmap(newWidth, newHeight))
             {
-                using (var bmp = new Bitmap(newWidth, newHeight))
+                using (var g = Graphics.FromImage(bmp))
+                    g.DrawImageUnscaled(rotateMe, (newWidth - rotateMe.Width) / 2, (newHeight - rotateMe.Height) / 2,
+                        bmp.Width, bmp.Height);
+
+                //Now, actually rotate the image
+                var rotatedImage = new Bitmap(bmp.Width, bmp.Height);
+
+                using (var g = Graphics.FromImage(rotatedImage))
                 {
-                    using (var g = Graphics.FromImage(bmp))
-                        g.DrawImageUnscaled(rotateMe, (newWidth - rotateMe.Width) / 2, (newHeight - rotateMe.Height) / 2,
-                            bmp.Width, bmp.Height);
-
-                    //Now, actually rotate the image
-                    var rotatedImage = new Bitmap(bmp.Width, bmp.Height);
-
-                    using (var g = Graphics.FromImage(rotatedImage))
-                    {
-                        g.FillRectangle(Brushes.Black, 0, 0, rotatedImage.Width, rotatedImage.Height);
-                        g.TranslateTransform(bmp.Width / 2, bmp.Height / 2);
-                        //set the rotation point as the center into the matrix
-                        g.RotateTransform(angle); //rotate
-                        g.TranslateTransform(-bmp.Width / 2, -bmp.Height / 2); //restore rotation point into the matrix
-                        g.DrawImage(bmp, new Point(0, 0)); //draw the image on the new bitmap
-                    }
-                    return rotatedImage;
+                    g.FillRectangle(Brushes.Black, 0, 0, rotatedImage.Width, rotatedImage.Height);
+                    g.TranslateTransform(bmp.Width / 2, bmp.Height / 2);
+                    //set the rotation point as the center into the matrix
+                    g.RotateTransform(angle); //rotate
+                    g.TranslateTransform(-bmp.Width / 2, -bmp.Height / 2); //restore rotation point into the matrix
+                    g.DrawImage(bmp, new Point(0, 0)); //draw the image on the new bitmap
                 }
+                return rotatedImage;
             }
+
         }
 
         public static Bitmap Binarilization(this Bitmap grayScaledBitmap, int threshold)
