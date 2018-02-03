@@ -11,6 +11,7 @@ namespace HotsBpHelper.Pages
     {
         private bool _interactionVisible = true;
         private bool _layerVisible = true;
+        private object _isFocused;
 
         public HeroSelectorViewModel(HeroItemUtil heroItemUtil, IEventAggregator eventAggregator)
             : base(heroItemUtil, eventAggregator)
@@ -41,6 +42,12 @@ namespace HotsBpHelper.Pages
         }
 
         public Visibility UserVisibility => LayerVisible && InteractionVisible ? Visibility.Visible : Visibility.Hidden;
+
+        public object IsFocused
+        {
+            get { return _isFocused; }
+            set { SetAndNotify(ref _isFocused, value); }
+        }
 
         public void Handle(ItemSelectedMessage message)
         {
