@@ -78,7 +78,7 @@ namespace HotsBpHelper.Pages
             var regionId = ((int) game.Region).ToString();
             // 玩家BattleTags
             var battleTags = string.Join("|", game.Players
-                .Select(p => p.Tag));
+                .Select(p => p.Tag + "#" + p.SelectedHero));
             Players = game.Players.Select(p => p.Tag).ToList();
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
