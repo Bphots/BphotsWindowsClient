@@ -8,7 +8,7 @@ namespace HotsBpHelper
 
         public const string LOCAL_WEB_FILE_DIR = "WebFiles";
         
-        public const string PATCH = "18013003";
+        public const string PATCH = "18020301";
 
         public const string UPDATE_FEED_XML = "https://www.bphots.com/bp_helper/get/update?patch=" + PATCH;
 
