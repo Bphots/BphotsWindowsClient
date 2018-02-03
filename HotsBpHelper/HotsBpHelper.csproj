@@ -243,6 +243,7 @@
     <Compile Include="Utils\Win32.cs" />
     <Compile Include="WPF\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="WPF\FilteredComboBox.cs" />
+    <Compile Include="WPF\FocusExtension.cs" />
     <Compile Include="WPF\NotifyTaskCompletion.cs" />
   </ItemGroup>
   <ItemGroup>

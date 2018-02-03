@@ -533,6 +533,8 @@ namespace HotsBpHelper.Pages
                 vm.Select(name);
                 vm.ConfirmSelection();
             }
+            if (!IsAutoMode)
+                vm.IsFocused = true;
         }
 
         public void ForceSecondBanProcess()

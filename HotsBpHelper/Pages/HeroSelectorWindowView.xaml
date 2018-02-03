@@ -52,6 +52,7 @@
                                                 PreviewMouseLeftButtonUp="UIElement_OnPreviewMouseLeftButtonUp"
                                                 MouseLeave="UIElement_OnMouseLeave"
                                                 SelectionChanged="Selector_OnSelectionChanged"
+                                                wpf:FocusExtension.IsFocused="{Binding IsFocused}"
                           >
                     <wpf:FilteredComboBox.Effect>
                         <DropShadowEffect Color="#FF51FF00" ShadowDepth="0"/>
