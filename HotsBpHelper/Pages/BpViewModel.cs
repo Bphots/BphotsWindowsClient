@@ -544,7 +544,7 @@ namespace HotsBpHelper.Pages
             {
                 if (HeroSelectorViewModels.First(v => v.Id == firstBanId).SelectedItemInfo == null)
                 {
-                    HeroSelectorViewModels.First(v => v.Id == firstBanId).Select(L("PLZ_CHOOSE"));
+                    HeroSelectorViewModels.First(v => v.Id == firstBanId).Select(L("NO_CHOOSE"));
                     HeroSelectorViewModels.First(v => v.Id == firstBanId).ConfirmSelection();
                 }
             }
@@ -558,7 +558,7 @@ namespace HotsBpHelper.Pages
             {
                 if (HeroSelectorViewModels.First(v => v.Id == firstBanId).SelectedItemInfo == null)
                 {
-                    HeroSelectorViewModels.First(v => v.Id == firstBanId).Select(L("PLZ_CHOOSE"));
+                    HeroSelectorViewModels.First(v => v.Id == firstBanId).Select(L("NO_CHOOSE"));
                     HeroSelectorViewModels.First(v => v.Id == firstBanId).ConfirmSelection();
                 }
             }
@@ -571,7 +571,7 @@ namespace HotsBpHelper.Pages
             {
                 if (HeroSelectorViewModels.First(v => v.Id == secondBanId).SelectedItemInfo == null)
                 {
-                    HeroSelectorViewModels.First(v => v.Id == secondBanId).Select(L("PLZ_CHOOSE"));
+                    HeroSelectorViewModels.First(v => v.Id == secondBanId).Select(L("NO_CHOOSE"));
                     HeroSelectorViewModels.First(v => v.Id == secondBanId).ConfirmSelection();
                 }
             }
@@ -584,7 +584,7 @@ namespace HotsBpHelper.Pages
             {
                 if (HeroSelectorViewModels.First(v => v.Id == secondBanId).SelectedItemInfo == null)
                 {
-                    HeroSelectorViewModels.First(v => v.Id == secondBanId).Select(L("PLZ_CHOOSE"));
+                    HeroSelectorViewModels.First(v => v.Id == secondBanId).Select(L("NO_CHOOSE"));
                     HeroSelectorViewModels.First(v => v.Id == secondBanId).ConfirmSelection();
                 }
             }
@@ -598,21 +598,21 @@ namespace HotsBpHelper.Pages
             {
                 var vm = HeroSelectorViewModels.First(v => v.Id == firstBanId);
                 vm.InteractionVisible = true;
-                vm.Select(L("PLZ_CHOOSE"));
+                vm.Select(L("NO_CHOOSE"));
             }
             else if (HeroSelectorViewModels.First(v => v.Id == firstBanId).SelectedItemInfo == null)
             {
-                HeroSelectorViewModels.First(v => v.Id == firstBanId).Select(L("PLZ_CHOOSE"));
+                HeroSelectorViewModels.First(v => v.Id == firstBanId).Select(L("NO_CHOOSE"));
             }
             if (!HeroSelectorViewModels.First(v => v.Id == secondBanId).InteractionVisible)
             {
                 var vm = HeroSelectorViewModels.First(v => v.Id == secondBanId);
                 vm.InteractionVisible = true;
-                vm.Select(L("PLZ_CHOOSE"));
+                vm.Select(L("NO_CHOOSE"));
             }
             else if (HeroSelectorViewModels.First(v => v.Id == secondBanId).SelectedItemInfo == null)
             {
-                HeroSelectorViewModels.First(v => v.Id == secondBanId).Select(L("PLZ_CHOOSE"));
+                HeroSelectorViewModels.First(v => v.Id == secondBanId).Select(L("NO_CHOOSE"));
             }
 
             BpStatus.CurrentStep = _listBpSteps[2].Contains(pointIndex) ? 2 : 7;
