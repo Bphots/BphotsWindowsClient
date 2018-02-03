@@ -290,6 +290,10 @@ namespace HotsBpHelper.Utils
                                         bpViewModel.WarnNotInBp();
                                     }
                                 }
+                                else
+                                {
+                                    bpScreenFail = 0;
+                                }
 
                                 logUtil.Log("Starting detect overlap");
                                 if (side == ScanSide.Right)
@@ -339,8 +343,6 @@ namespace HotsBpHelper.Utils
 
 
                         logUtil.Log("Checked " + ids[i]);
-                        if (sb.ToString() == _recognizer.PickingText)
-                            bpScreenFail = 0;
 
                         if (sb.ToString() == _recognizer.PickingText || string.IsNullOrEmpty(sb.ToString()))
                             continue;
