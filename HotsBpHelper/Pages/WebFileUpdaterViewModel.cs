@@ -146,7 +146,7 @@ namespace HotsBpHelper.Pages
             try
             {
                 remoteFileInfos = await _restApi.GetRemoteFileListAsync(_remoteUrl);
-                Logger.Trace("Remote files:\r\n{0}", string.Join("\r\n", remoteFileInfos.Select(rfi => rfi.Name)));
+                //Logger.Trace("Remote files:\r\n{0}", string.Join("\r\n", remoteFileInfos.Select(rfi => rfi.Name)));
             }
             catch (Exception e)
             {

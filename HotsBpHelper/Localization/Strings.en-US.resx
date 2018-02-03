@@ -163,7 +163,7 @@
     <value>No match resolution, cannot start the client.</value>
   </data>
   <data name="NO_CHOOSE" xml:space="preserve">
-    <value>[Please Select]</value>
+    <value>[None]</value>
   </data>
   <data name="UpdatesAvailable" xml:space="preserve">
     <value>Find new version, ready to update.</value>
@@ -269,5 +269,23 @@
   </data>
   <data name="Loading" xml:space="preserve">
     <value>Loading... Please wait</value>
+  </data>
+  <data name="PLZ_CHOOSE" xml:space="preserve">
+    <value>[Please select]</value>
+  </data>
+  <data name="ResetHelper" xml:space="preserve">
+    <value>Reset BP Status</value>
+  </data>
+  <data name="ResolutionQuestion" xml:space="preserve">
+    <value>The OCR feature is designed for screen resolution with 1080 height above. It may not provide the best experience under your graphic resolution settings. You may need to manually correct the selection in case of wrong detection. Would you still like to enable Auto-Detection?</value>
+  </data>
+  <data name="ShowHideHelper" xml:space="preserve">
+    <value>Turn On/Off BpHelper Manually</value>
+  </data>
+  <data name="SwitchVisibility" xml:space="preserve">
+    <value>Show/Hide BpHelper UI Manually</value>
+  </data>
+  <data name="WindowlessWarning" xml:space="preserve">
+    <value>BpHelper is only compatible with Windowless (Maximized) mode. Please modify your in-game graphic settings for the best experience.</value>
   </data>
 </root>

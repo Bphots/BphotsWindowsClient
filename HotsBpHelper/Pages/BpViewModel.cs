@@ -490,6 +490,7 @@ namespace HotsBpHelper.Pages
                 var vm = _viewModelFactory.CreateViewModel<HeroSelectorViewModel>();
                 _cachedHeroSelectorViewModels.Add(vm);
                 vm.Id = i;
+                vm.InitializeUnselect();
                 var position = _listPositions[i];
                 if (i < 7)
                 {
@@ -532,6 +533,8 @@ namespace HotsBpHelper.Pages
                 vm.Select(name);
                 vm.ConfirmSelection();
             }
+            if (!IsAutoMode)
+                vm.IsFocused = true;
         }
 
         public void ForceSecondBanProcess()
@@ -542,7 +545,7 @@ namespace HotsBpHelper.Pages
             {
                 if (HeroSelectorViewModels.First(v => v.Id == firstBanId).SelectedItemInfo == null)
                 {
-                    HeroSelectorViewModels.First(v => v.Id == firstBanId).Select(L("NO_CHOOSE"));
+                    HeroSelectorViewModels.First(v => v.Id == firstBanId).Select(L("PLZ_CHOOSE"));
                     HeroSelectorViewModels.First(v => v.Id == firstBanId).ConfirmSelection();
                 }
             }
@@ -556,7 +559,7 @@ namespace HotsBpHelper.Pages
             {
                 if (HeroSelectorViewModels.First(v => v.Id == firstBanId).SelectedItemInfo == null)
                 {
-                    HeroSelectorViewModels.First(v => v.Id == firstBanId).Select(L("NO_CHOOSE"));
+                    HeroSelectorViewModels.First(v => v.Id == firstBanId).Select(L("PLZ_CHOOSE"));
                     HeroSelectorViewModels.First(v => v.Id == firstBanId).ConfirmSelection();
                 }
             }
@@ -569,7 +572,7 @@ namespace HotsBpHelper.Pages
             {
                 if (HeroSelectorViewModels.First(v => v.Id == secondBanId).SelectedItemInfo == null)
                 {
-                    HeroSelectorViewModels.First(v => v.Id == secondBanId).Select(L("NO_CHOOSE"));
+                    HeroSelectorViewModels.First(v => v.Id == secondBanId).Select(L("PLZ_CHOOSE"));
                     HeroSelectorViewModels.First(v => v.Id == secondBanId).ConfirmSelection();
                 }
             }
@@ -582,7 +585,7 @@ namespace HotsBpHelper.Pages
             {
                 if (HeroSelectorViewModels.First(v => v.Id == secondBanId).SelectedItemInfo == null)
                 {
-                    HeroSelectorViewModels.First(v => v.Id == secondBanId).Select(L("NO_CHOOSE"));
+                    HeroSelectorViewModels.First(v => v.Id == secondBanId).Select(L("PLZ_CHOOSE"));
                     HeroSelectorViewModels.First(v => v.Id == secondBanId).ConfirmSelection();
                 }
             }
@@ -596,21 +599,21 @@ namespace HotsBpHelper.Pages
             {
                 var vm = HeroSelectorViewModels.First(v => v.Id == firstBanId);
                 vm.InteractionVisible = true;
-                vm.Select(L("NO_CHOOSE"));
+                vm.Select(L("PLZ_CHOOSE"));
             }
             else if (HeroSelectorViewModels.First(v => v.Id == firstBanId).SelectedItemInfo == null)
             {
-                HeroSelectorViewModels.First(v => v.Id == firstBanId).Select(L("NO_CHOOSE"));
+                HeroSelectorViewModels.First(v => v.Id == firstBanId).Select(L("PLZ_CHOOSE"));
             }
             if (!HeroSelectorViewModels.First(v => v.Id == secondBanId).InteractionVisible)
             {
                 var vm = HeroSelectorViewModels.First(v => v.Id == secondBanId);
                 vm.InteractionVisible = true;
-                vm.Select(L("NO_CHOOSE"));
+                vm.Select(L("PLZ_CHOOSE"));
             }
             else if (HeroSelectorViewModels.First(v => v.Id == secondBanId).SelectedItemInfo == null)
             {
-                HeroSelectorViewModels.First(v => v.Id == secondBanId).Select(L("NO_CHOOSE"));
+                HeroSelectorViewModels.First(v => v.Id == secondBanId).Select(L("PLZ_CHOOSE"));
             }
 
             BpStatus.CurrentStep = _listBpSteps[2].Contains(pointIndex) ? 2 : 7;

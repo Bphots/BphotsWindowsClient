@@ -163,7 +163,7 @@
     <value>未找到匹配的分辨率, 工具不能正常使用.</value>
   </data>
   <data name="NO_CHOOSE" xml:space="preserve">
-    <value>[请选择]</value>
+    <value>[不选择]</value>
   </data>
   <data name="UpdatesAvailable" xml:space="preserve">
     <value>发现新版本! 即将开始更新.</value>
@@ -284,5 +284,14 @@
   </data>
   <data name="NotInBpQuestion" xml:space="preserve">
     <value>您是否仍在BP中？如已离开游戏可使用Ctrl+Shit+N重置。</value>
+  </data>
+  <data name="WindowlessWarning" xml:space="preserve">
+    <value>背锅助手需要在窗口模式(最大化)下运行，请修改您的图形设定以获得最佳运行体验。</value>
+  </data>
+  <data name="PLZ_CHOOSE" xml:space="preserve">
+    <value>[请选择]</value>
+  </data>
+  <data name="ResolutionQuestion" xml:space="preserve">
+    <value>背锅助手的自动识别功能目前仅完全支持1080以上分辨率，自动识别在您的分辨率下无法提供最佳体验，可能存在较多误识别现象，届时需要您手动修改选择。是否仍要开启自动识别？</value>
   </data>
 </root>

@@ -11,12 +11,14 @@ namespace HotsBpHelper.Pages
     {
         private bool _interactionVisible = true;
         private bool _layerVisible = true;
+        private object _isFocused;
 
         public HeroSelectorViewModel(HeroItemUtil heroItemUtil, IEventAggregator eventAggregator)
             : base(heroItemUtil, eventAggregator)
         {
             Size = new Size(130, 20);
             EventAggregator.Subscribe(this);
+
         }
 
         public bool InteractionVisible
@@ -41,18 +43,22 @@ namespace HotsBpHelper.Pages
 
         public Visibility UserVisibility => LayerVisible && InteractionVisible ? Visibility.Visible : Visibility.Hidden;
 
+        public object IsFocused
+        {
+            get { return _isFocused; }
+            set { SetAndNotify(ref _isFocused, value); }
+        }
+
         public void Handle(ItemSelectedMessage message)
         {
             // TODO 将已选的英雄移除(又改了之前的选择需要恢复)
         }
 
-
-        protected override void OnViewLoaded()
+        public void InitializeUnselect()
         {
             if (Id == 0 || Id == 1 || Id == 7 || Id == 8)
             {
                 // 禁选英雄选择,增加[未选择]
-
                 ItemsInfos.Insert(0, new ComboBoxItemInfo
                 {
                     Id = "0",
@@ -60,7 +66,6 @@ namespace HotsBpHelper.Pages
                     Acronym = ""
                 });
             }
-            base.OnViewLoaded();
         }
 
         public void Select(string name)
@@ -72,7 +77,7 @@ namespace HotsBpHelper.Pages
             {
                 ItemsInfos.Insert(0, new ComboBoxItemInfo
                 {
-                    Id = "",
+                    Id = "0",
                     Name = name,
                     Acronym = ""
                 });

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -58,59 +59,11 @@ namespace HotsBpHelper.UserControls
                 e.NewUrl = PendingSource;
 
         }
-
-
+        
         private void LifeSpanHandlerOnOnBeforePopup(object sender, CfxOnBeforePopupEventArgs e)
         {
             var url = e.TargetUrl;
-           
-            Execute.OnUIThread(() =>
-            {
-                BitmapImage img = new BitmapImage();
-                img.BeginInit(); 
-                img.UriSource = new Uri(@".\Images\browser.ico", UriKind.Relative);
-                img.EndInit();
-                Window popupBrowserForm = new Window()
-                {
-                    Icon = img,
-                    Width = App.AppSetting.Position.Width * 0.5,
-                    Height = App.AppSetting.Position.Height * 0.5
-                };
-                var winformsHost = new WindowsFormsHost();
-
-                ChromiumWebBrowser popupBrowser = new ChromiumWebBrowser()
-                {
-                    Margin = new Padding(0),
-                    Name = Name,
-                    Dock = DockStyle.Fill
-                };
-
-                popupBrowser.DisplayHandler.OnTitleChange += (s, e2) =>
-                {
-                    var title = e2.Title;
-                    Execute.OnUIThread(
-                        () =>
-                            popupBrowserForm.Title =
-                                @"HotsBpHelper - " + title);
-                };
-
-                popupBrowser.LifeSpanHandler.OnBeforePopup += (s, e2) =>
-                {
-                    var newTarget = e2.TargetUrl;
-                   Execute.OnUIThread(
-                       () =>
-                       {
-                           popupBrowser.LoadUrl(newTarget);
-                       });
-                    e2.SetReturnValue(true);
-                };
-
-                popupBrowser.LoadUrl(url);
-                popupBrowserForm.Content = winformsHost;
-                winformsHost.Child = popupBrowser;
-                popupBrowserForm.Show();
-            });
-
+            Process.Start(url);
             e.SetReturnValue(true);
         }
 

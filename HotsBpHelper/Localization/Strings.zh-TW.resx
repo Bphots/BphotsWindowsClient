@@ -231,7 +231,7 @@
   <data name="AutoDetectHeroAndMap" xml:space="preserve">
     <value>自動識別英雄和地圖</value>
   </data>
-	<data name="ShowHideHelper" xml:space="preserve">
+  <data name="ShowHideHelper" xml:space="preserve">
     <value>手動重置/開啟背鍋助手</value>
   </data>
   <data name="SwitchVisibility" xml:space="preserve">
@@ -284,5 +284,14 @@
   </data>
   <data name="NotInBpQuestion" xml:space="preserve">
     <value>您是否仍在BP中？如已離開遊戲可使用Ctrl+Shit+N重置。</value>
+  </data>
+  <data name="PLZ_CHOOSE" xml:space="preserve">
+    <value>[請選擇]</value>
+  </data>
+  <data name="ResolutionQuestion" xml:space="preserve">
+    <value>背鍋助手的自動識別模塊目前僅完全支持1080以上解析度，自動識別在您的解析度下無法提供最佳體驗，可能存在較多誤識別現象，屆時需要您手動修改選擇。是否仍要開啟自動識別？</value>
+  </data>
+  <data name="WindowlessWarning" xml:space="preserve">
+    <value>背鍋助手需要在窗口模式(最大化)下運行，請修改您的圖形設定以獲得最佳運行體驗。</value>
   </data>
 </root>
