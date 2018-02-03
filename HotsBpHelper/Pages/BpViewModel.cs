@@ -37,9 +37,7 @@ namespace HotsBpHelper.Pages
         private bool _autoShowHideHelper;
         private bool _bpScreenLoaded;
         private bool _bpStarted;
-
-        private Dictionary<int, string> _cachedIds = new Dictionary<int, string>();
-
+        
         private bool _hasLookedForMap;
         private int _height;
         private HeroSelectorWindowViewModel _heroSelectorWindowViewModel;
@@ -305,15 +303,7 @@ namespace HotsBpHelper.Pages
                 foreach (var vm in HeroSelectorViewModels)
                 {
                     if (vm.SelectedItemInfo != null)
-                    {
-                        _cachedIds[vm.Id] = vm.SelectedItemInfo.Id;
                         idList.Add(vm.SelectedItemInfo.Id);
-                    }
-                    else
-                    {
-                        if (_cachedIds.ContainsKey(vm.Id))
-                            idList.Add(_cachedIds[vm.Id]);
-                    }
                 }
 
 
@@ -718,7 +708,6 @@ namespace HotsBpHelper.Pages
             // CloseHeroSelectorWindows();
             SwitchAdviceWindow(false);
             BpStarted = false;
-            _cachedIds = new Dictionary<int, string>();
             BpScreenLoaded = false;
             BpStatus = null;
             _hasLookedForMap = false;
