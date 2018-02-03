@@ -269,11 +269,22 @@ namespace HotsBpHelper.Pages
 
                         BpStatus.CurrentStep--;
 
-                        foreach (var i in _listBpSteps[BpStatus.CurrentStep])
                         {
+                            var i = _listBpSteps[BpStatus.CurrentStep].Last();
                             var vm = HeroSelectorViewModels.First(v => v.Id == i);
                             vm.Selected = false;
                             vm.SelectedItemInfo = null;
+
+                            if (_listBpSteps[BpStatus.CurrentStep].Count > 1)
+                            {
+                                var vmSelected = HeroSelectorViewModels.First(v => v.Id != _listBpSteps[BpStatus.CurrentStep].First());
+                                if (vmSelected != null)
+                                    BpStatus.StepSelectedIndex = new HashSet<int>() { vmSelected.Id };
+                                else
+                                    BpStatus.StepSelectedIndex.Clear();
+                            }
+                            else
+                                BpStatus.StepSelectedIndex.Clear();
                         }
                     }
                     
@@ -533,8 +544,6 @@ namespace HotsBpHelper.Pages
                 vm.Select(name);
                 vm.ConfirmSelection();
             }
-            if (!IsAutoMode)
-                vm.IsFocused = true;
         }
 
         public void ForceSecondBanProcess()
