@@ -57,10 +57,19 @@ namespace HotsBpHelper
 
             var args = Environment.GetCommandLineArgs();
 
+            if (args.Any(arg => arg.ToLower() == "/log"))
+            {
+                LogUtil.NoLog = false;
+                OcrEngine.Debug = true;
+            }
+
             if (args.Any(arg => arg.ToLower() == "/debug"))
             {
+                LogUtil.NoLog = false;
+                OcrEngine.Debug = true;
                 App.Debug = true;
             }
+
             if (args.Any(arg => arg.ToLower() == "/notcheckprocess"))
             {
                 App.NotCheckProcess = true;
