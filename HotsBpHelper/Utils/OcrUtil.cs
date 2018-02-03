@@ -223,7 +223,11 @@ namespace HotsBpHelper.Utils
                 var checkedDic = new Dictionary<int, bool>();
                 foreach (var id in ids)
                 {
-                    bpVm[id] = bpViewModel.HeroSelectorViewModels.First(vm => vm.Id == id);
+                    var vm = bpViewModel.HeroSelectorViewModels.First(v => v.Id == id);
+                    if (vm == null)
+                        return;
+
+                    bpVm[id] = vm;
                 }
                 for (var i = 0; i < ids.Count; ++i)
                 {
