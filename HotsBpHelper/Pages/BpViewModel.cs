@@ -37,9 +37,7 @@ namespace HotsBpHelper.Pages
         private bool _autoShowHideHelper;
         private bool _bpScreenLoaded;
         private bool _bpStarted;
-
-        private Dictionary<int, string> _cachedIds = new Dictionary<int, string>();
-
+        
         private bool _hasLookedForMap;
         private int _height;
         private HeroSelectorWindowViewModel _heroSelectorWindowViewModel;
@@ -269,11 +267,22 @@ namespace HotsBpHelper.Pages
 
                         BpStatus.CurrentStep--;
 
-                        foreach (var i in _listBpSteps[BpStatus.CurrentStep])
                         {
+                            var i = _listBpSteps[BpStatus.CurrentStep].Last();
                             var vm = HeroSelectorViewModels.First(v => v.Id == i);
                             vm.Selected = false;
                             vm.SelectedItemInfo = null;
+
+                            if (_listBpSteps[BpStatus.CurrentStep].Count > 1)
+                            {
+                                var vmSelected = HeroSelectorViewModels.First(v => v.Id != _listBpSteps[BpStatus.CurrentStep].First());
+                                if (vmSelected != null)
+                                    BpStatus.StepSelectedIndex = new HashSet<int>() { vmSelected.Id };
+                                else
+                                    BpStatus.StepSelectedIndex.Clear();
+                            }
+                            else
+                                BpStatus.StepSelectedIndex.Clear();
                         }
                     }
                     
@@ -294,15 +303,7 @@ namespace HotsBpHelper.Pages
                 foreach (var vm in HeroSelectorViewModels)
                 {
                     if (vm.SelectedItemInfo != null)
-                    {
-                        _cachedIds[vm.Id] = vm.SelectedItemInfo.Id;
                         idList.Add(vm.SelectedItemInfo.Id);
-                    }
-                    else
-                    {
-                        if (_cachedIds.ContainsKey(vm.Id))
-                            idList.Add(_cachedIds[vm.Id]);
-                    }
                 }
 
 
@@ -533,8 +534,6 @@ namespace HotsBpHelper.Pages
                 vm.Select(name);
                 vm.ConfirmSelection();
             }
-            if (!IsAutoMode)
-                vm.IsFocused = true;
         }
 
         public void ForceSecondBanProcess()
@@ -709,7 +708,6 @@ namespace HotsBpHelper.Pages
             // CloseHeroSelectorWindows();
             SwitchAdviceWindow(false);
             BpStarted = false;
-            _cachedIds = new Dictionary<int, string>();
             BpScreenLoaded = false;
             BpStatus = null;
             _hasLookedForMap = false;
