@@ -746,9 +746,24 @@ namespace HotsBpHelper.Pages
                 else
                     await OcrUtil.ScanLabelAsync(stepToProcess, this, OcrUtil.ScanSide.Right, cancellationToken).ConfigureAwait(false);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                MessageBox.Show(e.StackTrace);
+                try
+                {
+                    foreach (var i in stepToProcess)
+                    {
+                        _processingThreads[i] = false;
+                    }
+
+                    if (stepToProcess[0] <= 6)
+                        await OcrUtil.ScanLabelAsync(stepToProcess, this, OcrUtil.ScanSide.Left, cancellationToken).ConfigureAwait(false);
+                    else
+                        await OcrUtil.ScanLabelAsync(stepToProcess, this, OcrUtil.ScanSide.Right, cancellationToken).ConfigureAwait(false);
+                }
+                catch (Exception)
+                {
+                    Execute.OnUIThread(() => { Reset(); });
+                }
             }
             finally
             {
@@ -839,7 +854,7 @@ namespace HotsBpHelper.Pages
                 OcrAsyncChecker.CheckThread(OcrAsyncChecker.AwaitStagAsyncChecker);
                 bool warned = false;
                 int inBpFail = 0;
-                while (stageInfo.Step < stage && stage <= BpStatus.CurrentStep && !_scanningCancellationToken.IsCancellationRequested)
+                while (stageInfo.Step < stage && stage >= BpStatus.CurrentStep && !_scanningCancellationToken.IsCancellationRequested)
                 {
                     await Task.Delay(500);
                     stageInfo = finder.GetStageInfo();
