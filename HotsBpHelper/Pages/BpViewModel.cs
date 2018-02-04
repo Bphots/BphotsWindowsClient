@@ -24,7 +24,7 @@ using Point = System.Drawing.Point;
 
 namespace HotsBpHelper.Pages
 {
-    public class BpViewModel : ViewModelBase, IHandle<ItemSelectedMessage>, IHandle<SideSelectedMessage>
+    public class BpViewModel : ViewModelBase, IHandle<ItemSelectedMessage>, IHandle<SideSelectedMessage>, IHandle<MapSelectedMessage>
     {
         private static readonly object LookForBpTokenLock = new object();
 
@@ -350,6 +350,8 @@ namespace HotsBpHelper.Pages
             if (message.ItemInfo == null)
             {
                 Init();
+                InitializeAllHeroSelector();
+                Show();
                 return;
             }
             BpStarted = true;
@@ -362,7 +364,7 @@ namespace HotsBpHelper.Pages
             };
 
             var side = (int) BpStatus.FirstSide;
-            InvokeScript("init", message.ItemInfo.Id, side.ToString(), App.Language);
+            InvokeScript("init", side.ToString(), App.Language);
             InvokeScript("update", new List<Tuple<string, string>>
             {
                 Tuple.Create("chose", ""),
@@ -698,7 +700,7 @@ namespace HotsBpHelper.Pages
 
         public void Init()
         {
-            InvokeScript("init", "0", "", App.Language);
+            InvokeScript("init", "0", App.Language);
         }
 
         public void Reload()
@@ -1131,6 +1133,28 @@ namespace HotsBpHelper.Pages
         public void WarnNotInBp()
         {
             Execute.OnUIThread(() => _toastService.ShowWarning(L("NotInBpQuestion")));
+        }
+
+        public void Handle(MapSelectedMessage message)
+        {
+            if (!BpStarted)
+                return;
+
+            var idList = new List<string>();
+
+            foreach (var vm in HeroSelectorViewModels)
+            {
+                if (vm.SelectedItemInfo != null)
+                    idList.Add(vm.SelectedItemInfo.Id);
+            }
+
+            BpStatus.Map = message.ItemInfo.Id;
+            InvokeScript("update", new List<Tuple<string, string>>
+                {
+                    Tuple.Create("chose", string.Join("|", idList)),
+                    Tuple.Create("map", BpStatus.Map),
+                    Tuple.Create("lang", App.Language)
+                });
         }
     }
 

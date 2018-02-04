@@ -35,32 +35,31 @@ namespace HotsBpHelper.Pages
                 SelectedItemInfo = ItemsInfos[0];
             }
         }
-
-        protected override void OnPropertyChanged(string propertyName)
-        {
-            if (propertyName == "CanSelectSide")
-            {
-                EventAggregator.Publish(new SideSelectedMessage()
-                {
-                    ItemInfo = null,
-                    Side = BpStatus.Side.Left,
-                });
-            }
-            base.OnPropertyChanged(propertyName);
-        }
-
+        
         public new ComboBoxItemInfo SelectedItemInfo
         {
             get { return base.SelectedItemInfo; }
             set
             {
-                SetAndNotify(ref PSelectedItemInfo, value);
-                NotifyOfPropertyChange(propertyName: nameof(CanSelectSide));
+                if (SetAndNotify(ref PSelectedItemInfo, value))
+                {
+                    EventAggregator.Publish(new MapSelectedMessage()
+                    {
+                        ItemInfo = value,
+                    });
+                    NotifyOfPropertyChange(() => CanSelectSide);
+                }
+
             }
         }
 
         public void SelectSide(BpStatus.Side side)
         {
+            EventAggregator.Publish(new SideSelectedMessage()
+            {
+                ItemInfo = null,
+                Side = BpStatus.Side.Left,
+            });
             EventAggregator.Publish(new SideSelectedMessage()
             {
                 ItemInfo = SelectedItemInfo,
@@ -81,7 +80,5 @@ namespace HotsBpHelper.Pages
             get { return _buttonVisibility; }
             set { SetAndNotify(ref _buttonVisibility, value); }
         }
-
-
     }
 }
