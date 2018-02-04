@@ -454,7 +454,7 @@ namespace HotsBpHelper.Utils
 
         public static void CheckThread(int threadId)
         {
-            if (!App.Debug)
+            if (!App.Debug && LogUtil.NoLog)
                 return;
 
             Logger.Trace("Enter thread : {0}", threadId);
@@ -472,7 +472,7 @@ namespace HotsBpHelper.Utils
 
         public static void CleanThread(int threadId)
         {
-            if (!App.Debug)
+            if (!App.Debug && LogUtil.NoLog)
                 return;
 
             Logger.Trace("Exit thread: {0}", threadId);
