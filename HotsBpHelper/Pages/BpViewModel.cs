@@ -748,6 +748,7 @@ namespace HotsBpHelper.Pages
             }
             catch (Exception)
             {
+                Logger.Trace("OcrAsync failed first attempt on {0}", string.Join(",", stepToProcess));
                 try
                 {
                     foreach (var i in stepToProcess)
@@ -762,6 +763,7 @@ namespace HotsBpHelper.Pages
                 }
                 catch (Exception)
                 {
+                    Logger.Trace("OcrAsync failed 2nd attempt on {0}", string.Join(",", stepToProcess));
                     Execute.OnUIThread(() => { Reset(); });
                 }
             }
@@ -798,6 +800,7 @@ namespace HotsBpHelper.Pages
             {
                 Task.Run(() => OcrAsync(_listBpSteps[BpStatus.CurrentStep], _scanningCancellationToken.Token))
                     .ConfigureAwait(false);
+                return;
             }
 
             //if (BpStatus.CurrentStep == 0 || BpStatus.CurrentStep == 1)
@@ -815,6 +818,7 @@ namespace HotsBpHelper.Pages
             if ((BpStatus.CurrentStep == 0 || BpStatus.CurrentStep == 1) && !_isFirstAndSecondBanProcessing)
             {
                 Task.Run(ProcessFirstAndSecondBan).ConfigureAwait(false);
+                return;
             }
             if ((BpStatus.CurrentStep == 5 || BpStatus.CurrentStep == 6) && !_isThirdAndFourthBanProcessing)
             {
@@ -855,7 +859,7 @@ namespace HotsBpHelper.Pages
                 OcrAsyncChecker.CheckThread(OcrAsyncChecker.AwaitStagAsyncChecker);
                 bool warned = false;
                 int inBpFail = 0;
-                while (stageInfo.Step < stage && stage >= BpStatus.CurrentStep && !_scanningCancellationToken.IsCancellationRequested)
+                while (stageInfo.Step < stage && stage > BpStatus.CurrentStep && !_scanningCancellationToken.IsCancellationRequested)
                 {
                     await Task.Delay(500);
                     stageInfo = finder.GetStageInfo();
