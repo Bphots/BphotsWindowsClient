@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Drawing;
+using System.Web;
+using System.Web.Util;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using LobbyHeroParser;
@@ -78,7 +80,7 @@ namespace HotsBpHelper.Pages
             var regionId = ((int) game.Region).ToString();
             // 玩家BattleTags
             var battleTags = string.Join("|", game.Players
-                .Select(p => p.Tag + "#" + p.SelectedHero));
+                .Select(p => p.Tag + "#" + p.SelectedHero.Replace("'", "\\'")));
             Players = game.Players.Select(p => p.Tag).ToList();
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {

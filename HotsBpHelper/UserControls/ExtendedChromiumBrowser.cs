@@ -55,15 +55,12 @@ namespace HotsBpHelper.UserControls
 
             Chromium.WebBrowser.ChromiumWebBrowser.OnBeforeCfxInitialize += ChromiumWebBrowser_OnBeforeCfxInitialize;
             ChromiumWebBrowser.OnBeforeCommandLineProcessing += ChromiumWebBrowser_OnBeforeCommandLineProcessing;
-
-            try
-            {
-                ChromiumWebBrowser.Initialize();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            
+            ChromiumWebBrowser.Initialize();
+            
+            ChromiumWebBrowser.DefaultBrowserSettings.FileAccessFromFileUrls = CfxState.Enabled;
+            ChromiumWebBrowser.DefaultBrowserSettings.UniversalAccessFromFileUrls = CfxState.Enabled;
+                
             IsInitialized = true;
         }
 
