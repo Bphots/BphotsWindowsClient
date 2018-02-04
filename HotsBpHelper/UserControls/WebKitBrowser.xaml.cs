@@ -83,6 +83,9 @@ namespace HotsBpHelper.UserControls
             if (_isInitialized)
                 return;
 
+            if (App.Debug)
+                ShowDevTools();
+
             Execute.OnUIThread(() =>
             {
                 var dpiPoint = GetSystemDpi();
