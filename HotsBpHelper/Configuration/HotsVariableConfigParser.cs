@@ -1,18 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DotNetHelper;
 using HotsBpHelper.ConfigurationHelper;
 
 namespace HotsBpHelper.Configuration
 {
     public class HotsVariableConfigParser : ConfigureFileParser
     {
+        private const string WindowlessKey = @"displaymode";
+        private const string Locale = @"localeiddata";
+        private const string WindowlessValue = @"1";
+
+        private static readonly string HotsVariablePath =
+            Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"),
+                @"Documents\Heroes of the Storm\Variables.txt");
+
         public HotsVariableConfigParser() : base(HotsVariablePath)
-        {}
+        {
+        }
 
         public bool CheckIfWindowlessMax()
         {
@@ -21,10 +25,11 @@ namespace HotsBpHelper.Configuration
             return string.IsNullOrEmpty(windowstate) || windowstate == WindowlessValue;
         }
 
-        private static readonly string HotsVariablePath =
-            Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), @"Documents\Heroes of the Storm\Variables.txt");
+        public string CheckTextLocale()
+        {
+            var locale = GetConfigurationValue(Locale);
 
-        private const string WindowlessKey = @"displaymode";
-        private const string WindowlessValue = @"1";
+            return locale;
+        }
     }
 }

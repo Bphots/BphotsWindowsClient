@@ -123,6 +123,6 @@ namespace ImageProcessor.Ocr
         English,
         SimplifiedChinese,
         TraditionalChinese,
-        Korean
+        Unavailable
     }
 }

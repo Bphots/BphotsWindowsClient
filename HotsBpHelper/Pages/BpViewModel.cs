@@ -73,19 +73,16 @@ namespace HotsBpHelper.Pages
             _securityProvider = securityProvider;
             _eventAggregator.Subscribe(this);
             _scanningCancellationToken = new CancellationTokenSource();
-            if (OcrEngine.IsTessDataAvailable(App.OcrLanguage))
-            {
 
-                try
-                {
-                    OcrUtil = new OcrUtil();
-                    OcrUtil.Initialize();
-                    OcrAvailable = true;
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
+            try
+            {
+                OcrUtil = new OcrUtil();
+                OcrUtil.Initialize();
+                OcrAvailable = true;
+            }
+            catch (Exception)
+            {
+                // ignored
             }
 
             var unitPos = App.MyPosition.BpHelperPosition.ToUnitPoint();

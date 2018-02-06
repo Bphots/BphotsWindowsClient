@@ -240,7 +240,7 @@
   <data name="IncompatibleResolution" xml:space="preserve">
     <value>Automatic map&amp;character recognition has been disabled due to imcompatible screen resolution.</value>
   </data>
-  <data name="LanguageUnavailable" xml:space="preserve">
+  <data name="OcrUnavailable" xml:space="preserve">
     <value>Cannot enable automatic map&amp;character recognition. Please make sure the language pack and Microsift Visual C++ Redistributable x86 for Visual Studio 2015 has been installed.</value>
   </data>
   <data name="MatchDetectOffTitle" xml:space="preserve">
@@ -287,5 +287,8 @@
   </data>
   <data name="WindowlessWarning" xml:space="preserve">
     <value>BpHelper is only compatible with Windowless (Maximized) mode. Please modify your in-game graphic settings for the best experience.</value>
+  </data>
+  <data name="LanguageUnavailable" xml:space="preserve">
+    <value>The in-game language is not supported for OCR. Currently only English, Simplified Chinese, Traditional Chinese are supported. Please re-launching the tool after changing your language setting and reopening the game.</value>
   </data>
 </root>
