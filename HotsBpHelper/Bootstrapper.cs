@@ -63,6 +63,11 @@ namespace HotsBpHelper
                 OcrEngine.Debug = true;
             }
 
+            if (args.Any(arg => arg.ToLower() == "/devtool"))
+            {
+                App.DevTool = true;
+            }
+
             if (args.Any(arg => arg.ToLower() == "/debug"))
             {
                 LogUtil.NoLog = false;
