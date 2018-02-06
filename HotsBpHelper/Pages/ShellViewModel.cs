@@ -411,6 +411,7 @@ namespace HotsBpHelper.Pages
                     {
                         _mmrViewModel.Show();
                         _bpViewModel.Reset();
+                        _bpViewModel.OcrUtil.Dispose();
                     });
                 }
                 await Task.Delay(1000);
@@ -428,6 +429,9 @@ namespace HotsBpHelper.Pages
 
                 if (!File.Exists(Const.BattleLobbyPath) && OcrUtil.InGame)
                 {
+                    if (!_bpViewModel.OcrUtil.IsInitialized)
+                        _bpViewModel.OcrUtil.Initialize();
+                    
                     OcrUtil.InGame = false;
                 }
 

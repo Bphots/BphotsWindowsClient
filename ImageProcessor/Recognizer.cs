@@ -17,9 +17,7 @@ namespace ImageProcessor
         private readonly OcrEngine _engine;
 
         public static DirPath TempDirectoryPath;
-
-        private bool m_isDarkMode;
-
+        
         public string PickingText => _engine.PickingText;
 
 
@@ -54,10 +52,19 @@ namespace ImageProcessor
             using (var image = ImageProcessingHelper.GetCroppedMap(file))
                 image.Save(tempPath);
             
-            var pendingMatchResult = _engine.ProcessOcr(tempPath, OcrEngine.CandidateMaps);
+            OcrResult pendingMatchResult;
+
+            try
+            {
+                pendingMatchResult = _engine.ProcessOcr(tempPath, OcrEngine.CandidateMaps);
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
             if (!pendingMatchResult.Results.Any() || !pendingMatchResult.Values.First().Trustable)
             {
-                ResetFlags();
                 return;
             }
 
@@ -77,8 +84,6 @@ namespace ImageProcessor
                 file.DeleteIfExists();
 
             sb.Append(pendingMatchResult.Values.First().Value);
-
-            ResetFlags();
         }
 
         public void ProcessLoadingHero(FilePath file, StringBuilder sb)
@@ -90,7 +95,6 @@ namespace ImageProcessor
             var pendingMatchResult = _engine.ProcessOcr(tempPath, OcrEngine.CandidateHeroes);
             if (!pendingMatchResult.Results.Any() || !pendingMatchResult.Values.First().Trustable)
             {
-                ResetFlags();
                 return;
             }
 
@@ -110,8 +114,6 @@ namespace ImageProcessor
                 file.DeleteIfExists();
 
             sb.Append(pendingMatchResult.Values.First().Value);
-
-            ResetFlags();
         }
 
         private bool ProcessHero(FilePath file, float rotationAngle, StringBuilder sb, int offset)
@@ -126,11 +128,11 @@ namespace ImageProcessor
                 return false;
             }
 
-            m_isDarkMode = mode == 0;
-            var startThresholding = m_isDarkMode ? DarkModeThreshold : LightModeThreshold;
+            bool mIsDarkMode = mode == 0;
+            var startThresholding = mIsDarkMode ? DarkModeThreshold : LightModeThreshold;
 
             int sampleWidth;
-            var image = ImageProcessingHelper.GetCroppedImage(rotationAngle, file, m_isDarkMode, out sampleWidth);
+            var image = ImageProcessingHelper.GetCroppedImage(rotationAngle, file, mIsDarkMode, out sampleWidth);
             if (OcrEngine.Debug)
                 image.Save(TempDirectoryPath + "CroppedImage.bmp");
 
@@ -160,8 +162,17 @@ namespace ImageProcessor
                 if (segmentationCount < count && count - segmentationCount >= 2)
                     newCount = segmentationCount;
 
-                var result = _engine.ProcessOcr(newCount, tempPath,
-                        OcrEngine.CandidateHeroes);
+                OcrResult result;
+
+                try
+                {
+                    result = _engine.ProcessOcr(newCount, tempPath,
+                            OcrEngine.CandidateHeroes);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
 
                 // 100% match case
                 if (result.Values.Any(v => v.FullyTrustable))
@@ -234,15 +245,8 @@ namespace ImageProcessor
           
             if (!OcrEngine.Debug)
                 file.DeleteIfExists();
-
-            ResetFlags();
-
+            
             return maxValue == int.MaxValue;
-        }
-
-        private void ResetFlags()
-        {
-            m_isDarkMode = false;
         }
     }
 }

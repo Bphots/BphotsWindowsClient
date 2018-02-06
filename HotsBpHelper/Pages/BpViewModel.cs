@@ -79,6 +79,7 @@ namespace HotsBpHelper.Pages
                 try
                 {
                     OcrUtil = new OcrUtil();
+                    OcrUtil.Initialize();
                     OcrAvailable = true;
                 }
                 catch (Exception)
@@ -104,7 +105,7 @@ namespace HotsBpHelper.Pages
         {
             try
             {
-                OcrUtil = new OcrUtil();
+                OcrUtil.Initialize();
                 OcrAvailable = true;
             }
             catch (Exception)
@@ -112,7 +113,7 @@ namespace HotsBpHelper.Pages
                 // ignored
             }
         }
-
+        
         public int Left { get; set; }
 
         public int Top { get; set; }
@@ -743,7 +744,7 @@ namespace HotsBpHelper.Pages
 
             try
             {
-                if (stepToProcess[0] <= 6)
+                if (stepToProcess[0] <= 6 && OcrUtil.IsInitialized)
                     await OcrUtil.ScanLabelAsync(stepToProcess, this, OcrUtil.ScanSide.Left, cancellationToken).ConfigureAwait(false);
                 else
                     await OcrUtil.ScanLabelAsync(stepToProcess, this, OcrUtil.ScanSide.Right, cancellationToken).ConfigureAwait(false);
@@ -758,7 +759,7 @@ namespace HotsBpHelper.Pages
                         _processingThreads[i] = false;
                     }
 
-                    if (stepToProcess[0] <= 6)
+                    if (stepToProcess[0] <= 6 && OcrUtil.IsInitialized)
                         await OcrUtil.ScanLabelAsync(stepToProcess, this, OcrUtil.ScanSide.Left, cancellationToken).ConfigureAwait(false);
                     else
                         await OcrUtil.ScanLabelAsync(stepToProcess, this, OcrUtil.ScanSide.Right, cancellationToken).ConfigureAwait(false);

@@ -21,7 +21,7 @@ namespace HotsBpHelper.Utils
 {
     public class OcrUtil
     {
-        private readonly Recognizer _recognizer;
+        private Recognizer _recognizer;
         
         public static bool NotInFocus = false;
 
@@ -31,12 +31,20 @@ namespace HotsBpHelper.Utils
 
         public OcrUtil()
         {
-            _recognizer = new Recognizer(App.OcrLanguage, Path.Combine(App.AppPath, @"Images\Heroes\"));
         }
+
+        public bool IsInitialized { get; set; }
 
         public void Dispose()
         {
             _recognizer.Dispose();
+            IsInitialized = false;
+        }
+
+        public void Initialize()
+        {
+            _recognizer = new Recognizer(App.OcrLanguage, Path.Combine(App.AppPath, @"Images\Heroes\"));
+            IsInitialized = true;
         }
 
         public async Task LookForBpScreen(CancellationToken cancellationToken)
@@ -83,7 +91,7 @@ namespace HotsBpHelper.Utils
                 logUtil.Log("Started");
 
                 int attempts = 0;
-                while (!cancellationToken.IsCancellationRequested)
+                while (!cancellationToken.IsCancellationRequested && IsInitialized)
                 {
                     if (SuspendScanning)
                     {
