@@ -37,13 +37,17 @@ namespace HotsBpHelper.Utils
 
         public void Dispose()
         {
-            _recognizer.Dispose();
+            if (IsInitialized)
+                _recognizer.Dispose();
+
             IsInitialized = false;
         }
 
         public void Initialize()
         {
-            _recognizer = new Recognizer(App.OcrLanguage, Path.Combine(App.AppPath, @"Images\Heroes\"));
+            if (!IsInitialized)
+                _recognizer = new Recognizer(App.OcrLanguage, Path.Combine(App.AppPath, @"Images\Heroes\"));
+
             IsInitialized = true;
         }
 

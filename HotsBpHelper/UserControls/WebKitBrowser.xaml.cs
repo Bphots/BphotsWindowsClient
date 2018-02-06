@@ -83,7 +83,7 @@ namespace HotsBpHelper.UserControls
             if (_isInitialized)
                 return;
 
-            if (App.Debug)
+            if (App.DevTool)
                 ShowDevTools();
 
             Execute.OnUIThread(() =>

@@ -28,6 +28,8 @@ namespace HotsBpHelper
 
         public static OcrLanguage OcrLanguage;
 
+        public static bool DevTool { get; set; }
+
         private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             Pages.ErrorView _errorView;
