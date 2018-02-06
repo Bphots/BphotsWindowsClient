@@ -270,7 +270,7 @@
   <data name="OcrModeToolTipTitle" xml:space="preserve">
     <value>背鍋助手正在運行</value>
   </data>
-  <data name="LanguageUnavailable" xml:space="preserve">
+  <data name="OcrUnavailable" xml:space="preserve">
     <value>自動識別無法加載，請確保 chi_sim 語言包和微軟 Visual C++ Redistributable x86 for Visual Studio 2015 包已成功安裝。</value>
   </data>
   <data name="IncompatibleResolution" xml:space="preserve">
@@ -293,5 +293,8 @@
   </data>
   <data name="WindowlessWarning" xml:space="preserve">
     <value>背鍋助手需要在窗口模式(最大化)下運行，請修改您的圖形設定以獲得最佳運行體驗。</value>
+  </data>
+  <data name="LanguageUnavailable" xml:space="preserve">
+    <value>您的遊戲文本語言暫時不支持自動識別。目前僅有正體中文，簡體中文，英語支持自動識別。請調整語言重啟遊戲後，再打開背鍋助手。</value>
   </data>
 </root>

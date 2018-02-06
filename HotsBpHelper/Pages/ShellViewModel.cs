@@ -98,6 +98,16 @@ namespace HotsBpHelper.Pages
                 if (_bpViewModel.AutoShowHideHelper == value)
                     return;
 
+                if (value)
+                {
+                    var hotsConfig = new HotsVariableConfigParser();
+                    if (!hotsConfig.CheckIfWindowlessMax())
+                    {
+                        TopMostMessageBox.Show(L("WindowlessWarning"), @"Warning");
+                        return;
+                    }
+                }
+
                 _bpViewModel.AutoShowHideHelper = value;
                 if (SetAndNotify(ref _autoShowHideHelper, value))
                 {
@@ -123,6 +133,13 @@ namespace HotsBpHelper.Pages
 
                 if (value)
                 {
+                    var hotsConfig = new HotsVariableConfigParser();
+                    if (!hotsConfig.CheckIfWindowlessMax())
+                    {
+                        TopMostMessageBox.Show(L("WindowlessWarning"), @"Warning");
+                        return;
+                    }
+
                     if (App.AppSetting.Position.Height < Const.BestExpericenResolutionHeight && TopMostMessageBox.Show(L("ResolutionQuestion"), @"Warning",
                             MessageBoxButtons.YesNo) == DialogResult.No)
                             return;
@@ -165,6 +182,16 @@ namespace HotsBpHelper.Pages
             get { return _autoShowMMR; }
             set
             {
+                if (_autoShowMMR == value)
+                    return;
+
+                if (value)
+                {
+                    var hotsConfig = new HotsVariableConfigParser();
+                    if (!hotsConfig.CheckIfWindowlessMax())
+                        TopMostMessageBox.Show(L("WindowlessWarning"), @"Warning");
+                }
+
                 SetAndNotify(ref _autoShowMMR, value);
             }
         }
@@ -282,11 +309,16 @@ namespace HotsBpHelper.Pages
 
             RegisterHotKey();
             IsLoaded = true;
-            AutoShowHideHelper = true;
 
             CanOcr = true;
-            if (!_bpViewModel.OcrAvailable)
-                _toastService.ShowWarning(L("LanguageUnavailable"));
+
+            if (App.OcrLanguage == OcrLanguage.Unavailable)
+            {
+                TopMostMessageBox.Show(L("LanguageUnavailable"), @"Warning");
+                CanOcr = false;
+            }
+            else if (!_bpViewModel.OcrAvailable)
+                _toastService.ShowWarning(L("OcrUnavailable"));
 
             if (App.AppSetting.Position.Height < Const.IncompatibleResolutionHeight)
             {
@@ -294,16 +326,17 @@ namespace HotsBpHelper.Pages
                 _toastService.ShowWarning(L("IncompatibleResolution"));
             }
 
-            if (App.OcrLanguage == OcrLanguage.Korean)
-                CanOcr = false;
-
-
+            bool isWindowlessMax = true;
             var hotsConfig = new HotsVariableConfigParser();
             if (!hotsConfig.CheckIfWindowlessMax())
+            {
                 TopMostMessageBox.Show(L("WindowlessWarning"), @"Warning");
+                isWindowlessMax = false;
+            }
 
-            AutoDetect = CanOcr && _bpViewModel.OcrAvailable && App.AppSetting.Position.Height > Const.BestExpericenResolutionHeight;
-            AutoShowMmr = true; 
+            AutoDetect = CanOcr && _bpViewModel.OcrAvailable && App.AppSetting.Position.Height > Const.BestExpericenResolutionHeight && isWindowlessMax;
+            AutoShowHideHelper = isWindowlessMax;
+            AutoShowMmr = isWindowlessMax; 
 
             _bpViewModel.RemindDetectMode += BpViewModelOnRemindDetectMode;
             _bpViewModel.RemindBpStart += BpViewModelOnRemindGameStart;
@@ -320,8 +353,11 @@ namespace HotsBpHelper.Pages
 
         private void OnWebFileUpdateCompleted(object sender, EventArgs e)
         {
-            if (App.OcrLanguage == OcrLanguage.Korean)
+            if (App.OcrLanguage == OcrLanguage.Unavailable)
+            {
                 OnTessdataFileUpdateCompleted(this, EventArgs.Empty);
+                return;
+            }
 
             var tessdataWebUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
             tessdataWebUpdateVm.ShellViewModel = this;

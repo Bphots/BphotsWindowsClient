@@ -270,7 +270,7 @@
   <data name="OcrModeToolTipTitle" xml:space="preserve">
     <value>背锅助手正在运行</value>
   </data>
-  <data name="LanguageUnavailable" xml:space="preserve">
+  <data name="OcrUnavailable" xml:space="preserve">
     <value>自动识别无法加载，请确保 chi_sim 语言包和微软 Visual C++ Redistributable x86 for Visual Studio 2015 包已成功安装。</value>
   </data>
   <data name="IncompatibleResolution" xml:space="preserve">
@@ -293,5 +293,8 @@
   </data>
   <data name="ResolutionQuestion" xml:space="preserve">
     <value>背锅助手的自动识别功能目前仅完全支持1080以上分辨率，自动识别在您的分辨率下无法提供最佳体验，可能存在较多误识别现象，届时需要您手动修改选择。是否仍要开启自动识别？</value>
+  </data>
+  <data name="LanguageUnavailable" xml:space="preserve">
+    <value>您的游戏文本语言暂时不支持自动识别。目前仅有简体中文，繁体中文，英语支持自动识别。请调整语言重启游戏后，再打开背锅助手。</value>
   </data>
 </root>
