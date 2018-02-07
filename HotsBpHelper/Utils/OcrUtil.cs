@@ -375,7 +375,7 @@ namespace HotsBpHelper.Utils
                         }
 
 
-                        logUtil.Log("Checked " + ids[i]);
+                        logUtil.Log("Checked " + ids[i] + " (" + sb.ToString() + ")");
 
                         if (sb.ToString() == _recognizer.PickingText || string.IsNullOrEmpty(sb.ToString()))
                             continue;
@@ -385,6 +385,7 @@ namespace HotsBpHelper.Utils
 
                         if (SuspendScanning)
                         {
+                            logUtil.Log("SuspendScanning delay 1000 " + ids[i]);
                             await Task.Delay(1000).ConfigureAwait(false);
                             continue;
                         }
@@ -413,14 +414,18 @@ namespace HotsBpHelper.Utils
                             }
                         }
 
+                        logUtil.Log("Second checked " + ids[i] + " (" + sbConfirm.ToString() + ")");
+
                         if (SuspendScanning)
                         {
+                            logUtil.Log("SuspendScanning delay 1000 " + ids[i]);
                             await Task.Delay(1000).ConfigureAwait(false);
                             continue;
                         }
 
                         if (bpVm[ids[i]].Selected)
                         {
+                            logUtil.Log("Vm already selected delay 1000 " + ids[i]);
                             checkedDic[i] = true;
                             continue;
                         }
