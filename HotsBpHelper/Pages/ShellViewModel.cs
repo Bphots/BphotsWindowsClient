@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -430,33 +431,42 @@ namespace HotsBpHelper.Pages
         {
             var lobbyLastModified = DateTime.MinValue;
             var lobbyHeroes = _restApi.GetLobbyHeroList(App.Language).Where(h => !h.IsNew).Select(h => h.Name).ToList();
-            while (AutoShowMmr)
+            while (true)
             {
-                if (File.Exists(Const.BattleLobbyPath) &&
-                    File.GetLastWriteTime(Const.BattleLobbyPath) != lobbyLastModified)
+                if (AutoShowMmr)
                 {
-                    lobbyLastModified = File.GetLastWriteTime(Const.BattleLobbyPath);
-                    var lobbyProcessor = new LobbyFileProcessor(Const.BattleLobbyPath, lobbyHeroes);
-                    var game = lobbyProcessor.ParseLobbyInfo();
-                    _mmrViewModel.FillMMR(game);
-                    Execute.OnUIThread(() =>
+                    if (File.Exists(Const.BattleLobbyPath) && File.GetLastWriteTime(Const.BattleLobbyPath) != lobbyLastModified)
                     {
-                        _mmrViewModel.Show();
-                        _bpViewModel.Reset();
-                        _bpViewModel.OcrUtil.Dispose();
-                    });
+                        lobbyLastModified = File.GetLastWriteTime(Const.BattleLobbyPath);
+                        var lobbyProcessor = new LobbyFileProcessor(Const.BattleLobbyPath, lobbyHeroes);
+                        var game = lobbyProcessor.ParseLobbyInfo();
+                        _mmrViewModel.FillMMR(game);
+                        Execute.OnUIThread(() => { _mmrViewModel.Show(); });
+                    }
                 }
+                
                 await Task.Delay(1000);
             }
         }
-
+        
         private async Task MonitorInGameAsync()
         {
+            var lobbyLastModified = DateTime.MinValue;
             while (true)
             {
-                if (File.Exists(Const.BattleLobbyPath) && !OcrUtil.InGame)
+                if (File.Exists(Const.BattleLobbyPath) && File.GetLastWriteTime(Const.BattleLobbyPath) != lobbyLastModified)
                 {
-                    OcrUtil.InGame = true;
+                    lobbyLastModified = File.GetLastWriteTime(Const.BattleLobbyPath);
+                    Execute.OnUIThread(() => { _bpViewModel.Reset(); });
+                }
+
+                if (File.Exists(Const.BattleLobbyPath))
+                {
+                    if (_bpViewModel.ProcessingThreads.All(t => !t.Value) && _bpViewModel.OcrUtil.IsInitialized)
+                       _bpViewModel.OcrUtil?.Dispose();
+                    
+                    if (!OcrUtil.InGame)
+                        OcrUtil.InGame = true;
                 }
 
                 if (!File.Exists(Const.BattleLobbyPath) && OcrUtil.InGame)

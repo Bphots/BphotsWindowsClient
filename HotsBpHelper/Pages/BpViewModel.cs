@@ -54,7 +54,7 @@ namespace HotsBpHelper.Pages
 
         private MapSelectorViewModel _mapSelectorViewModel;
 
-        private ConcurrentDictionary<int, bool> _processingThreads;
+        public ConcurrentDictionary<int, bool> ProcessingThreads { get; set; } = new ConcurrentDictionary<int, bool>();
 
         private CancellationTokenSource _scanningCancellationToken;
         
@@ -203,7 +203,6 @@ namespace HotsBpHelper.Pages
                 }
                 else
                 {
-                    _processingThreads.Clear();
                     _scanningCancellationToken?.Cancel();
                 }
 
@@ -353,7 +352,6 @@ namespace HotsBpHelper.Pages
                 return;
             }
             BpStarted = true;
-            _processingThreads = new ConcurrentDictionary<int, bool>();
             // 初始化BP过程
             BpStatus = new BpStatus
             {
@@ -727,14 +725,14 @@ namespace HotsBpHelper.Pages
             var stepToProcess = new List<int>();
             foreach (var i in steps)
             {
-                if (_processingThreads.ContainsKey(i) && _processingThreads[i])
+                if (ProcessingThreads.ContainsKey(i) && ProcessingThreads[i])
                     continue;
 
                 if (HeroSelectorViewModels.Any(v => v.Id == i && v.Selected))
                     continue;
 
                 stepToProcess.Add(i);
-                _processingThreads[i] = true;
+                ProcessingThreads[i] = true;
             }
             if (!stepToProcess.Any())
                 return;
@@ -753,7 +751,7 @@ namespace HotsBpHelper.Pages
                 {
                     foreach (var i in stepToProcess)
                     {
-                        _processingThreads[i] = false;
+                        ProcessingThreads[i] = false;
                     }
 
                     if (stepToProcess[0] <= 6 && OcrUtil.IsInitialized)
@@ -771,7 +769,7 @@ namespace HotsBpHelper.Pages
             {
                 foreach (var i in stepToProcess)
                 {
-                    _processingThreads[i] = false;
+                    ProcessingThreads[i] = false;
                 }
             }
         }
@@ -862,6 +860,9 @@ namespace HotsBpHelper.Pages
                 while (stageInfo.Step < stage && stage > BpStatus.CurrentStep && !_scanningCancellationToken.IsCancellationRequested)
                 {
                     await Task.Delay(500);
+                    if (OcrUtil.SuspendScanning)
+                        continue;
+
                     stageInfo = finder.GetStageInfo();
 
                     if (stageInfo.Step != -1 || warned)
