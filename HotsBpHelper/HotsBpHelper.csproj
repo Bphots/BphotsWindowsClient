@@ -110,8 +110,8 @@
       <HintPath>..\packages\Its.Configuration.1.0.6\lib\net40\Its.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="LobbyHeroParser">
-      <HintPath>.\LobbyHeroParser.dll</HintPath>
+    <Reference Include="LobbyFileParser">
+      <HintPath>.\LobbyFileParser.dll</HintPath>
     </Reference>
     <Reference Include="NAppUpdate.Framework, Version=0.5.1.0, Culture=neutral, PublicKeyToken=d1f1d1f19f9e5a56, processorArchitecture=MSIL">
       <HintPath>..\packages\NAppUpdate.Framework.0.5.1.0\lib\net40\NAppUpdate.Framework.dll</HintPath>

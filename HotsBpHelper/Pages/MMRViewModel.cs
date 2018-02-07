@@ -8,7 +8,7 @@ using System.Web;
 using System.Web.Util;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
-using LobbyHeroParser;
+using LobbyFileParser;
 using Stylet;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
