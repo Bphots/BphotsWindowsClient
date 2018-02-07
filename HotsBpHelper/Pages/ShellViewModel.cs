@@ -20,7 +20,7 @@ using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using HotsBpHelper.WPF;
 using ImageProcessor.Ocr;
-using LobbyHeroParser;
+using LobbyFileParser;
 using NAppUpdate.Framework;
 using NAppUpdate.Framework.Sources;
 using NAppUpdate.Framework.Tasks;
