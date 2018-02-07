@@ -131,32 +131,32 @@ namespace HotsBpHelper
                             break;
                     }
                 }
+            }
 
-                switch (LocalizeDictionary.Instance.Culture.Name)
-                {
-                    case "zh-CN":
-                        App.Language = "zh-CN";
-                        break;
-                    case "ko-KR":
-                        App.Language = "ko-KR";
-                        break;
-                    case "zh-TW":
-                        App.Language = "zh-TW";
-                        break;
-                    case "zh-CHS":
-                        App.Language = "zh-CN";
-                        LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN");
-                        break;
-                    case "zh-HK":
-                    case "zh-CHT":
-                        App.Language = "zh-TW";
-                        LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-TW");
-                        break;
-                    default:
-                        App.Language = "en-US";
-                        LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("en-US");
-                        break;
-                }
+            switch (LocalizeDictionary.Instance.Culture.Name)
+            {
+                case "zh-CN":
+                    App.Language = "zh-CN";
+                    break;
+                case "ko-KR":
+                    App.Language = "ko-KR";
+                    break;
+                case "zh-TW":
+                    App.Language = "zh-TW";
+                    break;
+                case "zh-CHS":
+                    App.Language = "zh-CN";
+                    LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN");
+                    break;
+                case "zh-HK":
+                case "zh-CHT":
+                    App.Language = "zh-TW";
+                    LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-TW");
+                    break;
+                default:
+                    App.Language = "en-US";
+                    LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("en-US");
+                    break;
             }
 
             if (App.OcrLanguage == OcrLanguage.Unavailable)
