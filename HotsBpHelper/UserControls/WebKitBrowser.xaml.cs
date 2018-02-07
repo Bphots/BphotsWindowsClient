@@ -91,7 +91,12 @@ namespace HotsBpHelper.UserControls
                 var dpiPoint = GetSystemDpi();
                 double zoom = 0 - (dpiPoint.X - 96) / 24;
                 if (Math.Abs(zoom) > 0.01)
-                    Browser.BrowserHost.ZoomLevel = zoom * 0.94;
+                {
+                    if (Math.Abs(zoom) > 3.99)
+                        Browser.BrowserHost.ZoomLevel = zoom * 0.94;
+                    else
+                        Browser.BrowserHost.ZoomLevel = zoom;
+                }
             });
 
             Execute.OnUIThread(() =>
