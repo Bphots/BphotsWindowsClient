@@ -197,8 +197,7 @@ namespace ImageProcessor
                 // unique 60%+ case
                 if (matchResultsWithMaxScore.Count == 1 && matchResultsWithMaxScore[0].Trustable)
                 {
-                    scoreDictionary[matchResultsWithMaxScore[0].Value] = int.MaxValue / 2;
-                    break;
+                    matchResultsWithMaxScore[0].Score *= 2;
                 }
 
                 // normal case
