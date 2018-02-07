@@ -104,6 +104,7 @@ namespace HotsBpHelper.Pages
                     if (!hotsConfig.CheckIfWindowlessMax())
                     {
                         TopMostMessageBox.Show(L("WindowlessWarning"), @"Warning");
+                        AutoDetect = false;
                         return;
                     }
                 }
@@ -137,6 +138,7 @@ namespace HotsBpHelper.Pages
                     if (!hotsConfig.CheckIfWindowlessMax())
                     {
                         TopMostMessageBox.Show(L("WindowlessWarning"), @"Warning");
+                        AutoShowHideHelper = false;
                         return;
                     }
 
@@ -184,14 +186,7 @@ namespace HotsBpHelper.Pages
             {
                 if (_autoShowMMR == value)
                     return;
-
-                if (value)
-                {
-                    var hotsConfig = new HotsVariableConfigParser();
-                    if (!hotsConfig.CheckIfWindowlessMax())
-                        TopMostMessageBox.Show(L("WindowlessWarning"), @"Warning");
-                }
-
+                
                 SetAndNotify(ref _autoShowMMR, value);
             }
         }
