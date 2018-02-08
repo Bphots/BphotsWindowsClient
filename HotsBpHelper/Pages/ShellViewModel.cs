@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -28,6 +29,7 @@ using Stylet;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.Forms.MessageBox;
 using Point = System.Drawing.Point;
+using Size = System.Drawing.Size;
 
 namespace HotsBpHelper.Pages
 {
@@ -769,7 +771,7 @@ namespace HotsBpHelper.Pages
         /// </summary>
         private Position CaculatePosition(int width, int height)
         {
-            var bpHelperSize = App.AppSetting.DefaultBpHelperSize;
+            var bpHelperSize = new Size(425, 150);
             var dpiPoint = ScreenUtil.GetSystemDpi();
             double ratio = (double) dpiPoint.X / 96;
             if (App.Debug)

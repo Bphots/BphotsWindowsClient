@@ -73,7 +73,7 @@ namespace HotsBpHelper.Pages
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
                 ScriptName = "setAutoCloseSeconds",
-                Args = new[] {App.AppSetting.MMRAutoCloseSeconds.ToString()}
+                Args = new[] { "30" }
             }, "MMRChanel");
 
             // 取得地区ID

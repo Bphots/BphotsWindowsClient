@@ -78,7 +78,7 @@ namespace HotsBpHelper.UserControls
             e.Settings.LogSeverity = CfxLogSeverity.Disable;
             e.Settings.WindowlessRenderingEnabled = false;
             e.Settings.MultiThreadedMessageLoop = true;
-            CfxRuntime.EnableHighDpiSupport();
+            //CfxRuntime.EnableHighDpiSupport();
         }
     }
 }
