@@ -26,7 +26,7 @@ namespace HotsBpHelper.Pages
         {
             _eventAggregator = eventAggregator;
 
-            var location = new Point(App.AppSetting.Position.Width / 2 - 300, App.AppSetting.Position.Height / 2 - 135).ToUnitPoint();
+            var location = new Point(App.AppSetting.Position.Width / 2 - App.AppSetting.Position.MmrWidth / 2, App.AppSetting.Position.Height / 2 - App.AppSetting.Position.MmrHeight / 2).ToUnitPoint();
             Left = location.X;
             Top = location.Y;
             
@@ -98,7 +98,7 @@ namespace HotsBpHelper.Pages
 
         public void Show()
         {
-            var size = new Size(600, 270).ToUnitSize();
+            var size = new Size(App.AppSetting.Position.MmrWidth, App.AppSetting.Position.MmrHeight).ToUnitSize();
             Width = size.Width;
             Height = size.Height;
             Visibility = Visibility.Visible;
