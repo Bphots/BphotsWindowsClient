@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using HotsBpHelper.ConfigurationHelper;
 
 namespace HotsBpHelper.Configuration
 {
