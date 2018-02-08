@@ -170,6 +170,27 @@ namespace HotsBpHelper.Utils
     }
     public static class ScreenUtil
     {
+
+        #region Get System DPI
+        
+        /// <summary>Determines the current screen resolution in DPI.</summary>
+        /// <returns>Point.X is the X DPI, Point.Y is the Y DPI.</returns>
+        public static Hardcodet.Wpf.TaskbarNotification.Interop.Point GetSystemDpi()
+        {
+            Hardcodet.Wpf.TaskbarNotification.Interop.Point result = new Hardcodet.Wpf.TaskbarNotification.Interop.Point();
+
+            IntPtr hDC = GetDC(IntPtr.Zero);
+
+            result.X = GetDeviceCaps(hDC, (int)DeviceCap.LOGPIXELSX);
+            result.Y = GetDeviceCaps(hDC, (int)DeviceCap.LOGPIXELSY);
+
+            ReleaseDC(IntPtr.Zero, hDC);
+
+            return result;
+        }
+        
+        #endregion
+
         [DllImport("gdi32.dll")]
         public static extern int GetDeviceCaps(IntPtr hDc, int nIndex);
 

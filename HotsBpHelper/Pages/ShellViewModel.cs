@@ -770,6 +770,16 @@ namespace HotsBpHelper.Pages
         private Position CaculatePosition(int width, int height)
         {
             var bpHelperSize = App.AppSetting.DefaultBpHelperSize;
+            var dpiPoint = ScreenUtil.GetSystemDpi();
+            double ratio = (double) dpiPoint.X / 96;
+            if (App.Debug)
+                File.WriteAllText(@".\DPI.txt", dpiPoint.X + @"," + dpiPoint.Y);
+
+            bpHelperSize.Height = (int)(bpHelperSize.Height * ratio);
+            bpHelperSize.Width = (int)(bpHelperSize.Width * ratio);
+            var bpHelperPosition = new Point(
+                (int)(0.31 * height), 0.852 * height + bpHelperSize.Height > height ? height - bpHelperSize.Height - (int)(0.01 * height) : (int)(0.852 * height));
+            
             var heroWidth = (int) (0.08125*height);
             var heroHeight = (int) (0.0632*height);
             var position = new Position
@@ -777,8 +787,7 @@ namespace HotsBpHelper.Pages
                 Width = width,
                 Height = height,
                 BpHelperSize = bpHelperSize,
-                BpHelperPosition = new Point((int) (0.31*height),
-                    0.852*height + bpHelperSize.Height > height ? height - bpHelperSize.Height : (int) (0.852*height)),
+                BpHelperPosition = bpHelperPosition,
                 MapSelectorPosition = new Point((int) (0.5*width), (int) (0.146*height)),
                 HeroWidth = heroWidth,
                 HeroHeight = heroHeight,
@@ -840,8 +849,10 @@ namespace HotsBpHelper.Pages
                     Width = RoundUp(0.1694444444444444 * height),
                     Height = RoundUp(0.0243055555555556 * height),
                     Dy = RoundUp(0.1229166666666667 * height)
-                }
-            };
+                },
+                MmrWidth = (int)(600 * ratio),
+                MmrHeight = (int)(270 * ratio)
+        };
             
             return position;
         }

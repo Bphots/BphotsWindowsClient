@@ -92,6 +92,10 @@ namespace HotsBpHelper.Settings
         public OverlapPoints OverlapPoints { get; set; }
 
         public LoaddingPoints LoadingPoints { get; set; }
+
+        public int MmrWidth;
+
+        public int MmrHeight;
     }
 
     public class LoaddingPoints

@@ -17,6 +17,10 @@ using Chromium.Event;
 using Chromium.Remote.Event;
 using Chromium.WebBrowser;
 using Chromium.WebBrowser.Event;
+
+using HotsBpHelper.Configuration;
+using HotsBpHelper.Settings;
+
 using Stylet;
 using Orientation = System.Windows.Forms.Orientation;
 using Point = Hardcodet.Wpf.TaskbarNotification.Interop.Point;
@@ -85,20 +89,7 @@ namespace HotsBpHelper.UserControls
 
             if (App.DevTool)
                 ShowDevTools();
-
-            Execute.OnUIThread(() =>
-            {
-                var dpiPoint = GetSystemDpi();
-                double zoom = 0 - (dpiPoint.X - 96) / 24;
-                if (Math.Abs(zoom) > 0.01)
-                {
-                    if (Math.Abs(zoom) > 3.99)
-                        Browser.BrowserHost.ZoomLevel = zoom * 0.94;
-                    else
-                        Browser.BrowserHost.ZoomLevel = zoom;
-                }
-            });
-
+            
             Execute.OnUIThread(() =>
             {
                 Browser.LoadUrl(PendingSource);
@@ -106,38 +97,6 @@ namespace HotsBpHelper.UserControls
             _isInitialized = true;
         }
 
-        #region Get Font DPI
-
-        private static readonly int LOGPIXELSX = 88;    // Used for GetDeviceCaps().
-        private static readonly int LOGPIXELSY = 90;    // Used for GetDeviceCaps().
-
-        /// <summary>Determines the current screen resolution in DPI.</summary>
-        /// <returns>Point.X is the X DPI, Point.Y is the Y DPI.</returns>
-        public static Point GetSystemDpi()
-        {
-            Point result = new Point();
-
-            IntPtr hDC = GetDC(IntPtr.Zero);
-
-            result.X = GetDeviceCaps(hDC, LOGPIXELSX);
-            result.Y = GetDeviceCaps(hDC, LOGPIXELSY);
-
-            ReleaseDC(IntPtr.Zero, hDC);
-
-            return result;
-        }
-        
-
-        [DllImport("gdi32.dll")]
-        private static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetDC(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        private static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
-
-        #endregion
 
         private void ShowDevTools()
         {
