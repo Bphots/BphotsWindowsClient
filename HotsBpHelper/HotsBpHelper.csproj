@@ -341,9 +341,6 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include=".config\AppSetting.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="app.manifest" />
     <None Include="cef\Release\icudtl.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
