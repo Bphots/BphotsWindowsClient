@@ -1,9 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using HotsBpHelper.Api;
+using HotsBpHelper.Api.Model;
+using HotsBpHelper.Api.Security;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
 
@@ -11,11 +18,14 @@ namespace HotsBpHelper.Uploader
 {
     public class Uploader
     {
+        private readonly ISecurityProvider _securityProvider;
+        private readonly IRestApi _restApi;
+
         private static Logger _log = LogManager.GetCurrentClassLogger();
 //#if DEBUG
 //        const string ApiEndpoint = "http://hotsapi.local/api/v1";
 //#else
-        const string ApiEndpoint = "http://hotsapi.net/api/v1";
+        const string ApiEndpoint = "http://week.bphots.com:8888/replay/";
 //#endif
 
         public bool UploadToHotslogs { get; set; }
@@ -23,9 +33,10 @@ namespace HotsBpHelper.Uploader
         /// <summary>
         /// New instance of replay uploader
         /// </summary>
-        public Uploader()
+        public Uploader(ISecurityProvider securityProvider, IRestApi restApi)
         {
-
+            _securityProvider = securityProvider;
+            _restApi = restApi;
         }
 
         /// <summary>
@@ -34,13 +45,7 @@ namespace HotsBpHelper.Uploader
         /// <param name="file"></param>
         public async Task Upload(ReplayFile file)
         {
-            file.UploadStatus = UploadStatus.InProgress;
-            if (file.Fingerprint != null && await CheckDuplicate(file.Fingerprint)) {
-                _log.Debug($"File {file} marked as duplicate");
-                file.UploadStatus = UploadStatus.Duplicate;
-            } else {
                 file.UploadStatus = await Upload(file.Filename);
-            }
         }
 
         /// <summary>
@@ -50,10 +55,25 @@ namespace HotsBpHelper.Uploader
         /// <returns>Upload result</returns>
         public async Task<UploadStatus> Upload(string file)
         {
-            try {
+            try
+            {
+                var parameters = new List<Tuple<string, string>>();
+                var sp = _securityProvider.CaculateSecurityParameter(parameters);
+
+                parameters.Add(Tuple.Create("timestamp", sp.Timestamp));
+                parameters.Add(Tuple.Create("client_patch", sp.Patch));
+
+                string urlParam = string.Join("&", parameters.Select(tuple => $"{tuple.Item1}={tuple.Item2}"));
+                /*调试服务器回传信息用
+                string u = "https://www.bphots.com/bp_helper/" + method + "?" + urlParam + "&nonce=" + sp.Nonce + "&sign=" + sp.Sign;
+                if (method== "get/inform")
+                    System.Diagnostics.Process.Start(u);
+                System.Threading.Thread.Sleep(1000);
+                */
+
                 string response;
                 using (var client = new WebClient()) {
-                    var bytes = await client.UploadFileTaskAsync($"{ApiEndpoint}/upload?uploadToHotslogs={UploadToHotslogs}", file);
+                    var bytes = await client.UploadFileTaskAsync($"{ApiEndpoint}upload?{urlParam}&nonce={sp.Nonce}&sign={sp.Sign}", file);
                     response = Encoding.UTF8.GetString(bytes);
                 }
 
@@ -92,7 +112,7 @@ namespace HotsBpHelper.Uploader
             try {
                 string response;
                 using (var client = new WebClient()) {
-                    response = await client.DownloadStringTaskAsync($"{ApiEndpoint}/replays/fingerprints/v3/{fingerprint}?uploadToHotslogs={UploadToHotslogs}");
+                    response = await client.DownloadStringTaskAsync($"{ApiEndpoint}replays/fingerprints/v3/{fingerprint}?uploadToHotslogs={UploadToHotslogs}");
                 }
                 JObject json = JObject.Parse(response);
                 return false; // TODO (bool)json.exists;
@@ -109,34 +129,62 @@ namespace HotsBpHelper.Uploader
         /// <summary>
         /// Mass check replay fingerprints against database to detect duplicates
         /// </summary>
-        /// <param name="fingerprints"></param>
-        public async Task<string[]> CheckDuplicate(IEnumerable<string> fingerprints)
+        public async Task<FingerPrintStatusCollection> CheckDuplicate(IEnumerable<ReplayIdentity> replayIdentities)
         {
             try {
-                string response;
-                using (var client = new WebClient()) {
-                    response = await client.UploadStringTaskAsync($"{ApiEndpoint}/replays/fingerprints?uploadToHotslogs={UploadToHotslogs}", String.Join("\n", fingerprints));
-                }
-                dynamic json = JObject.Parse(response);
-                // TODO
-                return (json as JArray).Select(x => x.ToString()).ToArray();
+                var response = await _restApi.CheckDuplicatesAsync(replayIdentities);
+                return response;
             }
             catch (WebException ex) {
                 if (await CheckApiThrottling(ex.Response)) {
-                    return await CheckDuplicate(fingerprints);
+                    return await CheckDuplicate(replayIdentities);
                 }
                 _log.Warn(ex, $"Error checking fingerprint array");
-                return new string[0];
+                return null;
             }
         }
-
+        public static string CalculateMD5(string filename)
+        {
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = File.OpenRead(filename))
+                {
+                    var hash = md5.ComputeHash(stream);
+                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+                }
+            }
+        }
         /// <summary>
         /// Mass check replay fingerprints against database to detect duplicates
         /// </summary>
-        public async Task CheckDuplicate(IEnumerable<ReplayFile> replays)
+        public async Task CheckDuplicate(IList<ReplayFile> replays)
         {
-            var exists = new HashSet<string>(await CheckDuplicate(replays.Select(x => x.Fingerprint)));
-            replays.Where(x => exists.Contains(x.Fingerprint)).Map(x => x.UploadStatus = UploadStatus.Duplicate);
+            var fileIds = new List<ReplayIdentity>();
+            foreach (var file in replays)
+            {
+                fileIds.Add(new ReplayIdentity()
+                {
+                    FingerPrint = file.Fingerprint,
+                    Md5 = CalculateMD5(file.Filename),
+                    Size = new FileInfo(file.Filename).Length
+                });
+            }
+
+            var checkStatus = await CheckDuplicate(fileIds);
+            foreach (var fingerPrintInfo in checkStatus.Status)
+            {
+                var file = replays.FirstOrDefault(f => f.Fingerprint == fingerPrintInfo.FingerPrint);
+                if (file == null)
+                    continue;
+
+                if (fingerPrintInfo.Access == FingerPrintStatus.Reserved)
+                    file.UploadStatus = UploadStatus.Reserved;
+
+                if (fingerPrintInfo.Access == FingerPrintStatus.Duplicated)
+                    file.UploadStatus = UploadStatus.Duplicate;
+
+            }
+          //  replays.Where(x => exists.Contains(x.Fingerprint)).Map(x => x.UploadStatus = UploadStatus.Duplicate);
         }
 
         /// <summary>
@@ -144,9 +192,16 @@ namespace HotsBpHelper.Uploader
         /// </summary>
         public async Task<int> GetMinimumBuild()
         {
+            var parameters = new List<Tuple<string, string>>();
+            var sp = _securityProvider.CaculateSecurityParameter(parameters);
+
+            parameters.Add(Tuple.Create("timestamp", sp.Timestamp));
+            parameters.Add(Tuple.Create("client_patch", sp.Patch));
+
+            string urlParam = string.Join("&", parameters.Select(tuple => $"{tuple.Item1}={tuple.Item2}"));
             try {
                 using (var client = new WebClient()) {
-                    var response = await client.DownloadStringTaskAsync($"{ApiEndpoint}/replays/min-build");
+                    var response = await client.DownloadStringTaskAsync($"{ApiEndpoint}min-build?{urlParam}&nonce={sp.Nonce}&sign={sp.Sign}");
                     int build;
                     if (!int.TryParse(response, out build)) {
                         _log.Warn($"Error parsing minimum build: {response}");

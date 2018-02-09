@@ -3,9 +3,24 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Xml.Serialization;
+using HotsBpHelper.Api.Model;
+using Newtonsoft.Json;
 
 namespace HotsBpHelper.Uploader
 {
+    public class ReplayIdentity
+    {
+        [JsonProperty("size")]
+        public long Size { get; set; }
+
+        [JsonProperty("md5")]
+        public string Md5 { get; set; }
+
+        [JsonProperty("fingerprint")]
+        public string FingerPrint { get; set; }
+    }
+
+
     [Serializable]
     public class ReplayFile : INotifyPropertyChanged
     {
