@@ -107,6 +107,9 @@
     <Reference Include="HashLib, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\HashLib.2.0.1\lib\net40\HashLib.dll</HintPath>
     </Reference>
+    <Reference Include="Heroes.ReplayParser">
+      <HintPath>..\..\HotsStats-master\Heroes.ReplayParser\bin\x86\Debug\Heroes.ReplayParser.dll</HintPath>
+    </Reference>
     <Reference Include="Its.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Its.Configuration.1.0.6\lib\net40\Its.Configuration.dll</HintPath>
       <Private>True</Private>
@@ -118,8 +121,8 @@
       <HintPath>..\packages\NAppUpdate.Framework.0.5.1.0\lib\net40\NAppUpdate.Framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
@@ -224,6 +227,18 @@
     <Compile Include="Pages\ViewModelBase.cs" />
     <Compile Include="Services\ToastService.cs" />
     <Compile Include="Settings\AppSetting.cs" />
+    <Compile Include="Uploader\Analyzer.cs" />
+    <Compile Include="Uploader\DeleteFiles.cs" />
+    <Compile Include="Uploader\EventArgs.cs" />
+    <Compile Include="Uploader\Extensions.cs" />
+    <Compile Include="Uploader\IReplayStorage.cs" />
+    <Compile Include="Uploader\Manager.cs" />
+    <Compile Include="Uploader\Monitor.cs" />
+    <Compile Include="Uploader\ObservableCollectionEx.cs" />
+    <Compile Include="Uploader\ReplayFile.cs" />
+    <Compile Include="Uploader\ReplayStorage.cs" />
+    <Compile Include="Uploader\Uploader.cs" />
+    <Compile Include="Uploader\UploadStatus.cs" />
     <Compile Include="UserControls\ExtendedChromiumBrowser.cs" />
     <Compile Include="UserControls\ScriptingHelper.cs" />
     <Compile Include="UserControls\TabSwitcherFreeWindow.cs" />
