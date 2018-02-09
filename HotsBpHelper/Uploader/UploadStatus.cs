@@ -12,5 +12,6 @@
         PtrRegion,
         Incomplete,
         TooOld,
+        Reserved
     }
 }

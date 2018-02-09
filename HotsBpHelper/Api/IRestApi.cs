@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using HotsBpHelper.Api.Model;
+using HotsBpHelper.Uploader;
 
 namespace HotsBpHelper.Api
 {
@@ -28,5 +29,7 @@ namespace HotsBpHelper.Api
         List<BroadcastInfo> GetBroadcastInfo(string mode, string lang);
 
         Task<double> GetTimestamp();
+
+        Task<FingerPrintStatusCollection> CheckDuplicatesAsync(IEnumerable<ReplayIdentity> replayIdentities);
     }
 }

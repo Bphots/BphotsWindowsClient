@@ -354,7 +354,7 @@ namespace HotsBpHelper.Pages
 
         private void Upload()
         {
-            var manager = new Manager(new ReplayStorage(@"D:\qqytqqyt\Documents\HeroesBpProject\UploadTest\replays.xml"));
+            var manager = new Manager(new ReplayStorage(@"D:\qqytqqyt\Documents\HeroesBpProject\UploadTest\replays.xml"), _securityProvider, _restApi);
             manager.Start();
         }
 

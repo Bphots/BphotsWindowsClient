@@ -5,8 +5,12 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Heroes.ReplayParser;
+using HotsBpHelper.Api;
+using HotsBpHelper.Api.Security;
 using NLog;
 
 namespace HotsBpHelper.Uploader
@@ -18,6 +22,9 @@ namespace HotsBpHelper.Uploader
         /// </summary>
         public const int MaxThreads = 4;
 
+        private readonly ISecurityProvider _securityProvider;
+
+        private readonly IRestApi _restApi;
         /// <summary>
         /// Replay list
         /// </summary>
@@ -75,9 +82,11 @@ namespace HotsBpHelper.Uploader
         /// </summary>
         public DeleteFiles DeleteAfterUpload { get; set; }
 
-        public Manager(IReplayStorage storage)
+        public Manager(IReplayStorage storage, ISecurityProvider securityProvider, IRestApi restApi)
         {
             this._storage = storage;
+            _restApi = restApi;
+            _securityProvider = securityProvider;
             Files.ItemPropertyChanged += (_, __) => { RefreshStatusAndAggregates(); };
             Files.CollectionChanged += (_, __) => { RefreshStatusAndAggregates(); };
         }
@@ -92,7 +101,7 @@ namespace HotsBpHelper.Uploader
             }
             _initialized = true;
 
-            _uploader = new HotsBpHelper.Uploader.Uploader();
+            _uploader = new HotsBpHelper.Uploader.Uploader(_securityProvider, _restApi);
             _analyzer = new Analyzer();
             _monitor = new Monitor();
 
@@ -114,26 +123,45 @@ namespace HotsBpHelper.Uploader
             //    Task.Run(UploadLoop).Forget();
             //}
         }
-
+     
         private async Task UploadLoop()
         {
             while (true) {
                 try
                 {
-                    ReplayFile file = processingQueue[0];
-                    processingQueue.RemoveAt(0);
+                    List<ReplayFile> files = new List<ReplayFile>();
 
-                    file.UploadStatus = UploadStatus.InProgress;
+                    for (int i = 0; i < 10 && processingQueue.Any();)
+                    {
+                        ReplayFile file = processingQueue[0];
 
-                    // test if replay is eligible for upload (not AI, PTR, Custom, etc)
-                    var replay = _analyzer.Analyze(file);
-                    if (file.UploadStatus == UploadStatus.InProgress) {
-                        // if it is, upload it
-                        await _uploader.Upload(file);
+                        file.UploadStatus = UploadStatus.InProgress;
+
+                        _analyzer.Analyze(file);
+                        if (file.UploadStatus == UploadStatus.InProgress)
+                        {
+                            files.Add(file);
+                            ++i;
+                        }
+                        processingQueue.RemoveAt(0);
                     }
-                    SaveReplayList();
-                    if (ShouldDelete(file, replay)) {
-                        DeleteReplay(file);
+                    
+                    await _uploader.CheckDuplicate(files);
+                    
+                    foreach (var file in files)
+                    {
+                        var replay = _analyzer.Analyze(file);
+                        // test if replay is eligible for upload (not AI, PTR, Custom, etc)
+                        if (file.UploadStatus == UploadStatus.InProgress)
+                        {
+                            // if it is, upload it
+                            await _uploader.Upload(file);
+                        }
+                        SaveReplayList();
+                        if (ShouldDelete(file, replay))
+                        {
+                            DeleteReplay(file);
+                        }
                     }
                 }
                 catch (Exception ex) {

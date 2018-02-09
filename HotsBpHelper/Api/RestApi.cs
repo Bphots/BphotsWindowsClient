@@ -6,6 +6,8 @@ using System.Net;
 using System.Threading.Tasks;
 using HotsBpHelper.Api.Model;
 using HotsBpHelper.Api.Security;
+using HotsBpHelper.Uploader;
+using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Deserializers;
 using Stylet;
@@ -63,6 +65,20 @@ namespace HotsBpHelper.Api
             return response.Data;
         }
 
+        private async Task<T> ExecuteWeekAsync<T>(RestRequest request) where T : new()
+        {
+            var client = new RestClient(@"http://week.bphots.com:8888/replay/");
+            /*
+                        client.Authenticator = new HttpBasicAuthenticator(_accountSid, _secretKey);
+                        request.AddParameter("AccountSid", _accountSid, ParameterType.UrlSegment); // used on every request
+            */
+            var response = await client.ExecuteTaskAsync<T>(request);
+            EnsureNotErrorResponse(response);
+            return response.Data;
+        }
+
+
+
         private static void EnsureNotErrorResponse<T>(IRestResponse<T> response) where T : new()
         {
             try
@@ -93,6 +109,7 @@ namespace HotsBpHelper.Api
             EnsureNotErrorResponse(response);
             return response.Data;
         }
+        
 
         public async Task<List<RemoteFileInfo>> GetRemoteFileListAsync(string url)
         {
@@ -152,6 +169,18 @@ namespace HotsBpHelper.Api
         {
             var request = CreateRequest("get/timestamp");
             return await Task.Run(() => Execute<double>(request)).ConfigureAwait(false);
+        }
+
+        public async Task<FingerPrintStatusCollection> CheckDuplicatesAsync(IEnumerable<ReplayIdentity> replayIdentities)
+        {
+            var fileJson = JsonConvert.SerializeObject(replayIdentities);
+            var fileParam = new List<Tuple<string, string>>
+            {
+                Tuple.Create("files", fileJson)
+            };
+
+            var request = CreateRequest("check", fileParam);
+            return await ExecuteWeekAsync<FingerPrintStatusCollection>(request);
         }
 
         public List<BroadcastInfo> GetBroadcastInfo(string mode,string lang)

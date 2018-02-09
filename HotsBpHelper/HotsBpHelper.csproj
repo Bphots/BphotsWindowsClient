@@ -175,6 +175,7 @@
     </ApplicationDefinition>
     <Compile Include="Api\IRestApi.cs" />
     <Compile Include="Api\Model\BroadcastInfo.cs" />
+    <Compile Include="Api\Model\CheckAccessStatusModel.cs" />
     <Compile Include="Api\Model\HeroInfo.cs" />
     <Compile Include="Api\Model\MapInfo.cs" />
     <Compile Include="Api\Model\RemoteFileInfo.cs" />
