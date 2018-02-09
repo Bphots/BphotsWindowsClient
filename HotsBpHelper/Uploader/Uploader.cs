@@ -1,0 +1,182 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using NLog;
+
+namespace HotsBpHelper.Uploader
+{
+    public class Uploader
+    {
+        private static Logger _log = LogManager.GetCurrentClassLogger();
+//#if DEBUG
+//        const string ApiEndpoint = "http://hotsapi.local/api/v1";
+//#else
+        const string ApiEndpoint = "http://hotsapi.net/api/v1";
+//#endif
+
+        public bool UploadToHotslogs { get; set; }
+
+        /// <summary>
+        /// New instance of replay uploader
+        /// </summary>
+        public Uploader()
+        {
+
+        }
+
+        /// <summary>
+        /// Upload replay
+        /// </summary>
+        /// <param name="file"></param>
+        public async Task Upload(ReplayFile file)
+        {
+            file.UploadStatus = UploadStatus.InProgress;
+            if (file.Fingerprint != null && await CheckDuplicate(file.Fingerprint)) {
+                _log.Debug($"File {file} marked as duplicate");
+                file.UploadStatus = UploadStatus.Duplicate;
+            } else {
+                file.UploadStatus = await Upload(file.Filename);
+            }
+        }
+
+        /// <summary>
+        /// Upload replay
+        /// </summary>
+        /// <param name="file">Path to file</param>
+        /// <returns>Upload result</returns>
+        public async Task<UploadStatus> Upload(string file)
+        {
+            try {
+                string response;
+                using (var client = new WebClient()) {
+                    var bytes = await client.UploadFileTaskAsync($"{ApiEndpoint}/upload?uploadToHotslogs={UploadToHotslogs}", file);
+                    response = Encoding.UTF8.GetString(bytes);
+                }
+
+                return UploadStatus.Success;
+
+                // TODO
+                //dynamic json = JObject.Parse(response);
+                //if ((bool)json.success) {
+                //    if (Enum.TryParse<UploadStatus>((string)json.status, out UploadStatus status)) {
+                //        _log.Debug($"Uploaded file '{file}': {status}");
+                //        return status;
+                //    } else {
+                //        _log.Error($"Unknown upload status '{file}': {json.status}");
+                //        return UploadStatus.UploadError;
+                //    }
+                //} else {
+                //    _log.Warn($"Error uploading file '{file}': {response}");
+                //    return UploadStatus.UploadError;
+                //}
+            }
+            catch (WebException ex) {
+                if (await CheckApiThrottling(ex.Response)) {
+                    return await Upload(file);
+                }
+                _log.Warn(ex, $"Error uploading file '{file}'");
+                return UploadStatus.UploadError;
+            }
+        }
+
+        /// <summary>
+        /// Check replay fingerprint against database to detect duplicate
+        /// </summary>
+        /// <param name="fingerprint"></param>
+        public async Task<bool> CheckDuplicate(string fingerprint)
+        {
+            try {
+                string response;
+                using (var client = new WebClient()) {
+                    response = await client.DownloadStringTaskAsync($"{ApiEndpoint}/replays/fingerprints/v3/{fingerprint}?uploadToHotslogs={UploadToHotslogs}");
+                }
+                JObject json = JObject.Parse(response);
+                return false; // TODO (bool)json.exists;
+            }
+            catch (WebException ex) {
+                if (await CheckApiThrottling(ex.Response)) {
+                    return await CheckDuplicate(fingerprint);
+                }
+                _log.Warn(ex, $"Error checking fingerprint '{fingerprint}'");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Mass check replay fingerprints against database to detect duplicates
+        /// </summary>
+        /// <param name="fingerprints"></param>
+        public async Task<string[]> CheckDuplicate(IEnumerable<string> fingerprints)
+        {
+            try {
+                string response;
+                using (var client = new WebClient()) {
+                    response = await client.UploadStringTaskAsync($"{ApiEndpoint}/replays/fingerprints?uploadToHotslogs={UploadToHotslogs}", String.Join("\n", fingerprints));
+                }
+                dynamic json = JObject.Parse(response);
+                // TODO
+                return (json as JArray).Select(x => x.ToString()).ToArray();
+            }
+            catch (WebException ex) {
+                if (await CheckApiThrottling(ex.Response)) {
+                    return await CheckDuplicate(fingerprints);
+                }
+                _log.Warn(ex, $"Error checking fingerprint array");
+                return new string[0];
+            }
+        }
+
+        /// <summary>
+        /// Mass check replay fingerprints against database to detect duplicates
+        /// </summary>
+        public async Task CheckDuplicate(IEnumerable<ReplayFile> replays)
+        {
+            var exists = new HashSet<string>(await CheckDuplicate(replays.Select(x => x.Fingerprint)));
+            replays.Where(x => exists.Contains(x.Fingerprint)).Map(x => x.UploadStatus = UploadStatus.Duplicate);
+        }
+
+        /// <summary>
+        /// Get minimum HotS client build supported by HotsApi
+        /// </summary>
+        public async Task<int> GetMinimumBuild()
+        {
+            try {
+                using (var client = new WebClient()) {
+                    var response = await client.DownloadStringTaskAsync($"{ApiEndpoint}/replays/min-build");
+                    int build;
+                    if (!int.TryParse(response, out build)) {
+                        _log.Warn($"Error parsing minimum build: {response}");
+                        return 0;
+                    }
+                    return build;
+                }
+            }
+            catch (WebException ex) {
+                if (await CheckApiThrottling(ex.Response)) {
+                    return await GetMinimumBuild();
+                }
+                _log.Warn(ex, $"Error getting minimum build");
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Check if Hotsapi request limit is reached and wait if it is
+        /// </summary>
+        /// <param name="response">Server response to examine</param>
+        private async Task<bool> CheckApiThrottling(WebResponse response)
+        {
+            if ((int)(response as HttpWebResponse).StatusCode == 429) {
+                _log.Warn($"Too many requests, waiting");
+                await Task.Delay(10000);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+}

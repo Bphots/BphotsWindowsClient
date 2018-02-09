@@ -17,6 +17,7 @@ using HotsBpHelper.Configuration;
 using HotsBpHelper.Factories;
 using HotsBpHelper.Services;
 using HotsBpHelper.Settings;
+using HotsBpHelper.Uploader;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using HotsBpHelper.WPF;
@@ -347,6 +348,14 @@ namespace HotsBpHelper.Pages
             Task.Run(CheckFocusAsync).ConfigureAwait(false);
             Task.Run(MonitorInGameAsync).ConfigureAwait(false);
             Task.Run(MonitorLobbyFile).ConfigureAwait(false);
+            Upload();
+
+        }
+
+        private void Upload()
+        {
+            var manager = new Manager(new ReplayStorage(@"D:\qqytqqyt\Documents\HeroesBpProject\UploadTest\replays.xml"));
+            manager.Start();
         }
 
         private void OnWebFileUpdateCompleted(object sender, EventArgs e)
