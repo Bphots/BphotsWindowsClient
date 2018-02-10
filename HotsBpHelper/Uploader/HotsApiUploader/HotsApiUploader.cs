@@ -12,16 +12,8 @@ namespace HotsBpHelper.Uploader
     {
         const string ApiEndpoint = "http://hotsapi.net/api/v1";
 
-        public bool UploadToHotslogs { get; set; }
-
-        /// <summary>
-        /// New instance of replay uploader
-        /// </summary>
-        public HotsApiUploader()
-        {
-
-        }
-
+        public bool UploadToHotslogs { get; set; } = true;
+        
         /// <summary>
         /// Upload replay
         /// </summary>
@@ -52,26 +44,28 @@ namespace HotsBpHelper.Uploader
                 string response;
                 using (var client = new WebClient())
                 {
-                    var bytes = await client.UploadFileTaskAsync($"{ApiEndpoint}/upload?uploadToHotslogs={UploadToHotslogs}", file);
+                    var bytes =
+                        await
+                            client.UploadFileTaskAsync($"{ApiEndpoint}/upload?uploadToHotslogs={UploadToHotslogs}", file);
                     response = Encoding.UTF8.GetString(bytes);
+                    var json = JObject.Parse(response);
+                    if ((bool)json.Property("success"))
+                    {
+                        UploadStatus status;
+                        
+                        if (Enum.TryParse((string)json.Property("status"), out status))
+                        {
+                            _log.Debug($"Uploaded file '{file}': {status}");
+                            return status;
+                        }
+
+                        _log.Error($"Unknown upload status '{file}': {(string)json.Property("status")}");
+                        return UploadStatus.UploadError;
+                    }
+
+                    _log.Warn($"Error uploading file '{file}': {response}");
+                    return UploadStatus.UploadError;
                 }
-
-                return UploadStatus.Success;
-
-                // TODO
-                //dynamic json = JObject.Parse(response);
-                //if ((bool)json.success) {
-                //    if (Enum.TryParse<UploadStatus>((string)json.status, out UploadStatus status)) {
-                //        _log.Debug($"Uploaded file '{file}': {status}");
-                //        return status;
-                //    } else {
-                //        _log.Error($"Unknown upload status '{file}': {json.status}");
-                //        return UploadStatus.UploadError;
-                //    }
-                //} else {
-                //    _log.Warn($"Error uploading file '{file}': {response}");
-                //    return UploadStatus.UploadError;
-                //}
             }
             catch (WebException ex)
             {
@@ -97,8 +91,8 @@ namespace HotsBpHelper.Uploader
                 {
                     response = await client.DownloadStringTaskAsync($"{ApiEndpoint}/replays/fingerprints/v3/{fingerprint}?uploadToHotslogs={UploadToHotslogs}");
                 }
-                JObject json = JObject.Parse(response);
-                return false; // TODO (bool)json.exists;
+                var json = JObject.Parse(response);
+                return (bool)json.Property("exists");
             }
 
             catch (WebException ex)
@@ -126,8 +120,7 @@ namespace HotsBpHelper.Uploader
                     response = await client.UploadStringTaskAsync($"{ApiEndpoint}/replays/fingerprints?uploadToHotslogs={UploadToHotslogs}", String.Join("\n", fingerprints));
                 }
                 dynamic json = JObject.Parse(response);
-                // TODO
-                return (json as JArray).Select(x => x.ToString()).ToArray();
+                return (json.exists as JArray).Select(x => x.ToString()).ToArray();
             }
             catch (WebException ex)
             {

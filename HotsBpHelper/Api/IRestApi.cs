@@ -31,5 +31,9 @@ namespace HotsBpHelper.Api
         Task<double> GetTimestamp();
 
         Task<FingerPrintStatusCollection> CheckDuplicatesAsync(IEnumerable<ReplayIdentity> replayIdentities);
+
+        Task<int> GetMinimalBuild();
+
+        Task<UploadStatus> UploadReplay(string file);
     }
 }
