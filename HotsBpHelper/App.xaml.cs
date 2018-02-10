@@ -22,6 +22,7 @@ namespace HotsBpHelper
         public static AppSetting AppSetting;
 
         public static bool Debug;
+
         public static bool NotCheckProcess;
 
         public static string Language = CultureInfo.CurrentCulture.Name;
