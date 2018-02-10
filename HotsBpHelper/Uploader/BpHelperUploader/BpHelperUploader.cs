@@ -14,14 +14,10 @@ namespace HotsBpHelper.Uploader
 {
     public class BpHelperUploader : Uploader
     {
-        private readonly ISecurityProvider _securityProvider;
         private readonly IRestApi _restApi;
-
-        const string ApiEndpoint = "http://week.bphots.com:8888/replay/";
-
-        public BpHelperUploader(ISecurityProvider securityProvider, IRestApi restApi)
+        
+        public BpHelperUploader(IRestApi restApi)
         {
-            _securityProvider = securityProvider;
             _restApi = restApi;
         }
 
@@ -43,43 +39,7 @@ namespace HotsBpHelper.Uploader
         {
             try
             {
-                var parameters = new List<Tuple<string, string>>();
-                var sp = _securityProvider.CaculateSecurityParameter(parameters);
-
-                parameters.Add(Tuple.Create("timestamp", sp.Timestamp));
-                parameters.Add(Tuple.Create("client_patch", sp.Patch));
-
-                string urlParam = string.Join("&", parameters.Select(tuple => $"{tuple.Item1}={tuple.Item2}"));
-                /*调试服务器回传信息用
-                string u = "https://www.bphots.com/bp_helper/" + method + "?" + urlParam + "&nonce=" + sp.Nonce + "&sign=" + sp.Sign;
-                if (method== "get/inform")
-                    System.Diagnostics.Process.Start(u);
-                System.Threading.Thread.Sleep(1000);
-                */
-
-                string response;
-                using (var client = new WebClient())
-                {
-                    var bytes = await client.UploadFileTaskAsync($"{ApiEndpoint}upload?{urlParam}&nonce={sp.Nonce}&sign={sp.Sign}", file);
-                    response = Encoding.UTF8.GetString(bytes);
-                }
-
-                return UploadStatus.Success;
-
-                // TODO
-                //dynamic json = JObject.Parse(response);
-                //if ((bool)json.success) {
-                //    if (Enum.TryParse<UploadStatus>((string)json.status, out UploadStatus status)) {
-                //        _log.Debug($"Uploaded file '{file}': {status}");
-                //        return status;
-                //    } else {
-                //        _log.Error($"Unknown upload status '{file}': {json.status}");
-                //        return UploadStatus.UploadError;
-                //    }
-                //} else {
-                //    _log.Warn($"Error uploading file '{file}': {response}");
-                //    return UploadStatus.UploadError;
-                //}
+                return await _restApi.UploadReplay(file);
             }
             catch (WebException ex)
             {
@@ -164,26 +124,10 @@ namespace HotsBpHelper.Uploader
         /// </summary>
         public async Task<int> GetMinimumBuild()
         {
-            var parameters = new List<Tuple<string, string>>();
-            var sp = _securityProvider.CaculateSecurityParameter(parameters);
-
-            parameters.Add(Tuple.Create("timestamp", sp.Timestamp));
-            parameters.Add(Tuple.Create("client_patch", sp.Patch));
-
-            string urlParam = string.Join("&", parameters.Select(tuple => $"{tuple.Item1}={tuple.Item2}"));
             try
             {
-                using (var client = new WebClient())
-                {
-                    var response = await client.DownloadStringTaskAsync($"{ApiEndpoint}min-build?{urlParam}&nonce={sp.Nonce}&sign={sp.Sign}");
-                    int build;
-                    if (!int.TryParse(response, out build))
-                    {
-                        _log.Warn($"Error parsing minimum build: {response}");
-                        return 0;
-                    }
-                    return build;
-                }
+                int build = await _restApi.GetMinimalBuild();;
+                return build;
             }
             catch (WebException ex)
             {

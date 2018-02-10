@@ -19,8 +19,7 @@ namespace HotsBpHelper.Uploader
         private readonly List<ReplayFile> _processingQueue = new List<ReplayFile>(new ConcurrentStack<ReplayFile>());
 
         private readonly IRestApi _restApi;
-
-        private readonly ISecurityProvider _securityProvider;
+        
         private readonly IReplayStorage _storage;
         private Analyzer _analyzer;
 
@@ -29,11 +28,10 @@ namespace HotsBpHelper.Uploader
         private bool _initialized;
         private Monitor _monitor;
 
-        public Manager(IReplayStorage storage, ISecurityProvider securityProvider, IRestApi restApi)
+        public Manager(IReplayStorage storage, IRestApi restApi)
         {
             _storage = storage;
             _restApi = restApi;
-            _securityProvider = securityProvider;
             Files.ItemPropertyChanged += (_, __) => { RefreshStatusAndAggregates(); };
             Files.CollectionChanged += (_, __) => { RefreshStatusAndAggregates(); };
         }
@@ -76,7 +74,7 @@ namespace HotsBpHelper.Uploader
             }
             _initialized = true;
 
-            _bpHelperUploader = new BpHelperUploader(_securityProvider, _restApi);
+            _bpHelperUploader = new BpHelperUploader(_restApi);
             _hotsApiUploader = new HotsApiUploader();
 
             _analyzer = new Analyzer();
