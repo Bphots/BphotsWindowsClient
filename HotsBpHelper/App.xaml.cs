@@ -22,6 +22,7 @@ namespace HotsBpHelper
 
         public static bool DynamicPosition;
         public static bool Debug;
+
         public static bool NotCheckProcess;
 
         public static string Language = CultureInfo.CurrentCulture.Name;

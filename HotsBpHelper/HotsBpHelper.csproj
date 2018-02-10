@@ -232,6 +232,8 @@
     <Compile Include="Uploader\DeleteFiles.cs" />
     <Compile Include="Uploader\EventArgs.cs" />
     <Compile Include="Uploader\Extensions.cs" />
+    <Compile Include="Uploader\BpHelperUploader\BpHelperUploader.cs" />
+    <Compile Include="Uploader\HotsApiUploader\HotsApiUploader.cs" />
     <Compile Include="Uploader\IReplayStorage.cs" />
     <Compile Include="Uploader\Manager.cs" />
     <Compile Include="Uploader\Monitor.cs" />

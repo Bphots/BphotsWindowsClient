@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
-using HotsBpHelper.Api.Model;
 using Newtonsoft.Json;
 
 namespace HotsBpHelper.Uploader
@@ -24,19 +24,48 @@ namespace HotsBpHelper.Uploader
     [Serializable]
     public class ReplayFile : INotifyPropertyChanged
     {
-        [XmlIgnore]
-        public string Fingerprint { get; set; }
-        public string Filename { get; set; }
-        public DateTime Created { get; set; }
+        private UploadStatus _bpHelperUploadStatus = UploadStatus.None;
 
         private bool _deleted;
+
+        private UploadStatus _hotsApiUploadStatus = UploadStatus.None;
+
+        public ReplayFile()
+        {
+        } // Required for serialization
+
+        public ReplayFile(string filename)
+        {
+            Filename = filename;
+            Created = File.GetCreationTime(filename);
+        }
+
+        public bool NeedUpdate()
+        {
+            return _hotsApiUploadStatus == UploadStatus.None || _bpHelperUploadStatus == UploadStatus.None ||
+                   _bpHelperUploadStatus == UploadStatus.Reserved;
+        }
+
+        public bool Settled()
+        {
+            var ignored = new[] { UploadStatus.None, UploadStatus.UploadError, UploadStatus.InProgress };
+            return !ignored.Contains(_hotsApiUploadStatus) && !ignored.Contains(_bpHelperUploadStatus);
+        }
+
+        [XmlIgnore]
+        public string Fingerprint { get; set; }
+
+        public string Filename { get; set; }
+
+        public DateTime Created { get; set; }
+
         public bool Deleted
         {
-            get {
-                return _deleted;
-            }
-            set {
-                if (_deleted == value) {
+            get { return _deleted; }
+            set
+            {
+                if (_deleted == value)
+                {
                     return;
                 }
 
@@ -45,36 +74,42 @@ namespace HotsBpHelper.Uploader
             }
         }
 
-        UploadStatus _uploadStatus = UploadStatus.None;
-        public UploadStatus UploadStatus
+        public UploadStatus BpHelperUploadStatus
         {
-            get {
-                return _uploadStatus;
-            }
-            set {
-                if (_uploadStatus == value) {
+            get { return _bpHelperUploadStatus; }
+            set
+            {
+                if (_bpHelperUploadStatus == value)
+                {
                     return;
                 }
 
-                _uploadStatus = value;
+                _bpHelperUploadStatus = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UploadStatus)));
             }
         }
 
-        public ReplayFile() { } // Required for serialization
-
-        public ReplayFile(string filename)
+        public UploadStatus HotsApiUploadStatus
         {
-            Filename = filename;
-            Created = File.GetCreationTime(filename);
+            get { return _hotsApiUploadStatus; }
+            set
+            {
+                if (_hotsApiUploadStatus == value)
+                {
+                    return;
+                }
+
+                _hotsApiUploadStatus = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UploadStatus)));
+            }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public override string ToString()
         {
             return Filename;
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public class ReplayFileComparer : IEqualityComparer<ReplayFile>
         {
