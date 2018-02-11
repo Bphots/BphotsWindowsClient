@@ -72,11 +72,15 @@ namespace HotsBpHelper.Pages
 
         public void FillMMR(Game game)
         {
-            _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
+            int autoCloseSec = App.CustomConfigurationSettings.MMRAutoCloseTime;
+            if (autoCloseSec > 0)
             {
-                ScriptName = "setAutoCloseSeconds",
-                Args = new[] { "30" }
-            }, "MMRChanel");
+                _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
+                {
+                    ScriptName = "setAutoCloseSeconds",
+                    Args = new[] { autoCloseSec.ToString() }
+                }, "MMRChanel");
+            }
 
             // 取得地区ID
             var regionId = ((int) game.Region).ToString();

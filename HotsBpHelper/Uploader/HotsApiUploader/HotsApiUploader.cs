@@ -173,21 +173,5 @@ namespace HotsBpHelper.Uploader
                 return 0;
             }
         }
-
-        /// <summary>
-        /// Check if Hotsapi request limit is reached and wait if it is
-        /// </summary>
-        /// <param name="response">Server response to examine</param>
-        private async Task<bool> CheckApiThrottling(WebResponse response)
-        {
-            if ((int)(response as HttpWebResponse).StatusCode == 429)
-            {
-                _log.Warn($"Too many requests, waiting");
-                await Task.Delay(10000);
-                return true;
-            }
-
-            return false;
-        }
     }
 }

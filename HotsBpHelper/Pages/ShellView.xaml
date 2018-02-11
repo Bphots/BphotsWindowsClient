@@ -24,19 +24,26 @@
     <tb:TaskbarIcon IconSource="/Images/icon.ico" ToolTipText="{lex:Loc HotsBpHelper}">
       <tb:TaskbarIcon.ContextMenu>
             <ContextMenu>
-                <MenuItem Header="{Binding UploadStatusDescription}" IsEnabled="False" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"></MenuItem>
-                <Separator  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
-                <MenuItem Header="{lex:Loc AutoShowHideHelper}" IsCheckable="True" IsChecked="{Binding AutoShowHideHelper}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
-                <MenuItem Header="{lex:Loc AutoDetectHeroAndMap}" IsCheckable="True" IsChecked="{Binding AutoDetect}" IsEnabled="{Binding CanOcr}"  InputGestureText="Ctrl+Shift+R"  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
-                <Separator  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
-                <MenuItem Header="{lex:Loc ShowHideHelper}" Command="{s:Action ManuallyShowHideHelper}" InputGestureText="Ctrl+Shift+B"  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
-                <MenuItem Header="{lex:Loc SwitchVisibility}" Command="{s:Action SwitchVisibility}" InputGestureText="Ctrl+Shift+M"  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
-                <MenuItem Header="{lex:Loc ResetHelper}" Command="{s:Action ResetHelper}" InputGestureText="Ctrl+Shift+N" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
-                <MenuItem Header="{lex:Loc AutoShowMMR}" IsCheckable="True" IsChecked="{Binding AutoShowMmr}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"/>
                 <MenuItem Header="{Binding PercentageInfo}" IsEnabled="False" Visibility="{Binding IsLoaded, Converter={StaticResource InverseBoolToVisibilityConverter} }"></MenuItem>
+                
+                <MenuItem Header="{Binding UploadStatusDescription}" IsEnabled="False" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"></MenuItem>
+                <MenuItem Header="{Binding SwitchUploadDescription}" Command="{s:Action SwitchUpload}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
+
+                <Separator  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
+
+                <MenuItem Header="{lex:Loc AutoShowHideHelper}" IsCheckable="True" IsChecked="{Binding AutoShowHideHelper}"  InputGestureText="{Binding AutoShowHideHelperInputGestureText}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
+                <MenuItem Header="{lex:Loc AutoDetectHeroAndMap}" IsCheckable="True" IsChecked="{Binding AutoDetect}" IsEnabled="{Binding CanOcr}"  InputGestureText="Ctrl+Shift+R"  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
+                <MenuItem Header="{lex:Loc AutoShowMMR}" IsCheckable="True" IsChecked="{Binding AutoShowMmr}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"/>
+                
+                <Separator  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
+                
+                <MenuItem Header="{lex:Loc ShowHideHelper}" Command="{s:Action ManuallyShowHideHelper}" IsEnabled="{Binding CanManualShowHelper}" InputGestureText="{Binding ManualShowHideHelperInputGuestrueText}"  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
+                <MenuItem Header="{lex:Loc ResetHelper}" Command="{s:Action ResetHelper}" InputGestureText="Ctrl+Shift+N" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
+                
+                <Separator />
+                
                 <MenuItem Header="{lex:Loc Help}" Command="{s:Action ShowHelp}" />
                 <MenuItem Header="{lex:Loc About}" Command="{s:Action ShowAbout}"  />
-                <Separator />
                 <MenuItem Header="{lex:Loc Exit}" Command="{s:Action Exit}" />
             </ContextMenu>
         </tb:TaskbarIcon.ContextMenu>

@@ -47,7 +47,6 @@ namespace HotsBpHelper.Uploader
             }
 
             return false;
-
         }
     }
 }
