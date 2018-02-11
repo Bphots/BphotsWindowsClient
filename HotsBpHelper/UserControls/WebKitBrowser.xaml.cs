@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -48,22 +50,37 @@ namespace HotsBpHelper.UserControls
         private void OnLoadEnd(object sender, CfxOnLoadEndEventArgs e)
         {
             var url = Browser.Url;
-            if (url.AbsoluteUri.Contains("about:blank"))
+            
+            if (url.AbsoluteUri.Contains("about:blank") && !AllowBlank)
             {
                 Execute.OnUIThread(() =>
                 {
                     Browser.LoadUrl(PendingSource);
                 });
             }
+
+            if (!url.AbsoluteUri.Contains("about:blank"))
+            {
+                while (Scripts.Any())
+                {
+                    string script;
+                    if (Scripts.TryDequeue(out script))
+                        Execute.OnUIThread(() => Browser.ExecuteJavascript(script));
+                }
+            }
         }
 
+        private ConcurrentQueue<string> Scripts = new ConcurrentQueue<string>();
+        
         private void OnRedirect(object sender, CfxOnResourceRedirectEventArgs e)
         {
             if (e.NewUrl.Contains("about:blank"))
                 e.NewUrl = PendingSource;
 
         }
-        
+
+        public bool AllowBlank = false;
+
         private void LifeSpanHandlerOnOnBeforePopup(object sender, CfxOnBeforePopupEventArgs e)
         {
             var url = e.TargetUrl;
@@ -78,6 +95,8 @@ namespace HotsBpHelper.UserControls
             {
                 win.Visibility = Visibility.Hidden;
             }
+            AllowBlank = true;
+            Browser.LoadUrl("about:blank");
         }
 
         private bool _isInitialized = false;
@@ -115,7 +134,10 @@ namespace HotsBpHelper.UserControls
 
         public object InvokeScript(InvokeScriptMessage message)
         {
-            Execute.OnUIThread(() => Browser.ExecuteJavascript(message.ToScript()));
+            if (Browser.IsLoading || Scripts.Any())
+                Scripts.Enqueue(message.ToScript());
+            else
+                Execute.OnUIThread(() => Browser.ExecuteJavascript(message.ToScript()));
             
             return null;
         }

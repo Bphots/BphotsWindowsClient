@@ -55,7 +55,7 @@ namespace HotsBpHelper.UserControls
 
             Chromium.WebBrowser.ChromiumWebBrowser.OnBeforeCfxInitialize += ChromiumWebBrowser_OnBeforeCfxInitialize;
             ChromiumWebBrowser.OnBeforeCommandLineProcessing += ChromiumWebBrowser_OnBeforeCommandLineProcessing;
-            
+
             ChromiumWebBrowser.Initialize();
             
             ChromiumWebBrowser.DefaultBrowserSettings.FileAccessFromFileUrls = CfxState.Enabled;
@@ -77,6 +77,7 @@ namespace HotsBpHelper.UserControls
             e.Settings.BrowserSubprocessPath = System.IO.Path.GetFullPath(@".\cef\Cfx\BrowserSubProcess.exe");
             if (!App.Debug)
                 e.Settings.LogSeverity = CfxLogSeverity.Disable;
+
             e.Settings.WindowlessRenderingEnabled = false;
             e.Settings.MultiThreadedMessageLoop = true;
             //CfxRuntime.EnableHighDpiSupport();
