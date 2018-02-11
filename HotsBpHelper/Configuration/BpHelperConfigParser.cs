@@ -74,8 +74,11 @@ namespace HotsBpHelper.Configuration
 
             if (uploadStrategy == "1")
                 return UploadStrategy.UploadNew;
-            
-            return UploadStrategy.None;
+
+            if (uploadStrategy == "0")
+                return UploadStrategy.None;
+
+            return UploadStrategy.UploadAll;
         }
 
         public string GetLanguageForBphots()
