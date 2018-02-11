@@ -31,12 +31,20 @@ namespace HotsBpHelper.Configuration
             }
         }
 
-        public string GetConfigurationValue(string key)
+        protected string GetConfigurationValue(string key)
         {
             if (_configurationDictionary.ContainsKey(key))
                 return _configurationDictionary[key].Trim();
 
             return string.Empty;
+        }
+
+        protected static string WriteConfigurationValue(string key, object value)
+        {
+            if (value is bool)
+                return key + "=" + ((bool)value ? 1 : 0);
+
+            return key + "=" + value;
         }
 
         private readonly Dictionary<string, string> _configurationDictionary = new Dictionary<string, string>();

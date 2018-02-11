@@ -32,7 +32,8 @@ namespace HotsBpHelper.Uploader
 
         public ReplayFile()
         {
-        } // Required for serialization
+            // Required for serialization
+        } 
 
         public ReplayFile(string filename)
         {
@@ -42,8 +43,13 @@ namespace HotsBpHelper.Uploader
 
         public bool NeedUpdate()
         {
-            return _hotsApiUploadStatus == UploadStatus.None || _bpHelperUploadStatus == UploadStatus.None ||
-                   _bpHelperUploadStatus == UploadStatus.Reserved;
+            if (App.CustomConfigurationSettings.AutoUploadNewReplayToHotslogs)
+                return _hotsApiUploadStatus == UploadStatus.None;
+            
+            if (App.CustomConfigurationSettings.AutoUploadNewReplayToHotsweek)
+                return _bpHelperUploadStatus == UploadStatus.None || _bpHelperUploadStatus == UploadStatus.Reserved; ;
+
+            return false;
         }
 
         public bool Settled()
@@ -53,6 +59,7 @@ namespace HotsBpHelper.Uploader
         }
 
         [XmlIgnore]
+        [JsonIgnore]
         public string Fingerprint { get; set; }
 
         public string Filename { get; set; }

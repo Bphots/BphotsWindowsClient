@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using HotsBpHelper.Api.Model;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace HotsBpHelper.Uploader
@@ -48,18 +50,18 @@ namespace HotsBpHelper.Uploader
                         await
                             client.UploadFileTaskAsync($"{ApiEndpoint}/upload?uploadToHotslogs={UploadToHotslogs}", file);
                     response = Encoding.UTF8.GetString(bytes);
-                    var json = JObject.Parse(response);
-                    if ((bool)json.Property("success"))
+                    var genericResponse = JsonConvert.DeserializeObject<GenericResponse>(response);
+                    if (genericResponse.Success)
                     {
                         UploadStatus status;
                         
-                        if (Enum.TryParse((string)json.Property("status"), out status))
+                        if (Enum.TryParse(genericResponse.Status, out status))
                         {
                             _log.Debug($"Uploaded file '{file}': {status}");
                             return status;
                         }
 
-                        _log.Error($"Unknown upload status '{file}': {(string)json.Property("status")}");
+                        _log.Error($"Unknown upload status '{file}': {genericResponse.Status}");
                         return UploadStatus.UploadError;
                     }
 
@@ -91,8 +93,8 @@ namespace HotsBpHelper.Uploader
                 {
                     response = await client.DownloadStringTaskAsync($"{ApiEndpoint}/replays/fingerprints/v3/{fingerprint}?uploadToHotslogs={UploadToHotslogs}");
                 }
-                var json = JObject.Parse(response);
-                return (bool)json.Property("exists");
+                var converted = JsonConvert.DeserializeObject<GenericResponse>(response);
+                return converted.Exists;
             }
 
             catch (WebException ex)

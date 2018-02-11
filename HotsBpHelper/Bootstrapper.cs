@@ -58,6 +58,10 @@ namespace HotsBpHelper
             App.AppPath = AppDomain.CurrentDomain.BaseDirectory;
             var args = Environment.GetCommandLineArgs();
 
+            var configurationSettings = new CustomConfigurationSettings();
+            BpHelperConfigParser.PopulateConfigurationSettings(configurationSettings);
+            App.CustomConfigurationSettings = configurationSettings;
+            
             if (args.Any(arg => arg.ToLower() == "/log"))
             {
                 LogUtil.NoLog = false;

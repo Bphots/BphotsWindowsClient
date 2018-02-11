@@ -20,7 +20,10 @@ namespace HotsBpHelper
         public static string AppPath;
         public static Position MyPosition;
 
-        public static bool DynamicPosition;
+        public static AppSetting AppSetting;
+
+        public static CustomConfigurationSettings CustomConfigurationSettings;
+
         public static bool Debug;
 
         public static bool NotCheckProcess;
