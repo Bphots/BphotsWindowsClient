@@ -18,8 +18,8 @@ namespace HotsBpHelper.Uploader
     {
         private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
-        private readonly ConcurrentDictionary<ReplayFile, bool> _processingQueue =
-            new ConcurrentDictionary<ReplayFile, bool>();
+        private readonly ConcurrentDictionary<ReplayFile, int> _processingQueue =
+            new ConcurrentDictionary<ReplayFile, int>();
 
         private readonly IRestApi _restApi;
 
@@ -76,10 +76,10 @@ namespace HotsBpHelper.Uploader
                 if (SuspendUpload)
                     return "Suspended";
 
-                if (!_processingQueue.Any() || _processingQueue.All(l => l.Value))
+                if (!_processingQueue.Any() || _processingQueue.All(l => l.Value == 2))
                     return "Idle";
 
-                var processed = _processingQueue.Count(l => l.Value);
+                var processed = _processingQueue.Count(l => l.Value == 2);
                 return @"Uploading... " + processed + "/" + _processingQueue.Count;
             }
         }
@@ -110,14 +110,14 @@ namespace HotsBpHelper.Uploader
 
             var replays = ScanReplays();
             Files.AddRange(replays);
-            replays.Where(x => x.NeedUpdate()).Reverse().Map(x => _processingQueue[x] = false);
-
+            if (App.CustomConfigurationSettings.UploadStrategy == UploadStrategy.UploadAll)
+                replays.Where(x => x.NeedUpdate()).Reverse().Map(x => _processingQueue[x] = 0);
             _monitor.ReplayAdded += async (_, e) =>
             {
                 await EnsureFileAvailable(e.Data, 3000);
                 var replay = new ReplayFile(e.Data);
                 Files.Insert(0, replay);
-                _processingQueue[replay] = false;
+                _processingQueue[replay] = 0;
             };
 
             _monitor.Start();
@@ -129,7 +129,7 @@ namespace HotsBpHelper.Uploader
         private void RepopulateQueue()
         {
             _processingQueue.Clear();
-            Files.Where(x => x.NeedUpdate()).Reverse().Map(x => _processingQueue[x] = false);
+            Files.Where(x => x.NeedUpdate()).Reverse().Map(x => _processingQueue[x] = 0);
         }
 
         private async Task UploadLoop()
@@ -147,23 +147,25 @@ namespace HotsBpHelper.Uploader
 
                     for (var i = 0; i < 10 && _processingQueue.Any();)
                     {
-                        var file = _processingQueue.FirstOrDefault(l => !l.Value).Key;
+                        var file = _processingQueue.FirstOrDefault(l => l.Value == 0).Key;
                         if (file == null)
                             continue;
-
-
+                        
                         if (UplaodToHotsWeek)
                             file.BpHelperUploadStatus = UploadStatus.InProgress;
                         if (UploadToHotsApi)
                             file.HotsApiUploadStatus = UploadStatus.InProgress;
 
                         var replay = _analyzer.Analyze(file);
-                        if (file.BpHelperUploadStatus == UploadStatus.InProgress ||
-                            file.HotsApiUploadStatus == UploadStatus.InProgress)
+                        if (replay != null && (file.BpHelperUploadStatus == UploadStatus.InProgress ||
+                                               file.HotsApiUploadStatus == UploadStatus.InProgress))
                         {
+                            _processingQueue[file] = 1;
                             files[file] = replay;
                             ++i;
                         }
+                        else
+                            _processingQueue[file] = 2;
                     }
 
                     if (UplaodToHotsWeek)
@@ -175,9 +177,11 @@ namespace HotsBpHelper.Uploader
                             await UploadHotsApi(file.Key);
 
                         if (UplaodToHotsWeek)
+                        {
                             await UploadHotsBpHelper(file.Key);
+                        }
 
-                        _processingQueue[file.Key] = true;
+                        _processingQueue[file.Key] = 2;
                     }
 
                     OnStatusChanged();
