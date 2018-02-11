@@ -63,7 +63,6 @@ namespace HotsBpHelper.Pages
         public ShellViewModel(ViewModelFactory viewModelFactory, IImageUtil imageUtil, IToastService toastService,
             IRestApi restApi, ISecurityProvider securityProvider)
         {
-            App.Debug = true;
             _viewModelFactory = viewModelFactory;
 
             _imageUtil = imageUtil;
