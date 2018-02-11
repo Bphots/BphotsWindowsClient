@@ -42,8 +42,7 @@
                 
                 <Separator />
                 
-                <MenuItem Header="{lex:Loc Help}" Command="{s:Action ShowHelp}" />
-                <MenuItem Header="{lex:Loc About}" Command="{s:Action ShowAbout}"  />
+                <MenuItem Header="Settings" Command="{s:Action ShowSettings}" IsEnabled="{Binding CanShowSettings}"/>
                 <MenuItem Header="{lex:Loc Exit}" Command="{s:Action Exit}" />
             </ContextMenu>
         </tb:TaskbarIcon.ContextMenu>

@@ -27,7 +27,7 @@ namespace HotsBpHelper.Uploader
         /// <param name="file"></param>
         public override async Task Upload(ReplayFile file)
         {
-            file.BpHelperUploadStatus = await Upload(file.Filename);
+            file.HotsWeekUploadStatus = await Upload(file.Filename);
         }
 
         /// <summary>
@@ -110,10 +110,10 @@ namespace HotsBpHelper.Uploader
                     continue;
 
                 if (fingerPrintInfo.Access == FingerPrintStatus.Reserved)
-                    file.BpHelperUploadStatus = UploadStatus.Reserved;
+                    file.HotsWeekUploadStatus = UploadStatus.Reserved;
 
                 if (fingerPrintInfo.Access == FingerPrintStatus.Duplicated)
-                    file.BpHelperUploadStatus = UploadStatus.Duplicate;
+                    file.HotsWeekUploadStatus = UploadStatus.Duplicate;
 
             }
             //  replays.Where(x => exists.Contains(x.Fingerprint)).Map(x => x.UploadStatus = UploadStatus.Duplicate);

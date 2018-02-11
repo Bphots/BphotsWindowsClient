@@ -24,7 +24,7 @@ namespace HotsBpHelper.Uploader
     [Serializable]
     public class ReplayFile : INotifyPropertyChanged
     {
-        private UploadStatus _bpHelperUploadStatus = UploadStatus.None;
+        private UploadStatus _hotsWeekUploadStatus = UploadStatus.None;
 
         private bool _deleted;
 
@@ -43,11 +43,11 @@ namespace HotsBpHelper.Uploader
 
         public bool NeedUpdate()
         {
-            if (App.CustomConfigurationSettings.AutoUploadNewReplayToHotslogs)
+            if (App.CustomConfigurationSettings.AutoUploadReplayToHotslogs)
                 return _hotsApiUploadStatus == UploadStatus.None;
             
-            if (App.CustomConfigurationSettings.AutoUploadNewReplayToHotsweek)
-                return _bpHelperUploadStatus == UploadStatus.None || _bpHelperUploadStatus == UploadStatus.Reserved; ;
+            if (App.CustomConfigurationSettings.AutoUploadReplayToHotsweek)
+                return _hotsWeekUploadStatus == UploadStatus.None || _hotsWeekUploadStatus == UploadStatus.Reserved; ;
 
             return false;
         }
@@ -55,7 +55,7 @@ namespace HotsBpHelper.Uploader
         public bool Settled()
         {
             var ignored = new[] { UploadStatus.None, UploadStatus.UploadError, UploadStatus.InProgress };
-            return !ignored.Contains(_hotsApiUploadStatus) && !ignored.Contains(_bpHelperUploadStatus);
+            return !ignored.Contains(_hotsApiUploadStatus) && !ignored.Contains(_hotsWeekUploadStatus);
         }
 
         [XmlIgnore]
@@ -81,17 +81,17 @@ namespace HotsBpHelper.Uploader
             }
         }
 
-        public UploadStatus BpHelperUploadStatus
+        public UploadStatus HotsWeekUploadStatus
         {
-            get { return _bpHelperUploadStatus; }
+            get { return _hotsWeekUploadStatus; }
             set
             {
-                if (_bpHelperUploadStatus == value)
+                if (_hotsWeekUploadStatus == value)
                 {
                     return;
                 }
 
-                _bpHelperUploadStatus = value;
+                _hotsWeekUploadStatus = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UploadStatus)));
             }
         }

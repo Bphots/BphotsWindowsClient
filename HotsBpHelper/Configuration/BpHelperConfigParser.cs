@@ -11,8 +11,8 @@ namespace HotsBpHelper.Configuration
         private const string AutoShowHideHelperKey = @"AutoShowHideHelper";
         private const string AutoDetectHeroAndMapKey = @"AutoDetectHeroAndMap";
         private const string AutoShowMMRKey = @"AutoShowMMR";
-        private const string AutoUploadNewReplayToHotslogsKey = @"AutoUploadNewReplayToHotslogs";
-        private const string AutoUploadNewReplayToHotsweekKey = @"AutoUploadNewReplayToHotsweek";
+        private const string AutoUploadNewReplayToHotslogsKey = @"AutoUploadReplayToHotslogs";
+        private const string AutoUploadNewReplayToHotsweekKey = @"AutoUploadReplayToHotsweek";
         private const string UploadStrategyKey = @"UploadStrategy";
         private const string LanguageForBphotsKey = @"LanguageForBphots";
         private const string LanguageForRegionKey = @"LanguageForRegion";
@@ -115,8 +115,8 @@ namespace HotsBpHelper.Configuration
             customConfigurationSettings.AutoDetectHeroAndMap = parser.GetAutoDetectHeroAndMap();
             customConfigurationSettings.AutoShowHideHelper = parser.GetAutoShowHideHelper();
             customConfigurationSettings.AutoShowMMR = parser.GetAutoShowMMR();
-            customConfigurationSettings.AutoUploadNewReplayToHotslogs = parser.GetAutoUploadNewReplayToHotslogs();
-            customConfigurationSettings.AutoUploadNewReplayToHotsweek = parser.GetAutoUploadNewReplayToHotsweek();
+            customConfigurationSettings.AutoUploadReplayToHotslogs = parser.GetAutoUploadNewReplayToHotslogs();
+            customConfigurationSettings.AutoUploadReplayToHotsweek = parser.GetAutoUploadNewReplayToHotsweek();
             customConfigurationSettings.DefalutReplayFolderPath = parser.GetDefalutReplayFolderPath();
             customConfigurationSettings.UploadStrategy = parser.GeUploadStrategy();
             customConfigurationSettings.MMRAutoCloseTime = parser.GetMMRAutoCloseTime();
@@ -129,8 +129,8 @@ namespace HotsBpHelper.Configuration
                 sb.AppendLine(WriteConfigurationValue(AutoDetectHeroAndMapKey, customConfigurationSettings.AutoDetectHeroAndMap));
                 sb.AppendLine(WriteConfigurationValue(AutoShowHideHelperKey, customConfigurationSettings.AutoShowHideHelper));
                 sb.AppendLine(WriteConfigurationValue(AutoShowMMRKey, customConfigurationSettings.AutoShowMMR));
-                sb.AppendLine(WriteConfigurationValue(AutoUploadNewReplayToHotslogsKey, customConfigurationSettings.AutoUploadNewReplayToHotslogs));
-                sb.AppendLine(WriteConfigurationValue(AutoUploadNewReplayToHotsweekKey, customConfigurationSettings.AutoUploadNewReplayToHotsweek));
+                sb.AppendLine(WriteConfigurationValue(AutoUploadNewReplayToHotslogsKey, customConfigurationSettings.AutoUploadReplayToHotslogs));
+                sb.AppendLine(WriteConfigurationValue(AutoUploadNewReplayToHotsweekKey, customConfigurationSettings.AutoUploadReplayToHotsweek));
                 sb.AppendLine(WriteConfigurationValue(DefalutReplayFolderPathKey, customConfigurationSettings.DefalutReplayFolderPath));
                 sb.AppendLine(WriteConfigurationValue(UploadStrategyKey, (int)customConfigurationSettings.UploadStrategy));
                 sb.AppendLine(WriteConfigurationValue(MMRAutoCloseTimeKey, customConfigurationSettings.MMRAutoCloseTime));
