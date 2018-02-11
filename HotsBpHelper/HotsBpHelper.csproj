@@ -95,6 +95,9 @@
     <Reference Include="ChromiumWebBrowser">
       <HintPath>cef\Cfx\ChromiumWebBrowser.dll</HintPath>
     </Reference>
+    <Reference Include="DotNetZip">
+      <HintPath>.\DotNetZip.dll</HintPath>
+    </Reference>
     <Reference Include="GlobalHotKey, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GlobalHotKey.1.1.0\lib\GlobalHotKey.dll</HintPath>
       <Private>True</Private>
@@ -105,9 +108,6 @@
     </Reference>
     <Reference Include="HashLib, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\HashLib.2.0.1\lib\net40\HashLib.dll</HintPath>
-    </Reference>
-    <Reference Include="Heroes.ReplayParser">
-      <HintPath>.\Heroes.ReplayParser.dll</HintPath>
     </Reference>
     <Reference Include="Its.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Its.Configuration.1.0.6\lib\net40\Its.Configuration.dll</HintPath>
@@ -221,6 +221,10 @@
     </Compile>
     <Compile Include="Pages\HeroSelectorWindowViewMode.cs" />
     <Compile Include="Pages\HeroSelectorViewModel.cs" />
+    <Compile Include="Pages\ManagerView.xaml.cs">
+      <DependentUpon>ManagerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ManagerViewModel.cs" />
     <Compile Include="Pages\MapSelectorView.xaml.cs">
       <DependentUpon>MapSelectorView.xaml</DependentUpon>
     </Compile>
@@ -431,6 +435,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Pages\ManagerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\MapSelectorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -464,6 +472,14 @@
     <Folder Include="NAppUpdate\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\HotsStats-master\Heroes.ReplayParser\Heroes.ReplayParser.csproj">
+      <Project>{aaf78d53-a1da-424a-b1aa-09895eab3b2b}</Project>
+      <Name>Heroes.ReplayParser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\HotsStats-master\MpqTool\MpqTool.csproj">
+      <Project>{fa50e172-836b-47bb-8745-60595e4fb12a}</Project>
+      <Name>MpqTool</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DotNetHelper\DotNetHelper.csproj">
       <Project>{353b6e1b-1415-4010-babf-924c7158fc58}</Project>
       <Name>DotNetHelper</Name>
