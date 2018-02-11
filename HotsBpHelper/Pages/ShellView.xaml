@@ -24,6 +24,8 @@
     <tb:TaskbarIcon IconSource="/Images/icon.ico" ToolTipText="{lex:Loc HotsBpHelper}">
       <tb:TaskbarIcon.ContextMenu>
             <ContextMenu>
+                <MenuItem Header="{Binding UploadStatusDescription}" IsEnabled="False" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"></MenuItem>
+                <Separator  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
                 <MenuItem Header="{lex:Loc AutoShowHideHelper}" IsCheckable="True" IsChecked="{Binding AutoShowHideHelper}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
                 <MenuItem Header="{lex:Loc AutoDetectHeroAndMap}" IsCheckable="True" IsChecked="{Binding AutoDetect}" IsEnabled="{Binding CanOcr}"  InputGestureText="Ctrl+Shift+R"  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
                 <Separator  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />

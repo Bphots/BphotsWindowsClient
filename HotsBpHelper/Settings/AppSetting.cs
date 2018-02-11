@@ -5,12 +5,7 @@ namespace HotsBpHelper.Settings
 {
     public class AppSetting
     {
-
         public Position Position { get; set; }
-
-        public Size DefaultBpHelperSize { get; set; }
-
-        public int MMRAutoCloseSeconds { get; set; }
     }
 
     public class Position

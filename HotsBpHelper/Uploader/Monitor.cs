@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using HotsBpHelper.Settings;
 using NLog;
 
 namespace HotsBpHelper.Uploader
@@ -8,13 +9,14 @@ namespace HotsBpHelper.Uploader
     public class Monitor
     {
         private static Logger _log = LogManager.GetCurrentClassLogger();
-        protected readonly string ProfilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Heroes of the Storm\Accounts");
+
         protected FileSystemWatcher _watcher;
 
         /// <summary>
         /// Fires when a new replay file is found
         /// </summary>
         public event EventHandler<EventArgs<string>> ReplayAdded;
+
         protected virtual void OnReplayAdded(string path)
         {
             _log.Debug($"Detected new replay: {path}");
@@ -28,7 +30,7 @@ namespace HotsBpHelper.Uploader
         {
             if (_watcher == null) {
                 _watcher = new FileSystemWatcher() {
-                    Path = ProfilePath,
+                    Path = App.CustomConfigurationSettings.DefalutReplayFolderPath,
                     Filter = "*.StormReplay",
                     IncludeSubdirectories = true
                 };
@@ -54,7 +56,7 @@ namespace HotsBpHelper.Uploader
         /// </summary>
         public IEnumerable<string> ScanReplays()
         {
-            return Directory.GetFiles(ProfilePath, "*.StormReplay", SearchOption.AllDirectories);
+            return Directory.GetFiles(App.CustomConfigurationSettings.DefalutReplayFolderPath, "*.StormReplay", SearchOption.AllDirectories);
         }
     }
 }

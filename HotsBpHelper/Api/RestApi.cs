@@ -112,8 +112,8 @@ namespace HotsBpHelper.Api
             {
                 var bytes = await client.UploadFileTaskAsync($"{Const.WEB_API_WEEK_ROOT}upload?{url}", file);
                 var response = Encoding.UTF8.GetString(bytes);
-                var json = JObject.Parse(response);
-                return (bool)json.Property("success") ? UploadStatus.Success : UploadStatus.UploadError;
+                var responseItem = JsonConvert.DeserializeObject<GenericResponse>(response);
+                return responseItem.Success ? UploadStatus.Success : UploadStatus.UploadError;
             }
         }
 

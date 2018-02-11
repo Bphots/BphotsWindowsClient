@@ -21,6 +21,8 @@ namespace HotsBpHelper
 
         public static AppSetting AppSetting;
 
+        public static CustomConfigurationSettings CustomConfigurationSettings;
+
         public static bool Debug;
 
         public static bool NotCheckProcess;

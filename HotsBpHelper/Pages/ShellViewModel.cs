@@ -355,8 +355,27 @@ namespace HotsBpHelper.Pages
         private void Upload()
         {
             var path = Path.GetFullPath(@".\Replay\replays.xml");
-            var manager = new Manager(new ReplayStorage(path), _restApi);
-            manager.Start();
+            _uploadManager = new Manager(new ReplayStorage(path), _restApi);
+            _uploadManager.StatusChanged += OnUploadStateChanged;
+            _uploadManager.Start();
+        }
+
+        private Manager _uploadManager;
+
+        private void OnUploadStateChanged(object sender, EventArgs e)
+        {
+            NotifyOfPropertyChange(() => UploadStatusDescription);
+        }
+
+        public string UploadStatusDescription
+        {
+            get
+            {
+                if (_uploadManager == null)
+                    return "Loading Uploader...";
+                
+                return _uploadManager.Status;
+            }
         }
 
         private void OnWebFileUpdateCompleted(object sender, EventArgs e)
@@ -888,6 +907,7 @@ namespace HotsBpHelper.Pages
 
         protected override void OnClose()
         {
+            BpHelperConfigParser.WriteConfig(App.CustomConfigurationSettings);
             _hotKeyManager?.Dispose();
             _bpViewModel?.OcrUtil?.Dispose();
             AutoShowHideHelper = false;

@@ -107,7 +107,7 @@
       <HintPath>..\packages\HashLib.2.0.1\lib\net40\HashLib.dll</HintPath>
     </Reference>
     <Reference Include="Heroes.ReplayParser">
-      <HintPath>..\..\HotsStats-master\Heroes.ReplayParser\bin\x86\Debug\Heroes.ReplayParser.dll</HintPath>
+      <HintPath>.\Heroes.ReplayParser.dll</HintPath>
     </Reference>
     <Reference Include="Its.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Its.Configuration.1.0.6\lib\net40\Its.Configuration.dll</HintPath>
@@ -177,6 +177,7 @@
     <Compile Include="Api\IRestApi.cs" />
     <Compile Include="Api\Model\BroadcastInfo.cs" />
     <Compile Include="Api\Model\CheckAccessStatusModel.cs" />
+    <Compile Include="Api\Model\GenericResponse.cs" />
     <Compile Include="Api\Model\HeroInfo.cs" />
     <Compile Include="Api\Model\MapInfo.cs" />
     <Compile Include="Api\Model\RemoteFileInfo.cs" />
@@ -232,6 +233,7 @@
     <Compile Include="Pages\ViewModelBase.cs" />
     <Compile Include="Services\ToastService.cs" />
     <Compile Include="Settings\AppSetting.cs" />
+    <Compile Include="Settings\CustomConfigurationSettings.cs" />
     <Compile Include="Uploader\Analyzer.cs" />
     <Compile Include="Uploader\DeleteFiles.cs" />
     <Compile Include="Uploader\EventArgs.cs" />

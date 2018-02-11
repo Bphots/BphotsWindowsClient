@@ -75,7 +75,8 @@ namespace HotsBpHelper.UserControls
             e.Settings.LocalesDirPath = System.IO.Path.GetFullPath(@".\cef\Resources\locales");
             e.Settings.ResourcesDirPath = System.IO.Path.GetFullPath(@".\cef\Resources");
             e.Settings.BrowserSubprocessPath = System.IO.Path.GetFullPath(@".\cef\Cfx\BrowserSubProcess.exe");
-            e.Settings.LogSeverity = CfxLogSeverity.Disable;
+            if (!App.Debug)
+                e.Settings.LogSeverity = CfxLogSeverity.Disable;
             e.Settings.WindowlessRenderingEnabled = false;
             e.Settings.MultiThreadedMessageLoop = true;
             //CfxRuntime.EnableHighDpiSupport();
