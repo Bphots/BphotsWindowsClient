@@ -132,7 +132,7 @@ namespace HotsBpHelper.Configuration
                 sb.AppendLine(WriteConfigurationValue(AutoUploadNewReplayToHotslogsKey, customConfigurationSettings.AutoUploadNewReplayToHotslogs));
                 sb.AppendLine(WriteConfigurationValue(AutoUploadNewReplayToHotsweekKey, customConfigurationSettings.AutoUploadNewReplayToHotsweek));
                 sb.AppendLine(WriteConfigurationValue(DefalutReplayFolderPathKey, customConfigurationSettings.DefalutReplayFolderPath));
-                sb.AppendLine(WriteConfigurationValue(UploadStrategyKey, customConfigurationSettings.UploadStrategy));
+                sb.AppendLine(WriteConfigurationValue(UploadStrategyKey, (int)customConfigurationSettings.UploadStrategy));
                 sb.AppendLine(WriteConfigurationValue(MMRAutoCloseTimeKey, customConfigurationSettings.MMRAutoCloseTime));
             }
 
