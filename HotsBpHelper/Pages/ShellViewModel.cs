@@ -947,9 +947,24 @@ namespace HotsBpHelper.Pages
             Process.Start(Const.ABOUT_URL);
         }
 
-        public void ShowHelp()
+        public void ShowSettings()
         {
-            Process.Start(Const.HELP_URL);
+            _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
+            WindowManager.ShowWindow(_managerVm);
+            var managerView = (ManagerView)_managerVm.View;
+            managerView.Closed += OnManagerClose;
+            managerView.RegisterTitleHandler();
+            _managerVm.ShowSettings();
+            NotifyOfPropertyChange(() => CanShowSettings);
         }
+
+        private void OnManagerClose(object sender, EventArgs e)
+        {
+            NotifyOfPropertyChange(() => CanShowSettings);
+        }
+
+        public bool CanShowSettings => _managerVm == null || _managerVm.ScreenState == ScreenState.Closed;
+
+        private ManagerViewModel _managerVm;
     }
 }

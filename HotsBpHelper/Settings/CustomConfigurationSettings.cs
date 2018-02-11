@@ -8,9 +8,9 @@
 
         public bool AutoShowMMR { get; set; } = true;
 
-        public bool AutoUploadNewReplayToHotslogs { get; set; } 
+        public bool AutoUploadReplayToHotslogs { get; set; } 
 
-        public bool AutoUploadNewReplayToHotsweek { get; set; } 
+        public bool AutoUploadReplayToHotsweek { get; set; } 
 
         public UploadStrategy UploadStrategy { get; set; }
 

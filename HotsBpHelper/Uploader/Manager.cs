@@ -65,9 +65,9 @@ namespace HotsBpHelper.Uploader
             }
         }
 
-        private bool UploadToHotsApi => App.CustomConfigurationSettings.AutoUploadNewReplayToHotslogs;
+        private bool UploadToHotsApi => App.CustomConfigurationSettings.AutoUploadReplayToHotslogs;
 
-        private bool UplaodToHotsWeek => App.CustomConfigurationSettings.AutoUploadNewReplayToHotsweek;
+        private bool UplaodToHotsWeek => App.CustomConfigurationSettings.AutoUploadReplayToHotsweek;
 
         public string Status
         {
@@ -77,7 +77,10 @@ namespace HotsBpHelper.Uploader
                     return "Suspended";
 
                 if (!_processingQueue.Any() || _processingQueue.All(l => l.Value == 2))
+                {
+                    _processingQueue.Clear();
                     return "Idle";
+                }
 
                 var processed = _processingQueue.Count(l => l.Value == 2);
                 return @"Uploading... " + processed + "/" + _processingQueue.Count;
@@ -146,19 +149,19 @@ namespace HotsBpHelper.Uploader
                     var files = new Dictionary<ReplayFile, Replay>();
 
                     int invalidCount = 0;
-                    for (var i = 0; i < 10 && _processingQueue.Any();)
+                    for (var i = 0; i < 10 && _processingQueue.Any(l => l.Value == 0);)
                     {
                         var file = _processingQueue.FirstOrDefault(l => l.Value == 0).Key;
                         if (file == null)
                             continue;
                         
                         if (UplaodToHotsWeek)
-                            file.BpHelperUploadStatus = UploadStatus.InProgress;
+                            file.HotsWeekUploadStatus = UploadStatus.InProgress;
                         if (UploadToHotsApi)
                             file.HotsApiUploadStatus = UploadStatus.InProgress;
 
                         var replay = _analyzer.Analyze(file);
-                        if (replay != null && (file.BpHelperUploadStatus == UploadStatus.InProgress ||
+                        if (replay != null && (file.HotsWeekUploadStatus == UploadStatus.InProgress ||
                                                file.HotsApiUploadStatus == UploadStatus.InProgress))
                         {
                             _processingQueue[file] = 1;
@@ -220,7 +223,7 @@ namespace HotsBpHelper.Uploader
         private async Task UploadHotsBpHelper(ReplayFile file)
         {
             // test if replay is eligible for upload (not AI, PTR, Custom, etc)
-            if (file.BpHelperUploadStatus == UploadStatus.InProgress)
+            if (file.HotsWeekUploadStatus == UploadStatus.InProgress)
             {
                 // if it is, upload it
                 while (SuspendUpload)
@@ -237,7 +240,7 @@ namespace HotsBpHelper.Uploader
         //    Status =
         //        Files.Any(
         //            x =>
-        //                x.BpHelperUploadStatus == UploadStatus.InProgress ||
+        //                x.HotsWeekUploadStatus == UploadStatus.InProgress ||
         //                x.HotsApiUploadStatus == UploadStatus.InProgress)
         //            ? "Uploading..."
         //            : "Idle";

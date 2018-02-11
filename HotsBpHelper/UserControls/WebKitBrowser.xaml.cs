@@ -98,13 +98,13 @@ namespace HotsBpHelper.UserControls
         }
 
 
-        private void ShowDevTools()
+        public void ShowDevTools()
         {
             CfxWindowInfo windowInfo = new CfxWindowInfo();
 
             windowInfo.Style = Chromium.WindowStyle.WS_OVERLAPPEDWINDOW | Chromium.WindowStyle.WS_CLIPCHILDREN | Chromium.WindowStyle.WS_CLIPSIBLINGS | Chromium.WindowStyle.WS_VISIBLE;
             windowInfo.ParentWindow = IntPtr.Zero;
-            windowInfo.WindowName = "Dev Tools";
+            windowInfo.WindowName = "Dev Tools - " + PendingSource;
             windowInfo.X = 200;
             windowInfo.Y = 200;
             windowInfo.Width = 800;
