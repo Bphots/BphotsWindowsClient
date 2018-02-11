@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Chromium;
+using Chromium.WebBrowser;
 using GlobalHotKey;
 using HotsBpHelper.Api;
 using HotsBpHelper.Api.Security;
@@ -62,6 +63,7 @@ namespace HotsBpHelper.Pages
         public ShellViewModel(ViewModelFactory viewModelFactory, IImageUtil imageUtil, IToastService toastService,
             IRestApi restApi, ISecurityProvider securityProvider)
         {
+            App.Debug = true;
             _viewModelFactory = viewModelFactory;
 
             _imageUtil = imageUtil;
@@ -441,6 +443,8 @@ namespace HotsBpHelper.Pages
                     {
                         lobbyLastModified = File.GetLastWriteTime(Const.BattleLobbyPath);
                         var lobbyProcessor = new LobbyFileProcessor(Const.BattleLobbyPath, lobbyHeroes);
+                        ((MMRView) _mmrViewModel.View).Browser.AllowBlank = false;
+                        ((MMRView) _mmrViewModel.View).Browser.Browser.LoadUrl(_mmrViewModel.LocalFileUri);
                         var game = lobbyProcessor.ParseLobbyInfo();
                         _mmrViewModel.FillMMR(game);
                         Execute.OnUIThread(() => { _mmrViewModel.Show(); });
@@ -465,8 +469,12 @@ namespace HotsBpHelper.Pages
                 if (File.Exists(Const.BattleLobbyPath))
                 {
                     if (_bpViewModel.ProcessingThreads.All(t => !t.Value) && _bpViewModel.OcrUtil.IsInitialized)
-                       _bpViewModel.OcrUtil?.Dispose();
-                    
+                    {
+                        _bpViewModel.OcrUtil?.Dispose();
+                        ((BpView) _bpViewModel.View).Browser.AllowBlank = true;
+                        ((BpView)_bpViewModel.View).Browser.Browser.LoadUrl("about:blank");
+                    }
+
                     if (!OcrUtil.InGame)
                         OcrUtil.InGame = true;
                 }
@@ -474,7 +482,11 @@ namespace HotsBpHelper.Pages
                 if (!File.Exists(Const.BattleLobbyPath) && OcrUtil.InGame)
                 {
                     if (!_bpViewModel.OcrUtil.IsInitialized)
+                    {
                         _bpViewModel.OcrUtil.Initialize();
+                        ((BpView)_bpViewModel.View).Browser.AllowBlank = false;
+                        ((BpView)_bpViewModel.View).Browser.Browser.LoadUrl(_bpViewModel.LocalFileUri);
+                    }
                     
                     OcrUtil.InGame = false;
                 }
