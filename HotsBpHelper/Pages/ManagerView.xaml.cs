@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Chromium.WebBrowser;
 using HotsBpHelper.UserControls;
 using Stylet;
 
@@ -26,6 +27,8 @@ namespace HotsBpHelper.Pages
             eventAggregator.Subscribe(this, "ManagerChannel");
         }
 
+        public event EventHandler<SettingsTab> TabInfoRequested;
+
         public void RegisterTitleHandler()
         {
             Browser.Browser.DisplayHandler.OnTitleChange += (s, e2) =>
@@ -38,6 +41,23 @@ namespace HotsBpHelper.Pages
             };
         }
 
+        public void RegisterCallbackObject()
+        {
+            var callbackObject = new WebCallbackListener();
+            callbackObject.InfoRequested += CallbackObjectOnInfoRequested;
+            Browser.Browser.GlobalObject.Add("CallbackObject", callbackObject);
+        }
+
+        private void CallbackObjectOnInfoRequested(object sender, string s)
+        {
+            if (s == "Settings")
+                OnTabInfoRequested(SettingsTab.Settings);
+            if (s == "Replays")
+                OnTabInfoRequested(SettingsTab.Replay);
+            if (s == "About")
+                OnTabInfoRequested(SettingsTab.About);
+        }
+
         public void Handle(InvokeScriptMessage message)
         {
             Browser.InvokeScript(message);
@@ -46,6 +66,11 @@ namespace HotsBpHelper.Pages
         private void ManagerView_OnClosed(object sender, EventArgs e)
         {
             Browser?.Browser?.Dispose();
+        }
+
+        protected virtual void OnTabInfoRequested(SettingsTab e)
+        {
+            TabInfoRequested?.Invoke(this, e);
         }
     }
 }

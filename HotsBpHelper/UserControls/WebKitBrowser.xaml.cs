@@ -112,8 +112,8 @@ namespace HotsBpHelper.UserControls
             Execute.OnUIThread(() =>
             {
                 Browser.LoadUrl(PendingSource);
+                _isInitialized = true;
             });
-            _isInitialized = true;
         }
 
 
@@ -134,7 +134,7 @@ namespace HotsBpHelper.UserControls
 
         public object InvokeScript(InvokeScriptMessage message)
         {
-            if (Browser.IsLoading || Scripts.Any())
+            if (Browser.IsLoading || !_isInitialized || Scripts.Any())
                 Scripts.Enqueue(message.ToScript());
             else
                 Execute.OnUIThread(() => Browser.ExecuteJavascript(message.ToScript()));

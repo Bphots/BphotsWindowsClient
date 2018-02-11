@@ -10,7 +10,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Chromium;
-using Chromium.WebBrowser;
+using DotNetHelper;
 using GlobalHotKey;
 using HotsBpHelper.Api;
 using HotsBpHelper.Api.Security;
@@ -959,21 +959,65 @@ namespace HotsBpHelper.Pages
 
         public void ShowSettings()
         {
-            _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
-            WindowManager.ShowWindow(_managerVm);
-            var managerView = (ManagerView)_managerVm.View;
-            managerView.Closed += OnManagerClose;
-            managerView.RegisterTitleHandler();
+            if (_managerVm == null)
+                _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
+
+            if (_managerVm.View == null)
+                InitializeManagerView();
+
             _managerVm.ShowSettings();
+
             NotifyOfPropertyChange(() => CanShowSettings);
+            NotifyOfPropertyChange(() => CanShowReplays);
+        }
+
+        public void ShowReplays()
+        {
+            if (_managerVm == null)
+                _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
+
+            if (_managerVm.View == null)
+                InitializeManagerView();
+
+            _managerVm.ShowReplays(_uploadManager);
+
+            NotifyOfPropertyChange(() => CanShowSettings);
+            NotifyOfPropertyChange(() => CanShowReplays);
+        }
+
+        private void InitializeManagerView()
+        {
+            WindowManager.ShowWindow(_managerVm);
+            var managerView = (ManagerView) _managerVm.View;
+            managerView.RegisterTitleHandler();
+            managerView.RegisterCallbackObject();
+            managerView.Closed += OnManagerClose;
+            managerView.TabInfoRequested += OnTabInfoRequested;
+        }
+
+        private void OnTabInfoRequested(object sender, SettingsTab e)
+        {
+            if (_managerVm == null || _managerVm.View == null)
+                return;
+
+            if (e == SettingsTab.Settings)
+                _managerVm.PopulateSettings();
+
+            if (e == SettingsTab.Replay)
+                _managerVm.PopulateUploadManager(_uploadManager);
         }
 
         private void OnManagerClose(object sender, EventArgs e)
         {
+            _managerVm.PopulatedTabs.Clear();
+            _managerVm.ResetEvenHandler(_uploadManager);
             NotifyOfPropertyChange(() => CanShowSettings);
+            NotifyOfPropertyChange(() => CanShowReplays);
         }
 
-        public bool CanShowSettings => _managerVm == null || _managerVm.ScreenState == ScreenState.Closed;
+        public bool CanShowSettings => _managerVm == null || _managerVm.ScreenState == ScreenState.Closed || _managerVm.SettingsTab != SettingsTab.Settings;
+
+        public bool CanShowReplays => _managerVm == null || _managerVm.ScreenState == ScreenState.Closed || _managerVm.SettingsTab != SettingsTab.Replay;
 
         private ManagerViewModel _managerVm;
     }

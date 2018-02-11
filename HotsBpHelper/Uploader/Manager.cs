@@ -95,6 +95,11 @@ namespace HotsBpHelper.Uploader
         public event EventHandler StatusChanged;
 
         /// <summary>
+        ///     Fires when a new replay file is found
+        /// </summary>
+        public event EventHandler<EventArgs<ReplayFile>> ReplayFileStatusChanged;
+
+        /// <summary>
         ///     Start uploading and watching for new replays
         /// </summary>
         public async void Start()
@@ -121,6 +126,7 @@ namespace HotsBpHelper.Uploader
                 var replay = new ReplayFile(e.Data);
                 Files.Insert(0, replay);
                 _processingQueue[replay] = 0;
+                OnReplayFileStatusChanged(new EventArgs<ReplayFile>(replay));
             };
 
             _monitor.Start();
@@ -178,6 +184,7 @@ namespace HotsBpHelper.Uploader
                             invalidCount = 0;
                             SaveReplayList();
                         }
+                        OnReplayFileStatusChanged(new EventArgs<ReplayFile>(file));
                     }
 
                     if (UplaodToHotsWeek)
@@ -194,6 +201,7 @@ namespace HotsBpHelper.Uploader
                         }
 
                         _processingQueue[file.Key] = 2;
+                        OnReplayFileStatusChanged(new EventArgs<ReplayFile>(file.Key));
                     }
 
                     OnStatusChanged();
@@ -313,6 +321,11 @@ namespace HotsBpHelper.Uploader
         protected virtual void OnStatusChanged()
         {
             StatusChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected virtual void OnReplayFileStatusChanged(EventArgs<ReplayFile> e)
+        {
+            ReplayFileStatusChanged?.Invoke(this, e);
         }
     }
 }
