@@ -122,6 +122,10 @@ namespace HotsBpHelper.Pages
                         BpViewModelOnRemindBpMode(null, EventArgs.Empty);
                     }
                 }
+
+                NotifyOfPropertyChange(() => AutoShowHideHelperInputGestureText);
+                NotifyOfPropertyChange(() => ManualShowHideHelperInputGuestrueText);
+                NotifyOfPropertyChange(() => CanManualShowHelper);
             }
         }
 
@@ -311,15 +315,15 @@ namespace HotsBpHelper.Pages
 
             CanOcr = true;
 
-            if (App.OcrLanguage == OcrLanguage.Unavailable)
+            if (App.OcrLanguage == OcrLanguage.Unavailable && App.CustomConfigurationSettings.AutoDetectHeroAndMap)
             {
                 TopMostMessageBox.Show(L("LanguageUnavailable"), @"Warning");
                 CanOcr = false;
             }
-            else if (!_bpViewModel.OcrAvailable)
+            else if (!_bpViewModel.OcrAvailable && App.CustomConfigurationSettings.AutoDetectHeroAndMap)
                 _toastService.ShowWarning(L("OcrUnavailable"));
 
-            if (App.AppSetting.Position.Height < Const.IncompatibleResolutionHeight)
+            if (App.AppSetting.Position.Height < Const.IncompatibleResolutionHeight && App.CustomConfigurationSettings.AutoDetectHeroAndMap)
             {
                 CanOcr = false;
                 _toastService.ShowWarning(L("IncompatibleResolution"));
@@ -333,9 +337,9 @@ namespace HotsBpHelper.Pages
                 isWindowlessMax = false;
             }
 
-            AutoDetect = CanOcr && _bpViewModel.OcrAvailable && App.AppSetting.Position.Height > Const.BestExpericenResolutionHeight && isWindowlessMax;
-            AutoShowHideHelper = isWindowlessMax;
-            AutoShowMmr = isWindowlessMax; 
+            AutoDetect = App.CustomConfigurationSettings.AutoDetectHeroAndMap && CanOcr && _bpViewModel.OcrAvailable && App.AppSetting.Position.Height > Const.BestExpericenResolutionHeight && isWindowlessMax;
+            AutoShowHideHelper = App.CustomConfigurationSettings.AutoShowHideHelper && isWindowlessMax;
+            AutoShowMmr = App.CustomConfigurationSettings.AutoShowMMR && isWindowlessMax; 
 
             _bpViewModel.RemindDetectMode += BpViewModelOnRemindDetectMode;
             _bpViewModel.RemindBpStart += BpViewModelOnRemindGameStart;
@@ -378,9 +382,24 @@ namespace HotsBpHelper.Pages
             }
         }
 
+        public string SwitchUploadDescription => Manager.ManualSuspend ? "Resume Uploading" : "Suspend Uploading";
+
+        public string AutoShowHideHelperInputGestureText => AutoShowHideHelper ? "Ctrl+Shift+B" : string.Empty;
+
+        public string ManualShowHideHelperInputGuestrueText => AutoShowHideHelper ? string.Empty : "Ctrl+Shift+B";
+
+        public bool CanManualShowHelper => !AutoShowHideHelper;
+
+        public void SwitchUpload()
+        {
+            Manager.ManualSuspend = !Manager.ManualSuspend;
+            NotifyOfPropertyChange(() => SwitchUploadDescription);
+            NotifyOfPropertyChange(() => UploadStatusDescription);
+        }
+
         private void OnWebFileUpdateCompleted(object sender, EventArgs e)
         {
-            if (App.OcrLanguage == OcrLanguage.Unavailable)
+            if (App.OcrLanguage == OcrLanguage.Unavailable || !App.CustomConfigurationSettings.AutoDetectHeroAndMap)
             {
                 OnTessdataFileUpdateCompleted(this, EventArgs.Empty);
                 return;
@@ -498,6 +517,9 @@ namespace HotsBpHelper.Pages
                     
                     if (!OcrUtil.InGame)
                         OcrUtil.InGame = true;
+
+                    if (!Manager.IngameSuspend)
+                        Manager.IngameSuspend = true;
                 }
 
                 if (!File.Exists(Const.BattleLobbyPath) && OcrUtil.InGame)
@@ -506,6 +528,7 @@ namespace HotsBpHelper.Pages
                         _bpViewModel.OcrUtil.Initialize();
                     
                     OcrUtil.InGame = false;
+                    Manager.IngameSuspend = false;
                 }
 
                 await Task.Delay(1000);

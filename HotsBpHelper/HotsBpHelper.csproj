@@ -400,9 +400,6 @@
     <None Include="cef\Resources\locales\en-US.pak.info">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="config.ini">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="LICENSE.md" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
