@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Chromium;
+using DotNetHelper;
 using GlobalHotKey;
 using HotsBpHelper.Api;
 using HotsBpHelper.Api.Security;
@@ -358,7 +359,10 @@ namespace HotsBpHelper.Pages
 
         private void Upload()
         {
-            var path = Path.GetFullPath(@".\Replay\replays.xml");
+            FilePath path = Path.GetFullPath(@".\Replay\replays.xml");
+            if (!path.GetDirPath().Exists)
+                Directory.CreateDirectory(path.GetDirPath());
+
             _uploadManager = new Manager(new ReplayStorage(path), _restApi);
             _uploadManager.StatusChanged += OnUploadStateChanged;
             _uploadManager.Start();
