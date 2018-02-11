@@ -25,8 +25,8 @@
       <tb:TaskbarIcon.ContextMenu>
             <ContextMenu>
                 <MenuItem Header="{Binding PercentageInfo}" IsEnabled="False" Visibility="{Binding IsLoaded, Converter={StaticResource InverseBoolToVisibilityConverter} }"></MenuItem>
-                
-                <MenuItem Header="{Binding UploadStatusDescription}" IsEnabled="False" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"></MenuItem>
+
+                <MenuItem Header="{Binding UploadStatusDescription}" Command="{s:Action ShowReplays}" IsEnabled="{Binding CanShowReplays}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"></MenuItem>
                 <MenuItem Header="{Binding SwitchUploadDescription}" Command="{s:Action SwitchUpload}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
 
                 <Separator  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />

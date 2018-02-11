@@ -255,6 +255,7 @@
     <Compile Include="UserControls\ExtendedChromiumBrowser.cs" />
     <Compile Include="UserControls\ScriptingHelper.cs" />
     <Compile Include="UserControls\TabSwitcherFreeWindow.cs" />
+    <Compile Include="UserControls\WebCallbackListener.cs" />
     <Compile Include="UserControls\WebKitBrowser.xaml.cs">
       <DependentUpon>WebKitBrowser.xaml</DependentUpon>
     </Compile>
