@@ -145,6 +145,7 @@ namespace HotsBpHelper.Uploader
                     OnStatusChanged();
                     var files = new Dictionary<ReplayFile, Replay>();
 
+                    int invalidCount = 0;
                     for (var i = 0; i < 10 && _processingQueue.Any();)
                     {
                         var file = _processingQueue.FirstOrDefault(l => l.Value == 0).Key;
@@ -165,7 +166,15 @@ namespace HotsBpHelper.Uploader
                             ++i;
                         }
                         else
+                        {
+                            invalidCount ++;
                             _processingQueue[file] = 2;
+                        }
+                        if (invalidCount == 10)
+                        {
+                            invalidCount = 0;
+                            SaveReplayList();
+                        }
                     }
 
                     if (UplaodToHotsWeek)
