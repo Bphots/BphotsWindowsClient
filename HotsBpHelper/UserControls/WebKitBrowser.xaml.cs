@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Web;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -227,6 +228,6 @@ namespace HotsBpHelper.UserControls
 
         public string[] Args { get; set; }
 
-        public string ToScript() => ScriptName + "(" + string.Join(",", Args.Select(m => "'" + m + "'")) + ");";
+        public string ToScript() => ScriptName + "(" + string.Join(",", Args.Select(m => "'" + HttpUtility.JavaScriptStringEncode(m) + "'")) + ");";
     }
 }
