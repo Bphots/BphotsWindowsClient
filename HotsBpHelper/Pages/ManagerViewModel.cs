@@ -30,7 +30,7 @@ namespace HotsBpHelper.Pages
         public ManagerViewModel(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
-            var filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "manager.html#") + App.Language;
+            var filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "settings.html#") + App.Language;
             LocalFileUri = filePath;
         }
         
@@ -40,7 +40,7 @@ namespace HotsBpHelper.Pages
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
                 ScriptName = "setTab",
-                Args = new[] { "Settings" }
+                Args = new[] { "Configure" }
             }, "ManagerChannel");
 
             if (!PopulatedTabs.Contains(SettingsTab.Settings))
@@ -79,7 +79,7 @@ namespace HotsBpHelper.Pages
             uploadManager.ReplayFileStatusChanged -= UpdateReplay;
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
-                ScriptName = "PopulateReplayFiles",
+                ScriptName = "populateReplayFiles",
                 Args = new[] {JsonConvert.SerializeObject(uploadManager.Files.ToList())}
             }, "ManagerChannel");
             uploadManager.ReplayFileStatusChanged += UpdateReplay;
@@ -90,7 +90,7 @@ namespace HotsBpHelper.Pages
         {
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
-                ScriptName = "UpdateReplayFile",
+                ScriptName = "updateReplayFile",
                 Args = new[] { JsonConvert.SerializeObject(e.Data) }
             }, "ManagerChannel");
         }
