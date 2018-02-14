@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace HotsBpHelper
 {
@@ -23,6 +24,8 @@ namespace HotsBpHelper
         public const string HELP_URL = "https://www.bphots.com/articles/base/help";
 
         public static readonly string BattleLobbyPath = Path.Combine(Path.GetTempPath(), @"Heroes of the Storm\TempWriteReplayP1\replay.server.battlelobby");
+        
+        public static readonly string ProfilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Heroes of the Storm\Accounts");
 
         public const int BestExpericenResolutionHeight = 1070;
 

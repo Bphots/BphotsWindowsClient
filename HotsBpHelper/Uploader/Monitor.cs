@@ -30,7 +30,7 @@ namespace HotsBpHelper.Uploader
         {
             if (_watcher == null) {
                 _watcher = new FileSystemWatcher() {
-                    Path = App.CustomConfigurationSettings.DefalutReplayFolderPath,
+                    Path = Const.ProfilePath,
                     Filter = "*.StormReplay",
                     IncludeSubdirectories = true
                 };
@@ -56,7 +56,7 @@ namespace HotsBpHelper.Uploader
         /// </summary>
         public IEnumerable<string> ScanReplays()
         {
-            return Directory.GetFiles(App.CustomConfigurationSettings.DefalutReplayFolderPath, "*.StormReplay", SearchOption.AllDirectories);
+            return Directory.GetFiles(Const.ProfilePath, "*.StormReplay", SearchOption.AllDirectories);
         }
     }
 }
