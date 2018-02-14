@@ -30,11 +30,6 @@ namespace HotsBpHelper.Utils.ComboBoxItemUtil
                         Acronym = mi.Code,
                     })
                     .OrderBy(mi => mi.Name);
-
-                foreach (var mapInfo in _mapInfos)
-                {
-                    OcrEngine.CandidateMaps.Add(mapInfo.Name);
-                }
             }
             return _mapInfos;
         }

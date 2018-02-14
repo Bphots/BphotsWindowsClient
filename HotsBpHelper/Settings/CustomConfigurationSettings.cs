@@ -16,11 +16,11 @@
 
         public string LanguageForBphots { get; set; }
 
-        public string LanguageForRegion { get; set; }
+        public string LanguageForMessage { get; set; }
+
+        public string LanguageForGameClient { get; set; }
 
         public int MMRAutoCloseTime { get; set; }
-
-        public string DefalutReplayFolderPath { get; set; }
     }
 
     public enum UploadStrategy

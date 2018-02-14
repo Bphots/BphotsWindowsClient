@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using DotNetHelper;
 using HotsBpHelper.Settings;
+using ImageProcessor.Ocr;
+using WPFLocalizeExtension.Engine;
 
 namespace HotsBpHelper.Configuration
 {
@@ -15,16 +18,12 @@ namespace HotsBpHelper.Configuration
         private const string AutoUploadNewReplayToHotsweekKey = @"AutoUploadReplayToHotsweek";
         private const string UploadStrategyKey = @"UploadStrategy";
         private const string LanguageForBphotsKey = @"LanguageForBphots";
-        private const string LanguageForRegionKey = @"LanguageForRegion";
-        private const string DefalutReplayFolderPathKey = @"DefalutReplayFolderPath";
+        private const string LanguageForMessageKey = @"LanguageForMessage";
+        private const string LanguageForGameClientKey = @"LanguageForGameClient";
         private const string MMRAutoCloseTimeKey = @"MMRAutoCloseTime";
 
         private static readonly FilePath BpHelperConfigPath =
             Path.GetFullPath(@".\config.ini");
-
-        private readonly string ProfilePath =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                @"Heroes of the Storm\Accounts");
 
         public BpHelperConfigParser() : base(BpHelperConfigPath)
         {
@@ -62,7 +61,8 @@ namespace HotsBpHelper.Configuration
         {
             var autoUploadNewReplayToHotsweek = GetConfigurationValue(AutoUploadNewReplayToHotsweekKey);
 
-            return autoUploadNewReplayToHotsweek != "0";
+            return false;
+            //return autoUploadNewReplayToHotsweek != "0";
         }
 
         public UploadStrategy GeUploadStrategy()
@@ -84,8 +84,81 @@ namespace HotsBpHelper.Configuration
         public string GetLanguageForBphots()
         {
             var languageForBpHots = GetConfigurationValue(LanguageForBphotsKey);
+            if (!string.IsNullOrEmpty(languageForBpHots))
+                return languageForBpHots;
 
-            return languageForBpHots;
+            var languageFromGame = GetLanguageFromGame();
+            if (!string.IsNullOrEmpty(languageFromGame))
+                return languageFromGame;
+
+            return GetLanguageFromSystem();
+        }
+
+        public string GetLanguageForMessage()
+        {
+            var languageForMessage = GetConfigurationValue(LanguageForMessageKey);
+            if (!string.IsNullOrEmpty(languageForMessage))
+                return languageForMessage;
+
+            var languageFromGame = GetLanguageFromGame();
+            if (!string.IsNullOrEmpty(languageFromGame))
+                return languageFromGame;
+
+            return GetLanguageFromSystem();
+        }
+
+        public string GetLanguageForGameClient()
+        {
+            var languageForGameClient = GetConfigurationValue(LanguageForGameClientKey);
+            if (!string.IsNullOrEmpty(languageForGameClient))
+                return languageForGameClient;
+
+            var languageFromGame = GetLanguageFromGame();
+            if (!string.IsNullOrEmpty(languageFromGame))
+                return languageFromGame.Insert(2, "-");
+
+            return string.Empty;
+        }
+
+        private static string GetLanguageFromSystem()
+        {
+            LocalizeDictionary.Instance.Culture = CultureInfo.InstalledUICulture;
+            switch (LocalizeDictionary.Instance.Culture.Name)
+            {
+                case "zh-CN":
+                case "zh-CHS":
+                    return "zh-CN";
+                case "ko-KR":
+                    return "ko-KR";
+                case "zh-TW":
+                case "zh-HK":
+                case "zh-CHT":
+                    return "zh-TW";
+                default:
+                    return "en-US";
+            }
+        }
+        private static string GetLanguageFromGame()
+        {
+            var config = new HotsVariableConfigParser();
+            var locale = config.CheckTextLocale();
+            if (!string.IsNullOrEmpty(locale))
+            {
+                switch (locale)
+                {
+                    case "zhCN":
+                        return "zh-CN";
+                    case "koKR":
+                        return "ko-KR";
+                    case "zhTW":
+                        return "zh-TW";
+                    case "enUS":
+                        return "en-US";
+                    default:
+                        return string.Empty;
+                }
+            }
+            return string.Empty;
         }
 
         public int GetMMRAutoCloseTime()
@@ -99,16 +172,6 @@ namespace HotsBpHelper.Configuration
             return 30;
         }
 
-        public string GetDefalutReplayFolderPath()
-        {
-            var defalutReplayFolderPath = GetConfigurationValue(DefalutReplayFolderPathKey);
-
-            if (Directory.Exists(defalutReplayFolderPath))
-                return defalutReplayFolderPath;
-
-            return ProfilePath;
-        }
-
         public static void PopulateConfigurationSettings(CustomConfigurationSettings customConfigurationSettings)
         {
             var parser = new BpHelperConfigParser();
@@ -117,10 +180,47 @@ namespace HotsBpHelper.Configuration
             customConfigurationSettings.AutoShowMMR = parser.GetAutoShowMMR();
             customConfigurationSettings.AutoUploadReplayToHotslogs = parser.GetAutoUploadNewReplayToHotslogs();
             customConfigurationSettings.AutoUploadReplayToHotsweek = parser.GetAutoUploadNewReplayToHotsweek();
-            customConfigurationSettings.DefalutReplayFolderPath = parser.GetDefalutReplayFolderPath();
             customConfigurationSettings.UploadStrategy = parser.GeUploadStrategy();
             customConfigurationSettings.MMRAutoCloseTime = parser.GetMMRAutoCloseTime();
+
+            customConfigurationSettings.LanguageForBphots = parser.GetLanguageForBphots();
+            App.Language = customConfigurationSettings.LanguageForBphots;
+            LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo(customConfigurationSettings.LanguageForBphots);
+            
+            customConfigurationSettings.LanguageForMessage = parser.GetLanguageForMessage();
+
+            customConfigurationSettings.LanguageForGameClient = parser.GetLanguageForMessage();
+            SetOcrLanguage(customConfigurationSettings.LanguageForGameClient);
         }
+
+        private static void SetOcrLanguage(string languageForGameClient)
+        {
+            if (string.IsNullOrEmpty(languageForGameClient))
+            {
+                App.OcrLanguage = OcrLanguage.Unavailable;
+                return;
+            }
+
+            switch (languageForGameClient)
+            {
+                case "zh-CN":
+                    App.OcrLanguage = OcrLanguage.SimplifiedChinese;
+                    break;
+                case "ko-KR":
+                    App.OcrLanguage = OcrLanguage.Unavailable;
+                    break;
+                case "zh-TW":
+                    App.OcrLanguage = OcrLanguage.TraditionalChinese;
+                    break;
+                case "en-US":
+                    App.OcrLanguage = OcrLanguage.English;
+                    break;
+                default:
+                    App.OcrLanguage = OcrLanguage.Unavailable;
+                    break;
+            }
+        }
+
 
         public static void WriteConfig(CustomConfigurationSettings customConfigurationSettings)
         {
@@ -130,10 +230,12 @@ namespace HotsBpHelper.Configuration
                 sb.AppendLine(WriteConfigurationValue(AutoShowHideHelperKey, customConfigurationSettings.AutoShowHideHelper));
                 sb.AppendLine(WriteConfigurationValue(AutoShowMMRKey, customConfigurationSettings.AutoShowMMR));
                 sb.AppendLine(WriteConfigurationValue(AutoUploadNewReplayToHotslogsKey, customConfigurationSettings.AutoUploadReplayToHotslogs));
-                sb.AppendLine(WriteConfigurationValue(AutoUploadNewReplayToHotsweekKey, customConfigurationSettings.AutoUploadReplayToHotsweek));
-                sb.AppendLine(WriteConfigurationValue(DefalutReplayFolderPathKey, customConfigurationSettings.DefalutReplayFolderPath));
+                //sb.AppendLine(WriteConfigurationValue(AutoUploadNewReplayToHotsweekKey, customConfigurationSettings.AutoUploadReplayToHotsweek));
                 sb.AppendLine(WriteConfigurationValue(UploadStrategyKey, (int)customConfigurationSettings.UploadStrategy));
                 sb.AppendLine(WriteConfigurationValue(MMRAutoCloseTimeKey, customConfigurationSettings.MMRAutoCloseTime));
+                sb.AppendLine(WriteConfigurationValue(LanguageForBphotsKey, customConfigurationSettings.LanguageForBphots));
+                sb.AppendLine(WriteConfigurationValue(LanguageForMessageKey, customConfigurationSettings.LanguageForMessage));
+                sb.AppendLine(WriteConfigurationValue(LanguageForGameClientKey, customConfigurationSettings.LanguageForGameClient));
             }
 
             File.WriteAllText(BpHelperConfigPath, sb.ToString());
