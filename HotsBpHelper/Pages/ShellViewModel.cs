@@ -1000,11 +1000,11 @@ namespace HotsBpHelper.Pages
             if (_managerVm == null || _managerVm.View == null)
                 return;
 
-            if (e == SettingsTab.Settings)
-                _managerVm.PopulateSettings();
+            if (e == SettingsTab.Configure)
+                _managerVm.ShowSettings(false);
 
             if (e == SettingsTab.Replay)
-                _managerVm.PopulateUploadManager(_uploadManager);
+                _managerVm.ShowReplays(_uploadManager, false);
         }
 
         private void OnManagerClose(object sender, EventArgs e)
@@ -1015,7 +1015,7 @@ namespace HotsBpHelper.Pages
             NotifyOfPropertyChange(() => CanShowReplays);
         }
 
-        public bool CanShowSettings => _managerVm == null || _managerVm.ScreenState == ScreenState.Closed || _managerVm.SettingsTab != SettingsTab.Settings;
+        public bool CanShowSettings => _managerVm == null || _managerVm.ScreenState == ScreenState.Closed || _managerVm.SettingsTab != SettingsTab.Configure;
 
         public bool CanShowReplays => _managerVm == null || _managerVm.ScreenState == ScreenState.Closed || _managerVm.SettingsTab != SettingsTab.Replay;
 

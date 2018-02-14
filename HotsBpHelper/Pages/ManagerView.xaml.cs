@@ -50,8 +50,8 @@ namespace HotsBpHelper.Pages
 
         private void CallbackObjectOnInfoRequested(object sender, string s)
         {
-            if (s == "Settings")
-                OnTabInfoRequested(SettingsTab.Settings);
+            if (s == "Configure")
+                OnTabInfoRequested(SettingsTab.Configure);
             if (s == "Replays")
                 OnTabInfoRequested(SettingsTab.Replay);
             if (s == "About")
