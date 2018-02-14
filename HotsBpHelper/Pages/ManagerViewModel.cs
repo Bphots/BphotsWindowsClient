@@ -14,7 +14,7 @@ namespace HotsBpHelper.Pages
     public enum SettingsTab
     {
         Replay,
-        Settings,
+        Configure,
         BigData,
         About
     }
@@ -34,16 +34,17 @@ namespace HotsBpHelper.Pages
             LocalFileUri = filePath;
         }
         
-        public void ShowSettings()
+        public void ShowSettings(bool invokeWeb = true)
         {
-            SettingsTab = SettingsTab.Settings;
+            SettingsTab = SettingsTab.Configure;
+            if (invokeWeb)
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
                 ScriptName = "setTab",
                 Args = new[] { "Configure" }
             }, "ManagerChannel");
 
-            if (!PopulatedTabs.Contains(SettingsTab.Settings))
+            if (!PopulatedTabs.Contains(SettingsTab.Configure))
             {
                 PopulateSettings();
             }
@@ -56,12 +57,13 @@ namespace HotsBpHelper.Pages
                 ScriptName = "configure",
                 Args = new[] {JsonConvert.SerializeObject(App.CustomConfigurationSettings)}
             }, "ManagerChannel");
-            PopulatedTabs.Add(SettingsTab.Settings);
+            PopulatedTabs.Add(SettingsTab.Configure);
         }
 
-        public void ShowReplays(Manager uploadManager)
+        public void ShowReplays(Manager uploadManager, bool invokeWeb = true)
         {
             SettingsTab = SettingsTab.Replay;
+            if (invokeWeb)
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
                 ScriptName = "setTab",

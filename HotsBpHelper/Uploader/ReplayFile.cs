@@ -24,38 +24,20 @@ namespace HotsBpHelper.Uploader
     [Serializable]
     public class ReplayFile : INotifyPropertyChanged
     {
-        private UploadStatus _hotsWeekUploadStatus = UploadStatus.None;
-
         private bool _deleted;
 
         private UploadStatus _hotsApiUploadStatus = UploadStatus.None;
+        private UploadStatus _hotsWeekUploadStatus = UploadStatus.None;
 
         public ReplayFile()
         {
             // Required for serialization
-        } 
+        }
 
         public ReplayFile(string filename)
         {
             Filename = filename;
             Created = File.GetCreationTime(filename);
-        }
-
-        public bool NeedUpdate()
-        {
-            if (App.CustomConfigurationSettings.AutoUploadReplayToHotslogs)
-                return _hotsApiUploadStatus == UploadStatus.None;
-            
-            if (App.CustomConfigurationSettings.AutoUploadReplayToHotsweek)
-                return _hotsWeekUploadStatus == UploadStatus.None || _hotsWeekUploadStatus == UploadStatus.Reserved; ;
-
-            return false;
-        }
-
-        public bool Settled()
-        {
-            var ignored = new[] { UploadStatus.None, UploadStatus.UploadError, UploadStatus.InProgress };
-            return !ignored.Contains(_hotsApiUploadStatus) && !ignored.Contains(_hotsWeekUploadStatus);
         }
 
         [XmlIgnore]
@@ -80,7 +62,14 @@ namespace HotsBpHelper.Uploader
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Deleted)));
             }
         }
+        
+        [XmlIgnore]
+        public string HotsWeekUploadStatusText => HotsWeekUploadStatus.ToString();
 
+        [XmlIgnore]
+        public string HotsApiUploadStatusText => HotsApiUploadStatus.ToString();
+
+        [JsonIgnore]
         public UploadStatus HotsWeekUploadStatus
         {
             get { return _hotsWeekUploadStatus; }
@@ -96,6 +85,7 @@ namespace HotsBpHelper.Uploader
             }
         }
 
+        [JsonIgnore]
         public UploadStatus HotsApiUploadStatus
         {
             get { return _hotsApiUploadStatus; }
@@ -112,6 +102,24 @@ namespace HotsBpHelper.Uploader
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool NeedUpdate()
+        {
+            if (App.CustomConfigurationSettings.AutoUploadReplayToHotslogs)
+                return _hotsApiUploadStatus == UploadStatus.None;
+
+            if (App.CustomConfigurationSettings.AutoUploadReplayToHotsweek)
+                return _hotsWeekUploadStatus == UploadStatus.None || _hotsWeekUploadStatus == UploadStatus.Reserved;
+            ;
+
+            return false;
+        }
+
+        public bool Settled()
+        {
+            var ignored = new[] {UploadStatus.None, UploadStatus.UploadError, UploadStatus.InProgress};
+            return !ignored.Contains(_hotsApiUploadStatus) && !ignored.Contains(_hotsWeekUploadStatus);
+        }
 
         public override string ToString()
         {

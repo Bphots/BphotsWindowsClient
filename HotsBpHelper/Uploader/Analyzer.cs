@@ -48,10 +48,11 @@ namespace HotsBpHelper.Uploader
                 case DataParser.ReplayParseResult.ComputerPlayerFound:
                 case DataParser.ReplayParseResult.TryMeMode:
                     return UploadStatus.AiDetected;
-
                 case DataParser.ReplayParseResult.PTRRegion:
                     return UploadStatus.PtrRegion;
-
+                case DataParser.ReplayParseResult.Incomplete:
+                case DataParser.ReplayParseResult.Exception:
+                    return UploadStatus.Incomplete;
                 case DataParser.ReplayParseResult.PreAlphaWipe:
                     return UploadStatus.TooOld;
             }

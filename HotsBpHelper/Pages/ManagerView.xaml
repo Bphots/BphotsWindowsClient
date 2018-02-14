@@ -7,7 +7,7 @@
         xmlns:userControls="clr-namespace:HotsBpHelper.UserControls"
         d:DataContext="{d:DesignInstance local:ManagerViewModel}"
         mc:Ignorable="d"
-        Title="ManagerView" Height="700" Width="600"
+        Title="ManagerView" Height="450" Width="1250"
         Closed="ManagerView_OnClosed">
     <Grid>
         <userControls:WebKitBrowser x:Name="Browser" Source="{Binding LocalFileUri}" />

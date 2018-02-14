@@ -32,10 +32,10 @@ namespace HotsBpHelper.UserControls
                 BpHelperConfigParser.WriteConfig(newConfig);
                 App.CustomConfigurationSettings = newConfig;
             }
-
-            if (args[0].StringValue == "Request")
+            if (args[0].StringValue == "SetTab")
             {
-                OnInfoRequested(args[0].StringValue);
+                var newTab = args[1].StringValue;
+                OnInfoRequested(newTab);
             }
         }
 
