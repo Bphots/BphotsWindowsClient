@@ -238,7 +238,7 @@ namespace HotsBpHelper.Pages
 
         protected override void OnViewLoaded()
         {
-            _notifyGetTimeStampTaskCompleted = new NotifyTaskCompletion<double>(_restApi.GetTimestamp());
+            _notifyGetTimeStampTaskCompleted = new NotifyTaskCompletion<double>(InitializeApiAsync());
             _notifyGetTimeStampTaskCompleted.TaskStopped += OnTimeStampCompleted;
             if (_notifyGetTimeStampTaskCompleted.IsCompleted)
                 OnTimeStampCompleted(this, EventArgs.Empty);
@@ -248,6 +248,27 @@ namespace HotsBpHelper.Pages
             base.OnViewLoaded();
 
             _toastService.ShowInformation(L("Loading"));
+        }
+
+        private async Task<double> InitializeApiAsync()
+        {
+            var timeStamp = await _restApi.GetTimestamp();
+
+            App.OcrHeroInfos = _restApi.GetHeroList(App.CustomConfigurationSettings.LanguageForGameClient);
+            
+            foreach (var heroInfo in App.OcrHeroInfos)
+            {
+                OcrEngine.CandidateHeroes.Add(heroInfo.Name);
+            }
+
+            App.OcrMapInfos = _restApi.GetMapList(App.CustomConfigurationSettings.LanguageForGameClient);
+            
+            foreach (var mapInfo in App.OcrMapInfos)
+            {
+                OcrEngine.CandidateMaps.Add(mapInfo.Name);
+            }
+
+            return timeStamp;
         }
 
         private void ReceiveBroadcast()

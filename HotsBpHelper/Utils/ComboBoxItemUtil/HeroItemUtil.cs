@@ -30,11 +30,6 @@ namespace HotsBpHelper.Utils.ComboBoxItemUtil
                         Acronym = hi.Acronym,
                     })
                     .OrderBy(item => item.Name);
-
-                foreach (var heroInfo in _heroInfos)
-                {
-                    OcrEngine.CandidateHeroes.Add(heroInfo.Name);
-                }
             }
             return _heroInfos;
         }

@@ -439,6 +439,7 @@ namespace HotsBpHelper.Utils
                             tempscreenshotPath?.DeleteIfExists();
                             var text = sb.ToString();
                             var index = ids[i];
+
                             Execute.OnUIThread(() => { bpViewModel.ShowHeroSelector(index, text); });
                             checkedDic[i] = true;
                             logUtil.Log("Confirmed " + index + " " + text);

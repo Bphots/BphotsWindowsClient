@@ -529,7 +529,10 @@ namespace HotsBpHelper.Pages
             vm.InteractionVisible = true;
             if (name != null)
             {
-                vm.Select(name);
+                var heroInUi =
+                    vm.ItemsInfos.First(
+                        m => m.Id == App.OcrHeroInfos.First(om => om.Name == name).Id.ToString()).Name;
+                vm.Select(heroInUi);
                 vm.ConfirmSelection();
             }
         }
@@ -939,7 +942,13 @@ namespace HotsBpHelper.Pages
 
                 Execute.OnUIThread(() => SwitchMapSelector(true, false));
                 if (!string.IsNullOrEmpty(map))
-                    Execute.OnUIThread(() => SelectMap(map));
+                {
+                    var mapInUi =
+                        _mapSelectorViewModel.ItemsInfos.First(
+                            m => m.Id == App.OcrMapInfos.First(om => om.Name == map).Code).Name;
+
+                    Execute.OnUIThread(() => SelectMap(mapInUi));
+                }
 
                 await ScanBpAsync();
             }

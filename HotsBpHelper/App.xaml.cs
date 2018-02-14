@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using HotsBpHelper.Api.Model;
 using HotsBpHelper.Settings;
 using ImageProcessor.Ocr;
 
@@ -22,6 +23,10 @@ namespace HotsBpHelper
         public static AppSetting AppSetting;
 
         public static CustomConfigurationSettings CustomConfigurationSettings;
+
+        public static List<HeroInfo> OcrHeroInfos;
+
+        public static List<MapInfo> OcrMapInfos; 
 
         public static bool Debug;
 
