@@ -30,7 +30,7 @@ namespace HotsBpHelper.Pages
         public ManagerViewModel(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
-            var filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "settings.html#") + App.Language;
+            var filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "manager.html#") + App.Language;
             LocalFileUri = filePath;
         }
         
@@ -76,7 +76,7 @@ namespace HotsBpHelper.Pages
             }
         }
 
-        public void PopulateUploadManager(Manager uploadManager)
+        private void PopulateUploadManager(Manager uploadManager)
         {
             uploadManager.ReplayFileStatusChanged -= UpdateReplay;
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
