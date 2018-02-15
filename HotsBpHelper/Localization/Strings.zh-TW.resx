@@ -297,4 +297,22 @@
   <data name="LanguageUnavailable" xml:space="preserve">
     <value>您的遊戲文本語言暫時不支持自動識別。目前僅有正體中文，簡體中文，英語支持自動識別。請調整語言重啟遊戲後，再打開背鍋助手。</value>
   </data>
+  <data name="Idle" xml:space="preserve">
+    <value>暫無錄像需要上傳</value>
+  </data>
+  <data name="Loading Uploader..." xml:space="preserve">
+    <value>正在加載上傳模塊...</value>
+  </data>
+  <data name="Resume Uploading" xml:space="preserve">
+    <value>恢復上傳</value>
+  </data>
+  <data name="Suspend Uploading" xml:space="preserve">
+    <value>暫停上傳</value>
+  </data>
+  <data name="Suspended" xml:space="preserve">
+    <value>暫停</value>
+  </data>
+  <data name="Uploading..." xml:space="preserve">
+    <value>上傳中...</value>
+  </data>
 </root>
