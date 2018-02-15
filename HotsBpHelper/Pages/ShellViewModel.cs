@@ -1032,6 +1032,9 @@ namespace HotsBpHelper.Pages
 
             if (e == SettingsTab.Replay)
                 _managerVm.ShowReplays(_uploadManager, false);
+
+            if (e == SettingsTab.About)
+                _managerVm.ShowAbout(false);
         }
 
         private void OnManagerClose(object sender, EventArgs e)
