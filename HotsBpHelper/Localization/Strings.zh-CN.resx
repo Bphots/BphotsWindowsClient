@@ -306,6 +306,9 @@
   <data name="Resume Uploading" xml:space="preserve">
     <value>恢复上传</value>
   </data>
+  <data name="Settings" xml:space="preserve">
+    <value>设置</value>
+  </data>
   <data name="Suspend Uploading" xml:space="preserve">
     <value>暂停上传</value>
   </data>
