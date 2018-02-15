@@ -291,4 +291,22 @@
   <data name="LanguageUnavailable" xml:space="preserve">
     <value>The in-game language is not supported for OCR. Currently only English, Simplified Chinese, Traditional Chinese are supported. Please re-launching the tool after changing your language setting and reopening the game.</value>
   </data>
+  <data name="Idle" xml:space="preserve">
+    <value>Idle</value>
+  </data>
+  <data name="Loading Uploader..." xml:space="preserve">
+    <value>Loading Uploader...</value>
+  </data>
+  <data name="Resume Uploading" xml:space="preserve">
+    <value>Resume Uploading</value>
+  </data>
+  <data name="Suspend Uploading" xml:space="preserve">
+    <value>Suspend Uploading</value>
+  </data>
+  <data name="Suspended" xml:space="preserve">
+    <value>Suspended</value>
+  </data>
+  <data name="Uploading..." xml:space="preserve">
+    <value>Uploading...</value>
+  </data>
 </root>

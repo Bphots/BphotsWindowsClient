@@ -39,7 +39,7 @@ namespace HotsBpHelper.Pages
                 Execute.OnUIThread(
                     () =>
                         Title =
-                            @"HotsBpHelper - " + title);
+                            ViewModelBase.L("HotsBpHelper") + " - " + title);
             };
         }
 

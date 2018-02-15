@@ -401,13 +401,13 @@ namespace HotsBpHelper.Pages
             get
             {
                 if (_uploadManager == null)
-                    return "Loading Uploader...";
+                    return L("Loading Uploader...");
                 
                 return _uploadManager.Status;
             }
         }
 
-        public string SwitchUploadDescription => Manager.ManualSuspend ? "Resume Uploading" : "Suspend Uploading";
+        public string SwitchUploadDescription => Manager.ManualSuspend ? L("Resume Uploading") : L("Suspend Uploading");
 
         public string AutoShowHideHelperInputGestureText => AutoShowHideHelper ? "Ctrl+Shift+B" : string.Empty;
 

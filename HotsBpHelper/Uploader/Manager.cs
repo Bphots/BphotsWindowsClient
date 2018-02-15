@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Heroes.ReplayParser;
 using HotsBpHelper.Api;
+using HotsBpHelper.Pages;
 using HotsBpHelper.Settings;
 using HotsBpHelper.Utils;
 using NLog;
@@ -58,16 +59,16 @@ namespace HotsBpHelper.Uploader
             get
             {
                 if (SuspendUpload)
-                    return "Suspended";
+                    return ViewModelBase.L("Suspended");
 
                 if (!_processingQueue.Any() || _processingQueue.All(l => l.Value == 2))
                 {
                     _processingQueue.Clear();
-                    return "Idle";
+                    return ViewModelBase.L("Idle");
                 }
 
                 var processed = _processingQueue.Count(l => l.Value == 2);
-                return @"Uploading... " + processed + "/" + _processingQueue.Count;
+                return ViewModelBase.L("Uploading...") + @" " + processed + "/" + _processingQueue.Count;
             }
         }
 
