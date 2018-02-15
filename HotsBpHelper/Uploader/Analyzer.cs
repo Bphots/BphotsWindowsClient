@@ -51,6 +51,7 @@ namespace HotsBpHelper.Uploader
                 case DataParser.ReplayParseResult.PTRRegion:
                     return UploadStatus.PtrRegion;
                 case DataParser.ReplayParseResult.Incomplete:
+                    return UploadStatus.Incomplete;
                 case DataParser.ReplayParseResult.Exception:
                     return UploadStatus.Incomplete;
                 case DataParser.ReplayParseResult.PreAlphaWipe:
