@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using HotsBpHelper.Api.Model;
+using HotsBpHelper.Models;
 using HotsBpHelper.Settings;
 using ImageProcessor.Ocr;
 
@@ -35,6 +36,8 @@ namespace HotsBpHelper
         public static string Language = CultureInfo.CurrentCulture.Name;
 
         public static OcrLanguage OcrLanguage;
+
+        public static About About = new About();
 
         public static bool DevTool { get; set; }
 

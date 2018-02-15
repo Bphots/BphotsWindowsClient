@@ -202,6 +202,7 @@
     <Compile Include="Messages\ItemSelectedMessage.cs" />
     <Compile Include="Messages\ShowWindow.cs" />
     <Compile Include="Messages\SideSelectedMessage.cs" />
+    <Compile Include="Models\About.cs" />
     <Compile Include="Pages\BpView.xaml.cs">
       <DependentUpon>BpView.xaml</DependentUpon>
     </Compile>

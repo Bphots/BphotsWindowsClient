@@ -75,6 +75,30 @@ namespace HotsBpHelper.Pages
                 PopulateUploadManager(uploadManager);
             }
         }
+        public void ShowAbout(bool invokeWeb = true)
+        {
+            SettingsTab = SettingsTab.About;
+            if (invokeWeb)
+                _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
+                {
+                    ScriptName = "setTab",
+                    Args = new[] { "About" }
+                }, "ManagerChannel");
+
+            if (!PopulatedTabs.Contains(SettingsTab.About))
+            {
+                PopulateAbout();
+            }
+        }
+        public void PopulateAbout()
+        {
+            _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
+            {
+                ScriptName = "populateAbout",
+                Args = new[] { JsonConvert.SerializeObject(App.About) }
+            }, "ManagerChannel");
+            PopulatedTabs.Add(SettingsTab.About);
+        }
 
         private void PopulateUploadManager(Manager uploadManager)
         {
