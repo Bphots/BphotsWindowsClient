@@ -1014,6 +1014,12 @@ namespace HotsBpHelper.Pages
             managerView.RegisterCallbackObject();
             managerView.Closed += OnManagerClose;
             managerView.TabInfoRequested += OnTabInfoRequested;
+            managerView.ConfigurationSaved += OnConfigurationSaved;
+        }
+
+        private void OnConfigurationSaved(object sender, EventArgs e)
+        {
+            _uploadManager.RepopulateQueue();
         }
 
         private void OnTabInfoRequested(object sender, SettingsTab e)

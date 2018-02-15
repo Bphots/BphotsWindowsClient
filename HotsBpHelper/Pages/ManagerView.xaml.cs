@@ -29,6 +29,8 @@ namespace HotsBpHelper.Pages
 
         public event EventHandler<SettingsTab> TabInfoRequested;
 
+        public event EventHandler ConfigurationSaved;
+
         public void RegisterTitleHandler()
         {
             Browser.Browser.DisplayHandler.OnTitleChange += (s, e2) =>
@@ -45,7 +47,13 @@ namespace HotsBpHelper.Pages
         {
             var callbackObject = new WebCallbackListener();
             callbackObject.InfoRequested += CallbackObjectOnInfoRequested;
+            callbackObject.ConfigurationSaved += OnConfigurationSaved;
             Browser.Browser.GlobalObject.Add("CallbackObject", callbackObject);
+        }
+
+        private void OnConfigurationSaved(object sender, EventArgs e)
+        {
+            ConfigurationSaved?.Invoke(this, EventArgs.Empty);
         }
 
         private void CallbackObjectOnInfoRequested(object sender, string s)
