@@ -118,7 +118,12 @@ namespace HotsBpHelper.Uploader
         public bool Settled()
         {
             var ignored = new[] {UploadStatus.None, UploadStatus.UploadError, UploadStatus.InProgress};
-            return !ignored.Contains(_hotsApiUploadStatus) && !ignored.Contains(_hotsWeekUploadStatus);
+            bool settled = !(App.CustomConfigurationSettings.AutoUploadReplayToHotslogs && ignored.Contains(_hotsApiUploadStatus));
+
+            if (App.CustomConfigurationSettings.AutoUploadReplayToHotsweek && ignored.Contains(_hotsWeekUploadStatus))
+                settled = false;
+
+            return settled;
         }
 
         public override string ToString()
