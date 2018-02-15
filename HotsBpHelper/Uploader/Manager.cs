@@ -18,8 +18,7 @@ namespace HotsBpHelper.Uploader
     {
         private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
-        private readonly ConcurrentDictionary<ReplayFile, int> _processingQueue =
-            new ConcurrentDictionary<ReplayFile, int>();
+        private readonly ConcurrentDictionary<ReplayFile, int> _processingQueue = new ConcurrentDictionary<ReplayFile, int>();
 
         private readonly IRestApi _restApi;
 
@@ -102,9 +101,10 @@ namespace HotsBpHelper.Uploader
             _monitor = new Monitor();
 
             var replays = ScanReplays();
-            Files.AddRange(replays);
+            Files.AddRange(replays.OrderByDescending(l => l.Created));
             if (App.CustomConfigurationSettings.UploadStrategy == UploadStrategy.UploadAll)
                 replays.Where(x => x.NeedUpdate()).Reverse().Map(x => _processingQueue[x] = 0);
+
             _monitor.ReplayAdded += async (_, e) =>
             {
                 await EnsureFileAvailable(e.Data, 3000);
@@ -143,7 +143,7 @@ namespace HotsBpHelper.Uploader
                     int invalidCount = 0;
                     for (var i = 0; i < 10 && _processingQueue.Any(l => l.Value == 0);)
                     {
-                        var file = _processingQueue.FirstOrDefault(l => l.Value == 0).Key;
+                        var file = _processingQueue.OrderByDescending(l => l.Key.Created).FirstOrDefault(l => l.Value == 0).Key;
                         if (file == null)
                             continue;
                         
