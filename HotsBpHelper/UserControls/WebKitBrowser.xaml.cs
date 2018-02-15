@@ -96,8 +96,6 @@ namespace HotsBpHelper.UserControls
             {
                 win.Visibility = Visibility.Hidden;
             }
-            AllowBlank = true;
-            Browser.LoadUrl("about:blank");
         }
 
         private bool _isInitialized = false;
