@@ -300,6 +300,9 @@
   <data name="Resume Uploading" xml:space="preserve">
     <value>Resume Uploading</value>
   </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="Suspend Uploading" xml:space="preserve">
     <value>Suspend Uploading</value>
   </data>

@@ -42,7 +42,7 @@
                 
                 <Separator />
 
-                <MenuItem Header="Settings" Command="{s:Action ShowSettings}" IsEnabled="{Binding CanShowSettings}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"/>
+                <MenuItem Header="{lex:Loc Settings}" Command="{s:Action ShowSettings}" IsEnabled="{Binding CanShowSettings}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"/>
                 <MenuItem Header="{lex:Loc Exit}" Command="{s:Action Exit}" />
             </ContextMenu>
         </tb:TaskbarIcon.ContextMenu>
