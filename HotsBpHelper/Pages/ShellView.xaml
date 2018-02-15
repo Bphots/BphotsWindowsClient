@@ -41,8 +41,8 @@
                 <MenuItem Header="{lex:Loc ResetHelper}" Command="{s:Action ResetHelper}" InputGestureText="Ctrl+Shift+N" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
                 
                 <Separator />
-                
-                <MenuItem Header="Settings" Command="{s:Action ShowSettings}" IsEnabled="{Binding CanShowSettings}"/>
+
+                <MenuItem Header="Settings" Command="{s:Action ShowSettings}" IsEnabled="{Binding CanShowSettings}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"/>
                 <MenuItem Header="{lex:Loc Exit}" Command="{s:Action Exit}" />
             </ContextMenu>
         </tb:TaskbarIcon.ContextMenu>
