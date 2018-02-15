@@ -58,9 +58,6 @@ namespace HotsBpHelper.Uploader
         {
             get
             {
-                if (SuspendUpload)
-                    return ViewModelBase.L("Suspended");
-
                 if (!_processingQueue.Any() || _processingQueue.All(l => l.Value == 2))
                 {
                     _processingQueue.Clear();
@@ -68,6 +65,9 @@ namespace HotsBpHelper.Uploader
                 }
 
                 var processed = _processingQueue.Count(l => l.Value == 2);
+                if (SuspendUpload)
+                    return ViewModelBase.L("Suspended") + @" " + processed + "/" + _processingQueue.Count;
+
                 return ViewModelBase.L("Uploading...") + @" " + processed + "/" + _processingQueue.Count;
             }
         }
@@ -113,6 +113,7 @@ namespace HotsBpHelper.Uploader
                 Files.Insert(0, replay);
                 _processingQueue[replay] = 0;
                 OnReplayFileStatusChanged(new EventArgs<ReplayFile>(replay));
+                OnStatusChanged();
             };
 
             _monitor.Start();
@@ -126,6 +127,8 @@ namespace HotsBpHelper.Uploader
             _processingQueue.Clear();
             if (App.CustomConfigurationSettings.UploadStrategy == UploadStrategy.UploadAll)
                 Files.Where(x => x.NeedUpdate()).Reverse().Map(x => _processingQueue[x] = 0);
+
+            OnStatusChanged();
         }
 
         private async Task UploadLoop()
@@ -157,14 +160,16 @@ namespace HotsBpHelper.Uploader
                         if (replay != null && (file.HotsWeekUploadStatus == UploadStatus.InProgress ||
                                                file.HotsApiUploadStatus == UploadStatus.InProgress))
                         {
-                            _processingQueue[file] = 1;
+                            if (_processingQueue.ContainsKey(file))
+                                _processingQueue[file] = 1;
                             files[file] = replay;
                             ++i;
                         }
                         else
                         {
                             invalidCount ++;
-                            _processingQueue[file] = 2;
+                            if (_processingQueue.ContainsKey(file))
+                                _processingQueue[file] = 2;
                         }
                         if (invalidCount == 10)
                         {
@@ -187,8 +192,11 @@ namespace HotsBpHelper.Uploader
                             await UploadHotsBpHelper(file.Key);
                         }
 
-                        _processingQueue[file.Key] = 2;
-                        OnReplayFileStatusChanged(new EventArgs<ReplayFile>(file.Key));
+                        if (_processingQueue.ContainsKey(file.Key))
+                        {
+                            _processingQueue[file.Key] = 2;
+                            OnReplayFileStatusChanged(new EventArgs<ReplayFile>(file.Key));
+                        }
                     }
 
                     OnStatusChanged();

@@ -32,7 +32,10 @@ namespace HotsBpHelper.UserControls
             {
                 var newConfig = JsonConvert.DeserializeObject<CustomConfigurationSettings>(args[1].StringValue);
                 BpHelperConfigParser.WriteConfig(newConfig);
-                App.CustomConfigurationSettings = newConfig;
+                App.CustomConfigurationSettings.MMRAutoCloseTime = newConfig.MMRAutoCloseTime;
+                App.CustomConfigurationSettings.UploadStrategy = newConfig.UploadStrategy;
+                App.CustomConfigurationSettings.AutoUploadReplayToHotslogs = newConfig.AutoUploadReplayToHotslogs;
+                App.NextConfigurationSettings = newConfig;
                 OnConfigurationSaved();
             }
             if (args[0].StringValue == "SetTab")

@@ -25,6 +25,7 @@ namespace HotsBpHelper.Uploader
             file.HotsApiUploadStatus = UploadStatus.InProgress;
             if (file.Fingerprint != null && await CheckDuplicate(file.Fingerprint))
             {
+                if (App.Debug)
                 _log.Debug($"File {file} marked as duplicate");
                 file.HotsApiUploadStatus = UploadStatus.Duplicate;
             }

@@ -37,7 +37,8 @@ namespace HotsBpHelper.Uploader
                 _watcher.Created += (o, e) => OnReplayAdded(e.FullPath);
             }
             _watcher.EnableRaisingEvents = true;
-            _log.Debug($"Started watching for new replays");
+            if (App.Debug)
+                _log.Debug($"Started watching for new replays");
         }
 
         /// <summary>
@@ -48,7 +49,8 @@ namespace HotsBpHelper.Uploader
             if (_watcher != null) {
                 _watcher.EnableRaisingEvents = false;
             }
-            _log.Debug($"Stopped watching for new replays");
+            if (App.Debug)
+                _log.Debug($"Stopped watching for new replays");
         }
 
         /// <summary>

@@ -22,7 +22,7 @@ namespace HotsBpHelper.Configuration
         private const string LanguageForGameClientKey = @"LanguageForGameClient";
         private const string MMRAutoCloseTimeKey = @"MMRAutoCloseTime";
 
-        private static readonly FilePath BpHelperConfigPath =
+        private static readonly string BpHelperConfigPath =
             Path.GetFullPath(@".\config.ini");
 
         public BpHelperConfigParser() : base(BpHelperConfigPath)
@@ -115,7 +115,7 @@ namespace HotsBpHelper.Configuration
 
             var languageFromGame = GetLanguageFromGame();
             if (!string.IsNullOrEmpty(languageFromGame))
-                return languageFromGame.Insert(2, "-");
+                return languageFromGame;
 
             return string.Empty;
         }
@@ -189,7 +189,7 @@ namespace HotsBpHelper.Configuration
             
             customConfigurationSettings.LanguageForMessage = parser.GetLanguageForMessage();
 
-            customConfigurationSettings.LanguageForGameClient = parser.GetLanguageForMessage();
+            customConfigurationSettings.LanguageForGameClient = parser.GetLanguageForGameClient();
             SetOcrLanguage(customConfigurationSettings.LanguageForGameClient);
         }
 
@@ -235,7 +235,10 @@ namespace HotsBpHelper.Configuration
                 sb.AppendLine(WriteConfigurationValue(MMRAutoCloseTimeKey, customConfigurationSettings.MMRAutoCloseTime));
                 sb.AppendLine(WriteConfigurationValue(LanguageForBphotsKey, customConfigurationSettings.LanguageForBphots));
                 sb.AppendLine(WriteConfigurationValue(LanguageForMessageKey, customConfigurationSettings.LanguageForMessage));
-                sb.AppendLine(WriteConfigurationValue(LanguageForGameClientKey, customConfigurationSettings.LanguageForGameClient));
+
+                var languageFromGame = GetLanguageFromGame();
+                if (string.IsNullOrEmpty(languageFromGame))
+                    sb.AppendLine(WriteConfigurationValue(LanguageForGameClientKey, customConfigurationSettings.LanguageForGameClient));
             }
 
             File.WriteAllText(BpHelperConfigPath, sb.ToString());

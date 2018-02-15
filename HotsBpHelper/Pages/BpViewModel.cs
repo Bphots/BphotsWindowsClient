@@ -360,7 +360,7 @@ namespace HotsBpHelper.Pages
             };
 
             var side = (int) BpStatus.FirstSide;
-            InvokeScript("init", side.ToString(), App.Language);
+            InvokeScript("init", side.ToString(), App.CustomConfigurationSettings.LanguageForBphots, App.CustomConfigurationSettings.LanguageForMessage, App.CustomConfigurationSettings.LanguageForGameClient);
             InvokeScript("update", new List<Tuple<string, string>>
             {
                 Tuple.Create("chose", ""),
@@ -699,7 +699,7 @@ namespace HotsBpHelper.Pages
 
         public void Init()
         {
-            InvokeScript("init", "0", App.Language);
+            InvokeScript("init", "0", App.CustomConfigurationSettings.LanguageForBphots, App.CustomConfigurationSettings.LanguageForMessage, App.CustomConfigurationSettings.LanguageForGameClient);
         }
 
         public void Reload()

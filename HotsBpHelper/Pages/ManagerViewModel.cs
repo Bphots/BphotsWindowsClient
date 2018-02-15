@@ -55,7 +55,7 @@ namespace HotsBpHelper.Pages
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
                 ScriptName = "configure",
-                Args = new[] {JsonConvert.SerializeObject(App.CustomConfigurationSettings)}
+                Args = new[] {JsonConvert.SerializeObject(App.NextConfigurationSettings)}
             }, "ManagerChannel");
             PopulatedTabs.Add(SettingsTab.Configure);
         }
