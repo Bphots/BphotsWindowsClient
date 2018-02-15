@@ -26,6 +26,8 @@ namespace HotsBpHelper
 
         public static CustomConfigurationSettings CustomConfigurationSettings;
 
+        public static CustomConfigurationSettings NextConfigurationSettings;
+
         public static List<HeroInfo> OcrHeroInfos;
 
         public static List<MapInfo> OcrMapInfos; 

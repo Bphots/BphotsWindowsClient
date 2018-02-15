@@ -60,6 +60,7 @@ namespace HotsBpHelper
             var configurationSettings = new CustomConfigurationSettings();
             BpHelperConfigParser.PopulateConfigurationSettings(configurationSettings);
             App.CustomConfigurationSettings = configurationSettings;
+            App.NextConfigurationSettings = configurationSettings;
 
             if (args.Any(arg => arg.ToLower() == "/log"))
             {

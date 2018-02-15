@@ -9,15 +9,22 @@ namespace HotsBpHelper.Configuration
     {
         private readonly FilePath _configrationFilePath;
 
-        public ConfigureFileParser(FilePath configurationFilePath)
+        public ConfigureFileParser(string configurationFilePath)
         {
-            _configrationFilePath = configurationFilePath;
+            string trimmedFp = configurationFilePath.RemoveNewLines().Trim();
+            if (string.IsNullOrEmpty(trimmedFp))
+                _configrationFilePath = null;
+            else if (!Path.IsPathRooted(trimmedFp))
+                _configrationFilePath = null;
+            else
+                _configrationFilePath = configurationFilePath;
+
             InitializeConfiguration();
         }
 
         public void InitializeConfiguration()
         {
-            if (!_configrationFilePath.Exists())
+            if (_configrationFilePath == null || !_configrationFilePath.Exists())
                 return;
 
             var lines = File.ReadAllLines(_configrationFilePath);

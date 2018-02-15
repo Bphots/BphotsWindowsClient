@@ -216,13 +216,14 @@ namespace HotsBpHelper.Pages
 
         private void OnTimeStampCompleted(object sender, EventArgs e)
         {
-            if (!_notifyGetTimeStampTaskCompleted.IsSuccessfullyCompleted)
+            try
             {
-                Exit();
-                return;
+                ReceiveBroadcast();
             }
-
-            ReceiveBroadcast();
+            catch
+            {
+                // ignored
+            }
 
             if (!App.Debug)
             {
@@ -253,19 +254,23 @@ namespace HotsBpHelper.Pages
         private async Task<double> InitializeApiAsync()
         {
             var timeStamp = await _restApi.GetTimestamp();
-
-            App.OcrHeroInfos = _restApi.GetHeroList(App.CustomConfigurationSettings.LanguageForGameClient);
             
-            foreach (var heroInfo in App.OcrHeroInfos)
+            if (!string.IsNullOrEmpty(App.CustomConfigurationSettings.LanguageForGameClient))
             {
-                OcrEngine.CandidateHeroes.Add(heroInfo.Name);
-            }
+                App.OcrHeroInfos = _restApi.GetHeroList(App.CustomConfigurationSettings.LanguageForGameClient);
 
-            App.OcrMapInfos = _restApi.GetMapList(App.CustomConfigurationSettings.LanguageForGameClient);
-            
-            foreach (var mapInfo in App.OcrMapInfos)
-            {
-                OcrEngine.CandidateMaps.Add(mapInfo.Name);
+                foreach (var heroInfo in App.OcrHeroInfos)
+                {
+                    OcrEngine.CandidateHeroes.Add(heroInfo.Name);
+                }
+
+                App.OcrMapInfos = _restApi.GetMapList(App.CustomConfigurationSettings.LanguageForGameClient);
+
+                foreach (var mapInfo in App.OcrMapInfos)
+                {
+                    OcrEngine.CandidateMaps.Add(mapInfo.Name);
+                }
+
             }
 
             return timeStamp;
@@ -413,7 +418,7 @@ namespace HotsBpHelper.Pages
 
         public string ManualShowHideHelperInputGuestrueText => AutoShowHideHelper ? string.Empty : "Ctrl+Shift+B";
 
-        public bool CanManualShowHelper => !AutoShowHideHelper;
+        public bool CanManualShowHelper => !AutoShowHideHelper && !OcrUtil.InGame;
 
         public void SwitchUpload()
         {
@@ -547,7 +552,10 @@ namespace HotsBpHelper.Pages
                     }
 
                     if (!OcrUtil.InGame)
+                    {
                         OcrUtil.InGame = true;
+                        Execute.OnUIThread(() => NotifyOfPropertyChange(() => CanManualShowHelper));
+                    }
 
                     if (!Manager.IngameSuspend)
                         Manager.IngameSuspend = true;
@@ -563,6 +571,7 @@ namespace HotsBpHelper.Pages
                     }
                     
                     OcrUtil.InGame = false;
+                    Execute.OnUIThread(() => NotifyOfPropertyChange(() => CanManualShowHelper));
                     Manager.IngameSuspend = false;
                 }
 
@@ -726,7 +735,8 @@ namespace HotsBpHelper.Pages
         {
             var wasAuto = AutoShowHideHelper;
             AutoShowHideHelper = false;
-            if (!wasAuto)
+
+            if (!wasAuto && !OcrUtil.InGame)
                 ToggleVisible(true);
         }
 
@@ -965,7 +975,7 @@ namespace HotsBpHelper.Pages
 
         protected override void OnClose()
         {
-            BpHelperConfigParser.WriteConfig(App.CustomConfigurationSettings);
+            BpHelperConfigParser.WriteConfig(App.NextConfigurationSettings);
             _hotKeyManager?.Dispose();
             _bpViewModel?.OcrUtil?.Dispose();
             AutoShowHideHelper = false;
