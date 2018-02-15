@@ -842,7 +842,7 @@ namespace HotsBpHelper.Pages
                 var screenSize = ScreenUtil.GetScreenResolution();
                 App.AppSetting.Position = CaculatePosition(screenSize.Width, screenSize.Height);
                 
-                if (App.Language.Contains("en"))
+                if (App.OcrLanguage == OcrLanguage.English)
                     ExpandHeroPropertiesForLatin();
             }
             catch (Exception e)
