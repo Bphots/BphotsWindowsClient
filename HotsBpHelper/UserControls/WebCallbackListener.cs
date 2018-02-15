@@ -20,6 +20,8 @@ namespace HotsBpHelper.UserControls
 
         public event EventHandler<string> InfoRequested;
 
+        public event EventHandler ConfigurationSaved;
+
         private void Callback(object sender, CfrV8HandlerExecuteEventArgs e)
         {
             var args = e.Arguments;
@@ -31,6 +33,7 @@ namespace HotsBpHelper.UserControls
                 var newConfig = JsonConvert.DeserializeObject<CustomConfigurationSettings>(args[1].StringValue);
                 BpHelperConfigParser.WriteConfig(newConfig);
                 App.CustomConfigurationSettings = newConfig;
+                OnConfigurationSaved();
             }
             if (args[0].StringValue == "SetTab")
             {
@@ -42,6 +45,11 @@ namespace HotsBpHelper.UserControls
         protected virtual void OnInfoRequested(string e)
         {
             InfoRequested?.Invoke(this, e);
+        }
+
+        protected virtual void OnConfigurationSaved()
+        {
+            ConfigurationSaved?.Invoke(this, EventArgs.Empty);
         }
     }
 }

@@ -49,22 +49,7 @@ namespace HotsBpHelper.Uploader
         ///     Replay list
         /// </summary>
         public ObservableCollectionEx<ReplayFile> Files { get; } = new ObservableCollectionEx<ReplayFile>();
-
-        /// <summary>
-        ///     Whether to mark replays for upload to hotslogs
-        /// </summary>
-        public bool UploadToHotslogs
-        {
-            get { return _hotsApiUploader?.UploadToHotslogs ?? false; }
-            set
-            {
-                if (_hotsApiUploader != null)
-                {
-                    _hotsApiUploader.UploadToHotslogs = value;
-                }
-            }
-        }
-
+        
         private bool UploadToHotsApi => App.CustomConfigurationSettings.AutoUploadReplayToHotslogs;
 
         private bool UplaodToHotsWeek => App.CustomConfigurationSettings.AutoUploadReplayToHotsweek;
@@ -135,10 +120,11 @@ namespace HotsBpHelper.Uploader
             Task.Run(UploadLoop).Forget();
         }
 
-        private void RepopulateQueue()
+        public void RepopulateQueue()
         {
             _processingQueue.Clear();
-            Files.Where(x => x.NeedUpdate()).Reverse().Map(x => _processingQueue[x] = 0);
+            if (App.CustomConfigurationSettings.UploadStrategy == UploadStrategy.UploadAll)
+                Files.Where(x => x.NeedUpdate()).Reverse().Map(x => _processingQueue[x] = 0);
         }
 
         private async Task UploadLoop()
