@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Chromium;
+using Chromium.Event;
 
 namespace BrowserSubProcess
 {
@@ -17,9 +18,17 @@ namespace BrowserSubProcess
                 CfxRuntime.LibCefDirPath = @"cef\Release";
             
             CfxRuntime.LibCfxDirPath = @"cef\Cfx";
-            int retval = CfxRuntime.ExecuteProcess();
+            var app = new CfxApp();
+            app.OnBeforeCommandLineProcessing += AppOnOnBeforeCommandLineProcessing;
+            int retval = CfxRuntime.ExecuteProcess(app);
 
             Environment.Exit(retval);
+        }
+
+        private static void AppOnOnBeforeCommandLineProcessing(object sender, CfxOnBeforeCommandLineProcessingEventArgs cfxOnBeforeCommandLineProcessingEventArgs)
+        {
+            cfxOnBeforeCommandLineProcessingEventArgs.CommandLine.AppendSwitchWithValue("disable-gpu", "1");
+            cfxOnBeforeCommandLineProcessingEventArgs.CommandLine.AppendSwitchWithValue("disable-gpu-compositing", "1");
         }
     }
 }

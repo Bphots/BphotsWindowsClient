@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Chromium.Remote.Event;
 using Chromium.WebBrowser;
 using HotsBpHelper.Configuration;
@@ -18,9 +14,11 @@ namespace HotsBpHelper.UserControls
             AddFunction("callback").Execute += Callback;
         }
 
-        public event EventHandler<string> InfoRequested;
+        public static event EventHandler<string> InfoRequested;
 
-        public event EventHandler ConfigurationSaved;
+        public static event EventHandler ConfigurationSaved;
+
+        public static event EventHandler LobbyRequested;
 
         private void Callback(object sender, CfrV8HandlerExecuteEventArgs e)
         {
@@ -43,6 +41,10 @@ namespace HotsBpHelper.UserControls
                 var newTab = args[1].StringValue;
                 OnInfoRequested(newTab);
             }
+            if (args[0].StringValue == "RequestLobby")
+            {
+                OnLobbyRequested();
+            }
         }
 
         protected virtual void OnInfoRequested(string e)
@@ -53,6 +55,11 @@ namespace HotsBpHelper.UserControls
         protected virtual void OnConfigurationSaved()
         {
             ConfigurationSaved?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected virtual void OnLobbyRequested()
+        {
+            LobbyRequested?.Invoke(this, EventArgs.Empty);
         }
     }
 }

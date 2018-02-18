@@ -6,6 +6,7 @@ using System.Windows;
 using System.Drawing;
 using System.Web;
 using System.Web.Util;
+using HotsBpHelper.Api;
 using HotsBpHelper.Uploader;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
@@ -23,8 +24,9 @@ namespace HotsBpHelper.Pages
         private int _height;
         private Visibility _visibility;
         private int _width;
+        private readonly List<string> _lobbyHeroes;
 
-        public MMRViewModel(IEventAggregator eventAggregator)
+        public MMRViewModel(IEventAggregator eventAggregator, IRestApi restApi)
         {
             _eventAggregator = eventAggregator;
 
@@ -34,6 +36,19 @@ namespace HotsBpHelper.Pages
             
             var filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "mmr.html#") + App.Language;
             LocalFileUri = filePath;
+            _lobbyHeroes = restApi.GetLobbyHeroList(App.Language).Where(h => !h.IsNew).Select(h => h.Name).ToList();
+            WebCallbackListener.LobbyRequested += WebCallbackListenerOnLobbyRequested;
+        }
+
+        private void WebCallbackListenerOnLobbyRequested(object sender, EventArgs eventArgs)
+        {
+            if (!File.Exists(Const.BattleLobbyPath))
+                return;
+
+            var lobbyProcessor = new LobbyFileProcessor(Const.BattleLobbyPath, _lobbyHeroes);
+            var game = lobbyProcessor.ParseLobbyInfo();
+            FillMMR(game);
+            Show();
         }
 
         public string LocalFileUri { get; set; }
