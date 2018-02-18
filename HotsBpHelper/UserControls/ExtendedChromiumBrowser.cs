@@ -17,8 +17,15 @@ namespace HotsBpHelper.UserControls
     {
         public ExtendedChromiumBrowser()
         {
-            
+            GlobalObject.Add("CallbackObject", CallBackListener);
         }
+
+        public ExtendedChromiumBrowser(string url) : base(url)
+        {
+            GlobalObject.Add("CallbackObject", CallBackListener);
+        }
+        
+        public readonly WebCallbackListener CallBackListener = new WebCallbackListener();
     }
 
     public static class CefInitializer
@@ -53,7 +60,7 @@ namespace HotsBpHelper.UserControls
 
             CfxRuntime.LibCfxDirPath = @".\cef\cfx";
 
-            Chromium.WebBrowser.ChromiumWebBrowser.OnBeforeCfxInitialize += ChromiumWebBrowser_OnBeforeCfxInitialize;
+            ChromiumWebBrowser.OnBeforeCfxInitialize += ChromiumWebBrowser_OnBeforeCfxInitialize;
             ChromiumWebBrowser.OnBeforeCommandLineProcessing += ChromiumWebBrowser_OnBeforeCommandLineProcessing;
 
             ChromiumWebBrowser.Initialize();
@@ -67,6 +74,8 @@ namespace HotsBpHelper.UserControls
         private static void ChromiumWebBrowser_OnBeforeCommandLineProcessing(CfxOnBeforeCommandLineProcessingEventArgs e)
         {
             Console.WriteLine("ChromiumWebBrowser_OnBeforeCommandLineProcessing");
+            e.CommandLine.AppendSwitchWithValue("disable-gpu", "1");
+            e.CommandLine.AppendSwitchWithValue("disable-gpu-compositing", "1");
             Console.WriteLine(e.CommandLine.CommandLineString);
         }
 
@@ -76,8 +85,7 @@ namespace HotsBpHelper.UserControls
             e.Settings.ResourcesDirPath = System.IO.Path.GetFullPath(@".\cef\Resources");
             e.Settings.BrowserSubprocessPath = System.IO.Path.GetFullPath(@".\cef\Cfx\BrowserSubProcess.exe");
             if (!App.Debug)
-                e.Settings.LogSeverity = CfxLogSeverity.Disable;
-
+                e.Settings.LogSeverity = CfxLogSeverity.Error;
             e.Settings.WindowlessRenderingEnabled = false;
             e.Settings.MultiThreadedMessageLoop = true;
             //CfxRuntime.EnableHighDpiSupport();

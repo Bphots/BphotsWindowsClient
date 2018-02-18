@@ -337,6 +337,8 @@ namespace HotsBpHelper.Pages
             WindowManager.ShowWindow(_bpViewModel);
             _bpViewModel.Hide();
 
+            ManagerViewModel.TabChanged += OnManagerTabChanged;
+            
             RegisterHotKey();
             IsLoaded = true;
 
@@ -381,6 +383,12 @@ namespace HotsBpHelper.Pages
             Task.Run(MonitorLobbyFile).ConfigureAwait(false);
             Upload();
 
+        }
+
+        private void OnManagerTabChanged(object sender, EventArgs e)
+        {
+            NotifyOfPropertyChange(() => CanShowSettings);
+            NotifyOfPropertyChange(() => CanShowReplays);
         }
 
         private void Upload()
@@ -510,7 +518,6 @@ namespace HotsBpHelper.Pages
         private async Task MonitorLobbyFile()
         {
             var lobbyLastModified = DateTime.MinValue;
-            var lobbyHeroes = _restApi.GetLobbyHeroList(App.Language).Where(h => !h.IsNew).Select(h => h.Name).ToList();
             while (true)
             {
                 if (AutoShowMmr)
@@ -518,10 +525,10 @@ namespace HotsBpHelper.Pages
                     if (File.Exists(Const.BattleLobbyPath) && File.GetLastWriteTime(Const.BattleLobbyPath) != lobbyLastModified)
                     {
                         lobbyLastModified = File.GetLastWriteTime(Const.BattleLobbyPath);
-                        var lobbyProcessor = new LobbyFileProcessor(Const.BattleLobbyPath, lobbyHeroes);
-                        var game = lobbyProcessor.ParseLobbyInfo();
-                        _mmrViewModel.FillMMR(game);
-                        Execute.OnUIThread(() => { _mmrViewModel.Show(); });
+                        Execute.OnUIThread(() =>
+                        {
+                            ((MMRView)_mmrViewModel.View).Browser.InitializeBrowser(_mmrViewModel.LocalFileUri);
+                        });
                     }
                 }
                 
@@ -537,7 +544,11 @@ namespace HotsBpHelper.Pages
                 if (File.Exists(Const.BattleLobbyPath) && File.GetLastWriteTime(Const.BattleLobbyPath) != lobbyLastModified)
                 {
                     lobbyLastModified = File.GetLastWriteTime(Const.BattleLobbyPath);
-                    Execute.OnUIThread(() => { _bpViewModel.Reset(); });
+                    Execute.OnUIThread(() =>
+                    {
+                        _bpViewModel.Reset(); 
+                        ((BpView)_bpViewModel.View).Browser.DisposeBrowser();
+                    });
                 }
 
                 if (File.Exists(Const.BattleLobbyPath))
@@ -562,6 +573,7 @@ namespace HotsBpHelper.Pages
                     if (!_bpViewModel.OcrUtil.IsInitialized)
                     {
                         _bpViewModel.OcrUtil.Initialize();
+                        ((BpView)_bpViewModel.View).Browser.InitializeBrowser(_bpViewModel.LocalFileUri);
                     }
                     
                     OcrUtil.InGame = false;
@@ -963,8 +975,16 @@ namespace HotsBpHelper.Pages
             }
             catch (Exception)
             {
+                try
+                {
+                    CfxRuntime.Shutdown();
+                }
+                catch
+                {
+                }
                 Environment.Exit(0);
             }
+
         }
 
         protected override void OnClose()
@@ -976,16 +996,14 @@ namespace HotsBpHelper.Pages
             CfxRuntime.Shutdown();
             base.OnClose();
         }
-
-        public void ShowAbout()
-        {
-            Process.Start(Const.ABOUT_URL);
-        }
-
+        
         public void ShowSettings()
         {
             if (_managerVm == null)
+            {
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
+                _managerVm.UploadManager = _uploadManager;
+            }
 
             if (_managerVm.View == null)
                 InitializeManagerView();
@@ -999,12 +1017,15 @@ namespace HotsBpHelper.Pages
         public void ShowReplays()
         {
             if (_managerVm == null)
+            {
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
+                _managerVm.UploadManager = _uploadManager;
+            }
 
             if (_managerVm.View == null)
                 InitializeManagerView();
 
-            _managerVm.ShowReplays(_uploadManager);
+            _managerVm.ShowReplays();
 
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
@@ -1015,36 +1036,12 @@ namespace HotsBpHelper.Pages
             WindowManager.ShowWindow(_managerVm);
             var managerView = (ManagerView) _managerVm.View;
             managerView.RegisterTitleHandler();
-            managerView.RegisterCallbackObject();
             managerView.Closed += OnManagerClose;
-            managerView.TabInfoRequested += OnTabInfoRequested;
-            managerView.ConfigurationSaved += OnConfigurationSaved;
-        }
-
-        private void OnConfigurationSaved(object sender, EventArgs e)
-        {
-            _uploadManager.RepopulateQueue();
-        }
-
-        private void OnTabInfoRequested(object sender, SettingsTab e)
-        {
-            if (_managerVm == null || _managerVm.View == null)
-                return;
-
-            if (e == SettingsTab.Configure)
-                _managerVm.ShowSettings(false);
-
-            if (e == SettingsTab.Replay)
-                _managerVm.ShowReplays(_uploadManager, false);
-
-            if (e == SettingsTab.About)
-                _managerVm.ShowAbout(false);
         }
 
         private void OnManagerClose(object sender, EventArgs e)
         {
             _managerVm.PopulatedTabs.Clear();
-            _managerVm.ResetEvenHandler(_uploadManager);
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
         }
