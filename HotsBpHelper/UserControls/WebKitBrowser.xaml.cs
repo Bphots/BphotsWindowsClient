@@ -121,6 +121,9 @@ namespace HotsBpHelper.UserControls
             }
             if (!url.AbsoluteUri.Contains("about:blank"))
             {
+                if (App.DevTool)
+                    ShowDevTools();
+
                 Execute.OnUIThread(() =>
                 {
                     while (Scripts.Any())
@@ -159,9 +162,6 @@ namespace HotsBpHelper.UserControls
         {
             if (_isInitialized)
                 return;
-
-            if (App.DevTool)
-                ShowDevTools();
 
             Execute.OnUIThread(() =>
             {
