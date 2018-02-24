@@ -122,7 +122,7 @@ namespace ImageProcessor
             var mode = ImageProcessingHelper.CheckMode(file, rotationAngle);
             if (mode == -1)
             {
-                if (!OcrEngine.Debug)
+                if (!OcrEngine.Debug && OcrEngine.Delete)
                     file.DeleteIfExists();
 
                 return false;
@@ -136,7 +136,7 @@ namespace ImageProcessor
             if (OcrEngine.Debug)
                 image.Save(TempDirectoryPath + "CroppedImage.bmp");
 
-            var count = (double)image.Width / sampleWidth * 7.5 + 0.1;
+            var count = (double)image.Width / sampleWidth * 7.5 + 0.15;
 
             if (_engine is OcrEngineAsian)
                 _engine.Engine.SetVariable(@"textord_min_xheight", 25);
@@ -149,6 +149,7 @@ namespace ImageProcessor
             // 75 - 80 - 70 - 85 - 65 - 90 - 60
             var switcher = 0;
             int faultCount = 0;
+            int failBinaryCheckCount = 0;
             for (var index = startThresholding + 15; index <= startThresholding + 30; index += switcher)
             {
                 switcher = -switcher;
@@ -157,7 +158,17 @@ namespace ImageProcessor
                 else
                     switcher -= offset;
 
-                var segmentationCount = ImageProcessingHelper.ProcessOnce(index, image, tempPath);
+                var segmentationCount = ImageProcessingHelper.ProcessOnce(index, image, tempPath, rotationAngle);
+                if (segmentationCount == 0)
+                {
+                    failBinaryCheckCount ++;
+                    if (failBinaryCheckCount > 5)
+                        break;
+
+                    continue;
+                }
+
+                failBinaryCheckCount = -30;
                 var newCount = count;
                 if (segmentationCount < count && count - segmentationCount >= 2)
                     newCount = segmentationCount;
@@ -234,17 +245,22 @@ namespace ImageProcessor
                 }
 
                 if (!string.IsNullOrEmpty(sb.ToString()) || sb.ToString() != PickingText)
-                    File.Move(file, path);
+                {
+                    if (OcrEngine.Delete)
+                        File.Move(file, path);
+                    else
+                        File.Copy(file, path, true);
+                }
             }
 
 
             sb.Append(pendingMatchResult);
             image.Dispose();
 
-          
-            if (!OcrEngine.Debug)
+
+            if (!OcrEngine.Debug && OcrEngine.Delete)
                 file.DeleteIfExists();
-            
+
             return maxValue == int.MaxValue;
         }
     }

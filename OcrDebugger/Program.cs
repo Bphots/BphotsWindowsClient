@@ -17,74 +17,49 @@ namespace OcrDebugger
     {
         static void Main(string[] args)
         {
-            FileProcessor.ProcessLobbyFile(@"D:\qqytqqyt\Documents\HeroesBpProject\TempWriteReplayP1\replay.server.battlelobby");
+            //RunLobbyTest();
 
-            string a = @"拉格纳罗斯阿巴瑟祖尔金加尔鲁什阿努巴拉克阿塔尼斯阿尔萨斯阿兹莫丹光明之翼陈迪亚波罗精英牛头人酋长弗斯塔德加兹鲁";
-            var sb1 = new StringBuilder();
-            for (int i = 0; i < 55; i++)
-            {
-                int x = 29 + (i)*35;
-                int y = 260;
-                int width = x + 27;
-                int height = 285;
-                sb1.AppendLine(a[i] + " " + x + " " + y + " " + width + " " + height + " 0");
-            }
-            string b = @"维伊利丹吉安娜安娜乔汉娜凯尔萨斯凯瑞甘卡拉辛姆李奥瑞克克尔苏加德丽丽莫拉莉斯中尉玛法里奥穆拉丁奔波尔霸纳兹波诺";
-            for (int i = 0; i < 55; i++)
-            {
-                int x = 29 + (i) * 35;
-                int y = 215;
-                int width = x + 27;
-                int height = 240;
-                sb1.AppendLine(b[i] + " " + x + " " + y + " " + width + " " + height + " 0");
-            }
-            string c = @"娃雷诺雷加尔雷克萨重锤军士桑娅缝合怪希尔瓦娜斯塔萨达尔屠夫失落的维京人萨尔泰凯斯泰瑞尔泰兰德乌瑟尔维拉半藏扎加";
-            for (int i = 0; i < 55; i++)
-            {
-                int x = 29 + (i) * 35;
-                int y = 170;
-                int width = x + 27;
-                int height = 195;
-                sb1.AppendLine(c[i] + " " + x + " " + y + " " + width + " " + height + " 0");
-            }
-            string d = @"拉泽拉图古加尔露娜拉格雷迈恩李敏祖尔德哈卡猎空克罗米麦迪文古尔丹奥莉尔马萨伊尔阿拉纳克查莉娅萨穆罗瓦里安瓦莉拉";
-            for (int i = 0; i < 55; i++)
-            {
-                int x = 29 + (i) * 35;
-                int y = 125;
-                int width = x + 27;
-                int height = 150;
-                sb1.AppendLine(d[i] + " " + x + " " + y + " " + width + " " + height + " 0");
-            }
-            string e = @"源氏普罗比斯卡西娅卢西奥狂鼠阿莱克丝塔萨斯托科夫布雷泽正在选择中";
-            for (int i = 0; i < 32; i++)
-            {
-                int x = 29 + (i) * 35;
-                int y = 80;
-                int width = x + 27;
-                int height = 105;
-                sb1.AppendLine(e[i] + " " + x + " " + y + " " + width + " " + height + " 0");
-            }
-            string f = @"沃斯卡娅铸造厂花村诅咒谷弹头枢纽站布莱克西斯禁区失落洞窟末日塔炼狱圣坛永恒战场蛛后墓天空殿恐魔园鬼灵矿巨龙镇";
-            for (int i = 0; i < 54; i++)
-            {
-                int x = 53 + (i) * 35;
-                int y = 72;
-                int width = x + 27;
-                int height = 97;
-                sb1.AppendLine(f[i] + " " + x + " " + y + " " + width + " " + height + " 0");
-            }
-            var text = sb1.ToString();
-            Print();
-            foreach (var hero in OcrEngineAsian.Heroes)
-            {
-                OcrEngine.CandidateHeroes.Add(hero);
-            }
+            //RunOcrTrainDataTest();
+
+            InitializeOcrHeroData();
+
             OcrEngine.Debug = true;
-            var dir = @"D:\qqytqqyt\Documents\HeroesBpProject\test\AutoTest\";
+            DirPath dir = @"D:\qqytqqyt\Documents\HeroesBpProject\test\AutoTest\";
+            
             var recognizer = new Recognizer(OcrLanguage.SimplifiedChinese, dir);
+            Console.WriteLine(DateTime.Now);
             int correctCount = 0;
             int sum = 0;
+            foreach (FilePath path in Directory.GetFiles(dir + @"WipLeft"))
+            {
+                if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
+                {
+                    var sb = new StringBuilder();
+                    // This path is a file
+                    recognizer.Recognize(path, (float)29.7, sb, 3);
+                    var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
+                    if (correct)
+                        correctCount++;
+                    sum++;
+                     Console.WriteLine(sb + " " + (correct ? correct.ToString() : path.GetFileNameWithoutExtension()));
+                }
+            }
+            foreach (FilePath path in Directory.GetFiles(dir + @"WipRight"))
+            {
+                if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
+                {
+                    var sb = new StringBuilder();
+                    // This path is a file
+                    recognizer.Recognize(path, (float)-29.7, sb, 3);
+                    var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
+                    if (correct)
+                        correctCount++;
+                    sum++;
+                    Console.WriteLine(sb + " " + (correct ? correct.ToString() : (path.GetFileNameWithoutExtension() + " " + correct)));
+                }
+            }
+
+
             foreach (FilePath path in Directory.GetFiles(dir + @"left"))
             {
                 if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
@@ -92,7 +67,7 @@ namespace OcrDebugger
                     var sb = new StringBuilder();
                     // This path is a file
                     recognizer.Recognize(path, (float)29.7, sb, 3);
-                    var correct = !string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString());
+                    var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
                     if (correct)
                         correctCount++;
                     sum++;
@@ -106,7 +81,7 @@ namespace OcrDebugger
                     var sb = new StringBuilder();
                     // This path is a file
                     recognizer.Recognize(path, (float)-29.7, sb, 3);
-                    var correct = !string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString());
+                    var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
                     if (correct)
                         correctCount++;
                     sum++;
@@ -114,11 +89,12 @@ namespace OcrDebugger
                 }
             }
             Console.WriteLine(correctCount + " / " + sum);
+            Console.WriteLine(DateTime.Now);
+            Console.ReadKey();
             //var sb = new StringBuilder();
             //recognizer.Recognize(args[1], angle, sb, "1");
             //Console.WriteLine(sb.ToString());
             //Console.WriteLine(@"Press any key to exit.");
-            Console.ReadKey();
 
             //if (args.Length >= 4)
             //{
@@ -136,7 +112,7 @@ namespace OcrDebugger
             //        OcrEngine.CandidateHeroes.Add(hero);
             //    }
             //}
-            
+
             //var angle = args[2].Trim() == "L" ? (float)29.7 : (float)-29.7;
             //using (
             //    var recognizer = new Recognizer(args.Length >= 4 ? OcrLanguage.English : OcrLanguage.SimplifiedChinese,
@@ -149,6 +125,82 @@ namespace OcrDebugger
             //    Console.WriteLine(@"Press any key to exit.");
             //    Console.ReadKey();
             //}
+        }
+
+        private static void RunLobbyTest()
+        {
+            FileProcessor.ProcessLobbyFile(@"D:\qqytqqyt\Documents\HeroesBpProject\TempWriteReplayP1\replay.server.battlelobby");
+        }
+
+        private static void InitializeOcrHeroData()
+        {
+            foreach (var hero in OcrEngineAsian.Heroes)
+            {
+                OcrEngine.CandidateHeroes.Add(hero);
+            }
+            OcrEngine.Delete = false;
+        }
+
+#region TrainData
+        private static void RunOcrTrainDataTest()
+        {
+            string a = @"拉格纳罗斯阿巴瑟祖尔金加尔鲁什阿努巴拉克阿塔尼斯阿尔萨斯阿兹莫丹光明之翼陈迪亚波罗精英牛头人酋长弗斯塔德加兹鲁";
+            var sb1 = new StringBuilder();
+            for (int i = 0; i < 55; i++)
+            {
+                int x = 29 + (i)*35;
+                int y = 260;
+                int width = x + 27;
+                int height = 285;
+                sb1.AppendLine(a[i] + " " + x + " " + y + " " + width + " " + height + " 0");
+            }
+            string b = @"维伊利丹吉安娜安娜乔汉娜凯尔萨斯凯瑞甘卡拉辛姆李奥瑞克克尔苏加德丽丽莫拉莉斯中尉玛法里奥穆拉丁奔波尔霸纳兹波诺";
+            for (int i = 0; i < 55; i++)
+            {
+                int x = 29 + (i)*35;
+                int y = 215;
+                int width = x + 27;
+                int height = 240;
+                sb1.AppendLine(b[i] + " " + x + " " + y + " " + width + " " + height + " 0");
+            }
+            string c = @"娃雷诺雷加尔雷克萨重锤军士桑娅缝合怪希尔瓦娜斯塔萨达尔屠夫失落的维京人萨尔泰凯斯泰瑞尔泰兰德乌瑟尔维拉半藏扎加";
+            for (int i = 0; i < 55; i++)
+            {
+                int x = 29 + (i)*35;
+                int y = 170;
+                int width = x + 27;
+                int height = 195;
+                sb1.AppendLine(c[i] + " " + x + " " + y + " " + width + " " + height + " 0");
+            }
+            string d = @"拉泽拉图古加尔露娜拉格雷迈恩李敏祖尔德哈卡猎空克罗米麦迪文古尔丹奥莉尔马萨伊尔阿拉纳克查莉娅萨穆罗瓦里安瓦莉拉";
+            for (int i = 0; i < 55; i++)
+            {
+                int x = 29 + (i)*35;
+                int y = 125;
+                int width = x + 27;
+                int height = 150;
+                sb1.AppendLine(d[i] + " " + x + " " + y + " " + width + " " + height + " 0");
+            }
+            string e = @"源氏普罗比斯卡西娅卢西奥狂鼠阿莱克丝塔萨斯托科夫布雷泽正在选择中";
+            for (int i = 0; i < 32; i++)
+            {
+                int x = 29 + (i)*35;
+                int y = 80;
+                int width = x + 27;
+                int height = 105;
+                sb1.AppendLine(e[i] + " " + x + " " + y + " " + width + " " + height + " 0");
+            }
+            string f = @"沃斯卡娅铸造厂花村诅咒谷弹头枢纽站布莱克西斯禁区失落洞窟末日塔炼狱圣坛永恒战场蛛后墓天空殿恐魔园鬼灵矿巨龙镇";
+            for (int i = 0; i < 54; i++)
+            {
+                int x = 53 + (i)*35;
+                int y = 72;
+                int width = x + 27;
+                int height = 97;
+                sb1.AppendLine(f[i] + " " + x + " " + y + " " + width + " " + height + " 0");
+            }
+            var text = sb1.ToString();
+            Print();
         }
 
 
@@ -265,6 +317,6 @@ namespace OcrDebugger
             }
             var text = sb1.ToString();
         }
-
+#endregion
     }
 }

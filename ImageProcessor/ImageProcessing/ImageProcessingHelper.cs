@@ -197,7 +197,7 @@ namespace ImageProcessor.ImageProcessing
                                 if (OcrEngine.Debug)
                                     newThresholdedSample.Save(Recognizer.TempDirectoryPath + "Binary80CheckDarkMode.bmp");
                                 double blackPoint = GetBlackPointSample(rotationAngle, newThresholdedSample, sampleWidth);
-                                if (blackPoint / maxPoints < 0.01)
+                                if (blackPoint / maxPoints < 0.005)
                                     return -1;
                             }
 
@@ -213,13 +213,17 @@ namespace ImageProcessor.ImageProcessing
            
         }
 
-        public static int ProcessOnce(int threshold, Bitmap croppedImage, FilePath tempFilePath)
+        public static int ProcessOnce(int threshold, Bitmap croppedImage, FilePath tempFilePath, float rotation)
         {
-            using (var thresholdedCroppedImage = croppedImage.Binarilization(threshold))
+            bool binarilizationValid;
+            using (var thresholdedCroppedImage = croppedImage.BinarilizationWithValidation(threshold, rotation > 0, out binarilizationValid))
             {
+                thresholdedCroppedImage.Save(tempFilePath);
+                if (!binarilizationValid)
+                    return 0;
+
                 var count = GetSegmentation(thresholdedCroppedImage);
                 
-                thresholdedCroppedImage.Save(tempFilePath);
                 if (OcrEngine.Debug)
                     thresholdedCroppedImage.Save(Recognizer.TempDirectoryPath + "Threshold" + threshold + ".bmp");
                 return count;
