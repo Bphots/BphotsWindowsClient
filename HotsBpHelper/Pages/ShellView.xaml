@@ -36,13 +36,14 @@
                 <MenuItem Header="{lex:Loc AutoShowMMR}" IsCheckable="True" IsChecked="{Binding AutoShowMmr}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"/>
                 
                 <Separator  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
-                
-                <MenuItem Header="{lex:Loc ShowHideHelper}" Command="{s:Action ManuallyShowHideHelper}" IsEnabled="{Binding CanManualShowHelper}" InputGestureText="{Binding ManualShowHideHelperInputGuestrueText}"  Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
+
+                <MenuItem Header="{Binding ShowHideHelperTip}" Command="{s:Action ManuallyShowHideHelper}" InputGestureText="{Binding ManualShowHideHelperInputGuestrueText}"  Visibility="{Binding CanManualShowHelper, Converter={StaticResource BoolToVisibilityConverter} }" />
                 <MenuItem Header="{lex:Loc ResetHelper}" Command="{s:Action ResetHelper}" InputGestureText="Ctrl+Shift+N" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
                 
                 <Separator />
 
                 <MenuItem Header="{lex:Loc Settings}" Command="{s:Action ShowSettings}" IsEnabled="{Binding CanShowSettings}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"/>
+                <MenuItem Header="{lex:Loc About}" Command="{s:Action ShowAbout}" IsEnabled="{Binding CanAbout}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"/>
                 <MenuItem Header="{lex:Loc Exit}" Command="{s:Action Exit}" />
             </ContextMenu>
         </tb:TaskbarIcon.ContextMenu>

@@ -231,14 +231,14 @@
   <data name="AutoDetectHeroAndMap" xml:space="preserve">
     <value>自動識別英雄和地圖</value>
   </data>
-  <data name="ShowHideHelper" xml:space="preserve">
-    <value>手動重置/開啟背鍋助手</value>
+  <data name="ShowHelper" xml:space="preserve">
+    <value>開始 BP</value>
   </data>
   <data name="SwitchVisibility" xml:space="preserve">
     <value>隱藏/顯示當前界面</value>
   </data>
   <data name="ResetHelper" xml:space="preserve">
-    <value>重置BP狀態</value>
+    <value>重置自動識別</value>
   </data>
   <data name="AutoShowHideModeOffToolTip" xml:space="preserve">
     <value>已關閉自動檢測bp界面，可以通過托盤菜單重新啟用自動。</value>
@@ -253,7 +253,7 @@
     <value>請在需要時通過Ctrl+Shift+B手動喚起。如要開啟比賽檢測請在托盤開啟"自動檢測比賽"。</value>
   </data>
   <data name="AutoShowMMR" xml:space="preserve">
-    <value>自動顯示MMR</value>
+    <value>自動顯示對戰情報</value>
   </data>
   <data name="MatchDetectOffTitle" xml:space="preserve">
     <value>已關閉比賽檢測</value>
@@ -317,5 +317,8 @@
   </data>
   <data name="Uploading..." xml:space="preserve">
     <value>上傳中...</value>
+  </data>
+  <data name="HideHelper" xml:space="preserve">
+    <value>停止 BP</value>
   </data>
 </root>

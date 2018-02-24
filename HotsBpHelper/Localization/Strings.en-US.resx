@@ -279,8 +279,8 @@
   <data name="ResolutionQuestion" xml:space="preserve">
     <value>The OCR feature is designed for screen resolution with 1080 height above. It may not provide the best experience under your graphic resolution settings. You may need to manually correct the selection in case of wrong detection. Would you still like to enable Auto-Detection?</value>
   </data>
-  <data name="ShowHideHelper" xml:space="preserve">
-    <value>Turn On/Off BpHelper Manually</value>
+  <data name="ShowHelper" xml:space="preserve">
+    <value>Turn On BpHelper Manually</value>
   </data>
   <data name="SwitchVisibility" xml:space="preserve">
     <value>Show/Hide BpHelper UI Manually</value>
@@ -311,5 +311,8 @@
   </data>
   <data name="Uploading..." xml:space="preserve">
     <value>Uploading...</value>
+  </data>
+  <data name="HideHelper" xml:space="preserve">
+    <value>Turn Off BpHelper Manually</value>
   </data>
 </root>

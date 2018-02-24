@@ -34,7 +34,7 @@ namespace HotsBpHelper
 
         public static bool Debug;
 
-        public static bool NotCheckProcess;
+        public static bool ForceUpdate;
 
         public static string Language = CultureInfo.CurrentCulture.Name;
 

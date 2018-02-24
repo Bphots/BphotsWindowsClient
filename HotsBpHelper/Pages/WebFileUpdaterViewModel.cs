@@ -128,10 +128,19 @@ namespace HotsBpHelper.Pages
                     RequestClose(false);
                 }
             }
+            catch (InvalidOperationException e)
+            {
+                Logger.Error(e);
+                var errorView = new ErrorView(L("FileUpdateFail"), e.Message, "https://www.bphots.com/articles/errors/1");
+                errorView.ShowDialog();
+                RequestClose(false);
+                return;
+            }
             catch (Exception e)
             {
                 Logger.Error(e);
-                var _errorView = new ErrorView(L("FilesNotReady"), e.Message, "https://www.bphots.com/articles/errors/");
+                var errorView = new ErrorView(L("FilesNotReady"), e.Message, "https://www.bphots.com/articles/errors/");
+                errorView.ShowDialog();
                 RequestClose(false);
                 return;
             }
