@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
 using ImageProcessor.ImageProcessing;
 
 namespace ImageProcessor.Extensions
@@ -145,18 +146,85 @@ namespace ImageProcessor.Extensions
         public static Bitmap Binarilization(this Bitmap grayScaledBitmap, int threshold)
         {
             var bmp = new Bitmap(grayScaledBitmap); // new Bitmap(grayScaledBitmap.Width, grayScaledBitmap.Height);
-
             using (var fbitmap = new FastBitmap(bmp, 0, 0, bmp.Width, bmp.Height))
             {
                 unsafe
                 {
-                    byte* row = (byte*) fbitmap.Scan0, bb = row; 
+                    byte* row = (byte*) fbitmap.Scan0, bb = row;
                     for (var yy = 0; yy < fbitmap.Height; yy++, bb = row += fbitmap.Stride)
                     {
                         for (var xx = 0; xx < fbitmap.Width; xx++, bb += fbitmap.PixelSize)
                         {
                             var gray = (byte) ((1140**(bb + 0) + 5870**(bb + 1) + 2989**(bb + 2))/10000);
                             *(bb + 0) = *(bb + 1) = *(bb + 2) = (byte) (gray > threshold ? 0 : 255);
+                        }
+                    }
+                }
+            }
+            return bmp;
+        }
+
+        public static Bitmap BinarilizationWithValidation(this Bitmap grayScaledBitmap, int threshold, bool isLeft, out bool binarilizationValid)
+        {
+            var bmp = new Bitmap(grayScaledBitmap); // new Bitmap(grayScaledBitmap.Width, grayScaledBitmap.Height);
+            using (var fbitmap = new FastBitmap(bmp, 0, 0, bmp.Width, bmp.Height))
+            {
+                unsafe
+                {
+                    int oneThirdSample = (int)(fbitmap.Height * fbitmap.Width * 0.3);
+                    int countBlack = 0;
+                    int[,] indexer = new int[fbitmap.Height, fbitmap.Width];
+                    
+                    byte* row = (byte*)fbitmap.Scan0, bb = row;
+                    for (var yy = 0; yy < fbitmap.Height; yy++, bb = row += fbitmap.Stride)
+                    {
+                        for (var xx = 0; xx < fbitmap.Width; xx++, bb += fbitmap.PixelSize)
+                        {
+                            var gray = (byte) ((1140**(bb + 0) + 5870**(bb + 1) + 2989**(bb + 2))/10000);
+
+                            if (isLeft)
+                            {
+                                if (xx > fbitmap.Width * 0.7 && gray > threshold)
+                                    countBlack++;
+                            }
+                            if (!isLeft)
+                            {
+                                if (xx < fbitmap.Width * 0.3 && gray > threshold)
+                                    countBlack++;
+                            }
+                            indexer[yy, xx] = gray > threshold ? 1 : 0;
+                            * (bb + 0) = *(bb + 1) = *(bb + 2) = (byte) (gray > threshold ? 0 : 255);
+                        }
+
+                    }
+                    
+                    binarilizationValid = (double)countBlack / oneThirdSample < 0.8;
+                    if ((double) countBlack/oneThirdSample > 0.1)
+                    {
+                        int y = fbitmap.Height / 4;
+                        for (int x = 0; x < fbitmap.Width*0.5; ++x)
+                        {
+                            int countMiddle = 0;
+                            bool passX = false;
+                            for (int yy = y; yy < fbitmap.Height*0.6; ++yy)
+                            {
+                                for (int xx = x; xx < x + fbitmap.Width*0.2; ++xx)
+                                {
+                                    countMiddle += indexer[yy, xx];
+                                    if (countMiddle > 0)
+                                    {
+                                        passX = true;
+                                        break;
+                                    }
+                                }
+                                if (passX)
+                                    break;
+                            }
+                            if (passX)
+                                continue;
+
+                            binarilizationValid = false;
+                            break;
                         }
                     }
                 }

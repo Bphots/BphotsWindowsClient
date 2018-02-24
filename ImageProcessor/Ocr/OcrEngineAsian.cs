@@ -102,7 +102,7 @@ namespace ImageProcessor.ImageProcessing
             var heroesSet = new HashSet<char>();
             foreach (char character in candidates.Where(c => c.Count() == textCount).SelectMany(c => c))
                 heroesSet.Add(character);
-            if (textCount == 2 && Math.Abs(count - 2.5) < 0.3)
+            if (textCount == 2 && Math.Abs(count - 2.5) < 0.35)
             {
                 checkDva = true;
                 heroesSet.Add('D');
@@ -206,6 +206,7 @@ namespace ImageProcessor.ImageProcessing
                 "光明之翼",
                 "陈",
                 "迪亚波罗",
+                "玛维",
                 "精英牛头人酋长",
                 "弗斯塔德",
                 "加兹鲁维",
@@ -270,6 +271,7 @@ namespace ImageProcessor.ImageProcessing
                 "阿莱克丝塔萨",
                 "斯托科夫",
                 "布雷泽",
+                "D.Va",
                 "正在选择中"
             };
     }
