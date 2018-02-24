@@ -225,7 +225,7 @@
   <data name="AutoDetectHeroAndMap" xml:space="preserve">
     <value>영웅&amp;지도 인식하기</value>
   </data>
-  <data name="ShowHideHelper" xml:space="preserve">
+  <data name="ShowHelper" xml:space="preserve">
     <value>표시하기/숨기기BPHelper</value>
   </data>
   <data name="Help" xml:space="preserve">
@@ -236,5 +236,8 @@
   </data>
   <data name="WindowlessWarning" xml:space="preserve">
     <value>BpHelper is only compatible with Windowless (Maximized) mode. Please modify your in-game graphic settings for the best experience.</value>
+  </data>
+  <data name="HideHelper" xml:space="preserve">
+    <value>표시하기/숨기기BPHelper</value>
   </data>
 </root>

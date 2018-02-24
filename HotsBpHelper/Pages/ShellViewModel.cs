@@ -127,6 +127,7 @@ namespace HotsBpHelper.Pages
                 NotifyOfPropertyChange(() => AutoShowHideHelperInputGestureText);
                 NotifyOfPropertyChange(() => ManualShowHideHelperInputGuestrueText);
                 NotifyOfPropertyChange(() => CanManualShowHelper);
+                NotifyOfPropertyChange(() => ShowHideHelperTip);
             }
         }
 
@@ -211,7 +212,11 @@ namespace HotsBpHelper.Pages
         public bool IsLoaded
         {
             get { return _isLoaded; }
-            set { SetAndNotify(ref _isLoaded, value); }
+            set
+            {
+                SetAndNotify(ref _isLoaded, value);
+                NotifyOfPropertyChange(() => CanManualShowHelper);
+            }
         }
 
         private void OnTimeStampCompleted(object sender, EventArgs e)
@@ -389,6 +394,7 @@ namespace HotsBpHelper.Pages
         {
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
+            NotifyOfPropertyChange(() => CanShowAbout);
         }
 
         private void Upload()
@@ -426,7 +432,7 @@ namespace HotsBpHelper.Pages
 
         public string ManualShowHideHelperInputGuestrueText => AutoShowHideHelper ? string.Empty : "Ctrl+Shift+B";
 
-        public bool CanManualShowHelper => !AutoShowHideHelper && !OcrUtil.InGame;
+        public bool CanManualShowHelper => !AutoShowHideHelper && !OcrUtil.InGame && IsLoaded;
 
         public void SwitchUpload()
         {
@@ -548,6 +554,7 @@ namespace HotsBpHelper.Pages
                     {
                         _bpViewModel.Reset(); 
                         ((BpView)_bpViewModel.View).Browser.DisposeBrowser();
+                        NotifyOfPropertyChange(() => ShowHideHelperTip);
                     });
                 }
 
@@ -562,6 +569,7 @@ namespace HotsBpHelper.Pages
                     {
                         OcrUtil.InGame = true;
                         Execute.OnUIThread(() => NotifyOfPropertyChange(() => CanManualShowHelper));
+                        Execute.OnUIThread(() => NotifyOfPropertyChange(() => ShowHideHelperTip));
                     }
 
                     if (!Manager.IngameSuspend)
@@ -578,6 +586,7 @@ namespace HotsBpHelper.Pages
                     
                     OcrUtil.InGame = false;
                     Execute.OnUIThread(() => NotifyOfPropertyChange(() => CanManualShowHelper));
+                    Execute.OnUIThread(() => NotifyOfPropertyChange(() => ShowHideHelperTip));
                     Manager.IngameSuspend = false;
                 }
 
@@ -744,6 +753,8 @@ namespace HotsBpHelper.Pages
 
             if (!wasAuto && !OcrUtil.InGame)
                 ToggleVisible(true);
+
+            Execute.OnUIThread(() => NotifyOfPropertyChange(() => ShowHideHelperTip));
         }
 
         private void ToggleVisible(bool clear)
@@ -775,16 +786,27 @@ namespace HotsBpHelper.Pages
             try
             {
                 updManager.ReinstateIfRestarted();
+                var source = Const.UPDATE_FEED_XML;
+                if (App.ForceUpdate)
+                    source += @"&is_debug=1";
 
-                updManager.UpdateSource = new SimpleWebSource(Const.UPDATE_FEED_XML);
+                updManager.UpdateSource = new SimpleWebSource(source);
                 try
                 {
                     updManager.CheckForUpdates();
                 }
+                catch (InvalidOperationException e)
+                {
+                    Logger.Error(e);
+                    var errorView = new ErrorView(L("FileUpdateFail"), e.Message, "https://www.bphots.com/articles/errors/1");
+                    errorView.ShowDialog();
+                    RequestClose(false);
+                    throw;
+                }
                 catch (Exception ex)
                 {
                     Logger.Error(ex, "Checking updates exception.");
-                    return;
+                    throw;
                 }
                 Logger.Trace("Need updates files: {0}", updManager.UpdatesAvailable);
                 if (updManager.UpdatesAvailable == 0) return;
@@ -798,7 +820,7 @@ namespace HotsBpHelper.Pages
                 catch (Exception ex)
                 {
                     Logger.Error(ex, "Preparing updates exception.");
-                    return;
+                    throw;
                 }
 
                 try
@@ -814,6 +836,7 @@ namespace HotsBpHelper.Pages
                     Logger.Error(ex, "Applying updates exception.");
                     ShowMessageBox(string.Format(L("UpdatesFailed"), ex.Message), MessageBoxButton.OK,
                         MessageBoxImage.Information);
+                    throw;
                 }
             }
             finally
@@ -1012,6 +1035,7 @@ namespace HotsBpHelper.Pages
 
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
+            NotifyOfPropertyChange(() => CanShowAbout);
         }
 
         public void ShowReplays()
@@ -1029,6 +1053,25 @@ namespace HotsBpHelper.Pages
 
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
+            NotifyOfPropertyChange(() => CanShowAbout);
+        }
+
+        public void ShowAbout()
+        {
+            if (_managerVm == null)
+            {
+                _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
+                _managerVm.UploadManager = _uploadManager;
+            }
+
+            if (_managerVm.View == null)
+                InitializeManagerView();
+
+            _managerVm.ShowAbout();
+
+            NotifyOfPropertyChange(() => CanShowSettings);
+            NotifyOfPropertyChange(() => CanShowReplays);
+            NotifyOfPropertyChange(() => CanShowAbout);
         }
 
         private void InitializeManagerView()
@@ -1044,11 +1087,17 @@ namespace HotsBpHelper.Pages
             _managerVm.PopulatedTabs.Clear();
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
+            NotifyOfPropertyChange(() => CanShowAbout);
         }
 
         public bool CanShowSettings => _managerVm == null || _managerVm.ScreenState == ScreenState.Closed || _managerVm.SettingsTab != SettingsTab.Configure;
 
+        public bool CanShowAbout => _managerVm == null || _managerVm.ScreenState == ScreenState.Closed || _managerVm.SettingsTab != SettingsTab.About;
+
         public bool CanShowReplays => _managerVm == null || _managerVm.ScreenState == ScreenState.Closed || _managerVm.SettingsTab != SettingsTab.Replay;
+
+        public string ShowHideHelperTip
+            => _bpViewModel != null && _bpViewModel.BpScreenLoaded ? L("HideHelper") : L("ShowHelper");
 
         private ManagerViewModel _managerVm;
     }

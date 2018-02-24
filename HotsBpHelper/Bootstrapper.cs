@@ -79,9 +79,9 @@ namespace HotsBpHelper
                 App.Debug = true;
             }
 
-            if (args.Any(arg => arg.ToLower() == "/notcheckprocess"))
+            if (args.Any(arg => arg.ToLower() == "/forceupdate"))
             {
-                App.NotCheckProcess = true;
+                App.ForceUpdate = true;
             }
 
             if (args.Any(arg => arg.ToLower() == "/errortest"))
