@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using HotsBpHelper.Settings;
 using NLog;
 
@@ -58,7 +59,7 @@ namespace HotsBpHelper.Uploader
         /// </summary>
         public IEnumerable<string> ScanReplays()
         {
-            return Directory.GetFiles(Const.ProfilePath, "*.StormReplay", SearchOption.AllDirectories);
+            return Directory.GetFiles(Const.ProfilePath, "*.StormReplay", SearchOption.AllDirectories).Where(l => l.Length < 240);
         }
     }
 }
