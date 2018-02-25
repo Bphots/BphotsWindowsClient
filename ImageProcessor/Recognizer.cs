@@ -172,6 +172,8 @@ namespace ImageProcessor
                 var newCount = count;
                 if (segmentationCount < count && count - segmentationCount >= 2)
                     newCount = segmentationCount;
+                if (newCount > 4 && offset < 5)
+                    offset = 5;
 
                 OcrResult result;
 
@@ -208,6 +210,12 @@ namespace ImageProcessor
                 // unique 60%+ case
                 if (matchResultsWithMaxScore.Count == 1 && matchResultsWithMaxScore[0].Trustable)
                 {
+                    if (count >= 3)
+                    {
+                        scoreDictionary[matchResultsWithMaxScore[0].Value] = int.MaxValue/2;
+                        break;
+                    }
+                
                     matchResultsWithMaxScore[0].Score *= 2;
                 }
 
