@@ -21,110 +21,116 @@ namespace OcrDebugger
 
             //RunOcrTrainDataTest();
 
-            InitializeOcrHeroData();
-
-            OcrEngine.Debug = true;
-            DirPath dir = @"D:\qqytqqyt\Documents\HeroesBpProject\test\AutoTest\";
-            
-            var recognizer = new Recognizer(OcrLanguage.SimplifiedChinese, dir);
-            Console.WriteLine(DateTime.Now);
             int correctCount = 0;
             int sum = 0;
-            foreach (FilePath path in Directory.GetFiles(dir + @"WipLeft"))
+            DirPath dir = args.Length > 0 ? args[0] : @"D:\qqytqqyt\Documents\HeroesBpProject\test\AutoTest\";
+            Console.WriteLine("Running...");
+            Console.WriteLine(dir);
+            List<double> time = new List<double>();
+            int count = 0;
+            using (var fs = new FileStream(@".\Output.txt", FileMode.Create))
+            using (StreamWriter sw = new StreamWriter(fs))
             {
-                if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
+                Console.SetOut(sw);
+                InitializeOcrHeroData();
+
+                OcrEngine.Debug = true;
+
+                var recognizer = new Recognizer(OcrLanguage.SimplifiedChinese, dir);
+                Console.WriteLine(DateTime.Now);
+                foreach (FilePath path in Directory.GetFiles(dir + @"WipLeft"))
                 {
-                    var sb = new StringBuilder();
-                    // This path is a file
-                    recognizer.Recognize(path, (float)29.7, sb, 3);
-                    var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
-                    if (correct)
-                        correctCount++;
-                    sum++;
-                     Console.WriteLine(sb + " " + (correct ? correct.ToString() : path.GetFileNameWithoutExtension()));
+                    if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
+                    {
+                        var current = DateTime.Now;
+                        var sb = new StringBuilder();
+                        // This path is a file
+                        recognizer.Recognize(path, (float)29.7, sb, 3);
+                        var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
+                        if (correct)
+                            correctCount++;
+                        sum++;
+                        var span = (DateTime.Now - current).TotalSeconds;
+                        count++;
+                        time.Add(span);
+                        Console.Write(span + @" ");
+                        Console.WriteLine(sb + " " + (correct ? correct.ToString() : path.GetFileNameWithoutExtension()));
+                    }
                 }
+                foreach (FilePath path in Directory.GetFiles(dir + @"WipRight"))
+                {
+                    if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
+                    {
+                        var current = DateTime.Now;
+                        var sb = new StringBuilder();
+                        // This path is a file
+                        recognizer.Recognize(path, (float)-29.7, sb, 3);
+                        var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
+                        if (correct)
+                            correctCount++;
+                        sum++;
+                        var span = (DateTime.Now - current).TotalSeconds;
+                        count++;
+                        time.Add(span);
+                        Console.Write(span + @" ");
+                        Console.WriteLine(sb + " " + (correct ? correct.ToString() : (path.GetFileNameWithoutExtension() + " " + correct)));
+                    }
+                }
+
+
+                foreach (FilePath path in Directory.GetFiles(dir + @"left"))
+                {
+                    if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
+                    {
+                        var current = DateTime.Now;
+                        var sb = new StringBuilder();
+                        // This path is a file
+                        recognizer.Recognize(path, (float)29.7, sb, 3);
+                        var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
+                        if (correct)
+                            correctCount++;
+                        sum++;
+                        var span = (DateTime.Now - current).TotalSeconds;
+                        count++;
+                        time.Add(span);
+                        Console.Write(span + @" ");
+                        Console.WriteLine(sb + " " + (correct ? correct.ToString() : path.GetFileNameWithoutExtension()));
+                    }
+                }
+                foreach (FilePath path in Directory.GetFiles(dir + @"right"))
+                {
+                    if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
+                    {
+                        var current = DateTime.Now;
+                        var sb = new StringBuilder();
+                        // This path is a file
+                        recognizer.Recognize(path, (float)-29.7, sb, 3);
+                        var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
+                        if (correct)
+                            correctCount++;
+                        sum++;
+                        var span = (DateTime.Now - current).TotalSeconds;
+                        count++;
+                        time.Add(span);
+                        Console.Write(span + @" ");
+                        Console.WriteLine(sb + " " + (correct ? correct.ToString() : (path.GetFileNameWithoutExtension() + " " + correct)));
+                    }
+                }
+                Console.WriteLine(correctCount + " / " + sum);
+                Console.WriteLine(DateTime.Now);
+                recognizer.Dispose();
             }
-            foreach (FilePath path in Directory.GetFiles(dir + @"WipRight"))
+            using (StreamWriter standardOutput = new StreamWriter(Console.OpenStandardOutput()) {AutoFlush = true})
             {
-                if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
-                {
-                    var sb = new StringBuilder();
-                    // This path is a file
-                    recognizer.Recognize(path, (float)-29.7, sb, 3);
-                    var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
-                    if (correct)
-                        correctCount++;
-                    sum++;
-                    Console.WriteLine(sb + " " + (correct ? correct.ToString() : (path.GetFileNameWithoutExtension() + " " + correct)));
-                }
+                Console.SetOut(standardOutput);
+                var total = time.Sum();
+                var average = time.Sum() / count;
+                Console.WriteLine(@"Complete");
+                Console.WriteLine(@"Accuracy: " + correctCount + " / " + sum);
+                Console.WriteLine(@"Total: " + total);
+                Console.WriteLine(@"Avg: " + average);
+                Console.ReadKey();
             }
-
-
-            foreach (FilePath path in Directory.GetFiles(dir + @"left"))
-            {
-                if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
-                {
-                    var sb = new StringBuilder();
-                    // This path is a file
-                    recognizer.Recognize(path, (float)29.7, sb, 3);
-                    var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
-                    if (correct)
-                        correctCount++;
-                    sum++;
-                    Console.WriteLine(sb + " " + (correct ? correct.ToString() : path.GetFileNameWithoutExtension()));
-                }
-            }
-            foreach (FilePath path in Directory.GetFiles(dir + @"right"))
-            {
-                if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
-                {
-                    var sb = new StringBuilder();
-                    // This path is a file
-                    recognizer.Recognize(path, (float)-29.7, sb, 3);
-                    var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
-                    if (correct)
-                        correctCount++;
-                    sum++;
-                    Console.WriteLine(sb + " " + (correct ? correct.ToString() : (path.GetFileNameWithoutExtension() + " " + correct)));
-                }
-            }
-            Console.WriteLine(correctCount + " / " + sum);
-            Console.WriteLine(DateTime.Now);
-            Console.ReadKey();
-            //var sb = new StringBuilder();
-            //recognizer.Recognize(args[1], angle, sb, "1");
-            //Console.WriteLine(sb.ToString());
-            //Console.WriteLine(@"Press any key to exit.");
-
-            //if (args.Length >= 4)
-            //{
-
-            //    foreach (var hero in OcrEngineLatin.Candidates)
-            //    {
-            //        OcrEngine.CandidateHeroes.Add(hero);
-            //    }
-            //}
-            //else
-            //{
-
-            //    foreach (var hero in OcrEngineAsian.Heroes)
-            //    {
-            //        OcrEngine.CandidateHeroes.Add(hero);
-            //    }
-            //}
-
-            //var angle = args[2].Trim() == "L" ? (float)29.7 : (float)-29.7;
-            //using (
-            //    var recognizer = new Recognizer(args.Length >= 4 ? OcrLanguage.English : OcrLanguage.SimplifiedChinese,
-            //        args[0]))
-            //{
-
-            //    var sb = new StringBuilder();
-            //    recognizer.Recognize(args[1], angle, sb, "1");
-            //    Console.WriteLine(sb.ToString());
-            //    Console.WriteLine(@"Press any key to exit.");
-            //    Console.ReadKey();
-            //}
         }
 
         private static void RunLobbyTest()

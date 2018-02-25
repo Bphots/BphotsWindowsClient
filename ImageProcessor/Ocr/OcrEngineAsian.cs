@@ -100,7 +100,7 @@ namespace ImageProcessor.ImageProcessing
             bool checkDva = false;
             int textCount = (int)count;
             var heroesSet = new HashSet<char>();
-            foreach (char character in candidates.Where(c => c.Count() == textCount).SelectMany(c => c))
+            foreach (char character in candidates.Where(c => c.Count() == textCount).SelectMany(c => c).Where(c => c > 255))
                 heroesSet.Add(character);
             if (textCount == 2 && Math.Abs(count - 2.5) < 0.35)
             {
@@ -109,6 +109,7 @@ namespace ImageProcessor.ImageProcessing
                 heroesSet.Add('V');
                 heroesSet.Add('A');
             }
+
             if (!heroesSet.Any())
                 return ocrResult;
 
@@ -129,8 +130,11 @@ namespace ImageProcessor.ImageProcessing
                 {
                     int score = CalculateScore(text, hero);
                     if (score > 0)
-                        ocrResult.Results[hero] = new MatchResult() { Key = text, Value = hero, InDoubt = score / (double)(textCount * FullyMatchScore) <= 0.5 || textCount <= 1, Score = score, Trustable = (score / (double)(textCount * FullyMatchScore)) > 0.66 && count >= 2, FullyTrustable = textCount >= 2 && score == textCount * FullyMatchScore };
-                        
+                    {
+                        var trustable = ((score/(double) (textCount*FullyMatchScore)) > 0.66 && count >= 2) || ((score / (double)(textCount * FullyMatchScore)) >= 0.5 && count >= 4);
+                        ocrResult.Results[hero] = new MatchResult() { Key = text, Value = hero, InDoubt = score / (double)(textCount * FullyMatchScore) <= 0.5 || textCount <= 1, Score = score, Trustable = trustable, FullyTrustable = textCount >= 2 && score == textCount * FullyMatchScore };
+                    }
+
                 }
                 return ocrResult;
             }
