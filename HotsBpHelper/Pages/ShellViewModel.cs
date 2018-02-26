@@ -801,9 +801,13 @@ namespace HotsBpHelper.Pages
                 catch (InvalidOperationException e)
                 {
                     Logger.Error(e);
-                    var errorView = new ErrorView(L("FileUpdateFail"), e.Message, "https://www.bphots.com/articles/errors/1");
-                    errorView.ShowDialog();
-                    RequestClose(false);
+                    if (e.Message.Contains(@"Already checked for updates"))
+                        return;
+
+                    Execute.OnUIThread(() => {
+                        var errorView = new ErrorView(L("FileUpdateFail"), e.Message, "https://www.bphots.com/articles/errors/1");
+                        errorView.ShowDialog();
+                    });
                     throw;
                 }
                 catch (Exception ex)
@@ -1015,11 +1019,18 @@ namespace HotsBpHelper.Pages
 
         protected override void OnClose()
         {
-            BpHelperConfigParser.WriteConfig(App.NextConfigurationSettings);
-            _hotKeyManager?.Dispose();
-            _bpViewModel?.OcrUtil?.Dispose();
-            AutoShowHideHelper = false;
-            CfxRuntime.Shutdown();
+            try
+            {
+                BpHelperConfigParser.WriteConfig(App.NextConfigurationSettings);
+                _hotKeyManager?.Dispose();
+                _bpViewModel?.OcrUtil?.Dispose();
+                AutoShowHideHelper = false;
+                CfxRuntime.Shutdown();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
             base.OnClose();
         }
         
