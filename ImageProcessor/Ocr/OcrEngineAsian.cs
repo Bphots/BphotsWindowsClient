@@ -163,7 +163,11 @@ namespace ImageProcessor.Ocr
                 for (var i = 0; i < original.Length; ++i)
                 {
                     if (target.Contains(original[i]))
+                    {
                         score += 1;
+                        if (i < original.Length && i < target.Length && original[i] == target[i])
+                            score += 1;
+                    }
                 }
             }
 
@@ -299,7 +303,8 @@ namespace ImageProcessor.Ocr
                     Value = match,
                     InDoubt = inDoubt,
                     Score = maxScore,
-                    Trustable = maxScore/(double) (match.Length*FullyMatchScore) > 0.66
+                    Trustable = maxScore/(double) (match.Length*FullyMatchScore) >= 0.3,
+                    FullyTrustable = maxScore / (double)(match.Length * FullyMatchScore) >= 0.66
                 };
                 return ocrResult;
             }

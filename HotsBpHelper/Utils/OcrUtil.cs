@@ -97,20 +97,36 @@ namespace HotsBpHelper.Utils
                 int attempts = 0;
                 while (!cancellationToken.IsCancellationRequested && IsInitialized)
                 {
+                    sb.Clear();
                     if (SuspendScanning)
                     {
                         await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
                         continue;
                     }
-
+                    bool fullyTrustable = false;
                     lock (ImageProcessingHelper.GDILock)
                     {
                         var screenPath = finder.CaptureScreen();
-                        _recognizer.ProcessMap(finder.CaptureMapArea(screenPath), sb);
-                        if (!string.IsNullOrEmpty(sb.ToString()))
-                            break;
-                        attempts++;
+                        fullyTrustable = _recognizer.ProcessMap(finder.CaptureMapArea(screenPath), sb);
                     }
+
+                    if (!string.IsNullOrEmpty(sb.ToString()))
+                    {
+                        if (fullyTrustable)
+                            break;
+
+                        await Task.Delay(500, cancellationToken).ConfigureAwait(false);
+                        var sbConfirm = new StringBuilder();
+                        lock (ImageProcessingHelper.GDILock)
+                        {
+                            var screenPath = finder.CaptureScreen();
+                            _recognizer.ProcessMap(finder.CaptureMapArea(screenPath), sbConfirm);
+                            if (sbConfirm.ToString() == sb.ToString())
+                                break;
+                        }
+                    }
+
+                    attempts++;
                     if (attempts == 5)
                     {
                         return string.Empty;
