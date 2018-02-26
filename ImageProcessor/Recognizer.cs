@@ -28,6 +28,12 @@ namespace ImageProcessor
             TempDirectoryPath = sourceDirectory + @"\Test\";
             if (!Directory.Exists(TempDirectoryPath))
                 Directory.CreateDirectory(TempDirectoryPath);
+            var direLeft = TempDirectoryPath + @"left\";
+            if (!Directory.Exists(direLeft))
+                Directory.CreateDirectory(direLeft);
+            var direRight = TempDirectoryPath + @"right\";
+            if (!Directory.Exists(direRight))
+                Directory.CreateDirectory(direRight);
         }
 
         public void Dispose()
@@ -172,9 +178,7 @@ namespace ImageProcessor
                 var newCount = count;
                 if (segmentationCount < count && count - segmentationCount >= 2)
                     newCount = segmentationCount;
-                if (newCount > 4 && offset < 5)
-                    offset = 5;
-
+                
                 OcrResult result;
 
                 try
@@ -209,15 +213,7 @@ namespace ImageProcessor
 
                 // unique 60%+ case
                 if (matchResultsWithMaxScore.Count == 1 && matchResultsWithMaxScore[0].Trustable)
-                {
-                    if (count >= 3)
-                    {
-                        scoreDictionary[matchResultsWithMaxScore[0].Value] = int.MaxValue/2;
-                        break;
-                    }
-                
                     matchResultsWithMaxScore[0].Score *= 2;
-                }
 
                 // normal case
                 foreach (var matchResultWithMaxScore in matchResultsWithMaxScore)
@@ -245,11 +241,11 @@ namespace ImageProcessor
             if (OcrEngine.Debug)
             {
                 var i = 0;
-                var path = TempDirectoryPath + pendingMatchResult + ".tiff";
+                var path = TempDirectoryPath + (rotationAngle > 0 ? @"left\" : @"right\") + pendingMatchResult + ".tiff";
                 while (File.Exists(path))
                 {
                     ++i;
-                    path = TempDirectoryPath + pendingMatchResult + i + ".tiff";
+                    path = TempDirectoryPath + (rotationAngle > 0 ? @"left\" : @"right\") + pendingMatchResult + i + ".tiff";
                 }
 
                 if (!string.IsNullOrEmpty(sb.ToString()) || sb.ToString() != PickingText)

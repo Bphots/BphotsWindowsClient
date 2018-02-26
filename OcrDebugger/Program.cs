@@ -38,7 +38,7 @@ namespace OcrDebugger
 
                 var recognizer = new Recognizer(OcrLanguage.SimplifiedChinese, dir);
                 Console.WriteLine(DateTime.Now);
-                foreach (FilePath path in Directory.GetFiles(dir + @"WipLeft"))
+                foreach (FilePath path in Directory.GetFiles(dir + @"WipLeft").ToList())
                 {
                     if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
                     {
@@ -55,9 +55,11 @@ namespace OcrDebugger
                         time.Add(span);
                         Console.Write(span + @" ");
                         Console.WriteLine(sb + " " + (correct ? correct.ToString() : path.GetFileNameWithoutExtension()));
+
+                        File.Move(path, path.GetDirPath() + path.GetFileNameWithoutExtension() + "d" + path.GetFileExt());
                     }
                 }
-                foreach (FilePath path in Directory.GetFiles(dir + @"WipRight"))
+                foreach (FilePath path in Directory.GetFiles(dir + @"WipRight").ToList())
                 {
                     if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
                     {
@@ -74,6 +76,8 @@ namespace OcrDebugger
                         time.Add(span);
                         Console.Write(span + @" ");
                         Console.WriteLine(sb + " " + (correct ? correct.ToString() : (path.GetFileNameWithoutExtension() + " " + correct)));
+
+                        File.Move(path, path.GetDirPath() + path.GetFileNameWithoutExtension() + "d" + path.GetFileExt());
                     }
                 }
 
@@ -98,6 +102,44 @@ namespace OcrDebugger
                     }
                 }
                 foreach (FilePath path in Directory.GetFiles(dir + @"right"))
+                {
+                    if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
+                    {
+                        var current = DateTime.Now;
+                        var sb = new StringBuilder();
+                        // This path is a file
+                        recognizer.Recognize(path, (float)-29.7, sb, 3);
+                        var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
+                        if (correct)
+                            correctCount++;
+                        sum++;
+                        var span = (DateTime.Now - current).TotalSeconds;
+                        count++;
+                        time.Add(span);
+                        Console.Write(span + @" ");
+                        Console.WriteLine(sb + " " + (correct ? correct.ToString() : (path.GetFileNameWithoutExtension() + " " + correct)));
+                    }
+                }
+                foreach (FilePath path in Directory.GetFiles(dir + @"left120dpi"))
+                {
+                    if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
+                    {
+                        var current = DateTime.Now;
+                        var sb = new StringBuilder();
+                        // This path is a file
+                        recognizer.Recognize(path, (float)29.7, sb, 3);
+                        var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
+                        if (correct)
+                            correctCount++;
+                        sum++;
+                        var span = (DateTime.Now - current).TotalSeconds;
+                        count++;
+                        time.Add(span);
+                        Console.Write(span + @" ");
+                        Console.WriteLine(sb + " " + (correct ? correct.ToString() : path.GetFileNameWithoutExtension()));
+                    }
+                }
+                foreach (FilePath path in Directory.GetFiles(dir + @"right120dpi"))
                 {
                     if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
                     {
