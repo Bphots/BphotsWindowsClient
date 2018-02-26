@@ -386,10 +386,10 @@ namespace HotsBpHelper.Pages
             _toastService.ShowInformation(L("Started") + Environment.NewLine + L("StartedTips"));
 
             _initializeReset = true;
+            Upload();
             Task.Run(CheckFocusAsync).ConfigureAwait(false);
             Task.Run(MonitorInGameAsync).ConfigureAwait(false);
             Task.Run(MonitorLobbyFile).ConfigureAwait(false);
-            Upload();
 
         }
 
@@ -552,6 +552,8 @@ namespace HotsBpHelper.Pages
             {
                 if (File.Exists(Const.BattleLobbyPath) && File.GetLastWriteTime(Const.BattleLobbyPath) != lobbyLastModified)
                 {
+                    _uploadManager?.Monitor?.Start();
+
                     lobbyLastModified = File.GetLastWriteTime(Const.BattleLobbyPath);
                     Execute.OnUIThread(() =>
                     {
@@ -1011,6 +1013,7 @@ namespace HotsBpHelper.Pages
                 }
                 catch
                 {
+                    // ignored
                 }
                 Environment.Exit(0);
             }
