@@ -82,6 +82,26 @@ namespace OcrDebugger
                 }
 
 
+                foreach (FilePath path in Directory.GetFiles(dir + @"maps"))
+                {
+                    if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
+                    {
+                        var current = DateTime.Now;
+                        var sb = new StringBuilder();
+                        // This path is a file
+                        recognizer.ProcessMap(path, sb);
+                        var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
+                        if (correct)
+                            correctCount++;
+                        sum++;
+                        var span = (DateTime.Now - current).TotalSeconds;
+                        count++;
+                        time.Add(span);
+                        Console.Write(span + @" ");
+                        Console.WriteLine(sb + " " + (correct ? correct.ToString() : (path.GetFileNameWithoutExtension() + " " + correct)));
+                    }
+                }
+
                 foreach (FilePath path in Directory.GetFiles(dir + @"left"))
                 {
                     if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
@@ -101,6 +121,7 @@ namespace OcrDebugger
                         Console.WriteLine(sb + " " + (correct ? correct.ToString() : path.GetFileNameWithoutExtension()));
                     }
                 }
+
                 foreach (FilePath path in Directory.GetFiles(dir + @"right"))
                 {
                     if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
@@ -139,6 +160,7 @@ namespace OcrDebugger
                         Console.WriteLine(sb + " " + (correct ? correct.ToString() : path.GetFileNameWithoutExtension()));
                     }
                 }
+
                 foreach (FilePath path in Directory.GetFiles(dir + @"right120dpi"))
                 {
                     if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
@@ -185,6 +207,10 @@ namespace OcrDebugger
             foreach (var hero in OcrEngineAsian.Heroes)
             {
                 OcrEngine.CandidateHeroes.Add(hero);
+            }
+            foreach (var map in OcrEngineAsian.Maps)
+            {
+                OcrEngine.CandidateMaps.Add(map);
             }
             OcrEngine.Delete = false;
         }

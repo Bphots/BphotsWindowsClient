@@ -52,7 +52,7 @@ namespace ImageProcessor
             return ProcessHero(file, angle, sb, offset);
         }
 
-        public void ProcessMap(FilePath file, StringBuilder sb)
+        public bool ProcessMap(FilePath file, StringBuilder sb)
         {
             var tempPath = TempDirectoryPath + "temp.tiff";
             using (var image = ImageProcessingHelper.GetCroppedMap(file))
@@ -66,12 +66,12 @@ namespace ImageProcessor
             }
             catch (Exception)
             {
-                return;
+                return false;
             }
 
             if (!pendingMatchResult.Results.Any() || !pendingMatchResult.Values.First().Trustable)
             {
-                return;
+                return false;
             }
 
             if (OcrEngine.Debug)
@@ -83,13 +83,18 @@ namespace ImageProcessor
                     ++i;
                     path = TempDirectoryPath + pendingMatchResult.Values.First().Value + i + ".tiff";
                 }
-
-                File.Move(file, path);
+                
+                if (OcrEngine.Delete)
+                    File.Move(file, path);
+                else
+                    File.Copy(file, path, true);
             }
-            else
+
+            if (!OcrEngine.Debug && OcrEngine.Delete)
                 file.DeleteIfExists();
 
             sb.Append(pendingMatchResult.Values.First().Value);
+            return pendingMatchResult.Values.First().FullyTrustable;
         }
 
         public void ProcessLoadingHero(FilePath file, StringBuilder sb)
@@ -114,7 +119,13 @@ namespace ImageProcessor
                     path = TempDirectoryPath + pendingMatchResult.Values.First().Value + i + ".tiff";
                 }
 
-                File.Move(file, path);
+                if (!string.IsNullOrEmpty(sb.ToString()) || sb.ToString() != PickingText)
+                {
+                    if (OcrEngine.Delete)
+                        File.Move(file, path);
+                    else
+                        File.Copy(file, path, true);
+                }
             }
             else
                 file.DeleteIfExists();
