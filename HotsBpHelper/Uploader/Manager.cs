@@ -122,6 +122,8 @@ namespace HotsBpHelper.Uploader
             Task.Run(UploadLoop).Forget();
         }
 
+        public Monitor Monitor => _monitor;
+
         public void RepopulateQueue()
         {
             _processingQueue.Clear();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Controls.Primitives;
 using HotsBpHelper.Settings;
 using NLog;
 
@@ -24,11 +25,20 @@ namespace HotsBpHelper.Uploader
             ReplayAdded?.Invoke(this, new EventArgs<string>(path));
         }
 
+        private bool _started = false;
+
         /// <summary>
         /// Starts watching filesystem for new replays. When found raises <see cref="ReplayAdded"/> event.
         /// </summary>
         public void Start()
         {
+            if (_started)
+                return;
+
+            if (!Directory.Exists(Const.ProfilePath))
+                return;
+
+            _started = true;
             if (_watcher == null) {
                 _watcher = new FileSystemWatcher() {
                     Path = Const.ProfilePath,
@@ -59,6 +69,9 @@ namespace HotsBpHelper.Uploader
         /// </summary>
         public IEnumerable<string> ScanReplays()
         {
+            if (!Directory.Exists(Const.ProfilePath))
+                return new List<string>();
+
             return Directory.GetFiles(Const.ProfilePath, "*.StormReplay", SearchOption.AllDirectories).Where(l => l.Length < 240);
         }
     }
