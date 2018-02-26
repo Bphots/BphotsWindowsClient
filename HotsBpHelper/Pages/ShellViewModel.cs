@@ -314,6 +314,9 @@ namespace HotsBpHelper.Pages
                 return;
             }
 
+            if (!App.Debug)
+                Task.Run(() => FileUtil.CleanUpImageTestFiles());
+
             Execute.OnUIThread(() =>
             {
                 _securityProvider.SetServerTimestamp(_notifyGetTimeStampTaskCompleted.Result);
