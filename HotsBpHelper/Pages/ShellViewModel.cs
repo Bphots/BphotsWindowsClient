@@ -557,6 +557,7 @@ namespace HotsBpHelper.Pages
                     lobbyLastModified = File.GetLastWriteTime(Const.BattleLobbyPath);
                     Execute.OnUIThread(() =>
                     {
+                        _toastService.DisposeManager();
                         _bpViewModel.Reset(); 
                         ((BpView)_bpViewModel.View).Browser.DisposeBrowser();
                         NotifyOfPropertyChange(() => ShowHideHelperTip);
@@ -583,6 +584,7 @@ namespace HotsBpHelper.Pages
 
                 if (!File.Exists(Const.BattleLobbyPath) && OcrUtil.InGame)
                 {
+                    Execute.OnUIThread(() => _toastService.ReinitializeToast());
                     if (!_bpViewModel.OcrUtil.IsInitialized)
                     {
                         _bpViewModel.OcrUtil.Initialize();
@@ -1003,6 +1005,8 @@ namespace HotsBpHelper.Pages
         {
             try
             {
+                // stupid workaround for deploy build
+                _toastService?.ReinitializeToast();
                 Application.Current.Shutdown();
             }
             catch (Exception)
