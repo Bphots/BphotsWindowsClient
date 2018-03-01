@@ -13,6 +13,7 @@ using Chromium;
 using DotNetHelper;
 using GlobalHotKey;
 using HotsBpHelper.Api;
+using HotsBpHelper.Api.Model;
 using HotsBpHelper.Api.Security;
 using HotsBpHelper.Configuration;
 using HotsBpHelper.Factories;
@@ -27,6 +28,8 @@ using LobbyFileParser;
 using NAppUpdate.Framework;
 using NAppUpdate.Framework.Sources;
 using NAppUpdate.Framework.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Stylet;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.Forms.MessageBox;
@@ -260,16 +263,19 @@ namespace HotsBpHelper.Pages
         {
             var timeStamp = await _restApi.GetTimestamp();
             
+            App.AdviceHeroInfos = _restApi.GetHeroListV2();
+            App.AdviceMapInfos = _restApi.GetMapListV2();
+
             if (!string.IsNullOrEmpty(App.CustomConfigurationSettings.LanguageForGameClient))
             {
-                App.OcrHeroInfos = _restApi.GetHeroList(App.CustomConfigurationSettings.LanguageForGameClient);
+                App.OcrHeroInfos = HeroInfoV2.ToHeroInfoList(App.AdviceHeroInfos, App.CustomConfigurationSettings.LanguageForGameClient);
 
                 foreach (var heroInfo in App.OcrHeroInfos)
                 {
                     OcrEngine.CandidateHeroes.Add(heroInfo.Name);
                 }
 
-                App.OcrMapInfos = _restApi.GetMapList(App.CustomConfigurationSettings.LanguageForGameClient);
+                App.OcrMapInfos = MapInfoV2.ToMapInfoList(App.AdviceMapInfos, App.CustomConfigurationSettings.LanguageForGameClient);
 
                 foreach (var mapInfo in App.OcrMapInfos)
                 {
