@@ -18,6 +18,8 @@ using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using ImageProcessor.ImageProcessing;
 using ImageProcessor.Ocr;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Stylet;
 using MessageBox = System.Windows.MessageBox;
 using Point = System.Drawing.Point;
@@ -93,6 +95,19 @@ namespace HotsBpHelper.Pages
 
             var filePath = @Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "index.html#") + App.Language;
             LocalFileUri = filePath;
+
+            WebCallbackListener.PresetRequested += WebCallbackListenerOnPresetRequested;
+        }
+
+        private void WebCallbackListenerOnPresetRequested(object sender, EventArgs e)
+        {
+            var serializerSettings = new JsonSerializerSettings();
+            serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
+            {
+                ScriptName = "preset",
+                Args = new[] { JsonConvert.SerializeObject(App.AdviceHeroInfos, serializerSettings), JsonConvert.SerializeObject(App.AdviceMapInfos, serializerSettings) }
+            }, "BpChanel");
         }
 
         public BindableCollection<HeroSelectorViewModel> HeroSelectorViewModels =>

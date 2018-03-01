@@ -20,6 +20,8 @@ namespace HotsBpHelper.UserControls
 
         public static event EventHandler LobbyRequested;
 
+        public static event EventHandler PresetRequested;
+
         private void Callback(object sender, CfrV8HandlerExecuteEventArgs e)
         {
             var args = e.Arguments;
@@ -45,6 +47,10 @@ namespace HotsBpHelper.UserControls
             {
                 OnLobbyRequested();
             }
+            if (args[0].StringValue == "RequestPreset")
+            {
+                OnPresetRequested();
+            }
         }
 
         protected virtual void OnInfoRequested(string e)
@@ -60,6 +66,11 @@ namespace HotsBpHelper.UserControls
         protected virtual void OnLobbyRequested()
         {
             LobbyRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        private static void OnPresetRequested()
+        {
+            PresetRequested?.Invoke(null, EventArgs.Empty);
         }
     }
 }
