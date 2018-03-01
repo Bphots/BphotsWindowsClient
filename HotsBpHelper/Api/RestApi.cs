@@ -23,8 +23,7 @@ namespace HotsBpHelper.Api
         {
             _securityProvider = securityProvider;
         }
-
-
+        
         public async Task<List<RemoteFileInfo>> GetRemoteFileListAsync(string url)
         {
             var request = CreateRequest(url, new List<Tuple<string, string>>());
@@ -47,18 +46,7 @@ namespace HotsBpHelper.Api
             client.DownloadDataCompleted += downloadCompleted;
             client.DownloadDataAsync(new Uri(url));
         }
-
-        public List<HeroInfo> GetHeroList(string language)
-        {
-            var request = CreateRequest("get/herolist",
-                new List<Tuple<string, string>>
-                {
-                    Tuple.Create("lang", language)
-                });
-
-            return Execute<List<HeroInfo>>(request);
-        }
-
+        
         public List<LobbyHeroInfo> GetLobbyHeroList(string language)
         {
             var request = CreateRequest("get/herolist/lobby",
@@ -69,18 +57,7 @@ namespace HotsBpHelper.Api
 
             return Execute<List<LobbyHeroInfo>>(request);
         }
-
-        public List<MapInfo> GetMapList(string language)
-        {
-            var request = CreateRequest("get/maplist",
-                new List<Tuple<string, string>>
-                {
-                    Tuple.Create("lang", language)
-                });
-
-            return Execute<List<MapInfo>>(request);
-        }
-
+        
         public async Task<double> GetTimestamp()
         {
             var request = CreateRequest("get/timestamp");
@@ -115,6 +92,22 @@ namespace HotsBpHelper.Api
                 var responseItem = JsonConvert.DeserializeObject<GenericResponse>(response);
                 return responseItem.Success ? UploadStatus.Success : UploadStatus.UploadError;
             }
+        }
+
+        public Dictionary<int, HeroInfoV2> GetHeroListV2()
+        {
+            var request = CreateRequest("get/herolist/v2",
+               new List<Tuple<string, string>>());
+
+            return Execute<Dictionary<int, HeroInfoV2>>(request);
+        }
+
+        public Dictionary<string, MapInfoV2> GetMapListV2()
+        {
+            var request = CreateRequest("get/maplist/v2",
+               new List<Tuple<string, string>>());
+
+            return Execute<Dictionary<string, MapInfoV2>>(request);
         }
 
         public List<BroadcastInfo> GetBroadcastInfo(string mode, string lang)

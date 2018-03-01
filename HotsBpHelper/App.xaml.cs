@@ -43,6 +43,10 @@ namespace HotsBpHelper
 
         public static bool DevTool { get; set; }
 
+        public static Dictionary<int, HeroInfoV2> AdviceHeroInfos { get; set; }
+
+        public static Dictionary<string, MapInfoV2> AdviceMapInfos { get; set; }
+
         private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             Pages.ErrorView _errorView;
