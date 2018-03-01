@@ -17,12 +17,8 @@ namespace HotsBpHelper.Api
 
         void DownloadFileAsync(string url, DownloadProgressChangedEventHandler downloadProgressChanged,
             DownloadDataCompletedEventHandler downloadCompleted);
-
-        List<HeroInfo> GetHeroList(string name);
-
+        
         List<LobbyHeroInfo> GetLobbyHeroList(string name);
-
-        List<MapInfo> GetMapList(string language);
 
         //String GetBroadcastInfo(string mode, string lang);
 
@@ -35,5 +31,9 @@ namespace HotsBpHelper.Api
         Task<int> GetMinimalBuild();
 
         Task<UploadStatus> UploadReplay(string file);
+
+        Dictionary<int, HeroInfoV2> GetHeroListV2();
+
+        Dictionary<string, MapInfoV2> GetMapListV2();
     }
 }
