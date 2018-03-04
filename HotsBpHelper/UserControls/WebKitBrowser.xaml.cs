@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Web;
 using System.Windows;
-using System.Windows.Forms;
+using System.Windows.Controls;
 using Chromium;
 using Chromium.Event;
 using Chromium.Remote.Event;
-using Chromium.WebBrowser;
 using Chromium.WebBrowser.Event;
+using NLog;
 using Stylet;
-using UserControl = System.Windows.Controls.UserControl;
 using WindowStyle = Chromium.WindowStyle;
 
 namespace HotsBpHelper.UserControls
@@ -63,7 +59,7 @@ namespace HotsBpHelper.UserControls
             Browser.GlobalObject.AddFunction("HideWindow").Execute += HideWindow;
             Host.Child = Browser;
         }
-        
+
 
         public ExtendedChromiumBrowser Browser { get; set; }
 
@@ -75,6 +71,11 @@ namespace HotsBpHelper.UserControls
         {
             get { return (bool) GetValue(ShowDevToolProperty); }
             set { SetValue(ShowDevToolProperty, value); }
+        }
+
+        public void Dispose()
+        {
+            DisposeBrowser();
         }
 
         public void InitializeBrowser(string url = null)
@@ -137,7 +138,7 @@ namespace HotsBpHelper.UserControls
 
                     _isLoaded = true;
                 }
-               );
+                    );
             }
         }
 
@@ -249,11 +250,6 @@ namespace HotsBpHelper.UserControls
         }
 
         #endregion
-
-        public void Dispose()
-        {
-            DisposeBrowser();
-        }
     }
 
     public class InvokeScriptMessage
@@ -263,8 +259,17 @@ namespace HotsBpHelper.UserControls
         public string[] Args { get; set; }
 
         public string ToScript()
-            =>
-                ScriptName + "(" + string.Join(",", Args.Select(m => "'" + HttpUtility.JavaScriptStringEncode(m) + "'")) +
-                ");";
+        {
+            var script = ScriptName + "(" +
+                         string.Join(",", Args.Select(m => "'" + HttpUtility.JavaScriptStringEncode(m) + "'")) +
+                         ");";
+
+            if (App.Debug)
+            {
+                LogManager.GetCurrentClassLogger().Trace(script);
+            }
+
+            return script;
+        }
     }
 }

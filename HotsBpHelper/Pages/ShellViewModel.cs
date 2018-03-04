@@ -226,6 +226,11 @@ namespace HotsBpHelper.Pages
         {
             try
             {
+                if (_notifyGetTimeStampTaskCompleted != null && !_notifyGetTimeStampTaskCompleted.IsSuccessfullyCompleted)
+                {
+                    Logger.Error("NotifyGetTimeStampTask failed.");
+                }
+
                 ReceiveBroadcast();
             }
             catch
@@ -263,6 +268,8 @@ namespace HotsBpHelper.Pages
         {
             var timeStamp = await _restApi.GetTimestamp();
             
+            _securityProvider.SetServerTimestamp(timeStamp);
+
             App.AdviceHeroInfos = _restApi.GetHeroListV2();
             App.AdviceMapInfos = _restApi.GetMapListV2();
 
@@ -325,7 +332,6 @@ namespace HotsBpHelper.Pages
 
             Execute.OnUIThread(() =>
             {
-                _securityProvider.SetServerTimestamp(_notifyGetTimeStampTaskCompleted.Result);
                 if (!App.Debug)
                 {
                     var webUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
