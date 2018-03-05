@@ -149,11 +149,9 @@ namespace ImageProcessor
             var startThresholding = mIsDarkMode ? DarkModeThreshold : LightModeThreshold;
 
             int sampleWidth;
-            var image = ImageProcessingHelper.GetCroppedImage(rotationAngle, file, mIsDarkMode, out sampleWidth);
+            var image = ImageProcessingHelper.GetRotatedImage(rotationAngle, file, mIsDarkMode, out sampleWidth);
             if (OcrEngine.Debug)
-                image.Save(TempDirectoryPath + "CroppedImage.bmp");
-
-            var count = (double)image.Width / sampleWidth * 7.5 + 0.15;
+                image.Save(TempDirectoryPath + "RotatedImage.bmp");
 
             if (_engine is OcrEngineAsian)
                 _engine.Engine.SetVariable(@"textord_min_xheight", 25);
@@ -175,17 +173,22 @@ namespace ImageProcessor
                 else
                     switcher -= offset;
 
-                var segmentationCount = ImageProcessingHelper.ProcessOnce(index, image, tempPath, rotationAngle);
+                double count;
+                var segmentationCount = ImageProcessingHelper.ProcessOnce(index, image, tempPath, rotationAngle, mIsDarkMode, out count);
+                
                 if (segmentationCount == 0)
                 {
                     failBinaryCheckCount ++;
                     if (failBinaryCheckCount > 5)
+                    {
+                        scoreDictionary.Clear();
                         break;
+                    }
 
                     continue;
                 }
 
-                failBinaryCheckCount = -30;
+                failBinaryCheckCount = -5;
                 var newCount = count;
                 if (segmentationCount < count && count - segmentationCount >= 2)
                     newCount = segmentationCount;

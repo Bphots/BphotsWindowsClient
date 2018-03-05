@@ -199,16 +199,16 @@ namespace ImageProcessor.Extensions
                     }
                     
                     binarilizationValid = (double)countBlack / oneThirdSample < 0.8;
-                    if ((double) countBlack/oneThirdSample > 0.1)
+                    if ((double)countBlack / oneThirdSample > 0.01)
                     {
-                        int y = fbitmap.Height / 4;
+                        int y = (int) (fbitmap.Height * 0.33);
                         for (int x = 0; x < fbitmap.Width*0.5; ++x)
                         {
                             int countMiddle = 0;
                             bool passX = false;
-                            for (int yy = y; yy < fbitmap.Height*0.6; ++yy)
+                            for (int yy = y; yy < fbitmap.Height*0.66; ++yy)
                             {
-                                for (int xx = x; xx < x + fbitmap.Width*0.2; ++xx)
+                                for (int xx = x; xx < x + fbitmap.Width*0.3; ++xx)
                                 {
                                     countMiddle += indexer[yy, xx];
                                     if (countMiddle > 0)
