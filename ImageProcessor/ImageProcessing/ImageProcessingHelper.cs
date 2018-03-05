@@ -183,7 +183,7 @@ namespace ImageProcessor.ImageProcessing
                 {
                     if (OcrEngine.Debug)
                         rotatedImage.Save(Recognizer.TempDirectoryPath + "RotatedImage.bmp");
-                    using (var thresholdedSample = rotatedImage.Binarilization(140))
+                    using (var thresholdedSample = rotatedImage.Binarilization(135))
                     {
                         if (OcrEngine.Debug)
                             thresholdedSample.Save(Recognizer.TempDirectoryPath + "Binary140CheckDarkMode.bmp");
@@ -213,20 +213,38 @@ namespace ImageProcessor.ImageProcessing
            
         }
 
-        public static int ProcessOnce(int threshold, Bitmap croppedImage, FilePath tempFilePath, float rotation)
+        public static int ProcessOnce(int threshold, Bitmap rotatedImage, FilePath tempFilePath, float rotation, bool isDarkMode, out double count)
         {
-            bool binarilizationValid;
-            using (var thresholdedCroppedImage = croppedImage.BinarilizationWithValidation(threshold, rotation > 0, out binarilizationValid))
+            int firstThreshold = threshold;
+            if (isDarkMode)
             {
-                thresholdedCroppedImage.Save(tempFilePath);
-                if (!binarilizationValid)
-                    return 0;
+                //firstThreshold = 80;
+                firstThreshold = firstThreshold > 90 ? 90 : firstThreshold;
+                firstThreshold = firstThreshold < 70 ? 70 : firstThreshold;
+            }
+            else
+            {
+                //firstThreshold = 125;
+                firstThreshold = firstThreshold > 135 ? 135 : firstThreshold;
+                firstThreshold = firstThreshold < 115 ? 115 : firstThreshold;
+            }
+            using (var thresholdedSample = rotatedImage.Binarilization(firstThreshold))
+            using (var croppedImage = CropImage(thresholdedSample, rotatedImage))
+            {
+                count = (double)croppedImage.Width / rotatedImage.Width * 7.5 + 0.15;
+                bool binarilizationValid;
+                using (var thresholdedCroppedImage = croppedImage.BinarilizationWithValidation(threshold, rotation > 0, out binarilizationValid))
+                {
+                    thresholdedCroppedImage.Save(tempFilePath);
+                    if (!binarilizationValid)
+                        return 0;
 
-                var count = GetSegmentation(thresholdedCroppedImage);
-                
-                if (OcrEngine.Debug)
-                    thresholdedCroppedImage.Save(Recognizer.TempDirectoryPath + "Threshold" + threshold + ".bmp");
-                return count;
+                    var segCount = GetSegmentation(thresholdedCroppedImage);
+
+                    if (OcrEngine.Debug)
+                        thresholdedCroppedImage.Save(Recognizer.TempDirectoryPath + "Threshold" + threshold + ".bmp");
+                    return segCount;
+                }
             }
         }
 
@@ -265,6 +283,18 @@ namespace ImageProcessor.ImageProcessing
                 return croppedImage;
             }
         }
+        public static Bitmap GetRotatedImage(float rotationAngle, FilePath file, bool isDarkMode, out int sampleWidth)
+        {
+            using (var bitmap = new Bitmap(file))
+            using (var bitmapGray = bitmap.ToGrayscale())
+            using (var zoomedBitmapGray = bitmapGray.Zoom(200))
+            {
+                var rotatedImage = zoomedBitmapGray.RotateImage(rotationAngle);
+                sampleWidth = rotatedImage.Width;
+                return rotatedImage;
+            }
+        }
+
 
         private static int[] GetHisto(Bitmap sample, int[,] indexer, int minRow, int maxRow)
         {

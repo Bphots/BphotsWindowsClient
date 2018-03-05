@@ -150,6 +150,8 @@ namespace ImageProcessor.Ocr
                 original = original.Trim();
             if (original.Replace(" ", string.Empty).Length == target.Length)
                 original = original.Replace(" ", string.Empty);
+
+            var usedChars = new List<char>();
             if (original.Length == target.Length)
             {
                 for (var i = 0; i < original.Length; ++i)
@@ -162,8 +164,9 @@ namespace ImageProcessor.Ocr
             {
                 for (var i = 0; i < original.Length; ++i)
                 {
-                    if (target.Contains(original[i]))
+                    if (target.Contains(original[i]) && usedChars.Count(l => l == original[i]) < target.Count(l => l == original[i]))
                     {
+                        usedChars.Add(original[i]);
                         score += 1;
                         if (i < original.Length && i < target.Length && original[i] == target[i])
                             score += 1;
