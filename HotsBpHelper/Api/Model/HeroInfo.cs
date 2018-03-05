@@ -24,6 +24,8 @@ namespace HotsBpHelper.Api.Model
         public string Full { get; set; }
 
         public string Short { get; set; }
+
+        public string Acronym { get; set; }
     }
 
     public class HeroInfoV2
@@ -42,7 +44,7 @@ namespace HotsBpHelper.Api.Model
             if (heroInfoV2.Name.ContainsKey(language))
             {
                 heroInfo.Name = heroInfoV2.Name[language].Full;
-                heroInfo.Acronym = heroInfoV2.Name[language].Short;
+                heroInfo.Acronym = heroInfoV2.Name[language].Acronym;
             }
             return heroInfo;
         }

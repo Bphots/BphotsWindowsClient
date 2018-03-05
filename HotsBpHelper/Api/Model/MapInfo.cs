@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 
 namespace HotsBpHelper.Api.Model
 {
@@ -23,6 +24,7 @@ namespace HotsBpHelper.Api.Model
             if (mapInfoV2.Name.ContainsKey(language))
             {
                 mapInfo.Name = mapInfoV2.Name[language];
+                mapInfo.Code = mapInfoV2.Code;
             }
             return mapInfo;
         }
