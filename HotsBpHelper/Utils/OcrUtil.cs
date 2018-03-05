@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.IO;
@@ -450,7 +451,7 @@ namespace HotsBpHelper.Utils
                             bpScreenFail = 0;
 
                         if ((alreadyTrustable || sb.ToString() == sbConfirm.ToString()) &&
-                            !cancellationToken.IsCancellationRequested)
+                            !cancellationToken.IsCancellationRequested && CheckIfInFocus())
                         {
                             tempscreenshotPath?.DeleteIfExists();
                             var text = sb.ToString();
@@ -475,6 +476,17 @@ namespace HotsBpHelper.Utils
                 OcrAsyncChecker.CleanThread(OcrAsyncChecker.ScanLabelAsyncChecker);
             }
         }
+
+        private static bool CheckIfInFocus()
+        {
+            var hwnd = Win32.GetForegroundWindow();
+            var pid = Win32.GetWindowProcessID(hwnd);
+            var process = Process.GetProcessById(pid);
+            var inHotsGame = process.ProcessName.StartsWith(Const.HEROES_PROCESS_NAME);
+            var inHotsHelper = process.ProcessName.StartsWith(Const.HOTSBPHELPER_PROCESS_NAME);
+            return inHotsGame || inHotsHelper;
+        }
+
     }
 
     public static class OcrAsyncChecker
