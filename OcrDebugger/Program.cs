@@ -54,11 +54,37 @@ namespace OcrDebugger
                         count++;
                         time.Add(span);
                         Console.Write(span + @" ");
-                        Console.WriteLine(sb + " " + (correct ? correct.ToString() : path.GetFileNameWithoutExtension()));
-
-                        File.Move(path, path.GetDirPath() + path.GetFileNameWithoutExtension() + "d" + path.GetFileExt());
+                        Console.WriteLine(sb + " " + (correct ? correct.ToString() : (path.GetFileNameWithoutExtension() + " " + correct)));
                     }
                 }
+
+
+                foreach (FilePath path in Directory.GetFiles(dir + @"WipLeft").ToList())
+                {
+                    if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
+                    {
+                        var current = DateTime.Now;
+                        var sb = new StringBuilder();
+                        // This path is a file
+                        recognizer.Recognize(path, (float)29.7, sb, 3);
+                        var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
+                        if (correct)
+                            correctCount++;
+                        sum++;
+                        var span = (DateTime.Now - current).TotalSeconds;
+                        count++;
+                        time.Add(span);
+                        Console.Write(span + @" ");
+                        Console.WriteLine(sb + " " + (correct ? correct.ToString() : path.GetFileNameWithoutExtension()));
+                        var newName = path.GetFileNameWithoutExtension().Length > 30
+                            ? path.GetFileNameWithoutExtension().Substring(0, 10) : path.GetFileNameWithoutExtension();
+                        if (correct)
+                            File.Move(path, dir + @"left\" + path.GetFileNameWithoutExtension() + "d" + path.GetFileExt());
+                        else
+                            File.Move(path, path.GetDirPath() + newName + "d" + sb + "d" + path.GetFileExt());
+                    }
+                }
+
                 foreach (FilePath path in Directory.GetFiles(dir + @"WipRight").ToList())
                 {
                     if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
@@ -77,30 +103,15 @@ namespace OcrDebugger
                         Console.Write(span + @" ");
                         Console.WriteLine(sb + " " + (correct ? correct.ToString() : (path.GetFileNameWithoutExtension() + " " + correct)));
 
-                        File.Move(path, path.GetDirPath() + path.GetFileNameWithoutExtension() + "d" + path.GetFileExt());
-                    }
-                }
-
-
-                foreach (FilePath path in Directory.GetFiles(dir + @"maps"))
-                {
-                    if (File.Exists(path) && (path.GetFileExt() == ".tiff" || path.GetFileExt() == ".bmp"))
-                    {
-                        var current = DateTime.Now;
-                        var sb = new StringBuilder();
-                        // This path is a file
-                        recognizer.ProcessMap(path, sb);
-                        var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
+                        var newName = path.GetFileNameWithoutExtension().Length > 30
+                            ? path.GetFileNameWithoutExtension().Substring(0, 10) : path.GetFileNameWithoutExtension();
                         if (correct)
-                            correctCount++;
-                        sum++;
-                        var span = (DateTime.Now - current).TotalSeconds;
-                        count++;
-                        time.Add(span);
-                        Console.Write(span + @" ");
-                        Console.WriteLine(sb + " " + (correct ? correct.ToString() : (path.GetFileNameWithoutExtension() + " " + correct)));
+                            File.Move(path, dir + @"right\" + path.GetFileNameWithoutExtension() + "d" + path.GetFileExt());
+                        else
+                            File.Move(path, path.GetDirPath() + newName + "d" + sb + "d" + path.GetFileExt());
                     }
                 }
+
 
                 foreach (FilePath path in Directory.GetFiles(dir + @"left"))
                 {
@@ -118,7 +129,10 @@ namespace OcrDebugger
                         count++;
                         time.Add(span);
                         Console.Write(span + @" ");
-                        Console.WriteLine(sb + " " + (correct ? correct.ToString() : path.GetFileNameWithoutExtension()));
+                        Console.WriteLine(sb + " " + (correct ? correct.ToString() : path.GetFileNameWithoutExtension()) + " " + correct);
+
+                        if (!correct)
+                            File.Move(path, dir + @"WipLeft\" + path.GetFileNameWithoutExtension() + "d" + sb + path.GetFileExt());
                     }
                 }
 
@@ -139,6 +153,9 @@ namespace OcrDebugger
                         time.Add(span);
                         Console.Write(span + @" ");
                         Console.WriteLine(sb + " " + (correct ? correct.ToString() : (path.GetFileNameWithoutExtension() + " " + correct)));
+                        
+                        if (!correct)
+                            File.Move(path, dir + @"WipRight\" + path.GetFileNameWithoutExtension() + "d" + sb + path.GetFileExt());
                     }
                 }
                 foreach (FilePath path in Directory.GetFiles(dir + @"left120dpi"))
@@ -157,7 +174,10 @@ namespace OcrDebugger
                         count++;
                         time.Add(span);
                         Console.Write(span + @" ");
-                        Console.WriteLine(sb + " " + (correct ? correct.ToString() : path.GetFileNameWithoutExtension()));
+                        Console.WriteLine(sb + " " + (correct ? correct.ToString() : path.GetFileNameWithoutExtension()) + " " + correct);
+                        
+                        if (!correct)
+                            File.Move(path, dir + @"WipLeft\" + path.GetFileNameWithoutExtension() + "d" + sb + path.GetFileExt());
                     }
                 }
 
@@ -178,6 +198,9 @@ namespace OcrDebugger
                         time.Add(span);
                         Console.Write(span + @" ");
                         Console.WriteLine(sb + " " + (correct ? correct.ToString() : (path.GetFileNameWithoutExtension() + " " + correct)));
+
+                        if (!correct)
+                            File.Move(path, dir + @"WipRight\" + path.GetFileNameWithoutExtension() + "d" + sb + path.GetFileExt());
                     }
                 }
                 Console.WriteLine(correctCount + " / " + sum);
