@@ -11,6 +11,7 @@ using HotsBpHelper.Api.Model;
 using HotsBpHelper.Models;
 using HotsBpHelper.Settings;
 using ImageProcessor.Ocr;
+using NLog;
 
 namespace HotsBpHelper
 {
@@ -58,6 +59,8 @@ namespace HotsBpHelper
                     _errorView = new Pages.ErrorView(e.Exception.Message + "\nApplication language=" + App.Language);
                 }
                 else _errorView = new Pages.ErrorView(e.Exception.Message);
+
+                _log.Error(e.Exception);
                 _errorView.ShowDialog();
                 _errorView.Pause();
                 //MessageBox.Show(e.Exception.Message, "", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -69,5 +72,7 @@ namespace HotsBpHelper
             }
             //Current.Shutdown();
         }
+
+        private static Logger _log = LogManager.GetCurrentClassLogger();
     }
 }
