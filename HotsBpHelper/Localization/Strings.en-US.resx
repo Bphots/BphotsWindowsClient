@@ -315,4 +315,10 @@
   <data name="HideHelper" xml:space="preserve">
     <value>Turn Off BpHelper Manually</value>
   </data>
+  <data name="ApiFailed" xml:space="preserve">
+    <value>Api initialization failed. Please check your network settings.</value>
+  </data>
+  <data name="ErrorTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
 </root>

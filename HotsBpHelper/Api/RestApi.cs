@@ -169,7 +169,8 @@ namespace HotsBpHelper.Api
             }
             catch (Exception e)
             {
-                Logger.Error(e);
+                Logger.Error(e.Message);
+                Logger.Error(response.StatusDescription);
                 await Task.Delay(500);
                 response = await client.ExecuteTaskAsync<T>(request);
                 EnsureNotErrorResponse(response);
@@ -188,7 +189,8 @@ namespace HotsBpHelper.Api
             }
             catch (Exception e)
             {
-                Logger.Error(e);
+                Logger.Error(e.Message);
+                Logger.Error(response.StatusDescription);
                 await Task.Delay(500);
                 response = await client.ExecuteTaskAsync<T>(request);
                 EnsureNotErrorResponse(response);
@@ -230,7 +232,8 @@ namespace HotsBpHelper.Api
             }
             catch (Exception e)
             {
-                Logger.Error(e);
+                Logger.Error(e.Message);
+                Logger.Error(response.StatusDescription);
                 response = client.Execute<T>(request);
                 EnsureNotErrorResponse(response);
             }
