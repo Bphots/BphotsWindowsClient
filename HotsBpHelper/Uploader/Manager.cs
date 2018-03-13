@@ -118,7 +118,7 @@ namespace HotsBpHelper.Uploader
 
             _monitor.Start();
 
-            _analyzer.MinimumBuild = await _bpHelperUploader.GetMinimumBuild();
+            _analyzer.MinimumBuild = Const.ReplayMinimumBuild;
             Task.Run(UploadLoop).Forget();
         }
 
