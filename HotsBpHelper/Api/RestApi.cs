@@ -8,7 +8,6 @@ using HotsBpHelper.Api.Model;
 using HotsBpHelper.Api.Security;
 using HotsBpHelper.Uploader;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NLog;
 using RestSharp;
 using RestSharp.Deserializers;
@@ -18,28 +17,20 @@ namespace HotsBpHelper.Api
 {
     public class RestApi : IRestApi
     {
-        private readonly ISecurityProvider _securityProvider;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ISecurityProvider _securityProvider;
 
         public RestApi(ISecurityProvider securityProvider, IEventAggregator eventAggregator)
         {
             _securityProvider = securityProvider;
         }
-        
+
         public async Task<List<RemoteFileInfo>> GetRemoteFileListAsync(string url)
         {
             var request = CreateRequest(url, new List<Tuple<string, string>>());
             return await ExecuteAsync<List<RemoteFileInfo>>(request);
         }
-
-        public byte[] DownloadFile(string url)
-        {
-            using (var client = new WebClient())
-            {
-                return client.DownloadData(url);
-            }
-        }
-
+        
         public void DownloadFileAsync(string url, DownloadProgressChangedEventHandler downloadProgressChanged,
             DownloadDataCompletedEventHandler downloadCompleted)
         {
@@ -48,8 +39,8 @@ namespace HotsBpHelper.Api
             client.DownloadDataCompleted += downloadCompleted;
             client.DownloadDataAsync(new Uri(url));
         }
-        
-        public List<LobbyHeroInfo> GetLobbyHeroList(string language)
+
+        public async Task<List<LobbyHeroInfo>> GetLobbyHeroList(string language)
         {
             var request = CreateRequest("get/herolist/lobby",
                 new List<Tuple<string, string>>
@@ -57,13 +48,13 @@ namespace HotsBpHelper.Api
                     Tuple.Create("lang", language)
                 });
 
-            return Execute<List<LobbyHeroInfo>>(request);
+            return await ExecuteAsync<List<LobbyHeroInfo>>(request).ConfigureAwait(false);
         }
-        
+
         public async Task<double> GetTimestamp()
         {
             var request = CreateRequest("get/timestamp");
-            return await Task.Run(() => Execute<double>(request)).ConfigureAwait(false);
+            return await ExecuteAsync<double>(request).ConfigureAwait(false);
         }
 
         public async Task<FingerPrintStatusCollection> CheckDuplicatesAsync(IEnumerable<ReplayIdentity> replayIdentities)
@@ -96,20 +87,20 @@ namespace HotsBpHelper.Api
             }
         }
 
-        public Dictionary<int, HeroInfoV2> GetHeroListV2()
+        public async Task<Dictionary<int, HeroInfoV2>> GetHeroListV2()
         {
             var request = CreateRequest("get/herolist/v2",
-               new List<Tuple<string, string>>());
+                new List<Tuple<string, string>>());
 
-            return Execute<Dictionary<int, HeroInfoV2>>(request);
+            return await ExecuteAsync<Dictionary<int, HeroInfoV2>>(request).ConfigureAwait(false);
         }
 
-        public Dictionary<string, MapInfoV2> GetMapListV2()
+        public async Task<Dictionary<string, MapInfoV2>> GetMapListV2()
         {
             var request = CreateRequest("get/maplist/v2",
-               new List<Tuple<string, string>>());
+                new List<Tuple<string, string>>());
 
-            return Execute<Dictionary<string, MapInfoV2>>(request);
+            return await ExecuteAsync<Dictionary<string, MapInfoV2>>(request).ConfigureAwait(false);
         }
 
         public List<BroadcastInfo> GetBroadcastInfo(string mode, string lang)
@@ -172,7 +163,18 @@ namespace HotsBpHelper.Api
                         request.AddParameter("AccountSid", _accountSid, ParameterType.UrlSegment); // used on every request
             */
             var response = await client.ExecuteTaskAsync<T>(request);
-            EnsureNotErrorResponse(response);
+            try
+            {
+                EnsureNotErrorResponse(response);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                await Task.Delay(500);
+                response = await client.ExecuteTaskAsync<T>(request);
+                EnsureNotErrorResponse(response);
+            }
+
             return response.Data;
         }
 
@@ -180,10 +182,21 @@ namespace HotsBpHelper.Api
         {
             var client = new RestClient(Const.WEB_API_WEEK_ROOT);
             var response = await client.ExecuteTaskAsync<T>(request);
-            EnsureNotErrorResponse(response);
+            try
+            {
+                EnsureNotErrorResponse(response);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                await Task.Delay(500);
+                response = await client.ExecuteTaskAsync<T>(request);
+                EnsureNotErrorResponse(response);
+            }
+
             return response.Data;
         }
-        
+
         private static void EnsureNotErrorResponse<T>(IRestResponse<T> response) where T : new()
         {
             try
@@ -211,7 +224,16 @@ namespace HotsBpHelper.Api
                         request.AddParameter("AccountSi`    1   d", _accountSid, ParameterType.UrlSegment); // used on every request
             */
             var response = client.Execute<T>(request);
-            EnsureNotErrorResponse(response);
+            try
+            {
+                EnsureNotErrorResponse(response);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                response = client.Execute<T>(request);
+                EnsureNotErrorResponse(response);
+            }
             return response.Data;
         }
     }

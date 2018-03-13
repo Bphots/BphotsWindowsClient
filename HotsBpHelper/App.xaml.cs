@@ -31,7 +31,9 @@ namespace HotsBpHelper
 
         public static List<HeroInfo> OcrHeroInfos;
 
-        public static List<MapInfo> OcrMapInfos; 
+        public static List<MapInfo> OcrMapInfos;
+        
+        public static List<string> LobbyHeroes;
 
         public static bool Debug;
 
