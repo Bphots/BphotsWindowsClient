@@ -9,6 +9,7 @@ using HotsBpHelper.Api.Security;
 using HotsBpHelper.Uploader;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NLog;
 using RestSharp;
 using RestSharp.Deserializers;
 using Stylet;
@@ -18,6 +19,7 @@ namespace HotsBpHelper.Api
     public class RestApi : IRestApi
     {
         private readonly ISecurityProvider _securityProvider;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public RestApi(ISecurityProvider securityProvider, IEventAggregator eventAggregator)
         {
@@ -84,7 +86,7 @@ namespace HotsBpHelper.Api
 
         public async Task<UploadStatus> UploadReplay(string file)
         {
-            var url = GetSignedUrl(new List<Tuple<string, string>>());
+            var url = GetSignedUrl(new List<Tuple<string, string>>(), "upload");
             using (var client = new WebClient())
             {
                 var bytes = await client.UploadFileTaskAsync($"{Const.WEB_API_WEEK_ROOT}upload?{url}", file);
@@ -124,7 +126,7 @@ namespace HotsBpHelper.Api
 
         private RestRequest CreateRequest(string method, IList<Tuple<string, string>> parameters)
         {
-            var url = GetSignedUrl(parameters);
+            var url = GetSignedUrl(parameters, method);
             /*调试服务器回传信息用
             string u = "https://www.bphots.com/bp_helper/" + method + "?" + urlParam + "&nonce=" + sp.Nonce + "&sign=" + sp.Sign;
             if (method== "get/inform")
@@ -138,7 +140,7 @@ namespace HotsBpHelper.Api
             return request;
         }
 
-        private string GetSignedUrl(IList<Tuple<string, string>> parameters)
+        private string GetSignedUrl(IList<Tuple<string, string>> parameters, string method)
         {
             var sp = _securityProvider.CaculateSecurityParameter(parameters);
 
@@ -146,6 +148,8 @@ namespace HotsBpHelper.Api
             parameters.Add(Tuple.Create("client_patch", sp.Patch));
 
             var urlParam = string.Join("&", parameters.Select(tuple => $"{tuple.Item1}={tuple.Item2}"));
+
+            Logger.Trace("Prepare api for (" + method + ") : " + urlParam);
 
             var url = $"{urlParam}&nonce={sp.Nonce}&sign={sp.Sign}";
             return url;
