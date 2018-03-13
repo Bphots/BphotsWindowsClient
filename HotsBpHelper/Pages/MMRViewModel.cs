@@ -24,7 +24,6 @@ namespace HotsBpHelper.Pages
         private int _height;
         private Visibility _visibility;
         private int _width;
-        private readonly List<string> _lobbyHeroes;
 
         public MMRViewModel(IEventAggregator eventAggregator, IRestApi restApi)
         {
@@ -36,7 +35,6 @@ namespace HotsBpHelper.Pages
             
             var filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "mmr.html#") + App.Language;
             LocalFileUri = filePath;
-            _lobbyHeroes = restApi.GetLobbyHeroList(App.Language).Where(h => !h.IsNew).Select(h => h.Name).ToList();
             WebCallbackListener.LobbyRequested += WebCallbackListenerOnLobbyRequested;
         }
 
@@ -45,7 +43,7 @@ namespace HotsBpHelper.Pages
             if (!File.Exists(Const.BattleLobbyPath))
                 return;
 
-            var lobbyProcessor = new LobbyFileProcessor(Const.BattleLobbyPath, _lobbyHeroes);
+            var lobbyProcessor = new LobbyFileProcessor(Const.BattleLobbyPath, App.LobbyHeroes);
             var game = lobbyProcessor.ParseLobbyInfo();
             FillMMR(game);
             Show();

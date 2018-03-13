@@ -270,8 +270,10 @@ namespace HotsBpHelper.Pages
             
             _securityProvider.SetServerTimestamp(timeStamp);
 
-            App.AdviceHeroInfos = _restApi.GetHeroListV2();
-            App.AdviceMapInfos = _restApi.GetMapListV2();
+            App.AdviceHeroInfos = await _restApi.GetHeroListV2();
+            App.AdviceMapInfos = await _restApi.GetMapListV2();
+            var lobbyHeroList = await _restApi.GetLobbyHeroList(App.Language);
+            App.LobbyHeroes = lobbyHeroList.Where(h => !h.IsNew).Select(h => h.Name).ToList();
 
             if (!string.IsNullOrEmpty(App.CustomConfigurationSettings.LanguageForGameClient))
             {

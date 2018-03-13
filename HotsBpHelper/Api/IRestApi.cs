@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using HotsBpHelper.Api.Model;
@@ -11,18 +8,14 @@ namespace HotsBpHelper.Api
 {
     public interface IRestApi
     {
-        Task<List<RemoteFileInfo>> GetRemoteFileListAsync(string url);
+        List<BroadcastInfo> GetBroadcastInfo(string mode, string lang);
 
-        byte[] DownloadFile(string filePath);
+        Task<List<RemoteFileInfo>> GetRemoteFileListAsync(string url);
 
         void DownloadFileAsync(string url, DownloadProgressChangedEventHandler downloadProgressChanged,
             DownloadDataCompletedEventHandler downloadCompleted);
-        
-        List<LobbyHeroInfo> GetLobbyHeroList(string name);
 
-        //String GetBroadcastInfo(string mode, string lang);
-
-        List<BroadcastInfo> GetBroadcastInfo(string mode, string lang);
+        Task<List<LobbyHeroInfo>> GetLobbyHeroList(string name);
 
         Task<double> GetTimestamp();
 
@@ -32,8 +25,8 @@ namespace HotsBpHelper.Api
 
         Task<UploadStatus> UploadReplay(string file);
 
-        Dictionary<int, HeroInfoV2> GetHeroListV2();
+        Task<Dictionary<int, HeroInfoV2>> GetHeroListV2();
 
-        Dictionary<string, MapInfoV2> GetMapListV2();
+        Task<Dictionary<string, MapInfoV2>> GetMapListV2();
     }
 }
