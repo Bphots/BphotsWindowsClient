@@ -78,8 +78,7 @@ namespace HotsBpHelper.Pages
             CefInitializer.InitializeCef();
 
             PercentageInfo = L("Loading");
-
-
+            
             using (var mutex = new Mutex(false, "Global\\" + Const.HOTSBPHELPER_PROCESS_NAME))
             {
                 if (!mutex.WaitOne(0, false))
@@ -88,10 +87,10 @@ namespace HotsBpHelper.Pages
                     return;
                 }
             }
+
             if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
             {
                 Exit();
-                return;
             }
         }
 
@@ -222,6 +221,8 @@ namespace HotsBpHelper.Pages
             }
         }
 
+        private bool _loadingFailed;
+
         private void OnTimeStampCompleted(object sender, EventArgs e)
         {
             try
@@ -229,6 +230,7 @@ namespace HotsBpHelper.Pages
                 if (_notifyGetTimeStampTaskCompleted != null && !_notifyGetTimeStampTaskCompleted.IsSuccessfullyCompleted)
                 {
                     Logger.Error("NotifyGetTimeStampTask failed.");
+                    _loadingFailed = true;
                 }
 
                 ReceiveBroadcast();
@@ -329,7 +331,13 @@ namespace HotsBpHelper.Pages
             if (_notifyUpdateTaskCompleted != null && !_notifyUpdateTaskCompleted.IsSuccessfullyCompleted)
             {
                 Logger.Trace("Upldate failed");
-                Exit();
+                DisplayFatalMessage(L("UpdateFailed"));
+                return;
+            }
+
+            if (_loadingFailed)
+            {
+                DisplayFatalMessage(L("ApiFailed"));
                 return;
             }
 
@@ -352,7 +360,17 @@ namespace HotsBpHelper.Pages
             });
         }
 
-
+        private void DisplayFatalMessage(string message)
+        {
+            Execute.OnUIThread(() =>
+            {
+                var errorView = new ErrorView(L("ErrorTitle"), message);
+                errorView.ShowDialog();
+                errorView.Pause();
+                Exit();
+            });
+        }
+        
         private void OnTessdataFileUpdateCompleted(object sender, EventArgs e)
         {
             Logger.Trace("Tessdata initialzed");

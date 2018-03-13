@@ -271,7 +271,7 @@
     <value>背锅助手正在运行</value>
   </data>
   <data name="OcrUnavailable" xml:space="preserve">
-    <value>自动识别无法加载，请确保 chi_sim 语言包和微软 Visual C++ Redistributable x86 for Visual Studio 2015 包已成功安装。</value>
+    <value>自动识别无法加载，请确保语言包和微软 Visual C++ Redistributable x86 for Visual Studio 2015 包已成功安装。</value>
   </data>
   <data name="IncompatibleResolution" xml:space="preserve">
     <value>自动识别已关闭 (目前仅支持1080以上分辨率）</value>
@@ -320,5 +320,11 @@
   </data>
   <data name="HideHelper" xml:space="preserve">
     <value>停止 BP</value>
+  </data>
+  <data name="ApiFailed" xml:space="preserve">
+    <value>Api初始化调用失败，请检查网络连接。</value>
+  </data>
+  <data name="ErrorTitle" xml:space="preserve">
+    <value>错误</value>
   </data>
 </root>
