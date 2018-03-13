@@ -291,6 +291,7 @@ namespace HotsBpHelper.Pages
 
             }
 
+            Logger.Trace("Api initialized");
             return timeStamp;
         }
 
@@ -317,16 +318,20 @@ namespace HotsBpHelper.Pages
                     }
                 }
             }
+            
+            Logger.Trace("Broadcast loaded");
         }
 
         private void OnFeedUpdateCompleted(object sender, EventArgs e)
         {
             if (_notifyUpdateTaskCompleted != null && !_notifyUpdateTaskCompleted.IsSuccessfullyCompleted)
             {
+                Logger.Trace("Upldate failed");
                 Exit();
                 return;
             }
 
+            Logger.Trace("Update completed");
             if (!App.Debug)
                 Task.Run(() => FileUtil.CleanUpImageTestFiles());
 
@@ -348,6 +353,8 @@ namespace HotsBpHelper.Pages
 
         private void OnTessdataFileUpdateCompleted(object sender, EventArgs e)
         {
+            Logger.Trace("Tessdata initialzed");
+
             _mmrViewModel = _viewModelFactory.CreateViewModel<MMRViewModel>();
             _mmrViewModel.HideBrowser();
             WindowManager.ShowWindow(_mmrViewModel);
@@ -398,6 +405,8 @@ namespace HotsBpHelper.Pages
             _toastService.ShowInformation(L("Started") + Environment.NewLine + L("StartedTips"));
 
             _initializeReset = true;
+
+            Logger.Trace("BpHelper successfully loaded");
             Upload();
             Task.Run(CheckFocusAsync).ConfigureAwait(false);
             Task.Run(MonitorInGameAsync).ConfigureAwait(false);
@@ -458,6 +467,8 @@ namespace HotsBpHelper.Pages
 
         private void OnWebFileUpdateCompleted(object sender, EventArgs e)
         {
+            Logger.Trace("Webfiles initialzed");
+
             if (App.OcrLanguage == OcrLanguage.Unavailable || !App.CustomConfigurationSettings.AutoDetectHeroAndMap)
             {
                 OnTessdataFileUpdateCompleted(this, EventArgs.Empty);
