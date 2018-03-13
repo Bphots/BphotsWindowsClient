@@ -11,7 +11,7 @@ namespace HotsBpHelper
 
         public const string LOCAL_WEB_FILE_DIR = "WebFiles";
         
-        public const string PATCH = "18031001";
+        public const string PATCH = "18031401";
 
         public const string UPDATE_FEED_XML = "https://www.bphots.com/bp_helper/get/update?patch=" + PATCH;
 
@@ -30,5 +30,7 @@ namespace HotsBpHelper
         public const int BestExpericenResolutionHeight = 1070;
 
         public const int IncompatibleResolutionHeight = 880;
+
+        public const int ReplayMinimumBuild = 43905;
     }
 }
