@@ -131,7 +131,7 @@ namespace ImageProcessor.Extensions
 
                 using (var g = Graphics.FromImage(rotatedImage))
                 {
-                    g.FillRectangle(Brushes.Black, 0, 0, rotatedImage.Width, rotatedImage.Height);
+                    g.FillRectangle(Brushes.White, 0, 0, rotatedImage.Width, rotatedImage.Height);
                     g.TranslateTransform(bmp.Width / 2, bmp.Height / 2);
                     //set the rotation point as the center into the matrix
                     g.RotateTransform(angle); //rotate
@@ -157,6 +157,26 @@ namespace ImageProcessor.Extensions
                         {
                             var gray = (byte) ((1140**(bb + 0) + 5870**(bb + 1) + 2989**(bb + 2))/10000);
                             *(bb + 0) = *(bb + 1) = *(bb + 2) = (byte) (gray > threshold ? 0 : 255);
+                        }
+                    }
+                }
+            }
+            return bmp;
+        }
+        public static Bitmap ReverseBinarilization(this Bitmap grayScaledBitmap, int threshold)
+        {
+            var bmp = new Bitmap(grayScaledBitmap); // new Bitmap(grayScaledBitmap.Width, grayScaledBitmap.Height);
+            using (var fbitmap = new FastBitmap(bmp, 0, 0, bmp.Width, bmp.Height))
+            {
+                unsafe
+                {
+                    byte* row = (byte*)fbitmap.Scan0, bb = row;
+                    for (var yy = 0; yy < fbitmap.Height; yy++, bb = row += fbitmap.Stride)
+                    {
+                        for (var xx = 0; xx < fbitmap.Width; xx++, bb += fbitmap.PixelSize)
+                        {
+                            var gray = (byte)((1140 * *(bb + 0) + 5870 * *(bb + 1) + 2989 * *(bb + 2)) / 10000);
+                            *(bb + 0) = *(bb + 1) = *(bb + 2) = (byte)(gray > threshold ? 255 : 0);
                         }
                     }
                 }
@@ -193,7 +213,7 @@ namespace ImageProcessor.Extensions
                                     countBlack++;
                             }
                             indexer[yy, xx] = gray > threshold ? 1 : 0;
-                            * (bb + 0) = *(bb + 1) = *(bb + 2) = (byte) (gray > threshold ? 0 : 255);
+                            * (bb + 0) = *(bb + 1) = *(bb + 2) = (byte) (gray > threshold ? 255 : 0);
                         }
 
                     }

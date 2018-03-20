@@ -137,7 +137,7 @@ namespace ImageProcessor
         {
             var tempPath = TempDirectoryPath + "temp.tiff";
             var mode = ImageProcessingHelper.CheckMode(file, rotationAngle);
-            if (mode == -1)
+            if (mode != 1)
             {
                 if (!OcrEngine.Debug && OcrEngine.Delete)
                     file.DeleteIfExists();
