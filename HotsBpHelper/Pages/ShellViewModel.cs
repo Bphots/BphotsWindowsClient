@@ -962,8 +962,8 @@ namespace HotsBpHelper.Pages
             var bpHelperPosition = new Point(
                 (int)(0.31 * height), 0.852 * height + bpHelperSize.Height > height ? height - bpHelperSize.Height - (int)(0.01 * height) : (int)(0.852 * height));
             
-            var heroWidth = (int) (0.08125*height);
-            var heroHeight = (int) (0.0632*height);
+            var heroWidth = (int) (0.1074074074074074 * height);
+            var heroHeight = (int) (0.087962962962963 * height);
             var position = new Position
             {
                 Width = width,
@@ -985,11 +985,11 @@ namespace HotsBpHelper.Pages
                     HeroPathPoints =
                         new[]
                         {
-                            new Point(1, 1), new Point(1, (int) (0.0185*height)),
+                            new Point(1, 1), new Point(1, (int) (0.025*height)),
                             new Point(heroWidth, heroHeight),
-                            new Point(heroWidth, heroHeight - (int) (0.0165*height))
+                            new Point(heroWidth, heroHeight - (int) (0.025*height))
                         },
-                    HeroName1 = new Point(RoundUp(0.0138888888888889 * height), RoundUp(0.1722222222222222 * height))
+                    HeroName1 = new Point(RoundUp(0.0138888888888889 * height), RoundUp(0.1398148148148148 * height))
                 },
                 Right = new SidePosition
                 {
@@ -1003,11 +1003,11 @@ namespace HotsBpHelper.Pages
                     HeroPathPoints =
                         new[]
                         {
-                            new Point(heroWidth, 1), new Point(heroWidth, 1 + (int) (0.0185*height)),
+                            new Point(heroWidth, 1), new Point(heroWidth, 1 + (int) (0.025*height)),
                             new Point(1, heroHeight),
-                            new Point(1, heroHeight - (int) (0.0165*height))
+                            new Point(1, heroHeight - (int) (0.025*height))
                         },
-                    HeroName1 = new Point(RoundUp(width - 0.012037037037037 * height), RoundUp(0.175 * height))
+                    HeroName1 = new Point(RoundUp(width - 0.0138888888888889 * height), RoundUp(0.1398148148148148 * height))
                 },
                 MapPosition = new MapPosition
                 {
