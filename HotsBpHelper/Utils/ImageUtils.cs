@@ -37,7 +37,7 @@ namespace HotsBpHelper.Utils
             Bitmap bitmap = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppRgb);
             using (Graphics graphics = Graphics.FromImage(bitmap))
             {
-                graphics.FillRectangle(Brushes.Black, 0, 0, rect.Width, rect.Height);
+                graphics.FillRectangle(Brushes.White, 0, 0, rect.Width, rect.Height);
                 using (GraphicsPath graphicsPath = new GraphicsPath())
                 {
                     if (clipPoints.Length != 0)

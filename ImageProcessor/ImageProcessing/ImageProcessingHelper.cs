@@ -183,7 +183,7 @@ namespace ImageProcessor.ImageProcessing
                 {
                     if (OcrEngine.Debug)
                         rotatedImage.Save(Recognizer.TempDirectoryPath + "RotatedImage.bmp");
-                    using (var thresholdedSample = rotatedImage.Binarilization(135))
+                    using (var thresholdedSample = rotatedImage.ReverseBinarilization(135))
                     {
                         if (OcrEngine.Debug)
                             thresholdedSample.Save(Recognizer.TempDirectoryPath + "Binary140CheckDarkMode.bmp");
@@ -192,7 +192,7 @@ namespace ImageProcessor.ImageProcessing
                         double sumBlackPoint = GetBlackPointSample(rotationAngle, thresholdedSample, sampleWidth);
                         if (sumBlackPoint / maxPoints < 0.01)
                         {
-                            using (var newThresholdedSample = rotatedImage.Binarilization(80))
+                            using (var newThresholdedSample = rotatedImage.ReverseBinarilization(80))
                             {
                                 if (OcrEngine.Debug)
                                     newThresholdedSample.Save(Recognizer.TempDirectoryPath + "Binary80CheckDarkMode.bmp");
@@ -228,7 +228,7 @@ namespace ImageProcessor.ImageProcessing
                 firstThreshold = firstThreshold > 135 ? 135 : firstThreshold;
                 firstThreshold = firstThreshold < 115 ? 115 : firstThreshold;
             }
-            using (var thresholdedSample = rotatedImage.Binarilization(firstThreshold))
+            using (var thresholdedSample = rotatedImage.ReverseBinarilization(firstThreshold))
             using (var croppedImage = CropImage(thresholdedSample, rotatedImage))
             {
                 count = (double)croppedImage.Width / rotatedImage.Width * 7.5 + 0.15;
