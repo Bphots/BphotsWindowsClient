@@ -195,10 +195,9 @@ namespace HotsBpHelper.Uploader
                         }
 
                         if (_processingQueue.ContainsKey(file.Key))
-                        {
                             _processingQueue[file.Key] = 2;
-                            OnReplayFileStatusChanged(new EventArgs<ReplayFile>(file.Key));
-                        }
+
+                        OnReplayFileStatusChanged(new EventArgs<ReplayFile>(file.Key));
                     }
 
                     OnStatusChanged();
