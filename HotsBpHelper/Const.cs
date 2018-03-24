@@ -27,9 +27,9 @@ namespace HotsBpHelper
         
         public static readonly string ProfilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Heroes of the Storm\Accounts");
 
-        public const int BestExpericenResolutionHeight = 1070;
+        public const int BestExpericenResolutionHeight = 760;
 
-        public const int IncompatibleResolutionHeight = 880;
+        public const int IncompatibleResolutionHeight = 760;
 
         public const int ReplayMinimumBuild = 43905;
     }
