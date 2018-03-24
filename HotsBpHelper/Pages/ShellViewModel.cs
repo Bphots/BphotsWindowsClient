@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -901,24 +902,6 @@ namespace HotsBpHelper.Pages
 
         private void ExpandHeroPropertiesForLatin()
         {
-            App.AppSetting.Position.HeroWidth = (int) (App.AppSetting.Position.HeroWidth*1.25);
-            App.AppSetting.Position.HeroHeight = (int) (App.AppSetting.Position.HeroHeight*1.25);
-            App.AppSetting.Position.Left.HeroPathPoints =
-                new[]
-                {
-                    new Point(1, 1), new Point(1, (int) (0.0185*App.AppSetting.Position.Height)),
-                    new Point(App.AppSetting.Position.HeroWidth, App.AppSetting.Position.HeroHeight),
-                    new Point(App.AppSetting.Position.HeroWidth,
-                        App.AppSetting.Position.HeroHeight - (int) (0.0165*App.AppSetting.Position.Height))
-                };
-            App.MyPosition.Right.HeroPathPoints =
-                new[]
-                {
-                    new Point(App.MyPosition.HeroWidth, 1),
-                    new Point(App.MyPosition.HeroWidth, 1 + (int) (0.0185*App.MyPosition.Height)),
-                    new Point(1, App.MyPosition.HeroHeight),
-                    new Point(1, App.MyPosition.HeroHeight - (int) (0.0165*App.MyPosition.Height))
-                };
             App.AppSetting.Position.MapPosition = new MapPosition
             {
                 Location = new Point((int) (App.AppSetting.Position.Width/2 - 0.25*App.AppSetting.Position.Height), 0),
@@ -1033,8 +1016,16 @@ namespace HotsBpHelper.Pages
                     Dy = RoundUp(0.1229166666666667 * height)
                 },
                 MmrWidth = (int)(600 * ratio),
-                MmrHeight = (int)(270 * ratio)
-        };
+                MmrHeight = (int)(270 * ratio),
+
+                BanPositions = new List<Rectangle>()
+                {
+                    new Rectangle(RoundUp(0.2824074074074074 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
+                    new Rectangle(RoundUp(0.375 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
+                    new Rectangle(width - RoundUp(0.425 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
+                    new Rectangle(width - RoundUp(0.3324074074074074 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
+                }
+            };
             
             return position;
         }
