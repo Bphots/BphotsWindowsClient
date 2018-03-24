@@ -332,7 +332,7 @@ namespace HotsBpHelper.Pages
                         idList.Add(vm.SelectedItemInfo.Id);
                 }
             
-                if (BanSteps.Contains(message.SelectorId) && !string.IsNullOrEmpty(message.ItemInfo?.Id) && message.ItemInfo.Id != "0")
+                if (App.CustomConfigurationSettings.UploadBanSample && BanSteps.Contains(message.SelectorId) && !string.IsNullOrEmpty(message.ItemInfo?.Id) && message.ItemInfo.Id != "0")
                 {
                     if (_lastIds[message.SelectorId] != message.ItemInfo?.Id)
                     {
