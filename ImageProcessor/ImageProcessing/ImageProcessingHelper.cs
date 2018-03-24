@@ -213,27 +213,20 @@ namespace ImageProcessor.ImageProcessing
            
         }
 
-        public static int ProcessOnce(int threshold, Bitmap rotatedImage, FilePath tempFilePath, float rotation, bool isDarkMode, out double count)
+        public static int ProcessOnce(int threshold, Bitmap rotatedImage, FilePath tempFilePath, float rotation, bool textInWhite, out double count)
         {
             int firstThreshold = threshold;
-            if (isDarkMode)
-            {
-                //firstThreshold = 80;
-                firstThreshold = firstThreshold > 90 ? 90 : firstThreshold;
-                firstThreshold = firstThreshold < 70 ? 70 : firstThreshold;
-            }
-            else
-            {
-                //firstThreshold = 125;
-                firstThreshold = firstThreshold > 135 ? 135 : firstThreshold;
-                firstThreshold = firstThreshold < 115 ? 115 : firstThreshold;
-            }
-            using (var thresholdedSample = rotatedImage.ReverseBinarilization(firstThreshold))
+
+            //firstThreshold = 125;
+            firstThreshold = firstThreshold > 135 ? 135 : firstThreshold;
+            firstThreshold = firstThreshold < 115 ? 115 : firstThreshold;
+
+            using (var thresholdedSample = rotatedImage.ReverseBinarilization(firstThreshold, textInWhite))
             using (var croppedImage = CropImage(thresholdedSample, rotatedImage))
             {
                 count = (double)croppedImage.Width / rotatedImage.Width * 7.5 + 0.15;
                 bool binarilizationValid;
-                using (var thresholdedCroppedImage = croppedImage.BinarilizationWithValidation(threshold, rotation > 0, out binarilizationValid))
+                using (var thresholdedCroppedImage = croppedImage.BinarilizationWithValidation(threshold, rotation > 0, out binarilizationValid, textInWhite))
                 {
                     thresholdedCroppedImage.Save(tempFilePath);
                     if (!binarilizationValid)
@@ -283,13 +276,14 @@ namespace ImageProcessor.ImageProcessing
                 return croppedImage;
             }
         }
-        public static Bitmap GetRotatedImage(float rotationAngle, FilePath file, bool isDarkMode, out int sampleWidth)
+
+        public static Bitmap GetRotatedImage(float rotationAngle, FilePath file, bool textInWhite, out int sampleWidth)
         {
             using (var bitmap = new Bitmap(file))
             using (var bitmapGray = bitmap.ToGrayscale())
             using (var zoomedBitmapGray = bitmapGray.Zoom(200))
             {
-                var rotatedImage = zoomedBitmapGray.RotateImage(rotationAngle);
+                var rotatedImage = zoomedBitmapGray.RotateImage(rotationAngle, textInWhite);
                 sampleWidth = rotatedImage.Width;
                 return rotatedImage;
             }

@@ -32,12 +32,12 @@ namespace HotsBpHelper.Utils
             throw new NotImplementedException();
         }
 
-        public Bitmap CaptureArea(Bitmap bmp, Rectangle rect, Point[] clipPoints)
+        public Bitmap CaptureArea(Bitmap bmp, Rectangle rect, Point[] clipPoints, bool textInWhite = false)
         {
             Bitmap bitmap = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppRgb);
             using (Graphics graphics = Graphics.FromImage(bitmap))
             {
-                graphics.FillRectangle(Brushes.White, 0, 0, rect.Width, rect.Height);
+                graphics.FillRectangle(textInWhite ? Brushes.Black : Brushes.White, 0, 0, rect.Width, rect.Height);
                 using (GraphicsPath graphicsPath = new GraphicsPath())
                 {
                     if (clipPoints.Length != 0)

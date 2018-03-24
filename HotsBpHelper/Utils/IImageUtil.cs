@@ -6,7 +6,7 @@ namespace HotsBpHelper.Utils
     {
         Bitmap CaptureScreen();
 
-        Bitmap CaptureArea(Bitmap bmp, Rectangle rect, Point[] clipPoints);
+        Bitmap CaptureArea(Bitmap bmp, Rectangle rect, Point[] clipPoints, bool reverse = false);
 
         Bitmap CopBitmap(Bitmap bmp, Rectangle cropArea);
 

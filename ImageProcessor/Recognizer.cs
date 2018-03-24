@@ -47,9 +47,10 @@ namespace ImageProcessor
         /// <param name="file"></param>
         /// <param name="angle"></param>
         /// <param name="sb"></param>
-        public bool Recognize(string file, float angle, StringBuilder sb, int offset)
+        /// <param name="textInWhite"></param>
+        public bool Recognize(string file, float angle, StringBuilder sb, int offset, bool textInWhite = false)
         {
-            return ProcessHero(file, angle, sb, offset);
+            return ProcessHero(file, angle, sb, offset, textInWhite);
         }
 
         public bool ProcessMap(FilePath file, StringBuilder sb)
@@ -133,23 +134,23 @@ namespace ImageProcessor
             sb.Append(pendingMatchResult.Values.First().Value);
         }
 
-        private bool ProcessHero(FilePath file, float rotationAngle, StringBuilder sb, int offset)
+        private bool ProcessHero(FilePath file, float rotationAngle, StringBuilder sb, int offset, bool textInWhite)
         {
             var tempPath = TempDirectoryPath + "temp.tiff";
-            var mode = ImageProcessingHelper.CheckMode(file, rotationAngle);
-            if (mode != 1)
+            var mode = textInWhite ? 0 : ImageProcessingHelper.CheckMode(file, rotationAngle);
+
+            if (mode == -1)
             {
                 if (!OcrEngine.Debug && OcrEngine.Delete)
                     file.DeleteIfExists();
 
                 return false;
             }
-
-            bool mIsDarkMode = mode == 0;
-            var startThresholding = mIsDarkMode ? DarkModeThreshold : LightModeThreshold;
+            
+            var startThresholding = LightModeThreshold;
 
             int sampleWidth;
-            var image = ImageProcessingHelper.GetRotatedImage(rotationAngle, file, mIsDarkMode, out sampleWidth);
+            var image = ImageProcessingHelper.GetRotatedImage(rotationAngle, file, textInWhite, out sampleWidth);
             if (OcrEngine.Debug)
                 image.Save(TempDirectoryPath + "RotatedImage.bmp");
 
@@ -174,7 +175,7 @@ namespace ImageProcessor
                     switcher -= offset;
 
                 double count;
-                var segmentationCount = ImageProcessingHelper.ProcessOnce(index, image, tempPath, rotationAngle, mIsDarkMode, out count);
+                var segmentationCount = ImageProcessingHelper.ProcessOnce(index, image, tempPath, rotationAngle, textInWhite, out count);
                 
                 if (segmentationCount == 0)
                 {
