@@ -87,6 +87,18 @@ namespace HotsBpHelper.Api
             }
         }
 
+        public async Task<UploadStatus> UploadImage(string file, string id)
+        {
+            var url = GetSignedUrl(new List<Tuple<string, string>> { Tuple.Create("id", id) }, "uploadsample");
+            using (var client = new WebClient())
+            {
+                var bytes = await client.UploadFileTaskAsync($"{Const.WEB_API_ROOT}uploadsample?{url}", file);
+                var response = Encoding.UTF8.GetString(bytes);
+                var responseItem = JsonConvert.DeserializeObject<GenericResponse>(response);
+                return responseItem.Success ? UploadStatus.Success : UploadStatus.UploadError;
+            }
+        }
+
         public async Task<Dictionary<int, HeroInfoV2>> GetHeroListV2()
         {
             var request = CreateRequest("get/herolist/v2",

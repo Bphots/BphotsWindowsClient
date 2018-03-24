@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using Newtonsoft.Json;
 
@@ -94,6 +95,8 @@ namespace HotsBpHelper.Settings
         public int MmrWidth;
 
         public int MmrHeight;
+
+        public List<Rectangle> BanPositions { get; set; } 
     }
 
     public class LoaddingPoints
