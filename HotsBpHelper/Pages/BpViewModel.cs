@@ -8,12 +8,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
+using DotNetHelper;
+using HotsBpHelper.Api;
 using HotsBpHelper.Api.Security;
 using HotsBpHelper.Factories;
 using HotsBpHelper.HeroFinder;
 using HotsBpHelper.Messages;
 using HotsBpHelper.Services;
 using HotsBpHelper.Settings;
+using HotsBpHelper.Uploader;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using ImageProcessor.ImageProcessing;
@@ -32,6 +35,16 @@ namespace HotsBpHelper.Pages
 
         private readonly List<HeroSelectorViewModel> _cachedHeroSelectorViewModels = new List<HeroSelectorViewModel>();
         private readonly IEventAggregator _eventAggregator;
+
+        private static readonly List<int> BanSteps = new List<int> { 0, 1, 7, 8 };
+
+        private readonly Dictionary<int, string> _lastIds = new Dictionary<int, string>()
+        {
+            {0, "0"},
+            {1, "0"},
+            {7, "0"},
+            {8, "0"},
+        };
 
         private readonly ViewModelFactory _viewModelFactory;
 
@@ -63,13 +76,14 @@ namespace HotsBpHelper.Pages
         private int _width;
         private readonly IToastService _toastService;
         private bool _showDevTool;
+        private IRestApi _restApi;
 
         public bool OcrAvailable { get; set; }
 
-        public BpViewModel(ViewModelFactory viewModelFactory, IEventAggregator eventAggregator, ISecurityProvider securityProvider, IToastService toastService)
+        public BpViewModel(ViewModelFactory viewModelFactory, IEventAggregator eventAggregator, ISecurityProvider securityProvider, IRestApi restApi, IToastService toastService)
         {
             _viewModelFactory = viewModelFactory;
-
+            _restApi = restApi;
             _eventAggregator = eventAggregator;
             _toastService = toastService;
             _securityProvider = securityProvider;
@@ -317,7 +331,15 @@ namespace HotsBpHelper.Pages
                     if (vm.SelectedItemInfo != null)
                         idList.Add(vm.SelectedItemInfo.Id);
                 }
-
+            
+                if (BanSteps.Contains(message.SelectorId) && !string.IsNullOrEmpty(message.ItemInfo?.Id) && message.ItemInfo.Id != "0")
+                {
+                    if (_lastIds[message.SelectorId] != message.ItemInfo?.Id)
+                    {
+                        Task.Run(() => UploadSampleAsync(message.ItemInfo.Id, BanSteps.IndexOf(message.SelectorId)));
+                        _lastIds[message.SelectorId] = message.ItemInfo?.Id;
+                    }
+                }
 
                 InvokeScript("update", new List<Tuple<string, string>>
                 {
@@ -353,6 +375,34 @@ namespace HotsBpHelper.Pages
             catch (Exception)
             {
                 // TODO Ignore for test, please remove the catch
+            }
+        }
+
+        private async Task UploadSampleAsync(string id, int index)
+        {
+            try
+            {
+                var path = Path.Combine(App.AppPath, "Images\\Heroes");
+                var path2 = string.Format("{0}x{1}", App.AppSetting.Position.Width, App.AppSetting.Position.Height);
+                FilePath finalPath = Path.Combine(path, path2, string.Format("{0}_{1:yyyyMMddhhmmss}.jpg", id, DateTime.Now));
+                if (!finalPath.GetDirPath().Exists)
+                    Directory.CreateDirectory(finalPath.GetDirPath());
+
+                var imageUtils = new ImageUtils();
+                lock (ImageProcessingHelper.GDILock)
+                {
+                    using (var bmp = imageUtils.CaptureBanArea(App.AppSetting.Position.BanPositions[index]))
+                    {
+                        bmp.Save(finalPath);
+                    }
+                }
+
+                await _restApi.UploadImage(finalPath, id).ConfigureAwait(false);
+                finalPath.DeleteIfExists();
+            }
+            catch
+            {
+                // ignored
             }
         }
 
@@ -714,6 +764,11 @@ namespace HotsBpHelper.Pages
 
         public void Init()
         {
+            _lastIds[0] = "0";
+            _lastIds[1] = "0";
+            _lastIds[7] = "0";
+            _lastIds[8] = "0";
+
             InvokeScript("init", "0", App.CustomConfigurationSettings.LanguageForBphots, App.CustomConfigurationSettings.LanguageForMessage, App.CustomConfigurationSettings.LanguageForGameClient);
         }
 

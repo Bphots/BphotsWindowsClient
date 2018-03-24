@@ -51,6 +51,16 @@ namespace HotsBpHelper.Utils
             return bitmap;
         }
 
+        public Bitmap CaptureBanArea(Rectangle rect)
+        {
+            var screenBmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppRgb);
+            using (var bmpGraphics = Graphics.FromImage(screenBmp))
+            {
+                bmpGraphics.CopyFromScreen(rect.X, rect.Y, 0, 0, new Size(rect.Width, rect.Height));
+                return screenBmp;
+            } 
+        }
+
         public Bitmap CopBitmap(Bitmap bmp, Rectangle cropArea)
         {
             var bmpImage = new Bitmap(bmp);

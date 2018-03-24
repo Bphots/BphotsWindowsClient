@@ -21,6 +21,8 @@
         public string LanguageForGameClient { get; set; }
 
         public int MMRAutoCloseTime { get; set; }
+
+        public bool UploadBanSample { get; set; }
     }
 
     public enum UploadStrategy

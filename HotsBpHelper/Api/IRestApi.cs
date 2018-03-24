@@ -25,6 +25,8 @@ namespace HotsBpHelper.Api
 
         Task<UploadStatus> UploadReplay(string file);
 
+        Task<UploadStatus> UploadImage(string file, string id);
+
         Task<Dictionary<int, HeroInfoV2>> GetHeroListV2();
 
         Task<Dictionary<string, MapInfoV2>> GetMapListV2();

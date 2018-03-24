@@ -21,6 +21,7 @@ namespace HotsBpHelper.Configuration
         private const string LanguageForMessageKey = @"LanguageForMessage";
         private const string LanguageForGameClientKey = @"LanguageForGameClient";
         private const string MMRAutoCloseTimeKey = @"MMRAutoCloseTime";
+        private const string UploadBanSampleKey = @"UploadBanSample";
 
         private static readonly string BpHelperConfigPath =
             Path.GetFullPath(@".\config.ini");
@@ -34,6 +35,13 @@ namespace HotsBpHelper.Configuration
             var autoShowHideHelper = GetConfigurationValue(AutoShowHideHelperKey);
 
             return autoShowHideHelper != "0";
+        }
+
+        public bool GetUploadBanSample()
+        {
+            var uploadBanSample = GetConfigurationValue(UploadBanSampleKey);
+
+            return uploadBanSample != "0";
         }
 
         public bool GetAutoDetectHeroAndMap()
@@ -177,6 +185,7 @@ namespace HotsBpHelper.Configuration
             var parser = new BpHelperConfigParser();
             customConfigurationSettings.AutoDetectHeroAndMap = parser.GetAutoDetectHeroAndMap();
             customConfigurationSettings.AutoShowHideHelper = parser.GetAutoShowHideHelper();
+            customConfigurationSettings.UploadBanSample = parser.GetUploadBanSample();
             customConfigurationSettings.AutoShowMMR = parser.GetAutoShowMMR();
             customConfigurationSettings.AutoUploadReplayToHotslogs = parser.GetAutoUploadNewReplayToHotslogs();
             customConfigurationSettings.AutoUploadReplayToHotsweek = parser.GetAutoUploadNewReplayToHotsweek();
@@ -230,6 +239,7 @@ namespace HotsBpHelper.Configuration
                 sb.AppendLine(WriteConfigurationValue(AutoShowHideHelperKey, customConfigurationSettings.AutoShowHideHelper));
                 sb.AppendLine(WriteConfigurationValue(AutoShowMMRKey, customConfigurationSettings.AutoShowMMR));
                 sb.AppendLine(WriteConfigurationValue(AutoUploadNewReplayToHotslogsKey, customConfigurationSettings.AutoUploadReplayToHotslogs));
+                sb.AppendLine(WriteConfigurationValue(UploadBanSampleKey, customConfigurationSettings.UploadBanSample));
                 //sb.AppendLine(WriteConfigurationValue(AutoUploadNewReplayToHotsweekKey, customConfigurationSettings.AutoUploadReplayToHotsweek));
                 sb.AppendLine(WriteConfigurationValue(UploadStrategyKey, (int)customConfigurationSettings.UploadStrategy));
                 sb.AppendLine(WriteConfigurationValue(MMRAutoCloseTimeKey, customConfigurationSettings.MMRAutoCloseTime));
