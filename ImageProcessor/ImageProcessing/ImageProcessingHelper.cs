@@ -187,22 +187,19 @@ namespace ImageProcessor.ImageProcessing
                     {
                         if (OcrEngine.Debug)
                             thresholdedSample.Save(Recognizer.TempDirectoryPath + "Binary140CheckDarkMode.bmp");
+
                         int sampleWidth = thresholdedSample.Width / 5;
                         double maxPoints = sampleWidth * thresholdedSample.Height;
                         double sumBlackPoint = GetBlackPointSample(rotationAngle, thresholdedSample, sampleWidth);
-                        if (sumBlackPoint / maxPoints < 0.01)
-                        {
-                            using (var newThresholdedSample = rotatedImage.ReverseBinarilization(80))
-                            {
-                                if (OcrEngine.Debug)
-                                    newThresholdedSample.Save(Recognizer.TempDirectoryPath + "Binary80CheckDarkMode.bmp");
-                                double blackPoint = GetBlackPointSample(rotationAngle, newThresholdedSample, sampleWidth);
-                                if (blackPoint / maxPoints < 0.005)
-                                    return -1;
-                            }
+                        double totalMaxPoints = thresholdedSample.Width * thresholdedSample.Height;
+                        double sumTotalBlakcPoint = GetBlackPointSample(rotationAngle, thresholdedSample, thresholdedSample.Width);
 
-                            return 0; // dark mode
-                        }
+                        if (sumTotalBlakcPoint/totalMaxPoints > 0.15)
+                            return -1;
+
+                        if (sumBlackPoint / maxPoints < 0.01)
+                            return -1;
+
                         if (sumBlackPoint / maxPoints > 0.3)
                             return -1; // suspicious...
 
