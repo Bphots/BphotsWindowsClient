@@ -161,7 +161,7 @@ namespace HotsBpHelper.HeroFinder
             }
         }
 
-        public void AddNewTemplate(int id, string heroName, Dictionary<int, string> fileDictionary)
+        public void AddNewTemplate(int id, string heroName, Dictionary<int, string> fileDictionary, bool textInWhite = false)
         {
             var imageUtil = new ImageUtils();
             var positionInfo = CalculatePositionInfo(id);
@@ -178,7 +178,7 @@ namespace HotsBpHelper.HeroFinder
                 Directory.CreateDirectory(text.GetDirPath());
 
             using (var bitmap = imageUtil.CaptureScreen())
-            using (var bitmap2 = imageUtil.CaptureArea(bitmap, positionInfo.Rectangle, positionInfo.ClipPoints))
+            using (var bitmap2 = imageUtil.CaptureArea(bitmap, positionInfo.Rectangle, positionInfo.ClipPoints, textInWhite))
             {
                 bitmap2.Save(text);
                 fileDictionary[id] = text;

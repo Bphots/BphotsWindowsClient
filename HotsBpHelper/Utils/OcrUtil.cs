@@ -211,9 +211,9 @@ namespace HotsBpHelper.Utils
             {
                 lock (ImageProcessingHelper.GDILock)
                 {
-                    finder.AddNewTemplate(ids[0], ids[0].ToString(), fileDic);
+                    finder.AddNewTemplate(ids[0], ids[0].ToString(), fileDic, true);
                     logUtil.Log("Capture Complete " + ids[0]);
-                    _recognizer.Recognize(fileDic[ids[0]], rotation, sb, 5);
+                    _recognizer.Recognize(fileDic[ids[0]], rotation, sb, 5, true);
                 }
                 if (sb.ToString() == _recognizer.PickingText)
                     break;
@@ -231,9 +231,9 @@ namespace HotsBpHelper.Utils
             sb.Clear();
             lock (ImageProcessingHelper.GDILock)
             {
-                finder.AddNewTemplate(ids[1], ids[1].ToString(), fileDic);
-                logUtil.Log("Second Capture Complete " + ids[0]);
-                _recognizer.Recognize(fileDic[ids[1]], rotation, sb, 5);
+                finder.AddNewTemplate(ids[1], ids[1].ToString(), fileDic, true);
+                logUtil.Log("Second Capture Complete " + ids[1]);
+                _recognizer.Recognize(fileDic[ids[1]], rotation, sb, 5, true);
             }
             logUtil.Log(sb.ToString());
             logUtil.Flush();
@@ -247,7 +247,7 @@ namespace HotsBpHelper.Utils
                 OcrAsyncChecker.CheckThread(OcrAsyncChecker.ScanLabelAsyncChecker);
 
                 var finder = new Finder();
-                if (ids.Count == 1 && (ids[0] == 2 || ids[0] == 7))
+                if (ids.Count == 1 && (ids[0] == 2 || ids[0] == 9))
                 {
                     var stageInfo = new StageInfo();
                     while (stageInfo.Step < 2 && !cancellationToken.IsCancellationRequested)

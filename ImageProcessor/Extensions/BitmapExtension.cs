@@ -102,7 +102,7 @@ namespace ImageProcessor.Extensions
             return nb;
         }
 
-        public static Bitmap RotateImage(this Bitmap rotateMe, float angle)
+        public static Bitmap RotateImage(this Bitmap rotateMe, float angle, bool textInWhite = false)
         {
             angle = -angle;
             var normalizedRotationAngle = NormalizeAngle(angle);
@@ -131,7 +131,7 @@ namespace ImageProcessor.Extensions
 
                 using (var g = Graphics.FromImage(rotatedImage))
                 {
-                    g.FillRectangle(Brushes.White, 0, 0, rotatedImage.Width, rotatedImage.Height);
+                    g.FillRectangle(textInWhite ? Brushes.Black : Brushes.White, 0, 0, rotatedImage.Width, rotatedImage.Height);
                     g.TranslateTransform(bmp.Width / 2, bmp.Height / 2);
                     //set the rotation point as the center into the matrix
                     g.RotateTransform(angle); //rotate
@@ -163,7 +163,7 @@ namespace ImageProcessor.Extensions
             }
             return bmp;
         }
-        public static Bitmap ReverseBinarilization(this Bitmap grayScaledBitmap, int threshold)
+        public static Bitmap ReverseBinarilization(this Bitmap grayScaledBitmap, int threshold, bool textInWhite = false)
         {
             var bmp = new Bitmap(grayScaledBitmap); // new Bitmap(grayScaledBitmap.Width, grayScaledBitmap.Height);
             using (var fbitmap = new FastBitmap(bmp, 0, 0, bmp.Width, bmp.Height))
@@ -176,7 +176,7 @@ namespace ImageProcessor.Extensions
                         for (var xx = 0; xx < fbitmap.Width; xx++, bb += fbitmap.PixelSize)
                         {
                             var gray = (byte)((1140 * *(bb + 0) + 5870 * *(bb + 1) + 2989 * *(bb + 2)) / 10000);
-                            *(bb + 0) = *(bb + 1) = *(bb + 2) = (byte)(gray > threshold ? 255 : 0);
+                            *(bb + 0) = *(bb + 1) = *(bb + 2) = (byte)(gray > threshold ? (textInWhite ? 0 : 255) : (textInWhite ? 255 : 0));
                         }
                     }
                 }
@@ -184,7 +184,7 @@ namespace ImageProcessor.Extensions
             return bmp;
         }
 
-        public static Bitmap BinarilizationWithValidation(this Bitmap grayScaledBitmap, int threshold, bool isLeft, out bool binarilizationValid)
+        public static Bitmap BinarilizationWithValidation(this Bitmap grayScaledBitmap, int threshold, bool isLeft, out bool binarilizationValid, bool textInWhite = false)
         {
             var bmp = new Bitmap(grayScaledBitmap); // new Bitmap(grayScaledBitmap.Width, grayScaledBitmap.Height);
             using (var fbitmap = new FastBitmap(bmp, 0, 0, bmp.Width, bmp.Height))
@@ -213,7 +213,7 @@ namespace ImageProcessor.Extensions
                                     countBlack++;
                             }
                             indexer[yy, xx] = gray > threshold ? 1 : 0;
-                            * (bb + 0) = *(bb + 1) = *(bb + 2) = (byte) (gray > threshold ? 255 : 0);
+                            * (bb + 0) = *(bb + 1) = *(bb + 2) = (byte) (gray > threshold ? (textInWhite ? 0 : 255) : (textInWhite ? 255 : 0));
                         }
 
                     }
