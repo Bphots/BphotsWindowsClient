@@ -41,6 +41,8 @@ namespace HotsBpHelper.Pages
 
         public Manager UploadManager { get; set; }
 
+        public bool IsClosed { get; set; }
+
         private void OnInfoRequested(object sender, string s)
         {
             if (s == "Configure")

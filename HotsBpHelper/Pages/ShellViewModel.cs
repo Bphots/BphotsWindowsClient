@@ -1091,9 +1091,8 @@ namespace HotsBpHelper.Pages
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
                 _managerVm.UploadManager = _uploadManager;
             }
-
-            if (_managerVm.View == null)
-                InitializeManagerView();
+            
+            InitializeManagerView();
 
             _managerVm.ShowSettings();
 
@@ -1109,9 +1108,8 @@ namespace HotsBpHelper.Pages
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
                 _managerVm.UploadManager = _uploadManager;
             }
-
-            if (_managerVm.View == null)
-                InitializeManagerView();
+            
+            InitializeManagerView();
 
             _managerVm.ShowReplays();
 
@@ -1127,9 +1125,8 @@ namespace HotsBpHelper.Pages
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
                 _managerVm.UploadManager = _uploadManager;
             }
-
-            if (_managerVm.View == null)
-                InitializeManagerView();
+            
+            InitializeManagerView();
 
             _managerVm.ShowAbout();
 
@@ -1140,25 +1137,39 @@ namespace HotsBpHelper.Pages
 
         private void InitializeManagerView()
         {
-            WindowManager.ShowWindow(_managerVm);
-            var managerView = (ManagerView) _managerVm.View;
-            managerView.RegisterTitleHandler();
-            managerView.Closed += OnManagerClose;
+            var managerView = (ManagerView)_managerVm.View;
+
+            if (managerView == null)
+            {
+                WindowManager.ShowWindow(_managerVm);
+                managerView = (ManagerView)_managerVm.View;
+                managerView.RegisterTitleHandler();
+                managerView.HideRequested += OnManagerClose;
+            }
+            else
+            {
+                managerView.Browser.InitializeBrowser(_managerVm.LocalFileUri);
+                managerView.RegisterTitleHandler();
+                managerView.ShowWindow();
+            }
+
+            _managerVm.IsClosed = false;
         }
 
         private void OnManagerClose(object sender, EventArgs e)
         {
             _managerVm.PopulatedTabs.Clear();
+            _managerVm.IsClosed = true;
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
             NotifyOfPropertyChange(() => CanShowAbout);
         }
 
-        public bool CanShowSettings => _managerVm == null || _managerVm.ScreenState == ScreenState.Closed || _managerVm.SettingsTab != SettingsTab.Configure;
+        public bool CanShowSettings => _managerVm == null || _managerVm.IsClosed || _managerVm.SettingsTab != SettingsTab.Configure;
 
-        public bool CanShowAbout => _managerVm == null || _managerVm.ScreenState == ScreenState.Closed || _managerVm.SettingsTab != SettingsTab.About;
+        public bool CanShowAbout => _managerVm == null || _managerVm.IsClosed || _managerVm.SettingsTab != SettingsTab.About;
 
-        public bool CanShowReplays => _managerVm == null || _managerVm.ScreenState == ScreenState.Closed || _managerVm.SettingsTab != SettingsTab.Replay;
+        public bool CanShowReplays => _managerVm == null || _managerVm.IsClosed || _managerVm.SettingsTab != SettingsTab.Replay;
 
         public string ShowHideHelperTip
             => _bpViewModel != null && _bpViewModel.BpScreenLoaded ? L("HideHelper") : L("ShowHelper");
