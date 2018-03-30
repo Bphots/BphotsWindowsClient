@@ -1137,12 +1137,14 @@ namespace HotsBpHelper.Pages
                 managerView.RegisterTitleHandler();
                 managerView.HideRequested += OnManagerClose;
             }
-            else
+            else if (managerView.Browser.Browser == null || managerView.Browser.Browser.IsDisposed)
             {
                 managerView.Browser.InitializeBrowser(_managerVm.LocalFileUri);
                 managerView.RegisterTitleHandler();
                 managerView.ShowWindow();
             }
+            else
+                managerView.ShowWindow();
 
             _managerVm.IsClosed = false;
         }
