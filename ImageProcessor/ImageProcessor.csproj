@@ -71,6 +71,10 @@
   <ItemGroup>
     <Compile Include="Extensions\BitmapExtension.cs" />
     <Compile Include="Extensions\FastBitmap.cs" />
+    <Compile Include="HashProcessing\AllHero.cs" />
+    <Compile Include="HashProcessing\EachHero.cs" />
+    <Compile Include="HashProcessing\HeroIdentifier.cs" />
+    <Compile Include="HashProcessing\ImgHash.cs" />
     <Compile Include="ImageProcessing\ImageProcessingHelper.cs" />
     <Compile Include="Ocr\OcrEngineAsian.cs" />
     <Compile Include="Ocr\OcrEngine.cs" />
