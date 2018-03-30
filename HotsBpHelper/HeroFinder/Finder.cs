@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using DotNetHelper;
 using HotsBpHelper.Utils;
+using ImageProcessor.HashProcessing;
 using ImageProcessor.ImageProcessing;
 
 namespace HotsBpHelper.HeroFinder
@@ -22,6 +23,18 @@ namespace HotsBpHelper.HeroFinder
             }
         }
 
+        public Tuple<int, double> GetBanHero(int index)
+        {
+            lock (ImageProcessingHelper.GDILock)
+            {
+                var imageUtil = new ImageUtils();
+                using (var bitmap = imageUtil.CaptureBanArea(App.AppSetting.Position.BanPositions[index]))
+                {
+                    return HeroIdentifier.Identify(bitmap);
+                }
+            }
+        }
+        
         public FilePath CaptureScreen()
         {
             var imageUtil = new ImageUtils();
