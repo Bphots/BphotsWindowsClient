@@ -95,6 +95,12 @@ namespace HotsBpHelper.Pages
                 }, "MMRChanel");
             }
 
+            _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
+            {
+                ScriptName = "setLanguageForMessage",
+                Args = new[] { App.CustomConfigurationSettings.LanguageForMessage }
+            }, "MMRChanel");
+
             // 取得地区ID
             var regionId = ((int) game.Region).ToString();
             // 玩家BattleTags
