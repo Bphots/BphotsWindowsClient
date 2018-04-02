@@ -141,6 +141,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -190,6 +191,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Configuration\BpServiceConfigParser.cs" />
     <Compile Include="Configuration\BpHelperConfigParser.cs" />
     <Compile Include="Configuration\ConfigureFileParser.cs" />
     <Compile Include="Configuration\HotsVariableConfigParser.cs" />
@@ -465,6 +467,9 @@
   <ItemGroup>
     <Content Include="Screenshots\placeholder.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Service\BpHelperMonitor.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="WebFiles\placeholder.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

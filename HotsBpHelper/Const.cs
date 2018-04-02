@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using HotsBpHelper.Utils;
 
 namespace HotsBpHelper
 {
@@ -25,12 +26,14 @@ namespace HotsBpHelper
 
         public static readonly string BattleLobbyPath = Path.Combine(Path.GetTempPath(), @"Heroes of the Storm\TempWriteReplayP1\replay.server.battlelobby");
         
-        public static readonly string ProfilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Heroes of the Storm\Accounts");
+        public static readonly string ProfilePath = Path.Combine(FileUtil.GetMyDocumentFolderPath(), @"Heroes of the Storm\Accounts");
 
         public const int BestExpericenResolutionHeight = 760;
 
         public const int IncompatibleResolutionHeight = 760;
 
         public const int ReplayMinimumBuild = 43905;
+
+        public const string ServiceName = "HotsBpHelper - Monitor";
     }
 }
