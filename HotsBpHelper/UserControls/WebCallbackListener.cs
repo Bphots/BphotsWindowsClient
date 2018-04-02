@@ -22,6 +22,10 @@ namespace HotsBpHelper.UserControls
 
         public static event EventHandler PresetRequested;
 
+        public static event EventHandler StartServiceRequested;
+
+        public static event EventHandler StopServiceRequested;
+
         private void Callback(object sender, CfrV8HandlerExecuteEventArgs e)
         {
             var args = e.Arguments;
@@ -51,6 +55,14 @@ namespace HotsBpHelper.UserControls
             {
                 OnPresetRequested();
             }
+            if (args[0].StringValue == "StartService")
+            {
+                OnStartServiceRequested();
+            }
+            if (args[0].StringValue == "StopService")
+            {
+                OnStopServiceRequested();
+            }
         }
 
         protected virtual void OnInfoRequested(string e)
@@ -71,6 +83,16 @@ namespace HotsBpHelper.UserControls
         private static void OnPresetRequested()
         {
             PresetRequested?.Invoke(null, EventArgs.Empty);
+        }
+
+        private static void OnStartServiceRequested()
+        {
+            StartServiceRequested?.Invoke(null, EventArgs.Empty);
+        }
+
+        private static void OnStopServiceRequested()
+        {
+            StopServiceRequested?.Invoke(null, EventArgs.Empty);
         }
     }
 }
