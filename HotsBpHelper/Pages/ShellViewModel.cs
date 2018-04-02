@@ -68,10 +68,10 @@ namespace HotsBpHelper.Pages
         private bool _canOcr;
 
         public ShellViewModel(ViewModelFactory viewModelFactory, IImageUtil imageUtil, IToastService toastService,
-            IRestApi restApi, ISecurityProvider securityProvider)
+            IRestApi restApi, ISecurityProvider securityProvider, IEventAggregator eventAggregator)
         {
             _viewModelFactory = viewModelFactory;
-
+            _eventAggregator = eventAggregator;
             _imageUtil = imageUtil;
             _toastService = toastService;
             _securityProvider = securityProvider;
@@ -438,6 +438,27 @@ namespace HotsBpHelper.Pages
             Task.Run(MonitorInGameAsync).ConfigureAwait(false);
             Task.Run(MonitorLobbyFile).ConfigureAwait(false);
 
+            WebCallbackListener.StartServiceRequested += WebCallbackListenerOnStartServiceRequested;
+            WebCallbackListener.StopServiceRequested += WebCallbackListenerOnStopServiceRequested;
+        }
+
+        private void WebCallbackListenerOnStopServiceRequested(object sender, EventArgs eventArgs)
+        {
+            SetAutoStart();
+        }
+
+        private void InformServiceStatus()
+        {
+            _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
+            {
+                ScriptName = "setIsServiceRunning",
+                Args = new[] {JsonConvert.SerializeObject(IsServiceRunning)}
+            }, "ManagerChannel");
+        }
+
+        private void WebCallbackListenerOnStartServiceRequested(object sender, EventArgs eventArgs)
+        {
+            StopService();
         }
 
         private void OnManagerTabChanged(object sender, EventArgs e)
@@ -1125,23 +1146,29 @@ namespace HotsBpHelper.Pages
                         FileName = @"cmd.exe",
                         UseShellExecute = true,
                         Arguments =
-                            "/C sc delete \"HotsBpHelper - Monitor\"&sc create \"HotsBpHelper - Monitor\" binPath= \"" +
+                            "/C sc delete \"" + Const.ServiceName + "\"&sc create \"" + Const.ServiceName + "\" binPath= \"" +
                             App.AppPath +
-                            "\\Service\\BpHelperMonitor.exe\"&sc config \"HotsBpHelper - Monitor\" type= interact type= own&sc start \"HotsBpHelper - Monitor\"",
+                            "\\Service\\BpHelperMonitor.exe\"&sc config \"" + Const.ServiceName + "\" type= interact type= own&sc start \"" + Const.ServiceName + "\"",
                         Verb = "runas",
                         CreateNoWindow = true,
                         WindowStyle = ProcessWindowStyle.Hidden
                     });
 
                     process.WaitForExit();
+                    Thread.Sleep(500);
                 }
-                _toastService.ShowSuccess("Service successfully registered.");
             }
             catch (Exception)
             {
             }
 
 
+            if (IsServiceRunning)
+                _toastService.ShowSuccess("Service successfully registered.");
+            else 
+                _toastService.ShowWarning("Service not successfully registered.");
+            
+            InformServiceStatus();
             NotifyOfPropertyChange(() => ServiceNotRunning);
             NotifyOfPropertyChange(() => IsServiceRunning);
         }
@@ -1154,22 +1181,26 @@ namespace HotsBpHelper.Pages
                 {
                     FileName = @"cmd.exe",
                     UseShellExecute = true,
-                    Arguments = "/C sc stop \"HotsBpHelper - Monitor\"&sc delete \"HotsBpHelper - Monitor\"",
+                    Arguments = "/C sc stop \"" + Const.ServiceName + "\"&sc delete \"" + Const.ServiceName + "\"",
                     Verb = "runas",
                     CreateNoWindow = true,
                     WindowStyle = ProcessWindowStyle.Hidden
                 });
                 
                 process.WaitForExit();
-
-                _toastService.ShowSuccess("Service successfully unregistered.");
+                Thread.Sleep(500);
             }
             catch (Exception)
             {
                 
             }
-         
 
+            if (ServiceNotRunning)
+                _toastService.ShowSuccess("Service successfully unregistered.");
+            else
+                _toastService.ShowWarning("Service not successfully unregistered.");
+            
+            InformServiceStatus();
             NotifyOfPropertyChange(() => ServiceNotRunning);
             NotifyOfPropertyChange(() => IsServiceRunning);
         }
@@ -1184,8 +1215,9 @@ namespace HotsBpHelper.Pages
                         return sc.Status == ServiceControllerStatus.Running && IsLoaded;
                     }
                 }
-                catch (Exception)
+                catch (Exception exception)
                 {
+                    File.WriteAllText(@".\error.txt", exception.Message + exception.StackTrace);
                     return false;
                 }
             }
@@ -1252,5 +1284,6 @@ namespace HotsBpHelper.Pages
             => _bpViewModel != null && _bpViewModel.BpScreenLoaded ? L("HideHelper") : L("ShowHelper");
 
         private ManagerViewModel _managerVm;
+        private IEventAggregator _eventAggregator;
     }
 }
