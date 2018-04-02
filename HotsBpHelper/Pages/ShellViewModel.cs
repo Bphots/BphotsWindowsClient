@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -219,6 +221,9 @@ namespace HotsBpHelper.Pages
             {
                 SetAndNotify(ref _isLoaded, value);
                 NotifyOfPropertyChange(() => CanManualShowHelper);
+
+                NotifyOfPropertyChange(() => ServiceNotRunning);
+                NotifyOfPropertyChange(() => IsServiceRunning);
             }
         }
 
@@ -1108,6 +1113,85 @@ namespace HotsBpHelper.Pages
             NotifyOfPropertyChange(() => CanShowReplays);
             NotifyOfPropertyChange(() => CanShowAbout);
         }
+
+        public void SetAutoStart()
+        {
+            try
+            {
+                if (ServiceNotRunning)
+                {
+                    var process = Process.Start(new ProcessStartInfo()
+                    {
+                        FileName = @"cmd.exe",
+                        UseShellExecute = true,
+                        Arguments =
+                            "/C sc delete \"HotsBpHelper - Monitor\"&sc create \"HotsBpHelper - Monitor\" binPath= \"" +
+                            App.AppPath +
+                            "\\Service\\BpHelperMonitor.exe\"&sc config \"HotsBpHelper - Monitor\" type= interact type= own&sc start \"HotsBpHelper - Monitor\"",
+                        Verb = "runas",
+                        CreateNoWindow = true,
+                        WindowStyle = ProcessWindowStyle.Hidden
+                    });
+
+                    process.WaitForExit();
+                }
+                _toastService.ShowSuccess("Service successfully registered.");
+            }
+            catch (Exception)
+            {
+            }
+
+
+            NotifyOfPropertyChange(() => ServiceNotRunning);
+            NotifyOfPropertyChange(() => IsServiceRunning);
+        }
+
+        public void StopService()
+        {
+            try
+            {
+                var process = Process.Start(new ProcessStartInfo()
+                {
+                    FileName = @"cmd.exe",
+                    UseShellExecute = true,
+                    Arguments = "/C sc stop \"HotsBpHelper - Monitor\"&sc delete \"HotsBpHelper - Monitor\"",
+                    Verb = "runas",
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden
+                });
+                
+                process.WaitForExit();
+
+                _toastService.ShowSuccess("Service successfully unregistered.");
+            }
+            catch (Exception)
+            {
+                
+            }
+         
+
+            NotifyOfPropertyChange(() => ServiceNotRunning);
+            NotifyOfPropertyChange(() => IsServiceRunning);
+        }
+
+        public bool IsServiceRunning
+        {
+            get {
+                try
+                {
+                    using (ServiceController sc = new ServiceController(Const.ServiceName))
+                    {
+                        return sc.Status == ServiceControllerStatus.Running && IsLoaded;
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+        }
+
+        public bool ServiceNotRunning => !IsServiceRunning && IsLoaded;
 
         public void ShowAbout()
         {

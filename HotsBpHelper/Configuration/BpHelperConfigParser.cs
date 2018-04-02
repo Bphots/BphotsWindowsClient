@@ -120,11 +120,11 @@ namespace HotsBpHelper.Configuration
             var languageForGameClient = GetConfigurationValue(LanguageForGameClientKey);
             if (!string.IsNullOrEmpty(languageForGameClient))
                 return languageForGameClient;
-
+            
             var languageFromGame = GetLanguageFromGame();
             if (!string.IsNullOrEmpty(languageFromGame))
                 return languageFromGame;
-
+            
             return string.Empty;
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using HotsBpHelper.Api;
@@ -55,6 +56,8 @@ namespace HotsBpHelper
         protected override void Configure()
         {
             App.AppPath = AppDomain.CurrentDomain.BaseDirectory;
+            Directory.SetCurrentDirectory(App.AppPath);
+
             var args = Environment.GetCommandLineArgs();
 
             var configurationSettings = new CustomConfigurationSettings();

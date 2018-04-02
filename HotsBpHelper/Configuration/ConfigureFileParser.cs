@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DotNetHelper;
@@ -37,6 +38,8 @@ namespace HotsBpHelper.Configuration
                 _configurationDictionary[valuePair[0]] = valuePair[1];
             }
         }
+
+        protected Dictionary<string, string> AllValues => _configurationDictionary ;
 
         protected string GetConfigurationValue(string key)
         {

@@ -43,6 +43,8 @@
                 <Separator />
 
                 <MenuItem Header="{lex:Loc Settings}" Command="{s:Action ShowSettings}" IsEnabled="{Binding CanShowSettings}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"/>
+                <MenuItem Header="{lex:Loc AutoStart}" Command="{s:Action SetAutoStart}" Visibility="{Binding ServiceNotRunning, Converter={StaticResource BoolToVisibilityConverter} }"/>
+                <MenuItem Header="{lex:Loc AutoStop}" Command="{s:Action StopService}" Visibility="{Binding IsServiceRunning, Converter={StaticResource BoolToVisibilityConverter} }"/>
                 <MenuItem Header="{lex:Loc About}" Command="{s:Action ShowAbout}" IsEnabled="{Binding CanAbout}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"/>
                 <MenuItem Header="{lex:Loc Exit}" Command="{s:Action Exit}" />
             </ContextMenu>

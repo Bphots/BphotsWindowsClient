@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using DotNetHelper;
+using HotsBpHelper.Configuration;
 
 namespace HotsBpHelper.Utils
 {
@@ -28,5 +29,21 @@ namespace HotsBpHelper.Utils
             }
         }
 
+        public static string GetMyDocumentFolderPath()
+        {
+            var myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            if (string.IsNullOrEmpty(myDocumentsPath))
+                BpServiceConfigParser.PopulateConfigurationSettings();
+            else
+            {
+                MyDocumentFolderPathFromConfig = myDocumentsPath;
+                BpServiceConfigParser.WriteConfig();
+            }
+
+            return MyDocumentFolderPathFromConfig;
+        }
+
+        public static string MyDocumentFolderPathFromConfig = string.Empty;
     }
 }
