@@ -50,6 +50,8 @@ namespace HotsBpHelper
 
         public static Dictionary<string, MapInfoV2> AdviceMapInfos { get; set; }
 
+        public static bool HasServiceAsked { get; set; }
+
         private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             Pages.ErrorView _errorView;

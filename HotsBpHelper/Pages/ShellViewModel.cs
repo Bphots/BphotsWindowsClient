@@ -419,6 +419,14 @@ namespace HotsBpHelper.Pages
                 isWindowlessMax = false;
             }
 
+            BpServiceConfigParser.PopulateConfigurationSettings();
+            if (!App.HasServiceAsked && ServiceNotRunning && TopMostMessageBox.Show("Would you like to launch BpHelper automatically when starting the game?",
+                @"Question",
+                MessageBoxButtons.YesNo) == DialogResult.Yes)
+                SetAutoStart();
+
+            App.HasServiceAsked = true;
+            BpServiceConfigParser.WriteConfig();
             AutoDetect = App.CustomConfigurationSettings.AutoDetectHeroAndMap && CanOcr && _bpViewModel.OcrAvailable && App.AppSetting.Position.Height > Const.BestExpericenResolutionHeight && isWindowlessMax;
             AutoShowHideHelper = App.CustomConfigurationSettings.AutoShowHideHelper && isWindowlessMax;
             AutoShowMmr = App.CustomConfigurationSettings.AutoShowMMR && isWindowlessMax; 
