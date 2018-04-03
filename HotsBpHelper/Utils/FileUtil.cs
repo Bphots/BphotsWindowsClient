@@ -1,18 +1,21 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using DotNetHelper;
 using HotsBpHelper.Configuration;
 
 namespace HotsBpHelper.Utils
 {
     public static class FileUtil
     {
+        public static string MyDocumentFolderPathFromConfig = string.Empty;
+        public static string MyTempFolderPathFromConfig = string.Empty;
+
+        private static bool IsLaunchedFromService
+            => string.IsNullOrEmpty(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+
         public static void CleanUpImageTestFiles()
         {
-            DirectoryInfo di = new DirectoryInfo(@".\Images\Heroes\Test");
+            var di = new DirectoryInfo(@".\Images\Heroes\Test");
             if (!di.Exists)
                 return;
 
@@ -44,6 +47,18 @@ namespace HotsBpHelper.Utils
             return MyDocumentFolderPathFromConfig;
         }
 
-        public static string MyDocumentFolderPathFromConfig = string.Empty;
+        public static string GetTempFolderPath()
+        {
+            if (IsLaunchedFromService)
+                BpServiceConfigParser.PopulateConfigurationSettings();
+            else
+            {
+                var myTempPath = Path.GetTempPath();
+                MyTempFolderPathFromConfig = myTempPath;
+                BpServiceConfigParser.WriteConfig();
+            }
+
+            return MyTempFolderPathFromConfig;
+        }
     }
 }
