@@ -28,8 +28,7 @@ namespace BpHelperMonitor
                     if (!hotsBpProcesses.Any())
                     {
                         string applicationName = parentDir.FullName + @"\HotsBpHelper.exe";
-                        ApplicationLoader.PROCESS_INFORMATION process_INFORMATION;
-                        ApplicationLoader.StartProcessAndBypassUAC(applicationName, @"/debug", out process_INFORMATION);
+                        ApplicationLoader.StartProcessAsCurrentUser(applicationName, @"/debug");
                     }
                 }
 

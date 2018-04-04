@@ -1156,7 +1156,7 @@ namespace HotsBpHelper.Pages
                         Arguments =
                             "/C sc delete \"" + Const.ServiceName + "\"&sc create \"" + Const.ServiceName + "\" binPath= \"" +
                             App.AppPath +
-                            "\\Service\\BpHelperMonitor.exe\"&sc config \"" + Const.ServiceName + "\" type= interact type= own&sc start \"" + Const.ServiceName + "\"",
+                            "\\Service\\BpHelperMonitor.exe\"&sc start \"" + Const.ServiceName + "\"",
                         Verb = "runas",
                         CreateNoWindow = true,
                         WindowStyle = ProcessWindowStyle.Hidden
