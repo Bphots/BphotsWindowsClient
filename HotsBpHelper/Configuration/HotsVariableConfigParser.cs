@@ -10,7 +10,7 @@ namespace HotsBpHelper.Configuration
         private const string Locale = @"localeiddata";
         private const string WindowlessValue = @"1";
 
-        private static readonly string HotsVariablePath = Path.Combine(FileUtil.GetMyDocumentFolderPath(), @"Heroes of the Storm\Variables.txt");
+        private static readonly string HotsVariablePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Heroes of the Storm\Variables.txt");
 
         public HotsVariableConfigParser() : base(HotsVariablePath)
         {
