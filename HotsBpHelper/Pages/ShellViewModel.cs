@@ -1163,6 +1163,8 @@ namespace HotsBpHelper.Pages
                     });
 
                     process.WaitForExit();
+
+                    _restApi.Analysis("switchOnService", App.Language).ConfigureAwait(false);
                     Thread.Sleep(500);
                 }
             }
@@ -1196,6 +1198,8 @@ namespace HotsBpHelper.Pages
                 });
                 
                 process.WaitForExit();
+
+                _restApi.Analysis("switchOffService", App.Language).ConfigureAwait(false);
                 Thread.Sleep(500);
             }
             catch (Exception)
