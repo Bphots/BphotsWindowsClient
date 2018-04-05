@@ -92,14 +92,14 @@ namespace HotsBpHelper.Pages
             _securityProvider = securityProvider;
             _eventAggregator.Subscribe(this);
             _scanningCancellationToken = new CancellationTokenSource();
-
-            var folder = @".\hashlist.json";
-            var sourceContent = File.ReadAllText(folder);
-
-            AllHero.HeroInfo = JsonConvert.DeserializeObject<List<EachHero>>(sourceContent);
-
+            
             try
             {
+                var folder = @".\hashlist.json";
+                var sourceContent = File.ReadAllText(folder);
+
+                AllHero.HeroInfo = JsonConvert.DeserializeObject<List<EachHero>>(sourceContent);
+
                 OcrUtil = new OcrUtil();
                 OcrUtil.Initialize();
                 OcrAvailable = true;
@@ -373,11 +373,6 @@ namespace HotsBpHelper.Pages
                             ProcessStep();
                         }
                     }
-                    //else if (_listBpSteps[BpStatus.CurrentStep].Count == 2 && !IsAutoMode)
-                    //{
-                    //    HeroSelectorViewModels.FirstOrDefault(v => v.Id == _listBpSteps[BpStatus.CurrentStep][1])?
-                    //        .View.Focus();
-                    //}
                 }
             }
             catch (Exception)
