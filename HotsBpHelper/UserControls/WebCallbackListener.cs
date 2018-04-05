@@ -55,13 +55,14 @@ namespace HotsBpHelper.UserControls
             {
                 OnPresetRequested();
             }
-            if (args[0].StringValue == "StartService")
+            if (args[0].StringValue == "SetService")
             {
-                OnStartServiceRequested();
-            }
-            if (args[0].StringValue == "StopService")
-            {
-                OnStopServiceRequested();
+                var param = args[1].StringValue;
+                if (param.Trim() == "1")
+                    OnStartServiceRequested();
+                
+                if (param.Trim() == "0")
+                    OnStopServiceRequested();
             }
         }
 
