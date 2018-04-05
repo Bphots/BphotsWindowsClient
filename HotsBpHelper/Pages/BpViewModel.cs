@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using System.Windows;
 using System.Windows.Forms;
 using DotNetHelper;
 using HotsBpHelper.Api;
+using HotsBpHelper.Api.Model;
 using HotsBpHelper.Api.Security;
 using HotsBpHelper.Factories;
 using HotsBpHelper.HeroFinder;
@@ -19,6 +21,7 @@ using HotsBpHelper.Settings;
 using HotsBpHelper.Uploader;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
+using ImageProcessor.HashProcessing;
 using ImageProcessor.ImageProcessing;
 using ImageProcessor.Ocr;
 using Newtonsoft.Json;
@@ -89,6 +92,11 @@ namespace HotsBpHelper.Pages
             _securityProvider = securityProvider;
             _eventAggregator.Subscribe(this);
             _scanningCancellationToken = new CancellationTokenSource();
+
+            var folder = @".\hashlist.json";
+            var sourceContent = File.ReadAllText(folder);
+
+            AllHero.HeroInfo = JsonConvert.DeserializeObject<List<EachHero>>(sourceContent);
 
             try
             {
@@ -587,7 +595,7 @@ namespace HotsBpHelper.Pages
             if (!HeroSelectorViewModels.Any())
                 PopulateCachedHeroSelectorWindows();
 
-            if (_listBpSteps[2].Contains(pointIndex) || _listBpSteps[7].Contains(pointIndex))
+            if ((_listBpSteps[2].Contains(pointIndex) || _listBpSteps[7].Contains(pointIndex)) && name != null)
                 PopulateBanSelector(pointIndex);
 
             var vm = HeroSelectorViewModels.First(v => v.Id == pointIndex);
@@ -873,19 +881,7 @@ namespace HotsBpHelper.Pages
                     .ConfigureAwait(false);
                 return;
             }
-
-            //if (BpStatus.CurrentStep == 0 || BpStatus.CurrentStep == 1)
-            //{
-            //    foreach (var i in _listBpSteps[2])
-            //        Task.Run(() => OcrAsync(i, _scanningCancellationToken.Token)).ConfigureAwait(false);
-            //}
-
-            //if (BpStatus.CurrentStep == 5 || BpStatus.CurrentStep == 6)
-            //{
-            //    foreach (var i in _listBpSteps[7])
-            //        Task.Run(() => OcrAsync(i, _scanningCancellationToken.Token)).ConfigureAwait(false);
-            //}
-
+            
             if ((BpStatus.CurrentStep == 0 || BpStatus.CurrentStep == 1) && !_isFirstAndSecondBanProcessing)
             {
                 Task.Run(ProcessFirstAndSecondBan).ConfigureAwait(false);
@@ -934,7 +930,7 @@ namespace HotsBpHelper.Pages
                     await Task.Delay(500);
                     if (OcrUtil.SuspendScanning)
                         continue;
-
+                    
                     stageInfo = finder.GetStageInfo();
 
                     if (stageInfo.Step != -1 || warned)
@@ -949,6 +945,29 @@ namespace HotsBpHelper.Pages
 
                     warned = true;
                     WarnNotInBp();
+                }
+
+                try
+                {
+                    var selectorId = _listBpSteps[stage - 1].First();
+                    var idTuple = finder.GetBanHero(BanSteps.IndexOf(selectorId));
+                    if (idTuple.Item1 > 0 && idTuple.Item1 < 1000)
+                    {
+                        if (idTuple.Item2 < 20)
+                        {
+                            Execute.OnUIThread(() => { ShowHeroSelector(selectorId, App.OcrHeroInfos.First(h => h.Id == idTuple.Item1).Name); });
+                            return;
+                        }
+
+                        await Task.Delay(500);
+                        var idConfirm = finder.GetBanHero(BanSteps.IndexOf(selectorId));
+                        if (idConfirm.Item1 == idTuple.Item1)
+                            Execute.OnUIThread(() => { ShowHeroSelector(selectorId, App.OcrHeroInfos.First(h => h.Id == idTuple.Item1).Name); });
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
             }
             finally 
