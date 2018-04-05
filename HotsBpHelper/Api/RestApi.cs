@@ -75,6 +75,25 @@ namespace HotsBpHelper.Api
             return await ExecuteWeekAsync<int>(request);
         }
 
+        public async Task<object> Analysis(string type, string lang)
+        {
+            try
+            {
+                var request = CreateRequest("analysis",
+                    new List<Tuple<string, string>>
+                    {
+                        Tuple.Create("type", type),
+                        Tuple.Create("lang", lang)
+                    });
+
+                return await ExecuteAsync<object>(request).ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public async Task<UploadStatus> UploadReplay(string file)
         {
             var url = GetSignedUrl(new List<Tuple<string, string>>(), "upload");

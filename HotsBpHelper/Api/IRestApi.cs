@@ -23,6 +23,8 @@ namespace HotsBpHelper.Api
 
         Task<int> GetMinimalBuild();
 
+        Task<object> Analysis(string type, string lang);
+
         Task<UploadStatus> UploadReplay(string file);
 
         Task<UploadStatus> UploadImage(string file, string id);
