@@ -31,34 +31,5 @@ namespace HotsBpHelper.Utils
                 }
             }
         }
-
-        public static string GetMyDocumentFolderPath()
-        {
-            var myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
-            if (string.IsNullOrEmpty(myDocumentsPath))
-                BpServiceConfigParser.PopulateConfigurationSettings();
-            else
-            {
-                MyDocumentFolderPathFromConfig = myDocumentsPath;
-                BpServiceConfigParser.WriteConfig();
-            }
-
-            return MyDocumentFolderPathFromConfig;
-        }
-
-        public static string GetTempFolderPath()
-        {
-            if (IsLaunchedFromService)
-                BpServiceConfigParser.PopulateConfigurationSettings();
-            else
-            {
-                var myTempPath = Path.GetTempPath();
-                MyTempFolderPathFromConfig = myTempPath;
-                BpServiceConfigParser.WriteConfig();
-            }
-
-            return MyTempFolderPathFromConfig;
-        }
     }
 }
