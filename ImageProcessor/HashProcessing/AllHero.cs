@@ -58,7 +58,7 @@ namespace ImageProcessor.HashProcessing
                 for (var i = 0; i < count / 5; i++)
                     sumn += disList[i];
 
-                dis = 1.0 * sumn / (count / 5.0);
+                dis = 1.0 * sumn / (count / 5);
 
                 if (dis < mindis)
                 {

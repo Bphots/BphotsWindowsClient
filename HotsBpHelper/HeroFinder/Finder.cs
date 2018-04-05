@@ -28,9 +28,31 @@ namespace HotsBpHelper.HeroFinder
             lock (ImageProcessingHelper.GDILock)
             {
                 var imageUtil = new ImageUtils();
+                var path = Path.Combine(App.AppPath, "Images\\Heroes");
+                var path2 = string.Format("{0}x{1}", App.AppSetting.Position.Width, App.AppSetting.Position.Height);
+                FilePath text = Path.Combine(path, path2, "Ban",
+                    string.Format("{0}_{1:yyyyMMddhhmmss}.jpg", index, DateTime.Now));
+
+                if (!text.GetDirPath().Exists)
+                    Directory.CreateDirectory(text.GetDirPath());
+
                 using (var bitmap = imageUtil.CaptureBanArea(App.AppSetting.Position.BanPositions[index]))
                 {
-                    return HeroIdentifier.Identify(bitmap);
+                    bitmap.Save(text);
+                }
+
+                using (var bitmap = new Bitmap(text))
+                {
+                    var path1 = Path.Combine(App.AppPath, "Images\\Heroes");
+                    var path12 = string.Format("{0}x{1}", App.AppSetting.Position.Width, App.AppSetting.Position.Height);
+                    DirPath text2 = Path.Combine(path1, path12, "Ban\\Out");
+                    if (!text2.Exists)
+                        Directory.CreateDirectory(text2);
+
+                    var result = HeroIdentifier.Identify(bitmap);
+                    FilePath resultFilePath = Path.Combine(text2, result.Item1 + " " + result.Item2 + ".bmp");
+                    bitmap.Save(resultFilePath);
+                    return result;
                 }
             }
         }
