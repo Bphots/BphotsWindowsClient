@@ -85,6 +85,11 @@ namespace HotsBpHelper.Pages
                 Args = new[] {JsonConvert.SerializeObject(App.NextConfigurationSettings)}
             }, "ManagerChannel");
             PopulatedTabs.Add(SettingsTab.Configure);
+            _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
+            {
+                ScriptName = "setIsServiceRunning",
+                Args = new[] { JsonConvert.SerializeObject(ShellViewModel.GetIsServiceRuning()) }
+            }, "ManagerChannel");
         }
 
         public void ShowReplays(bool invokeWeb = true)

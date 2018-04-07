@@ -1219,12 +1219,16 @@ namespace HotsBpHelper.Pages
 
         public bool IsServiceRunning
         {
-            get {
+            get { return GetIsServiceRuning() && IsLoaded; }
+        }
+
+        public static bool GetIsServiceRuning()
+        {
                 try
                 {
                     using (ServiceController sc = new ServiceController(Const.ServiceName))
                     {
-                        return sc.Status == ServiceControllerStatus.Running && IsLoaded;
+                        return sc.Status == ServiceControllerStatus.Running;
                     }
                 }
                 catch (Exception exception)
@@ -1232,7 +1236,6 @@ namespace HotsBpHelper.Pages
                     File.WriteAllText(@".\error.txt", exception.Message + exception.StackTrace);
                     return false;
                 }
-            }
         }
 
         public bool ServiceNotRunning => !IsServiceRunning && IsLoaded;
