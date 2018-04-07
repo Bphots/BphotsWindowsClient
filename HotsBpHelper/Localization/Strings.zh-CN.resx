@@ -327,4 +327,22 @@
   <data name="ErrorTitle" xml:space="preserve">
     <value>错误</value>
   </data>
+  <data name="ServiceOff" xml:space="preserve">
+    <value>已关闭自动启动</value>
+  </data>
+  <data name="ServiceOn" xml:space="preserve">
+    <value>已开启自动启动</value>
+  </data>
+  <data name="ServiceQuestion" xml:space="preserve">
+    <value>您是否需要设置背锅助手在游戏启动时自动开启?(您也可以稍后在设置中开启/关闭该功能)</value>
+  </data>
+  <data name="ServiceOffFail" xml:space="preserve">
+    <value>自动识别关闭失败，请重试。</value>
+  </data>
+  <data name="ServiceOnFail" xml:space="preserve">
+    <value>自动启动开启失败，请重试。</value>
+  </data>
+  <data name="ShowMmr" xml:space="preserve">
+    <value>显示对战情报</value>
+  </data>
 </root>
