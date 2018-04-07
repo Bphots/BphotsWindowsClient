@@ -58,10 +58,10 @@ namespace HotsBpHelper.UserControls
             if (args[0].StringValue == "SetService")
             {
                 var param = args[1].StringValue;
-                if (param.Trim() == "1")
+                if (param.Trim() == "1" || param.Trim().ToLower() == "true")
                     OnStartServiceRequested();
                 
-                if (param.Trim() == "0")
+                if (param.Trim() == "0" || param.Trim().ToLower() == "false")
                     OnStopServiceRequested();
             }
         }
