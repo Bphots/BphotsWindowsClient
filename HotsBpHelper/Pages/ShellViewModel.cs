@@ -420,10 +420,24 @@ namespace HotsBpHelper.Pages
             }
 
             BpServiceConfigParser.PopulateConfigurationSettings();
-            if (!App.HasServiceAsked && ServiceNotRunning && TopMostMessageBox.Show(L(@"ServiceQuestion"),
-                @"Question",
-                MessageBoxButtons.YesNo) == DialogResult.Yes)
-                SetAutoStart();
+            if (!App.HasServiceAsked)
+            {
+                if (ServiceNotRunning)
+                {
+                    if (TopMostMessageBox.Show(L(@"ServiceQuestion"),
+                        @"Question",
+                        MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        SetAutoStart();
+                }
+                else
+                {
+                    if (TopMostMessageBox.Show(L(@"ServiceRestartQuestion"),
+                       @"Question",
+                       MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        ServiceRestart();
+                }
+
+            }
 
             App.HasServiceAsked = true;
             BpServiceConfigParser.WriteConfig();
@@ -1187,6 +1201,44 @@ namespace HotsBpHelper.Pages
                 _toastService.ShowWarning(L(@"ServiceOnFail"));
             
             InformServiceStatus();
+            NotifyOfPropertyChange(() => ServiceNotRunning);
+            NotifyOfPropertyChange(() => IsServiceRunning);
+        }
+
+        public void ServiceRestart()
+        {
+            try
+            {
+                if (ServiceNotRunning)
+                {
+                    var process = Process.Start(new ProcessStartInfo()
+                    {
+                        FileName = @"cmd.exe",
+                        UseShellExecute = true,
+                        Arguments =
+                            "/C sc stop \"" + Const.ServiceName + "\"&sc delete \"" + Const.ServiceName + "\"&sc create \"" + Const.ServiceName + "\" binPath= \"" +
+                            App.AppPath +
+                            "\\Service\\BpHelperMonitor.exe\"&sc config \"" + Const.ServiceName + "\" start=auto&sc description \"" + Const.ServiceName + "\" \"Launch HotsBpHelper on game start.\"&sc start \"" + Const.ServiceName + "\"",
+                        Verb = "runas",
+                        CreateNoWindow = true,
+                        WindowStyle = ProcessWindowStyle.Hidden
+                    });
+
+                    process.WaitForExit();
+
+                    _restApi.Analysis("action", "switchOnService", App.Language).ConfigureAwait(false);
+                    Thread.Sleep(500);
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            if (IsServiceRunning)
+                _toastService.ShowSuccess(L(@"ServiceOn"));
+            else
+                _toastService.ShowWarning(L(@"ServiceOnFail"));
+
             NotifyOfPropertyChange(() => ServiceNotRunning);
             NotifyOfPropertyChange(() => IsServiceRunning);
         }
