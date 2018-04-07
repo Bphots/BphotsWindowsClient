@@ -452,7 +452,7 @@ namespace HotsBpHelper.Pages
 
         private void WebCallbackListenerOnStopServiceRequested(object sender, EventArgs eventArgs)
         {
-            SetAutoStart();
+            StopService();
         }
 
         private void InformServiceStatus()
@@ -466,7 +466,7 @@ namespace HotsBpHelper.Pages
 
         private void WebCallbackListenerOnStartServiceRequested(object sender, EventArgs eventArgs)
         {
-            StopService();
+            SetAutoStart();
         }
 
         private void OnManagerTabChanged(object sender, EventArgs e)
@@ -793,7 +793,8 @@ namespace HotsBpHelper.Pages
             }
             if (e.HotKey.Key == Key.M)
             {
-                SwitchVisibility();
+                if (IsStatsVisible)
+                    ShowMmr();
             }
             if (e.HotKey.Key == Key.R)
             {
