@@ -345,4 +345,7 @@
   <data name="ShowMmr" xml:space="preserve">
     <value>顯示對戰情報</value>
   </data>
+  <data name="ServiceRestartQuestion" xml:space="preserve">
+    <value>檢測到安裝目錄已經更改，是否重新註冊服務以兼容您的新目錄？</value>
+  </data>
 </root>
