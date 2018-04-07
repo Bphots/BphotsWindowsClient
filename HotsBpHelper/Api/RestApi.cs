@@ -75,7 +75,7 @@ namespace HotsBpHelper.Api
             return await ExecuteWeekAsync<int>(request);
         }
 
-        public async Task<object> Analysis(string type, string lang)
+        public async Task<object> Analysis(string type, string para, string lang)
         {
             try
             {
@@ -83,6 +83,7 @@ namespace HotsBpHelper.Api
                     new List<Tuple<string, string>>
                     {
                         Tuple.Create("type", type),
+                        Tuple.Create("params", para),
                         Tuple.Create("lang", lang)
                     });
 
