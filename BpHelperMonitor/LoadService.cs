@@ -21,19 +21,21 @@ namespace BpHelperMonitor
             while (true)
             {
                 await Task.Delay(1000);
-                var processes = Process.GetProcessesByName("HeroesOfTheStorm").Union(Process.GetProcessesByName("HeroesOfTheStorm" + "_x64")); 
+                var processes = Process.GetProcessesByName("HeroesOfTheStorm").Union(Process.GetProcessesByName("HeroesOfTheStorm" + "_x64"));
+
                 if (processes.Any() && !hasProcess)
                 {
                     var hotsBpProcesses = Process.GetProcessesByName("HotsBpHelper");
                     if (!hotsBpProcesses.Any())
                     {
                         string applicationName = parentDir.FullName + @"\HotsBpHelper.exe";
-                        ApplicationLoader.StartProcessAsCurrentUser(applicationName, @"/debug");
+                        ApplicationLoader.StartProcessAsCurrentUser(applicationName, string.Empty);
                     }
                 }
 
                 hasProcess = processes.Any();
             }
+            
         }
 
         // Token: 0x0600000E RID: 14 RVA: 0x00002383 File Offset: 0x00000583
