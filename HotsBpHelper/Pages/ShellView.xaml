@@ -39,7 +39,8 @@
 
                 <MenuItem Header="{Binding ShowHideHelperTip}" Command="{s:Action ManuallyShowHideHelper}" InputGestureText="{Binding ManualShowHideHelperInputGuestrueText}"  Visibility="{Binding CanManualShowHelper, Converter={StaticResource BoolToVisibilityConverter} }" />
                 <MenuItem Header="{lex:Loc ResetHelper}" Command="{s:Action ResetHelper}" InputGestureText="Ctrl+Shift+N" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }" />
-                
+                <MenuItem Header="{lex:Loc ShowMmr}" Command="{s:Action ShowMmr}" InputGestureText="Ctrl+Shift+M" Visibility="{Binding IsStatsVisible, Converter={StaticResource BoolToVisibilityConverter} }" />
+
                 <Separator />
 
                 <MenuItem Header="{lex:Loc Settings}" Command="{s:Action ShowSettings}" IsEnabled="{Binding CanShowSettings}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"/>

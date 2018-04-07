@@ -420,7 +420,7 @@ namespace HotsBpHelper.Pages
             }
 
             BpServiceConfigParser.PopulateConfigurationSettings();
-            if (!App.HasServiceAsked && ServiceNotRunning && TopMostMessageBox.Show("Would you like to launch BpHelper automatically when starting the game?",
+            if (!App.HasServiceAsked && ServiceNotRunning && TopMostMessageBox.Show(L(@"ServiceQuestion"),
                 @"Question",
                 MessageBoxButtons.YesNo) == DialogResult.Yes)
                 SetAutoStart();
@@ -622,7 +622,12 @@ namespace HotsBpHelper.Pages
                 await Task.Delay(1000);
             }
         }
-        
+
+        public void ShowMmr()
+        {
+            ((MMRView) _mmrViewModel?.View)?.Browser?.InitializeBrowser(_mmrViewModel.LocalFileUri);
+        }
+
         private async Task MonitorInGameAsync()
         {
             var lobbyLastModified = DateTime.MinValue;
@@ -654,6 +659,7 @@ namespace HotsBpHelper.Pages
                         OcrUtil.InGame = true;
                         Execute.OnUIThread(() => NotifyOfPropertyChange(() => CanManualShowHelper));
                         Execute.OnUIThread(() => NotifyOfPropertyChange(() => ShowHideHelperTip));
+                        Execute.OnUIThread(() => NotifyOfPropertyChange(() => IsStatsVisible));
                     }
 
                     if (!Manager.IngameSuspend)
@@ -672,6 +678,7 @@ namespace HotsBpHelper.Pages
                     OcrUtil.InGame = false;
                     Execute.OnUIThread(() => NotifyOfPropertyChange(() => CanManualShowHelper));
                     Execute.OnUIThread(() => NotifyOfPropertyChange(() => ShowHideHelperTip));
+                    Execute.OnUIThread(() => NotifyOfPropertyChange(() => IsStatsVisible));
                     Manager.IngameSuspend = false;
                 }
 
@@ -1174,9 +1181,9 @@ namespace HotsBpHelper.Pages
 
 
             if (IsServiceRunning)
-                _toastService.ShowSuccess("Service successfully registered.");
+                _toastService.ShowSuccess(L(@"ServiceOn"));
             else 
-                _toastService.ShowWarning("Service not successfully registered.");
+                _toastService.ShowWarning(L(@"ServiceOnFail"));
             
             InformServiceStatus();
             NotifyOfPropertyChange(() => ServiceNotRunning);
@@ -1208,9 +1215,9 @@ namespace HotsBpHelper.Pages
             }
 
             if (ServiceNotRunning)
-                _toastService.ShowSuccess("Service successfully unregistered.");
+                _toastService.ShowSuccess(L(@"ServiceOff"));
             else
-                _toastService.ShowWarning("Service not successfully unregistered.");
+                _toastService.ShowWarning(L(@"ServiceOffFail"));
             
             InformServiceStatus();
             NotifyOfPropertyChange(() => ServiceNotRunning);
@@ -1239,6 +1246,11 @@ namespace HotsBpHelper.Pages
         }
 
         public bool ServiceNotRunning => !IsServiceRunning && IsLoaded;
+
+        public bool IsStatsVisible
+        {
+            get { return File.Exists(Const.BattleLobbyPath) && OcrUtil.InGame && IsLoaded; }
+        }
 
         public void ShowAbout()
         {

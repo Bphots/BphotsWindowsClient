@@ -321,4 +321,22 @@
   <data name="ErrorTitle" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="ServiceOff" xml:space="preserve">
+    <value>Auto-Start is cancelled successfully</value>
+  </data>
+  <data name="ServiceOn" xml:space="preserve">
+    <value>Auto-Start is registered successfully</value>
+  </data>
+  <data name="ServiceQuestion" xml:space="preserve">
+    <value>Would you like to launch BpHelper automatically on game start? (You may also configure/cancel this feature in 'Settings' later.)</value>
+  </data>
+  <data name="ServiceOffFail" xml:space="preserve">
+    <value>Failed to cancel Auto-Start, please try again.</value>
+  </data>
+  <data name="ServiceOnFail" xml:space="preserve">
+    <value>Failed to register Auto-Start, please try again.</value>
+  </data>
+  <data name="ShowMmr" xml:space="preserve">
+    <value>Display Player Stats</value>
+  </data>
 </root>
