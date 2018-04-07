@@ -1209,26 +1209,23 @@ namespace HotsBpHelper.Pages
         {
             try
             {
-                if (ServiceNotRunning)
+                var process = Process.Start(new ProcessStartInfo()
                 {
-                    var process = Process.Start(new ProcessStartInfo()
-                    {
-                        FileName = @"cmd.exe",
-                        UseShellExecute = true,
-                        Arguments =
-                            "/C sc stop \"" + Const.ServiceName + "\"&sc delete \"" + Const.ServiceName + "\"&sc create \"" + Const.ServiceName + "\" binPath= \"" +
-                            App.AppPath +
-                            "\\Service\\BpHelperMonitor.exe\"&sc config \"" + Const.ServiceName + "\" start=auto&sc description \"" + Const.ServiceName + "\" \"Launch HotsBpHelper on game start.\"&sc start \"" + Const.ServiceName + "\"",
-                        Verb = "runas",
-                        CreateNoWindow = true,
-                        WindowStyle = ProcessWindowStyle.Hidden
-                    });
+                    FileName = @"cmd.exe",
+                    UseShellExecute = true,
+                    Arguments =
+                        "/C sc stop \"" + Const.ServiceName + "\"&sc delete \"" + Const.ServiceName + "\"&sc create \"" + Const.ServiceName + "\" binPath= \"" +
+                        App.AppPath +
+                        "\\Service\\BpHelperMonitor.exe\"&sc config \"" + Const.ServiceName + "\" start=auto&sc description \"" + Const.ServiceName + "\" \"Launch HotsBpHelper on game start.\"&sc start \"" + Const.ServiceName + "\"",
+                    Verb = "runas",
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden
+                });
 
-                    process.WaitForExit();
+                process.WaitForExit();
 
-                    _restApi.Analysis("action", "switchOnService", App.Language).ConfigureAwait(false);
-                    Thread.Sleep(500);
-                }
+                _restApi.Analysis("action", "switchOnService", App.Language).ConfigureAwait(false);
+                Thread.Sleep(500);
             }
             catch (Exception)
             {
