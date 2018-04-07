@@ -40,7 +40,7 @@ namespace HotsBpHelper.HeroFinder
                 {
                     bitmap.Save(text);
                 }
-
+                Tuple<int, double> result = null;
                 using (var bitmap = new Bitmap(text))
                 {
                     var path1 = Path.Combine(App.AppPath, "Images\\Heroes");
@@ -49,11 +49,16 @@ namespace HotsBpHelper.HeroFinder
                     if (!text2.Exists)
                         Directory.CreateDirectory(text2);
 
-                    var result = HeroIdentifier.Identify(bitmap);
+                    result = HeroIdentifier.Identify(bitmap);
                     FilePath resultFilePath = Path.Combine(text2, result.Item1 + " " + result.Item2 + ".bmp");
-                    bitmap.Save(resultFilePath);
-                    return result;
+                    if (App.Debug)
+                        bitmap.Save(resultFilePath);
                 }
+
+                if (!App.Debug)
+                    text.DeleteIfExists();
+
+                return result;
             }
         }
         
