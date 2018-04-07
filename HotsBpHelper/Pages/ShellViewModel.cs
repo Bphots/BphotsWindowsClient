@@ -1172,7 +1172,7 @@ namespace HotsBpHelper.Pages
 
                     process.WaitForExit();
 
-                    _restApi.Analysis("switchOnService", App.Language).ConfigureAwait(false);
+                    _restApi.Analysis("action", "switchOnService", App.Language).ConfigureAwait(false);
                     Thread.Sleep(500);
                 }
             }
@@ -1207,7 +1207,7 @@ namespace HotsBpHelper.Pages
                 
                 process.WaitForExit();
 
-                _restApi.Analysis("switchOffService", App.Language).ConfigureAwait(false);
+                _restApi.Analysis("action", "switchOffService", App.Language).ConfigureAwait(false);
                 Thread.Sleep(500);
             }
             catch (Exception)
@@ -1239,9 +1239,8 @@ namespace HotsBpHelper.Pages
                         return sc.Status == ServiceControllerStatus.Running;
                     }
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
-                    File.WriteAllText(@".\error.txt", exception.Message + exception.StackTrace);
                     return false;
                 }
         }

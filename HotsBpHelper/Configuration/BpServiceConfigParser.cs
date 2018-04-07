@@ -8,11 +8,8 @@ namespace HotsBpHelper.Configuration
     public class BpServiceConfigParser : ConfigureFileParser
     {
         private static readonly string BpServiceConfigPath =
-            Path.GetFullPath(@".\Service\config.ini");
-
-        private const string TempFolderKey = "TempFolder";
-        private const string DocumentFolderKey = "DocumentFolder";
-
+            Path.GetFullPath(@".\Service\Variables.ini");
+        
         private const string LoadedKey = "BpServiceQuestionLoaded";
 
         public BpServiceConfigParser() : base(BpServiceConfigPath)
@@ -26,25 +23,9 @@ namespace HotsBpHelper.Configuration
             return !string.IsNullOrEmpty(isLoaded);
         }
 
-        public string GetDocumentsFolder()
-        {
-            var documentsPath = GetConfigurationValue(Environment.UserName + DocumentFolderKey);
-
-            return documentsPath;
-        }
-
-        public string GetTempFolder()
-        {
-            var documentsPath = GetConfigurationValue(Environment.UserName + TempFolderKey);
-
-            return documentsPath;
-        }
-
         public static void PopulateConfigurationSettings()
         {
             var parser = new BpServiceConfigParser();
-            FileUtil.MyDocumentFolderPathFromConfig = parser.GetDocumentsFolder();
-            FileUtil.MyTempFolderPathFromConfig = parser.GetTempFolder();
             if (!App.HasServiceAsked)
                 App.HasServiceAsked = parser.GetLoaded();
         }
@@ -52,10 +33,6 @@ namespace HotsBpHelper.Configuration
         public static void WriteConfig()
         {
             var parser = new BpServiceConfigParser();
-            if (!string.IsNullOrEmpty(FileUtil.MyDocumentFolderPathFromConfig))
-                parser.AllValues[Environment.UserName + DocumentFolderKey] = FileUtil.MyDocumentFolderPathFromConfig;
-            if (!string.IsNullOrEmpty(FileUtil.MyTempFolderPathFromConfig))
-                parser.AllValues[Environment.UserName + TempFolderKey] = FileUtil.MyTempFolderPathFromConfig;
 
             if (App.HasServiceAsked)
                parser.AllValues[LoadedKey] = "1";

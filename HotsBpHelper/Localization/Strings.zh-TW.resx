@@ -334,7 +334,7 @@
     <value>已開啟自動啟動</value>
   </data>
   <data name="ServiceQuestion" xml:space="preserve">
-    <value>您是否需要設置背鍋助手在遊戲啟動時自動開啟?(您也可以稍後在設置中開啟/關閉該功能)</value>
+    <value>是否設置背鍋助手自動跟隨遊戲一起啟動？（可在設置中開啟/關閉該功能）</value>
   </data>
   <data name="ServiceOffFail" xml:space="preserve">
     <value>自動識別關閉失敗，請重試。</value>
