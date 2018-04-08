@@ -1,44 +1,63 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using HotsBpHelper.Utils.ComboBoxItemUtil;
+using System.Windows.Media;
+using System.Windows.Media.Effects;
+using HotsBpHelper.Pages;
 
 namespace HotsBpHelper.WPF
 {
     public class FilteredComboBox : ComboBox
     {
-        private string oldFilter = string.Empty;
+        private string _currentFilter = string.Empty;
 
-        private string currentFilter = string.Empty;
+        public bool IsPressed;
+
+        private string _oldFilter = string.Empty;
 
         protected TextBox EditableTextBox => GetTemplateChild("PART_EditableTextBox") as TextBox;
 
-        private bool isPressed = false;
-
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
-        //取消高光效果
+            //取消高光效果
         {
             Effect = null;
+            if (e.AddedItems.Count == 0 && e.RemovedItems.Count > 0)
+                Focus();
             base.OnSelectionChanged(e);
+        }
+
+        protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        {
+            Effect = new DropShadowEffect() {Color = Color.FromArgb(255, 81, 255, 0), ShadowDepth = 0};
+            base.OnGotKeyboardFocus(e);
         }
 
         protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseLeftButtonUp(e);
-            isPressed = true;
+            IsPressed = true;
         }
 
         protected override void OnDropDownOpened(EventArgs e)
         {
-            if (isPressed)
-            {
+            if (IsPressed)
                 ClearFilter();
-            }
+
             base.OnDropDownOpened(e);
         }
+        protected override void OnDropDownClosed(EventArgs e)
+        {
+            ClearFilter();
+            var temp = SelectedIndex;
+            SelectedIndex = -1;
+            Text = string.Empty;
+            SelectedIndex = temp;
+            base.OnDropDownClosed(e);
+        }                     
 
         protected override void OnItemsSourceChanged(IEnumerable oldValue, IEnumerable newValue)
         {
@@ -63,12 +82,8 @@ namespace HotsBpHelper.WPF
             {
                 case Key.Tab:
                 case Key.Enter:
-                    if (SelectedIndex == -1) SelectedIndex = 0;
+                    if (Text != "" && SelectedIndex == -1) SelectedIndex = 0;
                     IsDropDownOpen = false;
-                    break;
-                case Key.Escape:
-                    IsDropDownOpen = false;
-                    SelectedIndex = -1;
                     break;
                 case Key.Down:
                     IsDropDownOpen = true;
@@ -77,21 +92,17 @@ namespace HotsBpHelper.WPF
                     break;
                 case Key.Up:
                     IsDropDownOpen = true;
-                    if (SelectedIndex == -1) SelectedIndex = 0;
                     base.OnPreviewKeyDown(e);
                     break;
                 default:
                     base.OnPreviewKeyDown(e);
                     break;
             }
-
-            // Cache text
-            //oldFilter = Text;
         }
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            isPressed = false;
+            IsPressed = false;
             switch (e.Key)
             {
                 case Key.Up:
@@ -106,52 +117,68 @@ namespace HotsBpHelper.WPF
                     break;
                 default:
                     base.OnKeyUp(e);
-                    currentFilter = Text;
-                    if (currentFilter != oldFilter)
+                    _currentFilter = Text;
+                    if (_currentFilter != _oldFilter)
                     {
-                        oldFilter = Text;
+                        _oldFilter = Text;
                         IsDropDownOpen = true;
-                        RefreshFilter();
-                        currentFilter = oldFilter;
-                        Text = oldFilter;
+                        RefreshFilter(false);
+                        _currentFilter = _oldFilter;
+                        Text = _oldFilter;
                         EditableTextBox.SelectionStart = int.MaxValue;
                     }
                     break;
             }
         }
-        /*
-                protected override void OnPreviewLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
-                {
-                    ClearFilter();
-                    var temp = SelectedIndex;
-                    SelectedIndex = -1;
-                    Text = string.Empty;
-                    SelectedIndex = temp;
-                    base.OnPreviewLostKeyboardFocus(e);
-                }
-        */
 
+        protected override void OnPreviewLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        {
+            ClearFilter();
+            var temp = SelectedIndex;
+            SelectedIndex = -1;
+            Text = string.Empty;
+            SelectedIndex = temp;
+            base.OnPreviewLostKeyboardFocus(e);
+        }
 
-        private void RefreshFilter()
+        protected override void OnLostFocus(RoutedEventArgs e)
+        {
+            var temp = SelectedIndex;
+            SelectedIndex = -1;
+            Text = string.Empty;
+            SelectedIndex = temp;
+            base.OnLostFocus(e);
+        }
+
+        private void RefreshFilter(bool reselect = true)
         {
             if (ItemsSource == null) return;
 
+            var currentItem = SelectedItem;
+
             var view = CollectionViewSource.GetDefaultView(ItemsSource);
             view.Refresh();
+
+            if (reselect && currentItem != null)
+            {
+                SelectedItem = Items.Cast<object>().FirstOrDefault(c => c == currentItem);
+                if (SelectedItem != null)
+                    SelectedIndex = Items.IndexOf(SelectedItem);
+            }
         }
 
         private void ClearFilter()
         {
-            currentFilter = string.Empty;
+            _currentFilter = string.Empty;
             RefreshFilter();
         }
 
         private bool FilterItem(object value)
         {
             if (value == null) return false;
-            if (currentFilter.Length == 0) return true;
-            string v = value.ToString().ToLower();
-            string f = currentFilter.ToLower();
+            if (_currentFilter.Length == 0) return true;
+            var v = value.ToString().ToLower();
+            var f = _currentFilter.ToLower();
             v = v.Replace(" ", "");
             f = f.Replace(" ", "");
 

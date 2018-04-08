@@ -1,32 +1,23 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using HotsBpHelper.Api;
 using HotsBpHelper.Api.Model;
 
 namespace HotsBpHelper.Utils.ComboBoxItemUtil
 {
     public class HeroItemUtil : IComboxItemUtil
     {
-        private readonly IRestApi _restApi;
-
         private IEnumerable<ComboBoxItemInfo> _heroInfos;
-
-        public HeroItemUtil(IRestApi restApi)
-        {
-            _restApi = restApi;
-        }
 
         public IEnumerable<ComboBoxItemInfo> GetComboxItemInfos()
         {
             if (_heroInfos == null)
             {
-                _heroInfos = _restApi.GetHeroList(App.Language)
-                    .Select(hi => new ComboBoxItemInfo()
+                _heroInfos = HeroInfoV2.ToHeroInfoList(App.AdviceHeroInfos, App.Language)
+                    .Select(hi => new ComboBoxItemInfo
                     {
                         Id = hi.Id.ToString(),
                         Name = hi.Name,
-                        Acronym = hi.Acronym,
+                        Acronym = hi.Acronym
                     })
                     .OrderBy(item => item.Name);
             }

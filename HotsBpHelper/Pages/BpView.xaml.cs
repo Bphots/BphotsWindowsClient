@@ -7,13 +7,13 @@ using Stylet;
 
 namespace HotsBpHelper.Pages
 {
-    public partial class BpView : Window, IHandle<InvokeScriptMessage>, IHandle<ShowWindowMessage>
+    public partial class BpView : TabSwitcherFreeWindow, IHandle<InvokeScriptMessage>, IHandle<ShowWindowMessage>
     {
         public BpView(IEventAggregator eventAggregator)
         {
 //            InitializeComponent();
             KeyDown += OnKeyDown;
-            eventAggregator.Subscribe(this);
+            eventAggregator.Subscribe(this, "BpChanel");
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
@@ -26,7 +26,7 @@ namespace HotsBpHelper.Pages
 
         public void Handle(InvokeScriptMessage message)
         {
-            Browser.InvokeScript(message);
+                Browser.InvokeScript(message);
         }
 
         public void Handle(ShowWindowMessage message)

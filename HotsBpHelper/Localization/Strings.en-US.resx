@@ -163,7 +163,7 @@
     <value>No match resolution, cannot start the client.</value>
   </data>
   <data name="NO_CHOOSE" xml:space="preserve">
-    <value>[NoChose]</value>
+    <value>[None]</value>
   </data>
   <data name="UpdatesAvailable" xml:space="preserve">
     <value>Find new version, ready to update.</value>
@@ -174,10 +174,172 @@
   <data name="Exit" xml:space="preserve">
     <value>Exit</value>
   </data>
-  <data name="ToggleVisibility" xml:space="preserve">
-    <value>Show / Hide</value>
+  <data name="AutoShowHideHelper" xml:space="preserve">
+    <value>Enable match detection</value>
   </data>
   <data name="RegisterHotKeyFailed" xml:space="preserve">
     <value>Register hotkey failed, please use system tray.</value>
+  </data>
+  <data name="ErrorInfo" xml:space="preserve">
+    <value>Error information:</value>
+  </data>
+  <data name="FileUpdateFail" xml:space="preserve">
+    <value>Fail to update files</value>
+  </data>
+  <data name="NoMatchResolution" xml:space="preserve">
+    <value>No match resolution</value>
+  </data>
+  <data name="OfficalWebsite" xml:space="preserve">
+    <value>Offical website：</value>
+  </data>
+  <data name="QQGroup" xml:space="preserve">
+    <value>QQ Group：</value>
+  </data>
+  <data name="Solution" xml:space="preserve">
+    <value>Solution:</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>Unknown error</value>
+  </data>
+  <data name="UpdateFullText" xml:space="preserve">
+    <value>Updating...Please Wait.</value>
+  </data>
+  <data name="Broadcast" xml:space="preserve">
+    <value>Broadcast</value>
+  </data>
+  <data name="BroadcastURL" xml:space="preserve">
+    <value>Broadcast URL</value>
+  </data>
+  <data name="Reminder" xml:space="preserve">
+    <value>Reminder</value>
+  </data>
+  <data name="Started" xml:space="preserve">
+    <value>Started</value>
+  </data>
+  <data name="StartedTips" xml:space="preserve">
+    <value>Bphelper will automatically detect and show if in BP mode. Press Ctrl+Shift+B to manually control Bphelper Hide/Show.</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="AutoShowMMR" xml:space="preserve">
+    <value>Auto show MMR</value>
+  </data>
+  <data name="AutoBpScreenModeOnToolTip" xml:space="preserve">
+    <value>Press Ctrl+Shit+B to launch the tool manually. To enable automatic match detection please select 'Auto detect match' from the tray menu. </value>
+  </data>
+  <data name="AutoDetect" xml:space="preserve">
+    <value>Enable character recognition</value>
+  </data>
+  <data name="AutoDetectHeroAndMap" xml:space="preserve">
+    <value>Enable character&amp;map recognition</value>
+  </data>
+  <data name="AutoShowHideModeOffToolTip" xml:space="preserve">
+    <value>Automatic match detection has been diabled. To enable please visit the tray menu options.</value>
+  </data>
+  <data name="IncompatibleResolution" xml:space="preserve">
+    <value>Automatic map&amp;character recognition has been disabled due to imcompatible screen resolution.</value>
+  </data>
+  <data name="OcrUnavailable" xml:space="preserve">
+    <value>Cannot enable automatic map&amp;character recognition. Please make sure the language pack and Microsift Visual C++ Redistributable x86 for Visual Studio 2015 has been installed.</value>
+  </data>
+  <data name="MatchDetectOffTitle" xml:space="preserve">
+    <value>Match detection disabled</value>
+  </data>
+  <data name="MatchDetectOnTitle" xml:space="preserve">
+    <value>Match detection enabled</value>
+  </data>
+  <data name="OcrModeOffTitle" xml:space="preserve">
+    <value>Hero detection disabled</value>
+  </data>
+  <data name="OcrModeOffToolTip" xml:space="preserve">
+    <value>Please select the corresponding hero&amp;map manually. Press Ctrl+Shift+R to switch to automatic detection.</value>
+  </data>
+  <data name="OcrModeOnTitle" xml:space="preserve">
+    <value>Hero detection enabled</value>
+  </data>
+  <data name="OcrModeOnToolTip" xml:space="preserve">
+    <value>Hero and map names will be automaticaly recognized. Press Ctrl+Shift+R to switch to manually selection mode.</value>
+  </data>
+  <data name="OcrModeToolTipTitle" xml:space="preserve">
+    <value>BpHelper is running</value>
+  </data>
+  <data name="TessdataQuestion" xml:space="preserve">
+    <value>The auto detection language pack has not been installed. Would you like to download?</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Loading... Please wait</value>
+  </data>
+  <data name="PLZ_CHOOSE" xml:space="preserve">
+    <value>[Please select]</value>
+  </data>
+  <data name="ResetHelper" xml:space="preserve">
+    <value>Reset BP Status</value>
+  </data>
+  <data name="ResolutionQuestion" xml:space="preserve">
+    <value>The OCR feature is designed for screen resolution with 1080 height above. It may not provide the best experience under your graphic resolution settings. You may need to manually correct the selection in case of wrong detection. Would you still like to enable Auto-Detection?</value>
+  </data>
+  <data name="ShowHelper" xml:space="preserve">
+    <value>Turn On BpHelper Manually</value>
+  </data>
+  <data name="SwitchVisibility" xml:space="preserve">
+    <value>Show/Hide BpHelper UI Manually</value>
+  </data>
+  <data name="WindowlessWarning" xml:space="preserve">
+    <value>BpHelper is only compatible with Windowless (Maximized) mode. Please modify your in-game graphic settings for the best experience.</value>
+  </data>
+  <data name="LanguageUnavailable" xml:space="preserve">
+    <value>The in-game language is not supported for OCR. Currently only English, Simplified Chinese, Traditional Chinese are supported. Please re-launching the tool after changing your language setting and reopening the game.</value>
+  </data>
+  <data name="Idle" xml:space="preserve">
+    <value>Idle</value>
+  </data>
+  <data name="Loading Uploader..." xml:space="preserve">
+    <value>Loading Uploader...</value>
+  </data>
+  <data name="Resume Uploading" xml:space="preserve">
+    <value>Resume Uploading</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Suspend Uploading" xml:space="preserve">
+    <value>Suspend Uploading</value>
+  </data>
+  <data name="Suspended" xml:space="preserve">
+    <value>Suspended</value>
+  </data>
+  <data name="Uploading..." xml:space="preserve">
+    <value>Uploading...</value>
+  </data>
+  <data name="HideHelper" xml:space="preserve">
+    <value>Turn Off BpHelper Manually</value>
+  </data>
+  <data name="ApiFailed" xml:space="preserve">
+    <value>Api initialization failed. Please check your network settings.</value>
+  </data>
+  <data name="ErrorTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ServiceOff" xml:space="preserve">
+    <value>Auto-Start is cancelled successfully</value>
+  </data>
+  <data name="ServiceOn" xml:space="preserve">
+    <value>Auto-Start is registered successfully</value>
+  </data>
+  <data name="ServiceQuestion" xml:space="preserve">
+    <value>Would you like to launch BpHelper automatically on game start? (You may also configure/cancel this feature in 'Settings' later.)</value>
+  </data>
+  <data name="ServiceOffFail" xml:space="preserve">
+    <value>Failed to cancel Auto-Start, please try again.</value>
+  </data>
+  <data name="ServiceOnFail" xml:space="preserve">
+    <value>Failed to register Auto-Start, please try again.</value>
+  </data>
+  <data name="ShowMmr" xml:space="preserve">
+    <value>Display Player Stats</value>
+  </data>
+  <data name="ServiceRestartQuestion" xml:space="preserve">
+    <value>Your installation folder has been changed, would you like to re-install the Auto-Start service to make it compatible with your new folder?</value>
   </data>
 </root>

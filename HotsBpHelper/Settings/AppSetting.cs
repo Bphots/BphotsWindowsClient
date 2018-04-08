@@ -1,16 +1,18 @@
-﻿using System.Windows;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace HotsBpHelper.Settings
 {
     public class AppSetting
     {
-        public Position[] Positions { get; set; }
-
-        public Position MyPosition { get; set; }
+        public Position Position { get; set; }
     }
 
     public class Position
     {
+        public MapPosition MapPosition { get; set; }
+        
         public int Width { get; set; }
 
         public int Height { get; set; }
@@ -24,10 +26,62 @@ namespace HotsBpHelper.Settings
         public SidePosition Left { get; set; }
 
         public SidePosition Right { get; set; }
+
+        public int HeroWidth { get; set; }
+        
+        public int HeroHeight { get; set; }
+
+        public OverlapPoints OverlapPoints { get; set; }
+
+        public LoaddingPoints LoadingPoints { get; set; }
+
+        public int MmrWidth;
+
+        public int MmrHeight;
+
+        public List<Rectangle> BanPositions { get; set; } 
+    }
+
+    public class LoaddingPoints
+    {
+        public Point LeftFirstPoint { get; set; }
+
+        public Point RightFirstPoint { get; set; }
+
+        public int Width { get; set; }
+
+        public int Height { get; set; }
+
+        public int Dy { get; set; }
+    }
+
+    public class OverlapPoints
+    {
+        public Point FrameRightBorderPoint { get; set; }
+
+        public Point AppearanceFramePoint { get; set; }
+
+        public Point SkillFramePoint { get; set; }
+
+        public Point TalentFramePoint { get; set; }
+
+        public Point FullChatHorizontalPoint { get; set; }
+
+        public Point PartialChatlHorizontalPoint { get; set; }
+    }
+
+    public class MapPosition
+    {
+        public Point Location { get; set; }
+
+        public int Width { get; set; }
+
+        public int Height { get; set; }
     }
 
     public class SidePosition
     {
+
         public Point Ban1 { get; set; }
 
         public Point Ban2 { get; set; }
@@ -37,5 +91,9 @@ namespace HotsBpHelper.Settings
         public int Dx { get; set; }
 
         public int Dy { get; set; }
+
+        public Point[] HeroPathPoints { get; set; }
+
+        public Point HeroName1 { get; set; }
     }
 }

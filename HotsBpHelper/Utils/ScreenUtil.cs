@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Windows;
+using System.Drawing;
 
 namespace HotsBpHelper.Utils
 {
@@ -170,6 +170,27 @@ namespace HotsBpHelper.Utils
     }
     public static class ScreenUtil
     {
+
+        #region Get System DPI
+        
+        /// <summary>Determines the current screen resolution in DPI.</summary>
+        /// <returns>Point.X is the X DPI, Point.Y is the Y DPI.</returns>
+        public static Hardcodet.Wpf.TaskbarNotification.Interop.Point GetSystemDpi()
+        {
+            Hardcodet.Wpf.TaskbarNotification.Interop.Point result = new Hardcodet.Wpf.TaskbarNotification.Interop.Point();
+
+            IntPtr hDC = GetDC(IntPtr.Zero);
+
+            result.X = GetDeviceCaps(hDC, (int)DeviceCap.LOGPIXELSX);
+            result.Y = GetDeviceCaps(hDC, (int)DeviceCap.LOGPIXELSY);
+
+            ReleaseDC(IntPtr.Zero, hDC);
+
+            return result;
+        }
+        
+        #endregion
+
         [DllImport("gdi32.dll")]
         public static extern int GetDeviceCaps(IntPtr hDc, int nIndex);
 
@@ -210,7 +231,8 @@ namespace HotsBpHelper.Utils
         public static Point ToPixelPoint(this Point unitPoint)
         {
             int pixelX, pixelY;
-            TransformToPixels((int)unitPoint.X, (int)unitPoint.Y, out pixelX, out pixelY);
+
+            TransformToPixels(unitPoint.X, unitPoint.Y, out pixelX, out pixelY);
             return new Point(pixelX, pixelY);
         }
 
@@ -222,7 +244,7 @@ namespace HotsBpHelper.Utils
         /// <param name="pixelY">returns the Y value in pixels</param>
         /// <param name="unitX">a device independent unit value X</param>
         /// <param name="unitY">a device independent unit value Y</param>
-        public static void TransformFromPixels(int pixelX, int pixelY, out double unitX, out double unitY)
+        public static void TransformFromPixels(int pixelX, int pixelY, out int unitX, out int unitY)
         {
             IntPtr hDc = GetDC(IntPtr.Zero);
             if (hDc != IntPtr.Zero)
@@ -231,9 +253,9 @@ namespace HotsBpHelper.Utils
                 int dpiY = GetDeviceCaps(hDc, (int)DeviceCap.LOGPIXELSY);
 
                 ReleaseDC(IntPtr.Zero, hDc);
-
-                unitX = pixelX * 96 / (double)dpiX;
-                unitY = pixelY * 96 / (double)dpiY;
+                
+                unitX = (int) (pixelX * 96 / (double)dpiX);
+                unitY = (int) (pixelY * 96 / (double)dpiY);
             }
             else
                 throw new ArgumentNullException("Failed to get DC.");
@@ -241,15 +263,15 @@ namespace HotsBpHelper.Utils
 
         public static Point ToUnitPoint(this Point pixelPoint)
         {
-            double unitX, unitY;
-            TransformFromPixels((int)pixelPoint.X, (int)pixelPoint.Y, out unitX, out unitY);
+            int unitX, unitY;
+            TransformFromPixels(pixelPoint.X, pixelPoint.Y, out unitX, out unitY);
             return new Point(unitX, unitY);
 
         }
         public static Size ToUnitSize(this Size pixelSize)
         {
-            double unitWidth, unitHeight;
-            TransformFromPixels((int)pixelSize.Width, (int)pixelSize.Height, out unitWidth, out unitHeight);
+            int unitWidth, unitHeight;
+            TransformFromPixels(pixelSize.Width, pixelSize.Height, out unitWidth, out unitHeight);
             return new Size(unitWidth, unitHeight);
 
         }

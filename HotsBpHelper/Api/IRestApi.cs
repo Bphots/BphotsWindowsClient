@@ -1,21 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using HotsBpHelper.Api.Model;
+using HotsBpHelper.Uploader;
 
 namespace HotsBpHelper.Api
 {
     public interface IRestApi
     {
-        Task<List<RemoteFileInfo>> GetRemoteFileListAsync();
+        List<BroadcastInfo> GetBroadcastInfo(string mode, string lang);
 
-        byte[] DownloadFile(string filePath);
+        Task<List<RemoteFileInfo>> GetRemoteFileListAsync(string url);
 
-        List<HeroInfo> GetHeroList(string name);
+        void DownloadFileAsync(string url, DownloadProgressChangedEventHandler downloadProgressChanged,
+            DownloadDataCompletedEventHandler downloadCompleted);
 
-        List<MapInfo> GetMapList(string language);
+        Task<List<LobbyHeroInfo>> GetLobbyHeroList(string name);
 
-        double GetTimestamp();
+        Task<double> GetTimestamp();
+
+        Task<FingerPrintStatusCollection> CheckDuplicatesAsync(IEnumerable<ReplayIdentity> replayIdentities);
+
+        Task<int> GetMinimalBuild();
+
+        Task<object> Analysis(string type, string para, string lang);
+
+        Task<UploadStatus> UploadReplay(string file);
+
+        Task<UploadStatus> UploadImage(string file, string id);
+
+        Task<Dictionary<int, HeroInfoV2>> GetHeroListV2();
+
+        Task<Dictionary<string, MapInfoV2>> GetMapListV2();
     }
 }

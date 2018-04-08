@@ -174,10 +174,25 @@
   <data name="Exit" xml:space="preserve">
     <value>Exit</value>
   </data>
-  <data name="ToggleVisibility" xml:space="preserve">
-    <value>Show / Hide</value>
+  <data name="AutoShowHideHelper" xml:space="preserve">
+    <value>Auto show/hide helper</value>
   </data>
   <data name="RegisterHotKeyFailed" xml:space="preserve">
     <value>Register hotkey failed, please use system tray.</value>
+  </data>
+  <data name="About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="AutoDetect" xml:space="preserve">
+    <value>Auto detect</value>
+  </data>
+  <data name="AutoDetectHeroAndMap" xml:space="preserve">
+    <value>Auto detect hero and map</value>
+  </data>
+  <data name="ShowHideHelper" xml:space="preserve">
+    <value>Show / Hide BPHelper</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Help</value>
   </data>
 </root>

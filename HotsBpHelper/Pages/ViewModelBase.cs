@@ -1,5 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Windows;
+
+using HotsBpHelper.WPF;
+
 using NLog;
 using Stylet;
 using StyletIoC;
@@ -14,9 +23,18 @@ namespace HotsBpHelper.Pages
         [Inject]
         protected IWindowManager WindowManager { get; set; }
 
-        protected static string L(string key)
+        public static string L(string key)
         {
-            return LocExtension.GetLocalizedValue<string>(key);
+            var text = LocExtension.GetLocalizedValue<string>(key);
+            if (string.IsNullOrEmpty(text))
+                return key;
+            return text;
+        }
+
+        protected void ShowWindowAndSetOwner(ViewModelBase vm)
+        {
+            WindowManager.ShowWindow(vm);
+            ((Window)vm.View).Owner = (Window)View;
         }
 
         protected MessageBoxResult ShowMessageBox(string messageBoxText,

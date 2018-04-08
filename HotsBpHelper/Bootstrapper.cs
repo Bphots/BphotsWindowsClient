@@ -1,12 +1,20 @@
 using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using HotsBpHelper.Api;
 using HotsBpHelper.Api.Security;
+using HotsBpHelper.Configuration;
+using HotsBpHelper.Factories;
 using Stylet;
 using StyletIoC;
 using HotsBpHelper.Pages;
+using HotsBpHelper.Services;
+using HotsBpHelper.Settings;
+using HotsBpHelper.Utils;
 using HotsBpHelper.Utils.ComboBoxItemUtil;
+using ImageProcessor.Ocr;
 using WPFLocalizeExtension.Engine;
 
 namespace HotsBpHelper
@@ -15,45 +23,76 @@ namespace HotsBpHelper
     {
         protected override void ConfigureIoC(IStyletIoCBuilder builder)
         {
-//            builder.Bind<IRestApi>().To<DummyRestApi>();
             builder.Bind<IRestApi>().To<RestApi>().InSingletonScope();
             builder.Bind<HeroItemUtil>().ToSelf().InSingletonScope();
             builder.Bind<MapItemUtil>().ToSelf().InSingletonScope();
             builder.Bind<ISecurityProvider>().To<SecurityProvider>().InSingletonScope();
-            builder.Bind<IHeroSelectorViewModelFactory>().ToAbstractFactory();
-            builder.Bind<IMapSelectorViewModelFactory>().ToAbstractFactory();
-            builder.Bind<ShellViewModel.IWebFileUpdaterViewModelFactory>().ToAbstractFactory();
-            builder.Bind<ShellViewModel.IBpViewModelFactory>().ToAbstractFactory();
+            builder.Bind<IToastService>().To<ToastService>().InSingletonScope();
+
+            RegisterViewModelFactories(builder);
+
+            builder.Bind<IImageUtil>().To<ImageUtils>();
+        }
+
+        private static void RegisterViewModelFactories(IStyletIoCBuilder builder)
+        {
+            var vmTypeList = (from domainAssembly in AppDomain.CurrentDomain.GetAssemblies()
+                from assemblyType in domainAssembly.GetTypes()
+                where typeof (ViewModelBase).IsAssignableFrom(assemblyType)
+                select assemblyType).Where(vmType => !vmType.IsGenericType && !vmType.IsAbstract).ToArray();
+
+            var method = typeof (IStyletIoCBuilder).GetMethod("Bind", new Type[] {});
+            foreach (var vm in vmTypeList)
+            {
+                var generic = method?.MakeGenericMethod(vm);
+                var bindTo = generic?.Invoke(builder, null) as IBindTo;
+                bindTo?.ToSelf();
+            }
+
+            builder.Bind<ViewModelFactory>().ToSelf().InSingletonScope();
         }
 
         protected override void Configure()
         {
-            
             App.AppPath = AppDomain.CurrentDomain.BaseDirectory;
+            Directory.SetCurrentDirectory(App.AppPath);
 
             var args = Environment.GetCommandLineArgs();
+
+            var configurationSettings = new CustomConfigurationSettings();
+            BpHelperConfigParser.PopulateConfigurationSettings(configurationSettings);
+            App.CustomConfigurationSettings = configurationSettings;
+            App.NextConfigurationSettings = configurationSettings;
+
+            if (args.Any(arg => arg.ToLower() == "/log"))
+            {
+                LogUtil.NoLog = false;
+                OcrEngine.Debug = true;
+            }
+
+            if (args.Any(arg => arg.ToLower() == "/devtool"))
+            {
+                App.DevTool = true;
+            }
+
             if (args.Any(arg => arg.ToLower() == "/debug"))
             {
+                LogUtil.NoLog = false;
+                OcrEngine.Debug = true;
                 App.Debug = true;
             }
-            if (args.Any(arg => arg.ToLower() == "/cn"))
+
+            if (args.Any(arg => arg.ToLower() == "/forceupdate"))
             {
-                LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN");                
+                App.ForceUpdate = true;
             }
-            else if (args.Any(arg => arg.ToLower() == "/us"))
+
+            if (args.Any(arg => arg.ToLower() == "/errortest"))
             {
-                LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("en-US");
+                ErrorView _errorView = new ErrorView(ViewModelBase.L("NoMatchResolution"),
+                    ViewModelBase.L("MSG_NoMatchResolution"), "https://www.bphots.com/articles/errors/test");
+                _errorView.ShowDialog();
             }
-            else if (args.Any(arg => arg.ToLower() == "/kr"))
-            {
-                LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("ko-KR");
-            }
-            else if (args.Any(arg => arg.ToLower() == "/tw"))
-            {
-                LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("zh-TW");
-            }
-            else LocalizeDictionary.Instance.Culture = System.Globalization.CultureInfo.InstalledUICulture;
-            App.Language = LocalizeDictionary.Instance.Culture.Name;
         }
     }
 }

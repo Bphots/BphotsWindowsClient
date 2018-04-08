@@ -174,10 +174,178 @@
   <data name="Exit" xml:space="preserve">
     <value>退出</value>
   </data>
-  <data name="ToggleVisibility" xml:space="preserve">
-    <value>顯示/隱藏</value>
+  <data name="AutoShowHideHelper" xml:space="preserve">
+    <value>自動顯示/隱藏助手</value>
   </data>
   <data name="RegisterHotKeyFailed" xml:space="preserve">
     <value>熱鍵註冊失敗,請使用托盤菜單顯示/隱藏助手</value>
+  </data>
+  <data name="ErrorInfo" xml:space="preserve">
+    <value>錯誤資訊：</value>
+  </data>
+  <data name="NoMatchResolution" xml:space="preserve">
+    <value>未找到匹配的解析度</value>
+  </data>
+  <data name="OfficalWebsite" xml:space="preserve">
+    <value>背鍋助手官網：</value>
+  </data>
+  <data name="QQGroup" xml:space="preserve">
+    <value>背鍋助手QQ群：</value>
+  </data>
+  <data name="Solution" xml:space="preserve">
+    <value>解決方案：</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>未知錯誤</value>
+  </data>
+  <data name="UpdateFullText" xml:space="preserve">
+    <value>軟體更新中。。。請稍候</value>
+  </data>
+  <data name="FileUpdateFail" xml:space="preserve">
+    <value>文件無法更新</value>
+  </data>
+  <data name="Broadcast" xml:space="preserve">
+    <value>公告</value>
+  </data>
+  <data name="BroadcastURL" xml:space="preserve">
+    <value>公告連結</value>
+  </data>
+  <data name="Reminder" xml:space="preserve">
+    <value>提示</value>
+  </data>
+  <data name="Started" xml:space="preserve">
+    <value>背鍋助手已啟動</value>
+  </data>
+  <data name="StartedTips" xml:space="preserve">
+    <value>助手會自動檢測是否進入bp介面，也可通過Ctrl+Shift+B手動控制顯隱。</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value>幫助</value>
+  </data>
+  <data name="About" xml:space="preserve">
+    <value>關於</value>
+  </data>
+  <data name="AutoDetect" xml:space="preserve">
+    <value>自動識別</value>
+  </data>
+  <data name="AutoDetectHeroAndMap" xml:space="preserve">
+    <value>自動識別英雄和地圖</value>
+  </data>
+  <data name="ShowHelper" xml:space="preserve">
+    <value>開始 BP</value>
+  </data>
+  <data name="SwitchVisibility" xml:space="preserve">
+    <value>隱藏/顯示當前界面</value>
+  </data>
+  <data name="ResetHelper" xml:space="preserve">
+    <value>重置自動識別</value>
+  </data>
+  <data name="AutoShowHideModeOffToolTip" xml:space="preserve">
+    <value>已關閉自動檢測bp界面，可以通過托盤菜單重新啟用自動。</value>
+  </data>
+  <data name="OcrModeOffToolTip" xml:space="preserve">
+    <value>請手動選擇英雄和地圖，可以通過Ctrl+Shift+R切換為自動識別。</value>
+  </data>
+  <data name="OcrModeOnToolTip" xml:space="preserve">
+    <value>背鍋助手將自動選擇英雄和地圖，可以通過Ctrl+Shift+R切換為手動輸入。</value>
+  </data>
+  <data name="AutoBpScreenModeOnToolTip" xml:space="preserve">
+    <value>請在需要時通過Ctrl+Shift+B手動喚起。如要開啟比賽檢測請在托盤開啟"自動檢測比賽"。</value>
+  </data>
+  <data name="AutoShowMMR" xml:space="preserve">
+    <value>自動顯示對戰情報</value>
+  </data>
+  <data name="MatchDetectOffTitle" xml:space="preserve">
+    <value>已關閉比賽檢測</value>
+  </data>
+  <data name="MatchDetectOnTitle" xml:space="preserve">
+    <value>已開啟比賽檢測</value>
+  </data>
+  <data name="OcrModeOffTitle" xml:space="preserve">
+    <value>已關閉英雄識別</value>
+  </data>
+  <data name="OcrModeOnTitle" xml:space="preserve">
+    <value>已開啟英雄識別</value>
+  </data>
+  <data name="OcrModeToolTipTitle" xml:space="preserve">
+    <value>背鍋助手正在運行</value>
+  </data>
+  <data name="OcrUnavailable" xml:space="preserve">
+    <value>自動識別無法加載，請確保 chi_sim 語言包和微軟 Visual C++ Redistributable x86 for Visual Studio 2015 包已成功安裝。</value>
+  </data>
+  <data name="IncompatibleResolution" xml:space="preserve">
+    <value>自動識別已關閉 （目前僅支持1080以上分辨率）</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>正在加載中，請稍候...</value>
+  </data>
+  <data name="TessdataQuestion" xml:space="preserve">
+    <value>自動識別庫未安裝，是否需要下載以啟用</value>
+  </data>
+  <data name="NotInBpQuestion" xml:space="preserve">
+    <value>您是否仍在BP中？如已離開遊戲可使用Ctrl+Shit+N重置。</value>
+  </data>
+  <data name="PLZ_CHOOSE" xml:space="preserve">
+    <value>[請選擇]</value>
+  </data>
+  <data name="ResolutionQuestion" xml:space="preserve">
+    <value>背鍋助手的自動識別模塊目前僅完全支持1080以上解析度，自動識別在您的解析度下無法提供最佳體驗，可能存在較多誤識別現象，屆時需要您手動修改選擇。是否仍要開啟自動識別？</value>
+  </data>
+  <data name="WindowlessWarning" xml:space="preserve">
+    <value>背鍋助手需要在窗口模式(最大化)下運行，請修改您的圖形設定以獲得最佳運行體驗。</value>
+  </data>
+  <data name="LanguageUnavailable" xml:space="preserve">
+    <value>您的遊戲文本語言暫時不支持自動識別。目前僅有正體中文，簡體中文，英語支持自動識別。請調整語言重啟遊戲後，再打開背鍋助手。</value>
+  </data>
+  <data name="Idle" xml:space="preserve">
+    <value>暫無錄像需要上傳</value>
+  </data>
+  <data name="Loading Uploader..." xml:space="preserve">
+    <value>正在加載上傳模塊...</value>
+  </data>
+  <data name="Resume Uploading" xml:space="preserve">
+    <value>恢復上傳</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>設置</value>
+  </data>
+  <data name="Suspend Uploading" xml:space="preserve">
+    <value>暫停上傳</value>
+  </data>
+  <data name="Suspended" xml:space="preserve">
+    <value>暫停</value>
+  </data>
+  <data name="Uploading..." xml:space="preserve">
+    <value>上傳中...</value>
+  </data>
+  <data name="HideHelper" xml:space="preserve">
+    <value>停止 BP</value>
+  </data>
+  <data name="ApiFailed" xml:space="preserve">
+    <value>Api初始化調用失敗，請檢查網路連接。</value>
+  </data>
+  <data name="ErrorTitle" xml:space="preserve">
+    <value>錯誤</value>
+  </data>
+  <data name="ServiceOff" xml:space="preserve">
+    <value>已關閉自動啟動</value>
+  </data>
+  <data name="ServiceOn" xml:space="preserve">
+    <value>已開啟自動啟動</value>
+  </data>
+  <data name="ServiceQuestion" xml:space="preserve">
+    <value>是否設置背鍋助手自動跟隨遊戲一起啟動？（可在設置中開啟/關閉該功能）</value>
+  </data>
+  <data name="ServiceOffFail" xml:space="preserve">
+    <value>自動識別關閉失敗，請重試。</value>
+  </data>
+  <data name="ServiceOnFail" xml:space="preserve">
+    <value>自動啟動開啟失敗，請重試。</value>
+  </data>
+  <data name="ShowMmr" xml:space="preserve">
+    <value>顯示對戰情報</value>
+  </data>
+  <data name="ServiceRestartQuestion" xml:space="preserve">
+    <value>檢測到安裝目錄已經更改，是否重新註冊服務以兼容您的新目錄？</value>
   </data>
 </root>

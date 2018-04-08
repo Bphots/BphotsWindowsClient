@@ -8,4 +8,9 @@ namespace HotsBpHelper.Messages
 
         public int SelectorId { get; set; }
     }
+
+    public class MapSelectedMessage
+    {
+        public ComboBoxItemInfo ItemInfo { get; set; }
+    }
 }

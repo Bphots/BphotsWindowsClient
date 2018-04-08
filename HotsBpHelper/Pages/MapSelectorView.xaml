@@ -7,8 +7,8 @@
         xmlns:s="https://github.com/canton7/Stylet"
         xmlns:wpf="clr-namespace:HotsBpHelper.WPF"
         mc:Ignorable="d"
-          SizeToContent="WidthAndHeight"
-      Topmost="True"
+        SizeToContent="WidthAndHeight"
+        Topmost="True"
         WindowStartupLocation="Manual"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -20,7 +20,7 @@
         Opacity="0.8"
         Width="{Binding Size.Width}" Height="{Binding Size.Height}"
         >
-    <DockPanel>
+    <DockPanel Visibility="{Binding Visibility}">
         <DockPanel.Resources>
             <Style TargetType="Button">
                 <Style.Triggers>
@@ -35,8 +35,8 @@
                 </Style.Triggers>
             </Style>
         </DockPanel.Resources>
-        <Button DockPanel.Dock="Left" Content="←" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Left}" Width="24" />
-        <Button DockPanel.Dock="Right" Content="→" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Right}" Width="24" />
+        <Button DockPanel.Dock="Left" Content="←" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Left}" Width="24" Visibility="{Binding ButtonVisibility}"/>
+        <Button DockPanel.Dock="Right" Content="→" Command="{s:Action SelectSide}" CommandParameter="{x:Static pages:BpStatus+Side.Right}" Width="24"  Visibility="{Binding ButtonVisibility}"/>
         <wpf:FilteredComboBox VerticalAlignment="Stretch" MinWidth="130" BorderThickness="1" BorderBrush="#1C1239" ItemsSource="{Binding ItemsInfos}"
                                         IsEditable="True" 
                                         IsTextSearchEnabled="False" 

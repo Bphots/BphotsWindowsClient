@@ -1,0 +1,67 @@
+﻿<userControls:TabSwitcherFreeWindow x:Class="HotsBpHelper.Pages.HeroSelectorWindowView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:pages="clr-namespace:HotsBpHelper.Pages"
+        xmlns:wpf="clr-namespace:HotsBpHelper.WPF"
+        xmlns:userControls="clr-namespace:HotsBpHelper.UserControls"
+        ResizeMode="NoResize"
+        mc:Ignorable="d"
+        Topmost="True"
+        WindowStartupLocation="Manual"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"       
+        d:DataContext="{d:DesignInstance pages:HeroSelectorWindowViewModel}"
+        Left="0"
+        Top="0"
+        WindowState="Maximized"
+        ShowInTaskbar="False"
+        >
+    <Window.Resources>
+        <Style TargetType="Window">
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="LawnGreen"/>
+                    <Setter Property="BorderThickness" Value="5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <ItemsControl ItemsSource="{Binding HeroSelectorViewModels}">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <Canvas/>
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <wpf:FilteredComboBox 
+                    Width="{Binding Size.Width}"  Opacity="0.6" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" 
+                                                IsEditable="True" 
+                                                IsTextSearchEnabled="False"
+                                                StaysOpenOnEdit="True"
+                                                DisplayMemberPath="Name"
+                                                FontSize="14"
+                                                ItemsSource="{Binding ItemsInfos}" SelectedItem="{Binding SelectedItemInfo}"
+                                                Visibility="{Binding UserVisibility}"
+                                                KeyDown="UIElement_OnKeyDown"
+                                                PreviewKeyUp="OnPreviewKeyUp"
+                                                Loaded="FrameworkElement_OnLoaded"
+                                                PreviewMouseLeftButtonUp="UIElement_OnPreviewMouseLeftButtonUp"
+                                                MouseLeave="UIElement_OnMouseLeave"
+                                                SelectionChanged="Selector_OnSelectionChanged"
+                                                wpf:FocusExtension.IsFocused="{Binding IsFocused}"
+                          >
+                    <wpf:FilteredComboBox.Effect>
+                        <DropShadowEffect Color="#FF51FF00" ShadowDepth="0"/>
+                    </wpf:FilteredComboBox.Effect>
+                    <wpf:FilteredComboBox.RenderTransform>
+                        <TranslateTransform X="{Binding Left}" Y="{Binding Top}"/>
+                    </wpf:FilteredComboBox.RenderTransform>
+                </wpf:FilteredComboBox>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</userControls:TabSwitcherFreeWindow>

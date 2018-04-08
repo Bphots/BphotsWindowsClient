@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using HotsBpHelper.Api.Model;
+﻿using System.Collections.ObjectModel;
+using System.Drawing;
 using HotsBpHelper.Messages;
 using HotsBpHelper.Utils;
 using HotsBpHelper.Utils.ComboBoxItemUtil;
@@ -15,7 +12,17 @@ namespace HotsBpHelper.Pages
         protected readonly IComboxItemUtil ComboxItemUtil;
 
         protected readonly IEventAggregator EventAggregator;
+        
+        protected ComboBoxItemInfo PSelectedItemInfo;
 
+        protected SelectorViewModel(IComboxItemUtil comboxItemUtil, IEventAggregator eventAggregator)
+        {
+            ComboxItemUtil = comboxItemUtil;
+            EventAggregator = eventAggregator;
+
+            ItemsInfos = new ObservableCollection<ComboBoxItemInfo>(ComboxItemUtil.GetComboxItemInfos());
+        }
+        
         public int Id { get; set; }
 
         public int Left { get; set; }
@@ -25,17 +32,14 @@ namespace HotsBpHelper.Pages
         public Size Size { get; set; }
 
         public ObservableCollection<ComboBoxItemInfo> ItemsInfos { get; set; }
-
-        protected ComboBoxItemInfo PSelectedItemInfo;
-
+        
         public ComboBoxItemInfo SelectedItemInfo
         {
             get { return PSelectedItemInfo; }
-            set
-            {
-                SetAndNotify(ref PSelectedItemInfo, value);
-            }
+            set { SetAndNotify(ref PSelectedItemInfo, value); }
         }
+
+        public bool Selected { get; set; }
 
         public void ConfirmSelection()
         {
@@ -44,16 +48,19 @@ namespace HotsBpHelper.Pages
                 ItemInfo = PSelectedItemInfo,
                 SelectorId = Id
             });
+
+            Selected = true;
         }
 
-        protected SelectorViewModel(IComboxItemUtil comboxItemUtil, IEventAggregator eventAggregator)
+        public void CancelSelection()
         {
-            ComboxItemUtil = comboxItemUtil;
-            EventAggregator = eventAggregator;
-
-            ItemsInfos = new ObservableCollection<ComboBoxItemInfo>(ComboxItemUtil.GetComboxItemInfos());
+            EventAggregator.Publish(new ItemSelectedMessage
+            {
+                ItemInfo = null,
+                SelectorId = Id
+            });
         }
-
+        
         public void SetLeftAndTop(Point position)
         {
             var pos = position.ToUnitPoint();
@@ -70,14 +77,15 @@ namespace HotsBpHelper.Pages
         public void SetCenterAndTop(Point position)
         {
             var unitPos = position.ToUnitPoint();
+
             var pos = new Point(unitPos.X - Size.Width / 2, unitPos.Y);
             SetPosition(pos);
         }
 
         private void SetPosition(Point unitPosition)
         {
-            Left = (int)unitPosition.X;
-            Top = (int)unitPosition.Y;
+            Left = unitPosition.X;
+            Top = unitPosition.Y;
         }
     }
 }

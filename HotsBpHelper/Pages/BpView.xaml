@@ -1,12 +1,12 @@
-﻿<Window x:Class="HotsBpHelper.Pages.BpView"
+﻿<userControls:TabSwitcherFreeWindow x:Class="HotsBpHelper.Pages.BpView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HotsBpHelper.Pages"
         xmlns:userControls="clr-namespace:HotsBpHelper.UserControls"
-        xmlns:s="https://github.com/canton7/Stylet"
         mc:Ignorable="d"
+        Visibility="Hidden"
         ShowInTaskbar="False"
         Topmost="True"
         WindowStyle="None"
@@ -17,7 +17,7 @@
         Left="{Binding Left}"
         Top ="{Binding Top}"
         >
-    <DockPanel >
-        <userControls:WebKitBrowser x:Name="Browser" DockPanel.Dock="Top" Width="{Binding Width}" Height="{Binding Height}" Source="{Binding LocalFileUri}"/>
+    <DockPanel>
+        <userControls:WebKitBrowser x:Name="Browser" DockPanel.Dock="Top" Width="{Binding Width}" Height="{Binding Height}" ShowDevTool="{Binding ShowDevTool}" Source="{Binding LocalFileUri}"/>
     </DockPanel>
-</Window>
+</userControls:TabSwitcherFreeWindow>
