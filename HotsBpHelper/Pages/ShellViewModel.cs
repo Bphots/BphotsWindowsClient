@@ -311,22 +311,32 @@ namespace HotsBpHelper.Pages
             var broadcastList = _restApi.GetBroadcastInfo("0", App.Language);
             if (broadcastList != null)
             {
-                foreach (var broadcast in broadcastList)
+                Execute.OnUIThreadSync(() =>
                 {
-                    if (broadcast.Type == 0)
+                    try
                     {
-                        var b = new BroadcastWindow(broadcast.Msg, broadcast.Url);
-                        b.Show();
+                        foreach (var broadcast in broadcastList)
+                        {
+                            if (broadcast.Type == 0)
+                            {
+                                var b = new BroadcastWindow(broadcast.Msg, broadcast.Url);
+                                b.Show();
+                            }
+                        }
+                        foreach (var broadcast in broadcastList)
+                        {
+                            if (broadcast.Type == 1)
+                            {
+                                var e = new ErrorView(L("Reminder"), broadcast.Msg, broadcast.Url);
+                                e.ShowDialog();
+                            }
+                        }
                     }
-                }
-                foreach (var broadcast in broadcastList)
-                {
-                    if (broadcast.Type == 1)
+                    catch
                     {
-                        var e = new ErrorView(L("Reminder"), broadcast.Msg, broadcast.Url);
-                        e.ShowDialog();
+                        // ignored
                     }
-                }
+                });
             }
             
             Logger.Trace("Broadcast loaded");
