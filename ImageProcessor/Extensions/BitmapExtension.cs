@@ -218,7 +218,7 @@ namespace ImageProcessor.Extensions
 
                     }
                     
-                    binarilizationValid = (double)countBlack / oneThirdSample < 0.8;
+                    binarilizationValid = (double)countBlack / oneThirdSample < 0.9;
                     if ((double)countBlack / oneThirdSample > 0.01)
                     {
                         int y = (int) (fbitmap.Height * 0.33);

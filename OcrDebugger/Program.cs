@@ -45,7 +45,7 @@ namespace OcrDebugger
                         var current = DateTime.Now;
                         var sb = new StringBuilder();
                         // This path is a file
-                        recognizer.Recognize(path, (float)29.7, sb, 3);
+                        recognizer.Recognize(path, (float)29.7, sb, 3, false);
                         var correct = (!string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith(sb.ToString())) || (string.IsNullOrEmpty(sb.ToString()) && path.GetFileNameWithoutExtension().StartsWith("x"));
                         if (correct)
                             correctCount++;
