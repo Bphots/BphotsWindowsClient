@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -34,6 +36,18 @@ namespace ImageProcessor.Ocr
         public void Dispose()
         {
             Engine.Dispose();
+        }
+        
+        public Bitmap ExtendImage(Bitmap bmp)
+        {
+            var bitmap = new Bitmap((int)(bmp.Width * 1.1), bmp.Height, PixelFormat.Format32bppRgb);
+            using (var graphics = Graphics.FromImage(bitmap))
+            {
+                graphics.FillRectangle(Brushes.White, 0, 0, bitmap.Width, bitmap.Height);
+                graphics.DrawImage(bmp, (float)(0.05 * bitmap.Width), 0, new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                    GraphicsUnit.Pixel);
+            }
+            return bitmap;
         }
 
         public abstract OcrResult ProcessOcr(string path, HashSet<string> candidates);
