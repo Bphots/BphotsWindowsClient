@@ -271,7 +271,7 @@ namespace HotsBpHelper.Pages
 
             _toastService.ShowInformation(L("Loading"));
         }
-
+        
         private async Task<double> InitializeApiAsync()
         {
             var timeStamp = await _restApi.GetTimestamp();
@@ -281,7 +281,9 @@ namespace HotsBpHelper.Pages
             App.AdviceHeroInfos = await _restApi.GetHeroListV2();
             App.AdviceMapInfos = await _restApi.GetMapListV2();
             var lobbyHeroList = await _restApi.GetLobbyHeroList(App.Language);
+            var lobbyMapList = await _restApi.GetLobbyMapList(App.Language);
             App.LobbyHeroes = lobbyHeroList.Where(h => !h.IsNew).Select(h => h.Name).ToList();
+            App.LobbyMaps = lobbyMapList.ToDictionary(k => k.Key, v => v.Name);
 
             if (!string.IsNullOrEmpty(App.CustomConfigurationSettings.LanguageForGameClient))
             {
@@ -311,22 +313,32 @@ namespace HotsBpHelper.Pages
             var broadcastList = _restApi.GetBroadcastInfo("0", App.Language);
             if (broadcastList != null)
             {
-                foreach (var broadcast in broadcastList)
+                Execute.OnUIThreadSync(() =>
                 {
-                    if (broadcast.Type == 0)
+                    try
                     {
-                        var b = new BroadcastWindow(broadcast.Msg, broadcast.Url);
-                        b.Show();
+                        foreach (var broadcast in broadcastList)
+                        {
+                            if (broadcast.Type == 0)
+                            {
+                                var b = new BroadcastWindow(broadcast.Msg, broadcast.Url);
+                                b.Show();
+                            }
+                        }
+                        foreach (var broadcast in broadcastList)
+                        {
+                            if (broadcast.Type == 1)
+                            {
+                                var e = new ErrorView(L("Reminder"), broadcast.Msg, broadcast.Url);
+                                e.ShowDialog();
+                            }
+                        }
                     }
-                }
-                foreach (var broadcast in broadcastList)
-                {
-                    if (broadcast.Type == 1)
+                    catch
                     {
-                        var e = new ErrorView(L("Reminder"), broadcast.Msg, broadcast.Url);
-                        e.ShowDialog();
+                        // ignored
                     }
-                }
+                });
             }
             
             Logger.Trace("Broadcast loaded");

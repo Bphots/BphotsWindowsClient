@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using DotNetHelper;
 using Tesseract;
 
 namespace ImageProcessor.Ocr
@@ -218,7 +220,20 @@ namespace ImageProcessor.Ocr
             var whiteList = heroesSet.Aggregate(string.Empty, (current, character) => current + character);
             Engine.SetVariable("tessedit_char_whitelist", whiteList);
 
-            using (var pix = Pix.LoadFromFile(path))
+            FilePath filePath = path;
+            if (count >= 7)
+            {
+                using (var bitMap = new Bitmap(filePath))
+                {
+                    using (var extendedBitmap = ExtendImage(bitMap))
+                    {
+                        extendedBitmap.Save(filePath.GetDirPath() + @"tempExtended.bmp");
+                        filePath = filePath.GetDirPath() + @"tempExtended.bmp";
+                    }
+                }
+            }
+
+            using (var pix = Pix.LoadFromFile(filePath))
             using (var page = Engine.Process(pix))
             {
                 var text = page.GetText();
@@ -249,8 +264,8 @@ namespace ImageProcessor.Ocr
                     if (score > 0)
                     {
                         var trustable = !checkDva &&
-                                        ((score/(double) (textCount*FullyMatchScore) > 0.66 && count >= 2) ||
-                                         (score/(double) (textCount*FullyMatchScore) >= 0.5 && count >= 4));
+                                        ((score / (double)(textCount * FullyMatchScore) > 0.66 && count >= 2) ||
+                                         (score / (double)(textCount * FullyMatchScore) >= 0.5 && count >= 4));
                         if (!trustable && hero == "加尔")
                             continue;
 
@@ -258,10 +273,10 @@ namespace ImageProcessor.Ocr
                         {
                             Key = text,
                             Value = hero,
-                            InDoubt = score/(double) (textCount*FullyMatchScore) <= 0.5 || textCount <= 1,
+                            InDoubt = score / (double)(textCount * FullyMatchScore) <= 0.5 || textCount <= 1,
                             Score = score,
                             Trustable = trustable,
-                            FullyTrustable = textCount >= 2 && score == textCount*FullyMatchScore
+                            FullyTrustable = textCount >= 2 && score == textCount * FullyMatchScore
                         };
                     }
                 }
@@ -283,6 +298,8 @@ namespace ImageProcessor.Ocr
             Engine.SetVariable("tessedit_char_whitelist", whiteList);
 
             var inDoubt = false;
+
+
             using (var pix = Pix.LoadFromFile(path))
             using (var page = Engine.Process(pix))
             {

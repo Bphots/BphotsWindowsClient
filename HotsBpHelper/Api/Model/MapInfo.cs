@@ -34,4 +34,11 @@ namespace HotsBpHelper.Api.Model
             return mapInfoV2List.Select(heroInfoV2 => ToMapInfo(heroInfoV2.Value, language)).ToList();
         }
     }
+
+    public class LobbyMapInfo
+    {
+        public string Key { get; set; }
+
+        public string Name { get; set; }
+    }
 }

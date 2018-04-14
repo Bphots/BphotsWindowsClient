@@ -51,6 +51,17 @@ namespace HotsBpHelper.Api
             return await ExecuteAsync<List<LobbyHeroInfo>>(request).ConfigureAwait(false);
         }
 
+        public async Task<List<LobbyMapInfo>> GetLobbyMapList(string language)
+        {
+            var request = CreateRequest("get/maplist/lobby",
+                new List<Tuple<string, string>>
+                {
+                    Tuple.Create("lang", language)
+                });
+
+            return await ExecuteAsync<List<LobbyMapInfo>>(request).ConfigureAwait(false);
+        }
+
         public async Task<double> GetTimestamp()
         {
             var request = CreateRequest("get/timestamp");
