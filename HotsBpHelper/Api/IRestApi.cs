@@ -17,6 +17,8 @@ namespace HotsBpHelper.Api
 
         Task<List<LobbyHeroInfo>> GetLobbyHeroList(string name);
 
+        Task<List<LobbyMapInfo>> GetLobbyMapList(string name);
+
         Task<double> GetTimestamp();
 
         Task<FingerPrintStatusCollection> CheckDuplicatesAsync(IEnumerable<ReplayIdentity> replayIdentities);

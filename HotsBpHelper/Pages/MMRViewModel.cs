@@ -43,7 +43,7 @@ namespace HotsBpHelper.Pages
             if (!File.Exists(Const.BattleLobbyPath))
                 return;
 
-            var lobbyProcessor = new LobbyFileProcessor(Const.BattleLobbyPath, App.LobbyHeroes);
+            var lobbyProcessor = new LobbyFileProcessor(Const.BattleLobbyPath, App.LobbyHeroes, App.LobbyMaps);
             var game = lobbyProcessor.ParseLobbyInfo();
             FillMMR(game);
             Show();
@@ -107,6 +107,13 @@ namespace HotsBpHelper.Pages
             var battleTags = string.Join("|", game.Players
                 .Select(p => p.Tag + "#" + p.SelectedHero));
             Players = game.Players.Select(p => p.Tag).ToList();
+
+            _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
+            {
+                ScriptName = "setMap",
+                Args = new[] { game.Map }
+            }, "MMRChanel");
+
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
                 ScriptName = "setPlayers",
