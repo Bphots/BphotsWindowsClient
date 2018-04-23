@@ -53,7 +53,7 @@ namespace HotsBpHelper
 
         public static bool HasServiceAsked { get; set; }
 
-        public static Dictionary<string, string> LobbyMaps { get; set; }
+        public static List<string> LobbyMaps { get; set; }
 
         private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
