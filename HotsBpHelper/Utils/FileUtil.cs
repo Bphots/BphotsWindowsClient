@@ -7,28 +7,27 @@ namespace HotsBpHelper.Utils
 {
     public static class FileUtil
     {
-        public static string MyDocumentFolderPathFromConfig = string.Empty;
-        public static string MyTempFolderPathFromConfig = string.Empty;
-
-        private static bool IsLaunchedFromService
-            => string.IsNullOrEmpty(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
-
         public static void CleanUpImageTestFiles()
         {
             var di = new DirectoryInfo(@".\Images\Heroes\Test");
             if (!di.Exists)
                 return;
 
-            foreach (var file in di.GetFiles().ToList())
+            try
             {
-                try
+                foreach (var file in di.GetFiles().ToList())
                 {
                     file.Delete();
                 }
-                catch (Exception)
+
+                foreach (DirectoryInfo dir in di.GetDirectories())
                 {
-                    // ignored
+                    dir.Delete(true);
                 }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
         }
     }
