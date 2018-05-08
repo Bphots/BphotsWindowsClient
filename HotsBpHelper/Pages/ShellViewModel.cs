@@ -283,7 +283,7 @@ namespace HotsBpHelper.Pages
             var lobbyHeroList = await _restApi.GetLobbyHeroList(App.Language);
             var lobbyMapList = await _restApi.GetLobbyMapList(App.Language);
             App.LobbyHeroes = lobbyHeroList.Where(h => !h.IsNew).Select(h => h.Name).ToList();
-            App.LobbyMaps = lobbyMapList.ToDictionary(k => k.Key, v => v.Name);
+            App.LobbyMaps = lobbyMapList.Select(v => v.Name).ToList();
 
             if (!string.IsNullOrEmpty(App.CustomConfigurationSettings.LanguageForGameClient))
             {
