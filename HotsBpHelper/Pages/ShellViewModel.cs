@@ -277,7 +277,7 @@ namespace HotsBpHelper.Pages
             App.AdviceMapInfos = await _restApi.GetMapListV2();
             var lobbyHeroList = await _restApi.GetLobbyHeroList(App.Language);
             var lobbyMapList = await _restApi.GetLobbyMapList(App.Language);
-            App.LobbyHeroes = lobbyHeroList.Where(h => !h.IsNew).Select(h => h.Name).ToList();
+            App.LobbyHeroes = lobbyHeroList.Select(h => h.Name).ToList();
             App.LobbyMaps = lobbyMapList.Select(v => v.Name).ToList();
 
             if (!string.IsNullOrEmpty(App.CustomConfigurationSettings.LanguageForGameClient))
@@ -1079,7 +1079,7 @@ namespace HotsBpHelper.Pages
                     Dy = RoundUp(0.1229166666666667 * height)
                 },
                 MmrWidth = (int)(600 * ratio),
-                MmrHeight = (int)(270 * ratio),
+                MmrHeight = (int)(400 * ratio),
 
                 BanPositions = new List<Rectangle>()
                 {
