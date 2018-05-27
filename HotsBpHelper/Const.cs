@@ -35,5 +35,7 @@ namespace HotsBpHelper
         public const int ReplayMinimumBuild = 43905;
 
         public const string ServiceName = "HotsBpHelper - Monitor";
+
+        public static readonly DateTime HotsWeekAcceptTime = DateTime.Parse("2018-03-1T00:00:00Z").ToUniversalTime();
     }
 }

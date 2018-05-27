@@ -27,7 +27,7 @@ namespace HotsBpHelper.Api
 
         Task<object> Analysis(string type, string para, string lang);
 
-        Task<UploadStatus> UploadReplay(string file);
+        Task<UploadStatus> UploadReplay(string file, string fingerprint);
 
         Task<UploadStatus> UploadImage(string file, string id);
 
