@@ -144,7 +144,7 @@ namespace HotsBpHelper.Utils
             }
         }
 
-        public async Task<List<string>> LookForLoadingLabels()
+        public List<string> LookForLoadingLabels()
         {
             var finder = new Finder();
             var sb = new StringBuilder();

@@ -122,7 +122,7 @@ namespace DotNetHelper
                 Value.IsReadOnly = false;
                 Value.Delete();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }

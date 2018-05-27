@@ -300,22 +300,22 @@
   <data name="Idle" xml:space="preserve">
     <value>暂无录像需要上传</value>
   </data>
-  <data name="Loading Uploader..." xml:space="preserve">
+  <data name="LoadingUploader" xml:space="preserve">
     <value>正在加载上传模块...</value>
   </data>
-  <data name="Resume Uploading" xml:space="preserve">
+  <data name="ResumeUploading" xml:space="preserve">
     <value>恢复上传</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>设置</value>
   </data>
-  <data name="Suspend Uploading" xml:space="preserve">
+  <data name="SuspendUploading" xml:space="preserve">
     <value>暂停上传</value>
   </data>
   <data name="Suspended" xml:space="preserve">
     <value>暂停</value>
   </data>
-  <data name="Uploading..." xml:space="preserve">
+  <data name="Uploading" xml:space="preserve">
     <value>上传中...</value>
   </data>
   <data name="HideHelper" xml:space="preserve">

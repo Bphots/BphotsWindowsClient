@@ -29,7 +29,7 @@ namespace DotNetHelper
             {
                 File.AppendAllText(fileToWriteTo, contentToWrite);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 return null;
             }
@@ -702,7 +702,7 @@ namespace DotNetHelper
             {
                 File.WriteAllText(fileToWriteTo, contentToWrite);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 return null;
             }
