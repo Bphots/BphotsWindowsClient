@@ -15,7 +15,7 @@ using NLog;
 
 namespace HotsBpHelper.Uploader
 {
-    public class Manager : INotifyPropertyChanged
+    public class Manager
     {
         private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
@@ -68,11 +68,9 @@ namespace HotsBpHelper.Uploader
                 if (SuspendUpload)
                     return ViewModelBase.L("Suspended") + @" " + processed + "/" + _processingQueue.Count;
 
-                return ViewModelBase.L("Uploading...") + @" " + processed + "/" + _processingQueue.Count;
+                return ViewModelBase.L("Uploading") + @" " + processed + "/" + _processingQueue.Count;
             }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         ///     Fires when a new replay file is found
@@ -87,12 +85,11 @@ namespace HotsBpHelper.Uploader
         /// <summary>
         ///     Start uploading and watching for new replays
         /// </summary>
-        public async void Start()
+        public void Start()
         {
             if (_initialized)
-            {
                 return;
-            }
+
             _initialized = true;
 
             _bpHelperUploader = new BpHelperUploader(_restApi);
@@ -190,9 +187,7 @@ namespace HotsBpHelper.Uploader
                             await UploadHotsApi(file.Key);
 
                         if (UplaodToHotsWeek)
-                        {
                             await UploadHotsBpHelper(file.Key);
-                        }
 
                         if (_processingQueue.ContainsKey(file.Key))
                             _processingQueue[file.Key] = 2;
