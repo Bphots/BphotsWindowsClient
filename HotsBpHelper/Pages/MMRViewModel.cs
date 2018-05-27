@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using HotsBpHelper.Api;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using LobbyFileParser;
@@ -101,28 +100,9 @@ namespace HotsBpHelper.Pages
             // 玩家BattleTags
             var battleTags = string.Join("|", game.Players
                 .Select(p => p.Tag + "#" + p.SelectedHero));
-            Players = game.Players.Select(p => p.Tag).ToList();
-            string defaultPlayer = Players.First();
-            if (App.CustomConfigurationSettings.PlayerTags.Any(p => Players.Contains(p)))
-            {
-                defaultPlayer = App.CustomConfigurationSettings.PlayerTags.First(p => Players.Contains(p));
-                App.CustomConfigurationSettings.PlayerTags.Remove(defaultPlayer);
-                App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
-                // for config.ini
-                App.NextConfigurationSettings.PlayerTags.Remove(defaultPlayer);
-                App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
-            }
-            else if (LastMatchPlayers.Count(p => Players.Contains(p)) == 1)
-            {
-                defaultPlayer = LastMatchPlayers.First(p => Players.Contains(p));
-                App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
-                // for config.ini
-                App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
-            }
+            var players = game.Players.Select(p => p.Tag).ToList();
 
-            int defaultPlayerIndex = Players.IndexOf(defaultPlayer);
-            LastMatchPlayers.Clear();
-            LastMatchPlayers.AddRange(Players);
+            var defaultPlayerIndex = GetDefaultPlayerIndex(players);
 
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
@@ -137,10 +117,34 @@ namespace HotsBpHelper.Pages
             }, "MMRChanel");
         }
 
+        private int GetDefaultPlayerIndex(List<string> players)
+        {
+            var defaultPlayer = players.First();
+            if (App.CustomConfigurationSettings.PlayerTags.Any(players.Contains))
+            {
+                defaultPlayer = App.CustomConfigurationSettings.PlayerTags.First(players.Contains);
+                App.CustomConfigurationSettings.PlayerTags.Remove(defaultPlayer);
+                App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+                // for config.ini
+                App.NextConfigurationSettings.PlayerTags.Remove(defaultPlayer);
+                App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+            }
+            else if (LastMatchPlayers.Count(players.Contains) == 1)
+            {
+                defaultPlayer = LastMatchPlayers.First(players.Contains);
+                App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+                // for config.ini
+                App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+            }
+
+            int defaultPlayerIndex = players.IndexOf(defaultPlayer);
+            LastMatchPlayers.Clear();
+            LastMatchPlayers.AddRange(players);
+            return defaultPlayerIndex;
+        }
+
         private static List<string> LastMatchPlayers { get; set; } = new List<string>();
-
-        public List<string> Players { get; set; }
-
+        
         public void HideBrowser()
         {
             Visibility = Visibility.Hidden;
