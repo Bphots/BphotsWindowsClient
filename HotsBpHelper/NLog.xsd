@@ -800,7 +800,7 @@
         </xs:attribute>
         <xs:attribute name="useTransactions" type="xs:boolean">
           <xs:annotation>
-            <xs:documentation>Obsolete - value will be ignored! The logging code always runs outside of transaction. Gets or sets a value indicating whether to use database transactions. Some data providers require this.</xs:documentation>
+            <xs:documentation>Obsolete - value will be ignored! The logging code always runs outside of transaction. Gets or sets a value indicating whether to use database transactions. Some data provIders require this.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="dbUserName" type="SimpleLayoutAttribute">
@@ -835,7 +835,7 @@
         </xs:attribute>
         <xs:attribute name="connectionString" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Connection string. When provided, it overrides the values specified in DBHost, DBUserName, DBPassword, DBDatabase.</xs:documentation>
+            <xs:documentation>Connection string. When provided, it overrIdes the values specified in DBHost, DBUserName, DBPassword, DBDatabase.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="dbHost" type="SimpleLayoutAttribute">
@@ -1434,7 +1434,7 @@
           <xs:element name="name" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="domain" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="impersonationLevel" minOccurs="0" maxOccurs="1" type="NLog.Targets.Wrappers.SecurityImpersonationLevel" />
-          <xs:element name="logOnProvider" minOccurs="0" maxOccurs="1" type="NLog.Targets.Wrappers.LogOnProviderType" />
+          <xs:element name="logOnProvider" minOccurs="0" maxOccurs="1" type="NLog.Targets.Wrappers.LogOnProvIderType" />
           <xs:element name="logOnType" minOccurs="0" maxOccurs="1" type="NLog.Targets.Wrappers.SecurityLogOnType" />
           <xs:element name="password" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="revertToSelf" minOccurs="0" maxOccurs="1" type="xs:boolean" />
@@ -1456,7 +1456,7 @@
             <xs:documentation>Required impersonation level.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="logOnProvider" type="NLog.Targets.Wrappers.LogOnProviderType">
+        <xs:attribute name="logOnProvider" type="NLog.Targets.Wrappers.LogOnProvIderType">
           <xs:annotation>
             <xs:documentation>Type of the logon provider.</xs:documentation>
           </xs:annotation>

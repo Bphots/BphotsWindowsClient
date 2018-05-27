@@ -525,13 +525,13 @@ namespace HotsBpHelper.Pages
             get
             {
                 if (_uploadManager == null)
-                    return L("Loading Uploader...");
+                    return L("LoadingUploader");
                 
                 return _uploadManager.Status;
             }
         }
 
-        public string SwitchUploadDescription => Manager.ManualSuspend ? L("Resume Uploading") : L("Suspend Uploading");
+        public string SwitchUploadDescription => Manager.ManualSuspend ? L("ResumeUploading") : L("SuspendUploading");
 
         public string AutoShowHideHelperInputGestureText => AutoShowHideHelper ? "Ctrl+Shift+B" : string.Empty;
 

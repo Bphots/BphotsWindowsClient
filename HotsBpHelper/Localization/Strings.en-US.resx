@@ -294,22 +294,22 @@
   <data name="Idle" xml:space="preserve">
     <value>Idle</value>
   </data>
-  <data name="Loading Uploader..." xml:space="preserve">
+  <data name="LoadingUploader" xml:space="preserve">
     <value>Loading Uploader...</value>
   </data>
-  <data name="Resume Uploading" xml:space="preserve">
+  <data name="ResumeUploading" xml:space="preserve">
     <value>Resume Uploading</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
   </data>
-  <data name="Suspend Uploading" xml:space="preserve">
+  <data name="SuspendUploading" xml:space="preserve">
     <value>Suspend Uploading</value>
   </data>
   <data name="Suspended" xml:space="preserve">
     <value>Suspended</value>
   </data>
-  <data name="Uploading..." xml:space="preserve">
+  <data name="Uploading" xml:space="preserve">
     <value>Uploading...</value>
   </data>
   <data name="HideHelper" xml:space="preserve">

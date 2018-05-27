@@ -4,6 +4,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Security;
@@ -205,8 +207,18 @@ namespace HotsBpHelper.Pages
                     //防盗链算法
                     var T = ((int) DateTime.Now.AddMinutes(1).ToUnixTimestamp()).ToString("x8").ToLower();
                     var S = SecurityProvider.UrlKey + HttpUtility.UrlEncode(fileUpdateInfo.Path).Replace("%2f", "/") + T;
-                    var SIGN = FormsAuthentication.HashPasswordForStoringInConfigFile(S, "MD5").ToLower();
-
+                    string SIGN = string.Empty;
+                    try
+                    {
+                        SIGN = GetSwcMD5(S).ToLower();
+                    }
+                    catch (Exception)
+                    {
+#pragma warning disable 618
+                        SIGN = FormsAuthentication.HashPasswordForStoringInConfigFile(S, "MD5").ToLower();
+#pragma warning restore 618
+                    }
+                    
                     _restApi.DownloadFileAsync(fileUpdateInfo.Url + "?sign=" + SIGN + "&t=" + T,
                         DownloadProgressChanged, DownloadFileCompleted);
                 }
@@ -222,6 +234,19 @@ namespace HotsBpHelper.Pages
                 // ReSharper disable once TailRecursiveCall
                 DownloadNextItem();
             }
+        }
+
+        private static string GetSwcMD5(string value)
+        {
+            var algorithm = MD5.Create();
+            byte[] data = algorithm.ComputeHash(Encoding.UTF8.GetBytes(value));
+            string sh1 = "";
+            for (int i = 0; i < data.Length; i++)
+            {
+                sh1 += data[i].ToString("x2").ToUpperInvariant();
+            }
+
+            return sh1;
         }
 
         private void DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
