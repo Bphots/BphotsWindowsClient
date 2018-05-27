@@ -89,14 +89,17 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ChromiumFX">
+    <Reference Include="ChromiumFX, Version=3.3239.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>cef\Cfx\ChromiumFX.dll</HintPath>
     </Reference>
-    <Reference Include="ChromiumWebBrowser">
+    <Reference Include="ChromiumWebBrowser, Version=3.3239.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>cef\Cfx\ChromiumWebBrowser.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetZip">
-      <HintPath>.\DotNetZip.dll</HintPath>
+    <Reference Include="DotNetZip, Version=1.11.0.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetZip.1.11.0\lib\net20\DotNetZip.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="GlobalHotKey, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GlobalHotKey.1.1.0\lib\GlobalHotKey.dll</HintPath>
@@ -109,20 +112,26 @@
     <Reference Include="HashLib, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\HashLib.2.0.1\lib\net40\HashLib.dll</HintPath>
     </Reference>
+    <Reference Include="Heroes.ReplayParser">
+      <HintPath>CustomPackages\Heroes.ReplayParser.dll</HintPath>
+    </Reference>
     <Reference Include="Its.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Its.Configuration.1.0.6\lib\net40\Its.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="LobbyFileParser">
-      <HintPath>..\..\LobbyFileParser\LobbyFileParser\bin\Release\LobbyFileParser.dll</HintPath>
+      <HintPath>CustomPackages\LobbyFileParser.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MpqTool">
+      <HintPath>CustomPackages\MpqTool.dll</HintPath>
+    </Reference>
     <Reference Include="NAppUpdate.Framework, Version=0.5.1.0, Culture=neutral, PublicKeyToken=d1f1d1f19f9e5a56, processorArchitecture=MSIL">
       <HintPath>..\packages\NAppUpdate.Framework.0.5.1.0\lib\net40\NAppUpdate.Framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
@@ -134,7 +143,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Stylet">
-      <HintPath>H:\Project\HotsBpHelper-find_heroe\HotsBpHelper-find_heroe\Stylet.dll</HintPath>
+      <HintPath>CustomPackages\Stylet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -482,14 +491,6 @@
     <Folder Include="NAppUpdate\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\HotsStats-master\Heroes.ReplayParser\Heroes.ReplayParser.csproj">
-      <Project>{aaf78d53-a1da-424a-b1aa-09895eab3b2b}</Project>
-      <Name>Heroes.ReplayParser</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\HotsStats-master\MpqTool\MpqTool.csproj">
-      <Project>{fa50e172-836b-47bb-8745-60595e4fb12a}</Project>
-      <Name>MpqTool</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DotNetHelper\DotNetHelper.csproj">
       <Project>{353b6e1b-1415-4010-babf-924c7158fc58}</Project>
       <Name>DotNetHelper</Name>

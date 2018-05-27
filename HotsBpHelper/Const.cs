@@ -8,7 +8,7 @@ namespace HotsBpHelper
     {
         public const string WEB_API_ROOT = "https://www.bphots.com/bp_helper/";
 
-        public const string WEB_API_WEEK_ROOT = "http://week.bphots.com:8888/replay/";
+        public const string WEB_API_WEEK_ROOT = "https://www.bphots.com/week/battlereport/";
 
         public const string LOCAL_WEB_FILE_DIR = "WebFiles";
         
