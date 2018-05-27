@@ -11,7 +11,6 @@ using Newtonsoft.Json;
 using NLog;
 using RestSharp;
 using RestSharp.Deserializers;
-using Stylet;
 
 namespace HotsBpHelper.Api
 {
@@ -20,7 +19,7 @@ namespace HotsBpHelper.Api
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly ISecurityProvider _securityProvider;
 
-        public RestApi(ISecurityProvider securityProvider, IEventAggregator eventAggregator)
+        public RestApi(ISecurityProvider securityProvider)
         {
             _securityProvider = securityProvider;
         }
@@ -70,10 +69,10 @@ namespace HotsBpHelper.Api
 
         public async Task<FingerPrintStatusCollection> CheckDuplicatesAsync(IEnumerable<ReplayIdentity> replayIdentities)
         {
-            var fileJson = JsonConvert.SerializeObject(replayIdentities);
+            var fileJson = JsonConvert.SerializeObject(replayIdentities.Select(r => r.FingerPrint));
             var fileParam = new List<Tuple<string, string>>
             {
-                Tuple.Create("files", fileJson)
+                Tuple.Create("fingerprints", fileJson)
             };
 
             var request = CreateRequest("check", fileParam);
@@ -106,9 +105,12 @@ namespace HotsBpHelper.Api
             }
         }
 
-        public async Task<UploadStatus> UploadReplay(string file)
+        public async Task<UploadStatus> UploadReplay(string file, string fingerprint)
         {
-            var url = GetSignedUrl(new List<Tuple<string, string>>(), "upload");
+            var url = GetSignedUrl(new List<Tuple<string, string>> { Tuple.Create("fingerprint", fingerprint) }, "upload");
+            if (App.Debug)
+                Logger.Trace($"{Const.WEB_API_WEEK_ROOT}upload?{url}");
+
             using (var client = new WebClient())
             {
                 var bytes = await client.UploadFileTaskAsync($"{Const.WEB_API_WEEK_ROOT}upload?{url}", file);
@@ -182,8 +184,8 @@ namespace HotsBpHelper.Api
             parameters.Add(Tuple.Create("client_patch", sp.Patch));
 
             var urlParam = string.Join("&", parameters.Select(tuple => $"{tuple.Item1}={tuple.Item2}"));
-
-            Logger.Trace("Prepare api for (" + method + ") : " + urlParam);
+            if (App.Debug)
+                Logger.Trace("Prepare api for (" + method + ") : " + urlParam);
 
             var url = $"{urlParam}&nonce={sp.Nonce}&sign={sp.Sign}";
             return url;
@@ -228,6 +230,12 @@ namespace HotsBpHelper.Api
             var response = await client.ExecuteTaskAsync<T>(request);
             try
             {
+                if (App.Debug)
+                {
+                    Logger.Trace(response.ResponseUri.AbsoluteUri);
+                    Logger.Trace(response.Content);
+                }
+
                 EnsureNotErrorResponse(response);
             }
             catch (Exception e)

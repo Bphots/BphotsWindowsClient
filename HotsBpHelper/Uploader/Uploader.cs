@@ -25,14 +25,7 @@ namespace HotsBpHelper.Uploader
         /// </summary>
         /// <param name="file"></param>
         public abstract Task Upload(ReplayFile file);
-
-        /// <summary>
-        /// Upload replay
-        /// </summary>
-        /// <param name="file">Path to file</param>
-        /// <returns>Upload result</returns>
-        public abstract Task<UploadStatus> Upload(string file);
-
+        
         /// <summary>
         /// Check if Hotsapi request limit is reached and wait if it is
         /// </summary>
