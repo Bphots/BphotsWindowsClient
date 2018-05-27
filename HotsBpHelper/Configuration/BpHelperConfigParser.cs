@@ -77,9 +77,8 @@ namespace HotsBpHelper.Configuration
         public bool GetAutoUploadNewReplayToHotsweek()
         {
             var autoUploadNewReplayToHotsweek = GetConfigurationValue(AutoUploadNewReplayToHotsweekKey);
-
-            return false;
-            //return autoUploadNewReplayToHotsweek != "0";
+            
+            return autoUploadNewReplayToHotsweek != "0";
         }
 
         public UploadStrategy GeUploadStrategy()

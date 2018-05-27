@@ -3,15 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Drawing;
-using System.Web;
-using System.Web.Util;
 using HotsBpHelper.Api;
-using HotsBpHelper.Uploader;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using LobbyFileParser;
-using Newtonsoft.Json;
 using Stylet;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
@@ -25,7 +20,7 @@ namespace HotsBpHelper.Pages
         private Visibility _visibility;
         private int _width;
 
-        public MMRViewModel(IEventAggregator eventAggregator, IRestApi restApi)
+        public MMRViewModel(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
 
