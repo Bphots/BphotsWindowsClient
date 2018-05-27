@@ -1,4 +1,6 @@
-﻿namespace HotsBpHelper.Settings
+﻿using System.Collections.Generic;
+
+namespace HotsBpHelper.Settings
 {
     public class CustomConfigurationSettings
     {
@@ -23,6 +25,8 @@
         public int MMRAutoCloseTime { get; set; }
 
         public bool UploadBanSample { get; set; }
+
+        public List<string> PlayerTags { get; set; }
     }
 
     public enum UploadStrategy

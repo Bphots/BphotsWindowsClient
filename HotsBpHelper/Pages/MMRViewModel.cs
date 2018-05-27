@@ -107,6 +107,27 @@ namespace HotsBpHelper.Pages
             var battleTags = string.Join("|", game.Players
                 .Select(p => p.Tag + "#" + p.SelectedHero));
             Players = game.Players.Select(p => p.Tag).ToList();
+            string defaultPlayer = Players.First();
+            if (App.CustomConfigurationSettings.PlayerTags.Any(p => Players.Contains(p)))
+            {
+                defaultPlayer = App.CustomConfigurationSettings.PlayerTags.First(p => Players.Contains(p));
+                App.CustomConfigurationSettings.PlayerTags.Remove(defaultPlayer);
+                App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+                // for config.ini
+                App.NextConfigurationSettings.PlayerTags.Remove(defaultPlayer);
+                App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+            }
+            else if (LastMatchPlayers.Count(p => Players.Contains(p)) == 1)
+            {
+                defaultPlayer = LastMatchPlayers.First(p => Players.Contains(p));
+                App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+                // for config.ini
+                App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+            }
+
+            int defaultPlayerIndex = Players.IndexOf(defaultPlayer);
+            LastMatchPlayers.Clear();
+            LastMatchPlayers.AddRange(Players);
 
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
@@ -117,9 +138,11 @@ namespace HotsBpHelper.Pages
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
                 ScriptName = "setPlayers",
-                Args = new[] {regionId, "left", battleTags}
+                Args = new[] {regionId, defaultPlayerIndex.ToString(), battleTags}
             }, "MMRChanel");
         }
+
+        private static List<string> LastMatchPlayers { get; set; } = new List<string>();
 
         public List<string> Players { get; set; }
 
