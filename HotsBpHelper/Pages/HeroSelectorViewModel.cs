@@ -16,7 +16,7 @@ namespace HotsBpHelper.Pages
         public HeroSelectorViewModel(HeroItemUtil heroItemUtil, IEventAggregator eventAggregator)
             : base(heroItemUtil, eventAggregator)
         {
-            Size = new Size(130, 20);
+            Size = new Size(120, 20);
             EventAggregator.Subscribe(this);
 
         }
