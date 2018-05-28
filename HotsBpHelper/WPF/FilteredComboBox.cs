@@ -32,7 +32,7 @@ namespace HotsBpHelper.WPF
 
         protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
         {
-            Effect = new DropShadowEffect() {Color = Color.FromArgb(255, 81, 255, 0), ShadowDepth = 0};
+            Effect = new DropShadowEffect() {Color = Color.FromArgb(24, 13, 47, 0), ShadowDepth = 0};
             base.OnGotKeyboardFocus(e);
         }
 

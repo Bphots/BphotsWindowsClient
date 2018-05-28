@@ -38,11 +38,13 @@ namespace HotsBpHelper.Uploader
             Files.CollectionChanged += (_, __) => { OnStatusChanged(); };
         }
 
-        public static bool SuspendUpload => ManualSuspend || IngameSuspend;
+        public static bool SuspendUpload => ManualSuspend || IngameSuspend || InBpSuspend;
 
         public static bool ManualSuspend { get; set; }
 
         public static bool IngameSuspend { get; set; }
+
+        public static bool InBpSuspend { get; set; }
 
         /// <summary>
         ///     Replay list
@@ -206,6 +208,7 @@ namespace HotsBpHelper.Uploader
 
         private async Task UploadHotsApi(ReplayFile file)
         {
+            await Task.Delay(1000);
             if (file.HotsApiUploadStatus == UploadStatus.InProgress)
             {
                 // if it is, upload it
@@ -220,6 +223,7 @@ namespace HotsBpHelper.Uploader
 
         private async Task UploadHotsBpHelper(ReplayFile file)
         {
+            await Task.Delay(1000);
             // test if replay is eligible for upload (not AI, PTR, Custom, etc)
             if (file.HotsWeekUploadStatus == UploadStatus.InProgress)
             {
