@@ -252,7 +252,10 @@ namespace HotsBpHelper.Pages
         public bool BpStarted
         {
             get { return _bpStarted; }
-            set { SetAndNotify(ref _bpStarted, value); }
+            set
+            {
+                SetAndNotify(ref _bpStarted, value);
+            }
         }
 
         public bool BpScreenLoaded
@@ -263,6 +266,7 @@ namespace HotsBpHelper.Pages
                 if (_bpScreenLoaded == value)
                     return;
 
+                Manager.InBpSuspend = value;
                 Execute.OnUIThread(() =>
                 {
                     _bpScreenLoaded = value;
