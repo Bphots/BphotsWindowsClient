@@ -37,8 +37,8 @@
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <wpf:FilteredComboBox 
-                    Width="{Binding Size.Width}"  Opacity="0.6" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#1C1239" 
+                <wpf:FilteredComboBox Style="{DynamicResource TheComboBox}"
+                    Width="{Binding Size.Width}"  Opacity="0.6" VerticalAlignment="Stretch" 
                                                 IsEditable="True" 
                                                 IsTextSearchEnabled="False"
                                                 StaysOpenOnEdit="True"
@@ -55,7 +55,7 @@
                                                 wpf:FocusExtension.IsFocused="{Binding IsFocused}"
                           >
                     <wpf:FilteredComboBox.Effect>
-                        <DropShadowEffect Color="#FF51FF00" ShadowDepth="0"/>
+                        <DropShadowEffect Color="#180D2F" ShadowDepth="0"/>
                     </wpf:FilteredComboBox.Effect>
                     <wpf:FilteredComboBox.RenderTransform>
                         <TranslateTransform X="{Binding Left}" Y="{Binding Top}"/>

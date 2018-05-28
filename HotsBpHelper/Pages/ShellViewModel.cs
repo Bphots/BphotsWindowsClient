@@ -1044,11 +1044,11 @@ namespace HotsBpHelper.Pages
                 },
                 Right = new SidePosition
                 {
-                    Ban1 = new Point((int) (width - 0.45*height), (int) (0.016*height)),
+                    Ban1 = new Point((int) (width - 0.46*height), (int) (0.016*height)),
                     Ban2 =
-                        new Point((int) (width - 0.45*height),
+                        new Point((int) (width - 0.46*height),
                             (int) (0.016*height) + (int) (0.023*height) + (int) (0.015*height)),
-                    Pick1 = new Point((int) (width - 0.195*height), (int) (0.132*height)),
+                    Pick1 = new Point((int) (width - 0.205*height), (int) (0.132*height)),
                     Dx = (int) (-0.0905*height),
                     Dy = (int) (0.1565*height),
                     HeroPathPoints =
