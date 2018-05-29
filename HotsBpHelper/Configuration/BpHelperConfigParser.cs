@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -259,11 +260,9 @@ namespace HotsBpHelper.Configuration
                 sb.AppendLine(WriteConfigurationValue(UploadStrategyKey,
                     (int) customConfigurationSettings.UploadStrategy));
                 sb.AppendLine(WriteConfigurationValue(MMRAutoCloseTimeKey, customConfigurationSettings.MMRAutoCloseTime));
-                sb.AppendLine(WriteConfigurationValue(LanguageForBphotsKey,
-                    customConfigurationSettings.LanguageForBphots));
-                sb.AppendLine(WriteConfigurationValue(LanguageForMessageKey,
-                    customConfigurationSettings.LanguageForMessage));
-                sb.AppendLine(WriteConfigurationValue(PlayerTagKey,
+                sb.AppendLine(WriteConfigurationValue(LanguageForBphotsKey, customConfigurationSettings.LanguageForBphots));
+                sb.AppendLine(WriteConfigurationValue(LanguageForMessageKey, customConfigurationSettings.LanguageForMessage));
+                sb.AppendLine(WriteConfigurationValue(PlayerTagKey, 
                     string.Join("|", customConfigurationSettings.PlayerTags)));
 
                 var languageFromGame = GetLanguageFromGame();

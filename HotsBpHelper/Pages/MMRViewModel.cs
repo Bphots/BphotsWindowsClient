@@ -100,9 +100,28 @@ namespace HotsBpHelper.Pages
             // 玩家BattleTags
             var battleTags = string.Join("|", game.Players
                 .Select(p => p.Tag + "#" + p.SelectedHero));
-            var players = game.Players.Select(p => p.Tag).ToList();
+            Players = game.Players.Select(p => p.Tag).ToList();
+            string defaultPlayer = Players.First();
+            if (App.CustomConfigurationSettings.PlayerTags.Any(p => Players.Contains(p)))
+            {
+                defaultPlayer = App.CustomConfigurationSettings.PlayerTags.First(p => Players.Contains(p));
+                App.CustomConfigurationSettings.PlayerTags.Remove(defaultPlayer);
+                App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+                // for config.ini
+                App.NextConfigurationSettings.PlayerTags.Remove(defaultPlayer);
+                App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+            }
+            else if (LastMatchPlayers.Count(p => Players.Contains(p)) == 1)
+            {
+                defaultPlayer = LastMatchPlayers.First(p => Players.Contains(p));
+                App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+                // for config.ini
+                App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+            }
 
-            var defaultPlayerIndex = GetDefaultPlayerIndex(players);
+            int defaultPlayerIndex = Players.IndexOf(defaultPlayer);
+            LastMatchPlayers.Clear();
+            LastMatchPlayers.AddRange(Players);
 
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
@@ -117,31 +136,9 @@ namespace HotsBpHelper.Pages
             }, "MMRChanel");
         }
 
-        private int GetDefaultPlayerIndex(List<string> players)
-        {
-            var defaultPlayer = players.First();
-            if (App.CustomConfigurationSettings.PlayerTags.Any(players.Contains))
-            {
-                defaultPlayer = App.CustomConfigurationSettings.PlayerTags.First(players.Contains);
-                App.CustomConfigurationSettings.PlayerTags.Remove(defaultPlayer);
-                App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
-                // for config.ini
-                App.NextConfigurationSettings.PlayerTags.Remove(defaultPlayer);
-                App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
-            }
-            else if (LastMatchPlayers.Count(players.Contains) == 1)
-            {
-                defaultPlayer = LastMatchPlayers.First(players.Contains);
-                App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
-                // for config.ini
-                App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
-            }
+        private static List<string> LastMatchPlayers { get; set; } = new List<string>();
 
-            int defaultPlayerIndex = players.IndexOf(defaultPlayer);
-            LastMatchPlayers.Clear();
-            LastMatchPlayers.AddRange(players);
-            return defaultPlayerIndex;
-        }
+        public List<string> Players { get; set; }
 
         private static List<string> LastMatchPlayers { get; set; } = new List<string>();
         

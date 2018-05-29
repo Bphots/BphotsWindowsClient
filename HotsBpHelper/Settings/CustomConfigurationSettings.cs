@@ -25,7 +25,7 @@ namespace HotsBpHelper.Settings
         public int MMRAutoCloseTime { get; set; }
 
         public bool UploadBanSample { get; set; }
-
+        
         public List<string> PlayerTags { get; set; }
     }
 
