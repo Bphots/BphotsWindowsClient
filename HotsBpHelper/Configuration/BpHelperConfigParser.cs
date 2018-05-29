@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using DotNetHelper;
 using HotsBpHelper.Settings;
@@ -22,6 +24,7 @@ namespace HotsBpHelper.Configuration
         private const string LanguageForGameClientKey = @"LanguageForGameClient";
         private const string MMRAutoCloseTimeKey = @"MMRAutoCloseTime";
         private const string UploadBanSampleKey = @"UploadBanSample";
+        private const string PlayerTagKey = @"PlayerTag";
 
         private static readonly string BpHelperConfigPath =
             Path.GetFullPath(@".\config.ini");
@@ -35,6 +38,14 @@ namespace HotsBpHelper.Configuration
             var autoShowHideHelper = GetConfigurationValue(AutoShowHideHelperKey);
 
             return autoShowHideHelper != "0";
+        }
+
+        public List<string> GetPlayerTags()
+        {
+            var playerTagString = GetConfigurationValue(PlayerTagKey);
+            var playerTags = playerTagString.Split('|');
+
+            return playerTags.ToList();
         }
 
         public bool GetUploadBanSample()
@@ -191,6 +202,7 @@ namespace HotsBpHelper.Configuration
             customConfigurationSettings.AutoUploadReplayToHotsweek = parser.GetAutoUploadNewReplayToHotsweek();
             customConfigurationSettings.UploadStrategy = parser.GeUploadStrategy();
             customConfigurationSettings.MMRAutoCloseTime = parser.GetMMRAutoCloseTime();
+            customConfigurationSettings.PlayerTags = parser.GetPlayerTags();
 
             customConfigurationSettings.LanguageForBphots = parser.GetLanguageForBphots();
             App.Language = customConfigurationSettings.LanguageForBphots;
@@ -245,6 +257,8 @@ namespace HotsBpHelper.Configuration
                 sb.AppendLine(WriteConfigurationValue(MMRAutoCloseTimeKey, customConfigurationSettings.MMRAutoCloseTime));
                 sb.AppendLine(WriteConfigurationValue(LanguageForBphotsKey, customConfigurationSettings.LanguageForBphots));
                 sb.AppendLine(WriteConfigurationValue(LanguageForMessageKey, customConfigurationSettings.LanguageForMessage));
+                sb.AppendLine(WriteConfigurationValue(PlayerTagKey, 
+                    string.Join("|", customConfigurationSettings.PlayerTags)));
 
                 var languageFromGame = GetLanguageFromGame();
                 if (string.IsNullOrEmpty(languageFromGame))
