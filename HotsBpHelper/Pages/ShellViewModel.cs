@@ -1084,7 +1084,7 @@ namespace HotsBpHelper.Pages
                     Dy = RoundUp(0.1229166666666667 * height)
                 },
                 MmrWidth = (int)(600 * ratio),
-                MmrHeight = (int)(270 * ratio),
+                MmrHeight = (int)(400 * ratio),
 
                 BanPositions = new List<Rectangle>()
                 {
