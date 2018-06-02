@@ -43,8 +43,10 @@ namespace HotsBpHelper.Configuration
         public List<string> GetPlayerTags()
         {
             var playerTagString = GetConfigurationValue(PlayerTagKey);
-            var playerTags = playerTagString.Split('|');
+            if (string.IsNullOrEmpty(playerTagString))
+                return new List<string>();
 
+            var playerTags = playerTagString.Split('|');
             return playerTags.ToList();
         }
 
