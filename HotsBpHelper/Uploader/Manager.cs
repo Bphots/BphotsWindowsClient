@@ -188,7 +188,17 @@ namespace HotsBpHelper.Uploader
                             await UploadHotsApi(file.Key);
 
                         if (UplaodToHotsWeek)
-                            await UploadHotsBpHelper(file.Key);
+                        {
+                            if (file.Value != null && file.Value.GameMode != GameMode.QuickMatch &&
+                                file.Value.GameMode != GameMode.HeroLeague
+                                && file.Value.GameMode != GameMode.TeamLeague &&
+                                file.Value.GameMode == GameMode.UnrankedDraft)
+                            {
+                                file.Key.HotsApiUploadStatus = UploadStatus.Success;
+                            }
+                            else
+                                await UploadHotsBpHelper(file.Key);
+                        }
 
                         if (_processingQueue.ContainsKey(file.Key))
                             _processingQueue[file.Key] = 2;
