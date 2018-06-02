@@ -36,6 +36,6 @@ namespace HotsBpHelper
 
         public const string ServiceName = "HotsBpHelper - Monitor";
 
-        public static readonly DateTime HotsWeekAcceptTime = DateTime.Parse("2018-03-1T00:00:00Z").ToUniversalTime();
+        public static readonly DateTime HotsWeekAcceptTime = DateTime.Parse("2018-01-1T00:00:00Z").ToUniversalTime();
     }
 }

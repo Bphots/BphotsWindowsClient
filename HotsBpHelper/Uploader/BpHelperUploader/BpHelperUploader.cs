@@ -33,18 +33,15 @@ namespace HotsBpHelper.Uploader
             var result = DataParser.ParseReplayFull(file.Filename, false, false, false);
             FilePath tempPath = Path.GetTempFileName();
             tempPath = tempPath.GetDirPath() + tempPath.GetFileNameWithoutExtension() + ".json";
-            if (result != null)
+            try
             {
-                try
-                {
-                    var resultText = JsonConvert.SerializeObject(result.Item2);
-                    File.WriteAllText(tempPath, resultText);
-                }
-                catch (Exception)
-                {
-                    file.HotsWeekUploadStatus = UploadStatus.UploadError;
-                    return;
-                }
+                var resultText = JsonConvert.SerializeObject(result.Item2);
+                File.WriteAllText(tempPath, resultText);
+            }
+            catch (Exception)
+            {
+                file.HotsWeekUploadStatus = UploadStatus.UploadError;
+                return;
             }
 
             file.HotsWeekUploadStatus = await Upload(tempPath, file.Fingerprint);
