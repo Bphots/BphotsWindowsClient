@@ -108,15 +108,19 @@ namespace HotsBpHelper.Pages
                 App.CustomConfigurationSettings.PlayerTags.Remove(defaultPlayer);
                 App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
                 // for config.ini
-                App.NextConfigurationSettings.PlayerTags.Remove(defaultPlayer);
-                App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+                if (App.NextConfigurationSettings != App.CustomConfigurationSettings)
+                {
+                    App.NextConfigurationSettings.PlayerTags.Remove(defaultPlayer);
+                    App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+                }
             }
             else if (LastMatchPlayers.Count(p => Players.Contains(p)) == 1)
             {
                 defaultPlayer = LastMatchPlayers.First(p => Players.Contains(p));
                 App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
                 // for config.ini
-                App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+                if (App.NextConfigurationSettings != App.CustomConfigurationSettings)
+                    App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
             }
 
             int defaultPlayerIndex = Players.IndexOf(defaultPlayer);
