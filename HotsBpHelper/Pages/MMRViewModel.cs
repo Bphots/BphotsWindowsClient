@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Drawing;
+using System.Web;
+using System.Web.Util;
+using HotsBpHelper.Api;
+using HotsBpHelper.Uploader;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using LobbyFileParser;
+using Newtonsoft.Json;
 using Stylet;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
@@ -19,14 +25,14 @@ namespace HotsBpHelper.Pages
         private Visibility _visibility;
         private int _width;
 
-        public MMRViewModel(IEventAggregator eventAggregator)
+        public MMRViewModel(IEventAggregator eventAggregator, IRestApi restApi)
         {
             _eventAggregator = eventAggregator;
 
             var location = new Point(App.AppSetting.Position.Width / 2 - App.AppSetting.Position.MmrWidth / 2, App.AppSetting.Position.Height / 2 - App.AppSetting.Position.MmrHeight / 2).ToUnitPoint();
             Left = location.X;
             Top = location.Y;
-            
+
             var filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "mmr.html#") + App.Language;
             LocalFileUri = filePath;
             WebCallbackListener.LobbyRequested += WebCallbackListenerOnLobbyRequested;
@@ -96,13 +102,36 @@ namespace HotsBpHelper.Pages
             }, "MMRChanel");
 
             // 取得地区ID
-            var regionId = ((int) game.Region).ToString();
+            var regionId = ((int)game.Region).ToString();
             // 玩家BattleTags
             var battleTags = string.Join("|", game.Players
                 .Select(p => p.Tag + "#" + p.SelectedHero));
-            var players = game.Players.Select(p => p.Tag).ToList();
+            Players = game.Players.Select(p => p.Tag).ToList();
+            string defaultPlayer = Players.First();
+            if (App.CustomConfigurationSettings.PlayerTags.Any(p => Players.Contains(p)))
+            {
+                defaultPlayer = App.CustomConfigurationSettings.PlayerTags.First(p => Players.Contains(p));
+                App.CustomConfigurationSettings.PlayerTags.Remove(defaultPlayer);
+                App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+                // for config.ini
+                if (App.NextConfigurationSettings != App.CustomConfigurationSettings)
+                {
+                    App.NextConfigurationSettings.PlayerTags.Remove(defaultPlayer);
+                    App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+                }
+            }
+            else if (LastMatchPlayers.Count(p => Players.Contains(p)) == 1)
+            {
+                defaultPlayer = LastMatchPlayers.First(p => Players.Contains(p));
+                App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+                // for config.ini
+                if (App.NextConfigurationSettings != App.CustomConfigurationSettings)
+                    App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+            }
 
-            var defaultPlayerIndex = GetDefaultPlayerIndex(players);
+            int defaultPlayerIndex = Players.IndexOf(defaultPlayer);
+            LastMatchPlayers.Clear();
+            LastMatchPlayers.AddRange(Players);
 
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
@@ -113,38 +142,14 @@ namespace HotsBpHelper.Pages
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
                 ScriptName = "setPlayers",
-                Args = new[] {regionId, defaultPlayerIndex.ToString(), battleTags}
+                Args = new[] { regionId, defaultPlayerIndex.ToString(), battleTags }
             }, "MMRChanel");
         }
 
-        private int GetDefaultPlayerIndex(List<string> players)
-        {
-            var defaultPlayer = players.First();
-            if (App.CustomConfigurationSettings.PlayerTags.Any(players.Contains))
-            {
-                defaultPlayer = App.CustomConfigurationSettings.PlayerTags.First(players.Contains);
-                App.CustomConfigurationSettings.PlayerTags.Remove(defaultPlayer);
-                App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
-                // for config.ini
-                App.NextConfigurationSettings.PlayerTags.Remove(defaultPlayer);
-                App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
-            }
-            else if (LastMatchPlayers.Count(players.Contains) == 1)
-            {
-                defaultPlayer = LastMatchPlayers.First(players.Contains);
-                App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
-                // for config.ini
-                App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
-            }
-
-            int defaultPlayerIndex = players.IndexOf(defaultPlayer);
-            LastMatchPlayers.Clear();
-            LastMatchPlayers.AddRange(players);
-            return defaultPlayerIndex;
-        }
-
         private static List<string> LastMatchPlayers { get; set; } = new List<string>();
-        
+
+        public List<string> Players { get; set; }
+
         public void HideBrowser()
         {
             Visibility = Visibility.Hidden;
