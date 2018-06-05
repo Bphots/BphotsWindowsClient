@@ -1172,6 +1172,11 @@ namespace HotsBpHelper.Pages
             NotifyOfPropertyChange(() => CanShowAbout);
         }
 
+        public void ShowHotsWeek()
+        {
+            Process.Start(Const.HotsWeeklyUrl);
+        }
+        
         public void SetAutoStart()
         {
             try

@@ -36,6 +36,8 @@ namespace HotsBpHelper
 
         public const string ServiceName = "HotsBpHelper - Monitor";
 
+        public const string HotsWeeklyUrl = "https://www.bphots.com/week/take";
+
         public static readonly DateTime HotsWeekAcceptTime = DateTime.Parse("2018-01-1T00:00:00Z").ToUniversalTime();
     }
 }
