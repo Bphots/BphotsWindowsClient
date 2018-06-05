@@ -348,4 +348,7 @@
   <data name="ServiceRestartQuestion" xml:space="preserve">
     <value>檢測到安裝目錄已經更改，是否重新註冊服務以兼容您的新目錄？</value>
   </data>
+  <data name="HotsWeekUrl" xml:space="preserve">
+    <value>周報管理</value>
+  </data>
 </root>
