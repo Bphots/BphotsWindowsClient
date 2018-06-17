@@ -105,19 +105,19 @@ namespace HotsBpHelper.Uploader
 
         public bool NeedUpdate()
         {
+            bool needUpdate = false;
             if (App.CustomConfigurationSettings.AutoUploadReplayToHotslogs)
-                return _hotsApiUploadStatus == UploadStatus.None;
+                needUpdate = _hotsApiUploadStatus == UploadStatus.None;
 
-            if (App.CustomConfigurationSettings.AutoUploadReplayToHotsweek)
-                return _hotsWeekUploadStatus == UploadStatus.None || _hotsWeekUploadStatus == UploadStatus.Reserved;
-            ;
-
-            return false;
+            if (App.CustomConfigurationSettings.AutoUploadReplayToHotsweek && !needUpdate)
+                needUpdate = _hotsWeekUploadStatus == UploadStatus.None || _hotsWeekUploadStatus == UploadStatus.Reserved;
+            
+            return needUpdate;
         }
 
         public bool Settled()
         {
-            var ignored = new[] {UploadStatus.None, UploadStatus.UploadError, UploadStatus.InProgress};
+            var ignored = new[] { UploadStatus.None, UploadStatus.UploadError, UploadStatus.InProgress };
             bool settled = !(App.CustomConfigurationSettings.AutoUploadReplayToHotslogs && ignored.Contains(_hotsApiUploadStatus));
 
             if (App.CustomConfigurationSettings.AutoUploadReplayToHotsweek && ignored.Contains(_hotsWeekUploadStatus))
