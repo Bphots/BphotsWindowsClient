@@ -151,9 +151,9 @@ namespace HotsBpHelper.Uploader
                         if (file == null)
                             continue;
                         
-                        if (UplaodToHotsWeek)
+                        if (UplaodToHotsWeek && (file.HotsWeekUploadStatus == UploadStatus.None || file.HotsWeekUploadStatus == UploadStatus.Reserved))
                             file.HotsWeekUploadStatus = UploadStatus.InProgress;
-                        if (UploadToHotsApi)
+                        if (UploadToHotsApi && file.HotsApiUploadStatus == UploadStatus.None)
                             file.HotsApiUploadStatus = UploadStatus.InProgress;
 
                         var replay = _analyzer.Analyze(file);
@@ -189,12 +189,13 @@ namespace HotsBpHelper.Uploader
 
                         if (UplaodToHotsWeek)
                         {
+                            _log.Trace($"Pre-preparsing file {file.Key.Filename} + {file.Value.GameMode}");
                             if (file.Value != null && file.Value.GameMode != GameMode.QuickMatch &&
                                 file.Value.GameMode != GameMode.HeroLeague
                                 && file.Value.GameMode != GameMode.TeamLeague &&
-                                file.Value.GameMode == GameMode.UnrankedDraft)
+                                file.Value.GameMode != GameMode.UnrankedDraft)
                             {
-                                file.Key.HotsApiUploadStatus = UploadStatus.Success;
+                                file.Key.HotsWeekUploadStatus = UploadStatus.AiDetected;
                             }
                             else
                                 await UploadHotsBpHelper(file.Key);
@@ -219,6 +220,7 @@ namespace HotsBpHelper.Uploader
         private async Task UploadHotsApi(ReplayFile file)
         {
             await Task.Delay(1000);
+
             if (file.HotsApiUploadStatus == UploadStatus.InProgress)
             {
                 // if it is, upload it
@@ -235,6 +237,7 @@ namespace HotsBpHelper.Uploader
         {
             await Task.Delay(1000);
             // test if replay is eligible for upload (not AI, PTR, Custom, etc)
+            _log.Trace($"Pre-parsing file {file.Filename} : { file.HotsWeekUploadStatus }");
             if (file.HotsWeekUploadStatus == UploadStatus.InProgress)
             {
                 // if it is, upload it
