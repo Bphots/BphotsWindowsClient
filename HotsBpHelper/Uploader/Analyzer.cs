@@ -53,7 +53,7 @@ namespace HotsBpHelper.Uploader
                 case DataParser.ReplayParseResult.Incomplete:
                     return UploadStatus.Incomplete;
                 case DataParser.ReplayParseResult.Exception:
-                    return UploadStatus.Incomplete;
+                    return UploadStatus.UploadError;
                 case DataParser.ReplayParseResult.PreAlphaWipe:
                     return UploadStatus.TooOld;
             }
