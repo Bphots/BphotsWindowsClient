@@ -290,5 +290,14 @@ namespace HotsBpHelper.Api
             }
             return response.Data;
         }
+
+        public string GetOss()
+        {
+            using (var client = new WebClient())
+            {
+                var ossInfo = client.DownloadString(Const.OSS_ADDRESS);
+                return ossInfo;
+            }
+        }
     }
 }

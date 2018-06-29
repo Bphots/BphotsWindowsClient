@@ -344,12 +344,37 @@ namespace HotsBpHelper.Pages
             if (_notifyUpdateTaskCompleted != null && !_notifyUpdateTaskCompleted.IsSuccessfullyCompleted)
             {
                 Logger.Trace("Upldate failed");
+                try
+                {
+                    var ossInfo = _restApi.GetOss();
+                    if (!string.IsNullOrEmpty(ossInfo))
+                    {
+                        DisplayFatalMessage(ossInfo);
+                        return;
+                    }
+                }
+                catch
+                {
+
+                }
                 DisplayFatalMessage(L("UpdateFailed"));
                 return;
             }
 
             if (_loadingFailed)
             {
+                try
+                {
+                    var ossInfo = _restApi.GetOss();
+                    if (!string.IsNullOrEmpty(ossInfo))
+                    {
+                        DisplayFatalMessage(ossInfo);
+                        return;
+                    }
+                }
+                catch
+                {
+                }
                 DisplayFatalMessage(L("ApiFailed"));
                 return;
             }
@@ -915,11 +940,11 @@ namespace HotsBpHelper.Pages
                     if (e.Message.Contains(@"Already checked for updates"))
                         return;
 
-                    Execute.OnUIThread(() => {
-                        var errorView = new ErrorView(L("FileUpdateFail"), e.Message, "https://www.bphots.com/articles/errors/1");
-                        errorView.ShowDialog();
-                    });
-                    throw;
+                    //Execute.OnUIThread(() => {
+                    //    var errorView = new ErrorView(L("FileUpdateFail"), e.Message, "https://www.bphots.com/articles/errors/1");
+                    //    errorView.ShowDialog();
+                    //});
+                    throw e;
                 }
                 catch (Exception ex)
                 {
