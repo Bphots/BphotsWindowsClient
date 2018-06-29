@@ -10,6 +10,8 @@ namespace HotsBpHelper.Api
     {
         List<BroadcastInfo> GetBroadcastInfo(string mode, string lang);
 
+        string GetOss();
+
         Task<List<RemoteFileInfo>> GetRemoteFileListAsync(string url);
 
         void DownloadFileAsync(string url, DownloadProgressChangedEventHandler downloadProgressChanged,

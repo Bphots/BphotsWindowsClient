@@ -114,7 +114,7 @@ namespace HotsBpHelper.Uploader
             {
                 if (file.Created < Const.HotsWeekAcceptTime)
                 {
-                    file.HotsApiUploadStatus = UploadStatus.TooOld;
+                    file.HotsWeekUploadStatus = UploadStatus.TooOld;
                     continue;
                 }
 
