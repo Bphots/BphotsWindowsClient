@@ -14,7 +14,7 @@ namespace HotsBpHelper
 
         public const string OSS_ADDRESS = "http://bphots-1251808214.cossh.myqcloud.com/bp_helper/client/inform.txt";
 
-        public const string PATCH = "18063001";
+        public const string PATCH = "18063002";
 
         public const string UPDATE_FEED_XML = "https://www.bphots.com/bp_helper/get/update?patch=" + PATCH;
 
@@ -38,8 +38,8 @@ namespace HotsBpHelper
 
         public const string ServiceName = "HotsBpHelper - Monitor";
 
-        public const string HotsWeeklyUrl = "https://www.bphots.com/week/take";
+        public const string HotsWeeklyUrl = "https://www.bphots.com/week/subscribe";
 
-        public static readonly DateTime HotsWeekAcceptTime = DateTime.Parse("2018-01-1T00:00:00Z").ToUniversalTime();
+        public static readonly DateTime HotsWeekAcceptTime = DateTime.Parse("2018-07-8T00:00:00Z").ToUniversalTime();
     }
 }

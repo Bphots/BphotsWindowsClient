@@ -38,6 +38,8 @@ namespace HotsBpHelper
 
         public static bool ForceUpdate;
 
+        public static DateTime UploadMinimumAcceptableTime;
+
         public static string Language = CultureInfo.CurrentCulture.Name;
 
         public static OcrLanguage OcrLanguage;
@@ -51,6 +53,8 @@ namespace HotsBpHelper
         public static Dictionary<string, MapInfoV2> AdviceMapInfos { get; set; }
 
         public static bool HasServiceAsked { get; set; }
+
+        public static bool HasHotsWeekAsked { get; set; }
 
         public static List<string> LobbyMaps { get; set; }
 

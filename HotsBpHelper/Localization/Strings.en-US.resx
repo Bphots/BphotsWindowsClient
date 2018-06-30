@@ -345,4 +345,7 @@
   <data name="HotsWeekUrl" xml:space="preserve">
     <value>HotS Weekly</value>
   </data>
+  <data name="HotsWeekQuestion" xml:space="preserve">
+    <value>Would like to enable the new feature HotSWeek from HotsBpHelper 3.0?</value>
+  </data>
 </root>
