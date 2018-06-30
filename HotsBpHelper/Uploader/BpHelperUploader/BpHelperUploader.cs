@@ -112,11 +112,12 @@ namespace HotsBpHelper.Uploader
             var fileIds = new List<ReplayIdentity>();
             foreach (var file in replays)
             {
-                if (file.Created < Const.HotsWeekAcceptTime)
+                if (file.Created < App.UploadMinimumAcceptableTime)
                 {
                     file.HotsWeekUploadStatus = UploadStatus.TooOld;
                     continue;
                 }
+                _log.Trace($"Check file {file.Filename} + {file.HotsWeekUploadStatus}");
 
                 fileIds.Add(new ReplayIdentity()
                 {

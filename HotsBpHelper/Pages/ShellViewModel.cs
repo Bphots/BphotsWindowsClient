@@ -468,10 +468,23 @@ namespace HotsBpHelper.Pages
                        MessageBoxButtons.YesNo) == DialogResult.Yes)
                         ServiceRestart();
                 }
-
+            }
+            else if (!App.HasHotsWeekAsked)
+            {
+                if (TopMostMessageBox.Show(L(@"HotsWeekQuestion"),
+                    @"Question",
+                    MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    Process.Start(Const.HotsWeeklyUrl);
+                    App.CustomConfigurationSettings.AutoUploadReplayToHotsweek = true;
+                    App.NextConfigurationSettings.AutoUploadReplayToHotsweek = true;
+                }
             }
 
+
             App.HasServiceAsked = true;
+            App.HasHotsWeekAsked = true;
+
             BpServiceConfigParser.WriteConfig();
             AutoDetect = App.CustomConfigurationSettings.AutoDetectHeroAndMap && CanOcr && _bpViewModel.OcrAvailable && App.AppSetting.Position.Height > Const.BestExpericenResolutionHeight && isWindowlessMax;
             AutoShowHideHelper = App.CustomConfigurationSettings.AutoShowHideHelper && isWindowlessMax;

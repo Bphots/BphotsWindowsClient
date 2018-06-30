@@ -351,4 +351,7 @@
   <data name="HotsWeekUrl" xml:space="preserve">
     <value>周報管理</value>
   </data>
+  <data name="HotsWeekQuestion" xml:space="preserve">
+    <value>是否立刻體驗背鍋助手3.0的新功能——背鍋周報？</value>
+  </data>
 </root>
