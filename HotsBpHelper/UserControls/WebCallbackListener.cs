@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Chromium.Remote.Event;
 using Chromium.WebBrowser;
 using HotsBpHelper.Configuration;
@@ -42,6 +43,13 @@ namespace HotsBpHelper.UserControls
                 App.NextConfigurationSettings = newConfig;
                 OnConfigurationSaved();
             }
+            if (args[0].StringValue == "SavePlayerId")
+            {
+                var param = args[1].StringValue;
+                App.CustomConfigurationSettings.HotsWeekPlayerId = param;
+                App.NextConfigurationSettings.HotsWeekPlayerId = param;
+                OnConfigurationSaved();
+            }
             if (args[0].StringValue == "SetTab")
             {
                 var newTab = args[1].StringValue;
@@ -54,6 +62,11 @@ namespace HotsBpHelper.UserControls
             if (args[0].StringValue == "RequestPreset")
             {
                 OnPresetRequested();
+            }
+            if (args[0].StringValue == "OpenExternalBrowser")
+            {
+                var param = args[1].StringValue;
+                Process.Start(param);
             }
             if (args[0].StringValue == "SetService")
             {

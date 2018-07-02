@@ -93,13 +93,20 @@ namespace HotsBpHelper
             if (args.Any(arg => arg.ToLower() == "/forceupdate"))
                 App.ForceUpdate = true;
 
-            if (args.Any(arg => arg.ToLower().StartsWith("/upload")))
+            try
             {
-                var dateString = args.First(arg => arg.ToLower().StartsWith("/upload")).Substring(7);
-                App.UploadMinimumAcceptableTime = DateTime.Parse(dateString).ToUniversalTime();
+                if (args.Any(arg => arg.ToLower().StartsWith("/upload")))
+                {
+                    var dateString = args.First(arg => arg.ToLower().StartsWith("/upload")).Substring(7);
+                    App.UploadMinimumAcceptableTime = DateTime.Parse(dateString).ToUniversalTime();
+                }
+                else
+                    App.UploadMinimumAcceptableTime = Const.HotsWeekAcceptTime;
             }
-            else
-                App.UploadMinimumAcceptableTime = Const.HotsWeekAcceptTime;
+            catch
+            {
+                App.UploadMinimumAcceptableTime = DateTime.Now;
+            }
 
             if (args.Any(arg => arg.ToLower() == "/errortest"))
             {
