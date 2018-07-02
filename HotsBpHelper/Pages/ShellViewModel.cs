@@ -524,18 +524,6 @@ namespace HotsBpHelper.Pages
             WebCallbackListener.StartServiceRequested += WebCallbackListenerOnStartServiceRequested;
             WebCallbackListener.StopServiceRequested += WebCallbackListenerOnStopServiceRequested;
 
-            if (App.HasServiceAsked && !App.HasHotsWeekAsked)
-            {
-                if (TopMostMessageBox.Show(L(@"HotsWeekQuestion"),
-                    @"Question",
-                    MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    ShowHotsWeek();
-                    App.CustomConfigurationSettings.AutoUploadReplayToHotsweek = true;
-                    App.NextConfigurationSettings.AutoUploadReplayToHotsweek = true;
-                }
-            }
-
             if (launchHotsWeek)
                 ShowHotsWeek(); 
         }
