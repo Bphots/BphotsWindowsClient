@@ -43,7 +43,7 @@
 
                 <Separator />
 
-                <MenuItem Header="{lex:Loc HotsWeekUrl}" Command="{s:Action ShowHotsWeek}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"/>
+                <MenuItem Header="{Binding HotsWeekEntry, Mode=OneTime}" Command="{s:Action ShowHotsWeek}" IsEnabled="{Binding CanShowHotsWeek}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"/>
                 <MenuItem Header="{lex:Loc Settings}" Command="{s:Action ShowSettings}" IsEnabled="{Binding CanShowSettings}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"/>
                 <MenuItem Header="{lex:Loc About}" Command="{s:Action ShowAbout}" IsEnabled="{Binding CanAbout}" Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibilityConverter} }"/>
                 <MenuItem Header="{lex:Loc Exit}" Command="{s:Action Exit}" />
