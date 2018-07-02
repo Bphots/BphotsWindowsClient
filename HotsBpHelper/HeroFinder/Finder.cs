@@ -228,7 +228,7 @@ namespace HotsBpHelper.HeroFinder
         private PositionInfo CalculatePositionInfo(int id)
         {
             var result = default(PositionInfo);
-            var flag = id == 0 || id == 1 || id == 7 || id == 8;
+            var flag = id == 0 || id == 1 || id == 2 || id == 8 || id == 9 || id == 10;
             if (flag)
             {
                 result.DirStr = "ban";
@@ -237,14 +237,14 @@ namespace HotsBpHelper.HeroFinder
             }
             else
             {
-                var flag2 = id >= 2 && id <= 6;
+                var flag2 = id >= 3 && id <= 7;
                 if (flag2)
                 {
                     result.DirStr = "left";
                     result.ClipPoints = App.AppSetting.Position.Left.HeroPathPoints;
-                    var num = App.AppSetting.Position.Left.HeroName1.X + id%2*App.AppSetting.Position.Left.Dx;
-                    var num2 = App.AppSetting.Position.Left.HeroName1.Y + (id - 2)*App.AppSetting.Position.Left.Dy;
-                    var flag3 = id == 5 || id == 6;
+                    var num = App.AppSetting.Position.Left.HeroName1.X + (id + 1) % 2 * App.AppSetting.Position.Left.Dx;
+                    var num2 = App.AppSetting.Position.Left.HeroName1.Y + (id - 3)*App.AppSetting.Position.Left.Dy;
+                    var flag3 = id == 6 || id == 7;
                     if (flag3)
                         num2++;
                     result.Rectangle = new Rectangle(num, num2, App.AppSetting.Position.HeroWidth, App.AppSetting.Position.HeroHeight);
@@ -254,8 +254,8 @@ namespace HotsBpHelper.HeroFinder
                     result.DirStr = "right";
                     result.ClipPoints = App.AppSetting.Position.Right.HeroPathPoints;
                     var num = App.AppSetting.Position.Right.HeroName1.X + (id + 1)%2*App.AppSetting.Position.Right.Dx;
-                    var num2 = App.AppSetting.Position.Right.HeroName1.Y + (id - 9)*App.AppSetting.Position.Right.Dy;
-                    var flag4 = id == 12 || id == 13;
+                    var num2 = App.AppSetting.Position.Right.HeroName1.Y + (id - 11)*App.AppSetting.Position.Right.Dy;
+                    var flag4 = id == 14 || id == 15;
                     if (flag4)
                         num2++;
                     result.Rectangle = new Rectangle(num - App.AppSetting.Position.HeroWidth, num2, App.AppSetting.Position.HeroWidth,
