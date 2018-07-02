@@ -133,7 +133,7 @@ namespace HotsBpHelper.Pages
 
         public void ShowHotsWeek(bool invokeWeb = true)
         {
-            SettingsTab = SettingsTab.About;
+            SettingsTab = SettingsTab.HotsWeek;
             if (invokeWeb)
                 _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
                 {
