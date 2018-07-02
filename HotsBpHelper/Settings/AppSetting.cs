@@ -142,7 +142,9 @@ namespace HotsBpHelper.Settings
 
         public System.Drawing.Point Ban2 { get; set; }
 
-        public System.Drawing.Point Pick1 { get; set; }
+        public Point Ban3 { get; set; }
+
+        public Point Pick1 { get; set; }
 
         public int Dx { get; set; }
 

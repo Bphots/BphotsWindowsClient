@@ -1079,10 +1079,14 @@ namespace HotsBpHelper.Pages
                 HeroHeight = heroHeight,
                 Left = new SidePosition
                 {
-                    Ban1 = new Point((int) (0.45*height), (int) (0.016*height)),
+                    Ban1 = new Point((int) (0.53125 * height), (int) (0.016*height)),
                     Ban2 =
-                        new Point((int) (0.45*height),
-                            (int) (0.016*height) + (int) (0.023*height) + (int) (0.015*height)),
+                        new Point((int) (0.53125 * height),
+                            (int) (0.016*height) + (int) (0.023*height)),
+                    Ban3 =
+                        new Point((int)(0.53125 * height),
+                            (int)(0.016 * height) + (int)(0.046 * height)),
+
                     Pick1 = new Point((int) (0.195*height), (int) (0.132*height)),
                     Dx = (int) (0.0905*height),
                     Dy = (int) (0.1565*height),
@@ -1097,11 +1101,15 @@ namespace HotsBpHelper.Pages
                 },
                 Right = new SidePosition
                 {
-                    Ban1 = new Point((int) (width - 0.46*height), (int) (0.016*height)),
+                    Ban1 = new Point((int) (width - 0.54225 * height), (int) (0.016*height)),
                     Ban2 =
-                        new Point((int) (width - 0.46*height),
-                            (int) (0.016*height) + (int) (0.023*height) + (int) (0.015*height)),
-                    Pick1 = new Point((int) (width - 0.205*height), (int) (0.132*height)),
+                        new Point((int) (width - 0.54225 * height),
+                            (int) (0.016*height) + (int) (0.023*height)),
+                    Ban3 =
+                        new Point((int)(width - 0.54225 * height),
+                            (int)(0.016 * height) + (int)(0.046 * height)),
+
+                    Pick1 = new Point((int) (width - 0.215*height), (int) (0.132*height)),
                     Dx = (int) (-0.0905*height),
                     Dy = (int) (0.1565*height),
                     HeroPathPoints =
@@ -1141,10 +1149,12 @@ namespace HotsBpHelper.Pages
 
                 BanPositions = new List<Rectangle>()
                 {
-                    new Rectangle(RoundUp(0.2824074074074074 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
-                    new Rectangle(RoundUp(0.375 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
-                    new Rectangle(width - RoundUp(0.425 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
-                    new Rectangle(width - RoundUp(0.3324074074074074 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
+                    new Rectangle(RoundUp(0.26597222222222222222222222222222 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
+                    new Rectangle(RoundUp(0.35902777777777777777777777777778 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
+                    new Rectangle(RoundUp(0.45208333333333333333333333333334 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
+                    new Rectangle(width - RoundUp(0.49675925925925926666666666666667 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
+                    new Rectangle(width - RoundUp(0.40416666666666666666666666666667 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
+                    new Rectangle(width - RoundUp(0.31157407407407406666666666666667 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
                 }
             };
             

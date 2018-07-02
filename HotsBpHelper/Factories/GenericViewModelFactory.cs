@@ -37,36 +37,4 @@ namespace HotsBpHelper.Factories
             throw new NotSupportedException($"The type {typeof (T).Name} is not properly registered.");
         }
     }
-
-    #region Prefered solution, cannot be used due to stylet bug
-    /// <summary>
-    ///     Prefered generic factory, cannot be used due to stylet bug
-    /// </summary>
-    public interface IViewModelBaseFactory<T> where T : ViewModelBase
-    {
-        T CreateViewModel();
-    }
-
-    /// <summary>
-    ///     Prefered generic factory, cannot be used due to stylet bug
-    /// </summary>
-    public class GenericViewModelFactory
-    {
-        private readonly IContainer _ioc;
-
-        public GenericViewModelFactory(IContainer container)
-        {
-            _ioc = container;
-        }
-
-        public T GetViewModel<T>() where T : ViewModelBase
-        {
-            var factory = _ioc.Get(typeof (IViewModelBaseFactory<T>)) as IViewModelBaseFactory<T>;
-            if (factory == null)
-                throw new Exception($"The factory for type {typeof (T).Name} is not registered.");
-
-            return factory.CreateViewModel();
-        }
-    }
-    #endregion 
 }

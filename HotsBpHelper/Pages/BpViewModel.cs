@@ -39,14 +39,16 @@ namespace HotsBpHelper.Pages
         private readonly List<HeroSelectorViewModel> _cachedHeroSelectorViewModels = new List<HeroSelectorViewModel>();
         private readonly IEventAggregator _eventAggregator;
 
-        private static readonly List<int> BanSteps = new List<int> { 0, 1, 7, 8 };
+        private static readonly List<int> BanSteps = new List<int> { 0, 1, 2, 8, 9, 10 };
 
         private readonly Dictionary<int, string> _lastIds = new Dictionary<int, string>()
         {
             {0, "0"},
             {1, "0"},
-            {7, "0"},
+            {2, "0"},
             {8, "0"},
+            {9, "0"},
+            {10, "0"},
         };
 
         private readonly ViewModelFactory _viewModelFactory;
@@ -371,7 +373,7 @@ namespace HotsBpHelper.Pages
                     if (BpStatus.StepSelectedIndex.Count == _listBpSteps[BpStatus.CurrentStep].Count)
                     {
                         // 选够了,下一步
-                        if (BpStatus.CurrentStep < 9)
+                        if (BpStatus.CurrentStep < 11)
                         {
                             BpStatus.CurrentStep++;
                             ProcessStep();
@@ -441,43 +443,47 @@ namespace HotsBpHelper.Pages
             });
 
             // Position下标位置示意
-            //   0 1   7 8
-            // 2          9
-            // 3          10
-            // 4          11
-            // 5          12
-            // 6          13
+            //   0 1 2   8 9 10
+            // 3                11
+            // 4                12
+            // 5                13
+            // 6                14
+            // 7                15
 
             if (message.Side == BpStatus.Side.Left)
             {
-                _listBpSteps = new List<IList<int>> // BP总共10手
+                _listBpSteps = new List<IList<int>> // BP总共12手
                 {
                     new List<int> {0},
-                    new List<int> {7},
-                    new List<int> {2},
-                    new List<int> {9, 10}, // 倒序是为了让9获得输入焦点
-                    new List<int> {3, 4},
                     new List<int> {8},
                     new List<int> {1},
-                    new List<int> {11, 12},
-                    new List<int> {5, 6},
-                    new List<int> {13}
+                    new List<int> {9},
+                    new List<int> {3},
+                    new List<int> {11, 12}, // 倒序是为了让9获得输入焦点
+                    new List<int> {4, 5},
+                    new List<int> {10},
+                    new List<int> {2},
+                    new List<int> {13, 14},
+                    new List<int> {6, 7},
+                    new List<int> {15}
                 };
             }
             else
             {
-                _listBpSteps = new List<IList<int>> // BP总共10手
+                _listBpSteps = new List<IList<int>> // BP总共12手
                 {
-                    new List<int> {7},
+                    new List<int> {8},
                     new List<int> {0},
                     new List<int> {9},
-                    new List<int> {2, 3},
-                    new List<int> {10, 11},
                     new List<int> {1},
-                    new List<int> {8},
-                    new List<int> {4, 5},
+                    new List<int> {11},
+                    new List<int> {3, 4},
                     new List<int> {12, 13},
-                    new List<int> {6}
+                    new List<int> {2},
+                    new List<int> {10},
+                    new List<int> {5, 6},
+                    new List<int> {14, 15},
+                    new List<int> {7}
                 };
             }
 
@@ -556,14 +562,14 @@ namespace HotsBpHelper.Pages
             WindowManager.ShowWindow(_heroSelectorWindowViewModel);
             ((Window) _heroSelectorWindowViewModel.View).Owner = (Window) View;
 
-            for (var i = 0; i <= 13; ++i)
+            for (var i = 0; i <= 15; ++i)
             {
                 var vm = _viewModelFactory.CreateViewModel<HeroSelectorViewModel>();
                 _cachedHeroSelectorViewModels.Add(vm);
                 vm.Id = i;
                 vm.InitializeUnselect();
                 var position = _listPositions[i];
-                if (i < 7)
+                if (i < 8)
                 {
                     vm.SetLeftAndTop(position);
                 }
@@ -594,7 +600,7 @@ namespace HotsBpHelper.Pages
             if (!HeroSelectorViewModels.Any())
                 PopulateCachedHeroSelectorWindows();
 
-            if ((_listBpSteps[2].Contains(pointIndex) || _listBpSteps[7].Contains(pointIndex)) && name != null)
+            if ((_listBpSteps[4].Contains(pointIndex) || _listBpSteps[9].Contains(pointIndex)) && name != null)
                 PopulateBanSelector(pointIndex);
 
             var vm = HeroSelectorViewModels.First(v => v.Id == pointIndex);
@@ -609,10 +615,10 @@ namespace HotsBpHelper.Pages
             }
         }
 
-        public void ForceSecondBanProcess()
+        public void ForceBanProcess(int banSteps)
         {
-            var firstBanId = _listBpSteps[0].First();
-            var secondBanId = _listBpSteps[1].First();
+            var firstBanId = _listBpSteps[banSteps - 1].First();
+            var secondBanId = _listBpSteps[banSteps].First();
             if (!HeroSelectorViewModels.First(v => v.Id == secondBanId).InteractionVisible)
             {
                 if (HeroSelectorViewModels.First(v => v.Id == firstBanId).SelectedItemInfo == null)
@@ -622,25 +628,11 @@ namespace HotsBpHelper.Pages
                 }
             }
         }
-
-        private void ForceFourthBanProcess()
-        {
-            var firstBanId = _listBpSteps[5].First();
-            var secondBanId = _listBpSteps[6].First();
-            if (!HeroSelectorViewModels.First(v => v.Id == secondBanId).InteractionVisible)
-            {
-                if (HeroSelectorViewModels.First(v => v.Id == firstBanId).SelectedItemInfo == null)
-                {
-                    HeroSelectorViewModels.First(v => v.Id == firstBanId).Select(L("NO_CHOOSE"));
-                    HeroSelectorViewModels.First(v => v.Id == firstBanId).ConfirmSelection();
-                }
-            }
-        }
-
+        
         private void ForceFourthPickProcess()
         {
-            var secondBanId = _listBpSteps[6].First();
-            if (BpStatus.CurrentStep == 6)
+            var secondBanId = _listBpSteps[8].First();
+            if (BpStatus.CurrentStep == 8)
             {
                 if (HeroSelectorViewModels.First(v => v.Id == secondBanId).SelectedItemInfo == null)
                 {
@@ -652,8 +644,8 @@ namespace HotsBpHelper.Pages
 
         public void ForceFirstPickProcess()
         {
-            var secondBanId = _listBpSteps[1].First();
-            if (BpStatus.CurrentStep == 1)
+            var secondBanId = _listBpSteps[3].First();
+            if (BpStatus.CurrentStep == 3)
             {
                 if (HeroSelectorViewModels.First(v => v.Id == secondBanId).SelectedItemInfo == null)
                 {
@@ -665,8 +657,9 @@ namespace HotsBpHelper.Pages
 
         private void PopulateBanSelector(int pointIndex)
         {
-            var firstBanId = _listBpSteps[2].Contains(pointIndex) ? _listBpSteps[0].First() : _listBpSteps[5].First();
-            var secondBanId = _listBpSteps[2].Contains(pointIndex) ? _listBpSteps[1].First() : _listBpSteps[6].First();
+            var firstBanId = _listBpSteps[4].Contains(pointIndex) ? _listBpSteps[0].First() : _listBpSteps[5].First();
+            var secondBanId = _listBpSteps[4].Contains(pointIndex) ? _listBpSteps[1].First() : _listBpSteps[6].First();
+
             if (!HeroSelectorViewModels.First(v => v.Id == firstBanId).InteractionVisible)
             {
                 var vm = HeroSelectorViewModels.First(v => v.Id == firstBanId);
@@ -687,8 +680,34 @@ namespace HotsBpHelper.Pages
             {
                 HeroSelectorViewModels.First(v => v.Id == secondBanId).Select(L("NO_CHOOSE"));
             }
+            if (_listBpSteps[4].Contains(pointIndex))
+            {
+                var thirdBanId = _listBpSteps[2].First();
+                var fourthBanId = _listBpSteps[3].First();
+                if (!HeroSelectorViewModels.First(v => v.Id == thirdBanId).InteractionVisible)
+                {
+                    var vm = HeroSelectorViewModels.First(v => v.Id == thirdBanId);
+                    vm.InteractionVisible = true;
+                    vm.Select(L("NO_CHOOSE"));
+                }
+                else if (HeroSelectorViewModels.First(v => v.Id == thirdBanId).SelectedItemInfo == null)
+                {
+                    HeroSelectorViewModels.First(v => v.Id == thirdBanId).Select(L("NO_CHOOSE"));
+                }
+                if (!HeroSelectorViewModels.First(v => v.Id == fourthBanId).InteractionVisible)
+                {
+                    var vm = HeroSelectorViewModels.First(v => v.Id == fourthBanId);
+                    vm.InteractionVisible = true;
+                    vm.Select(L("NO_CHOOSE"));
+                }
+                else if (HeroSelectorViewModels.First(v => v.Id == fourthBanId).SelectedItemInfo == null)
+                {
+                    HeroSelectorViewModels.First(v => v.Id == fourthBanId).Select(L("NO_CHOOSE"));
+                }
+            }
 
-            BpStatus.CurrentStep = _listBpSteps[2].Contains(pointIndex) ? 2 : 7;
+
+            BpStatus.CurrentStep = _listBpSteps[4].Contains(pointIndex) ? 4 : 9;
         }
 
 
@@ -697,12 +716,13 @@ namespace HotsBpHelper.Pages
             SidePosition sidePosition;
             int x, y;
             int dx, dy;
-            _listPositions = new List<Point>(14); // BP总共14个选择
+            _listPositions = new List<Point>(16); // BP总共14个选择
 
             // Left
             sidePosition = App.MyPosition.Left;
             _listPositions.Add(sidePosition.Ban1);
             _listPositions.Add(sidePosition.Ban2);
+            _listPositions.Add(sidePosition.Ban3);
             x = sidePosition.Pick1.X;
             y = sidePosition.Pick1.Y;
             dx = sidePosition.Dx;
@@ -718,6 +738,7 @@ namespace HotsBpHelper.Pages
             sidePosition = App.MyPosition.Right;
             _listPositions.Add(sidePosition.Ban1);
             _listPositions.Add(sidePosition.Ban2);
+            _listPositions.Add(sidePosition.Ban3);
             x = sidePosition.Pick1.X;
             y = sidePosition.Pick1.Y;
             dx = sidePosition.Dx;
@@ -773,8 +794,10 @@ namespace HotsBpHelper.Pages
         {
             _lastIds[0] = "0";
             _lastIds[1] = "0";
-            _lastIds[7] = "0";
+            _lastIds[2] = "0";
             _lastIds[8] = "0";
+            _lastIds[9] = "0";
+            _lastIds[10] = "0";
 
             InvokeScript("init", "0", App.CustomConfigurationSettings.LanguageForBphots, App.CustomConfigurationSettings.LanguageForMessage, App.CustomConfigurationSettings.LanguageForGameClient);
         }
@@ -819,7 +842,7 @@ namespace HotsBpHelper.Pages
 
             try
             {
-                if (stepToProcess[0] <= 6 && OcrUtil.IsInitialized)
+                if (stepToProcess[0] <= 8 && OcrUtil.IsInitialized)
                     await OcrUtil.ScanLabelAsync(stepToProcess, this, OcrUtil.ScanSide.Left, cancellationToken).ConfigureAwait(false);
                 else
                     await OcrUtil.ScanLabelAsync(stepToProcess, this, OcrUtil.ScanSide.Right, cancellationToken).ConfigureAwait(false);
@@ -834,7 +857,7 @@ namespace HotsBpHelper.Pages
                         ProcessingThreads[i] = false;
                     }
 
-                    if (stepToProcess[0] <= 6 && OcrUtil.IsInitialized)
+                    if (stepToProcess[0] <= 8 && OcrUtil.IsInitialized)
                         await OcrUtil.ScanLabelAsync(stepToProcess, this, OcrUtil.ScanSide.Left, cancellationToken).ConfigureAwait(false);
                     else
                         await OcrUtil.ScanLabelAsync(stepToProcess, this, OcrUtil.ScanSide.Right, cancellationToken).ConfigureAwait(false);
@@ -873,22 +896,23 @@ namespace HotsBpHelper.Pages
                 ShowHeroSelector(i);
             }
 
-            if (!(BpStatus.CurrentStep == 0 || BpStatus.CurrentStep == 1 || BpStatus.CurrentStep == 5 ||
-                  BpStatus.CurrentStep == 6))
+            if (!(BpStatus.CurrentStep == 0 || BpStatus.CurrentStep == 1 || 
+                BpStatus.CurrentStep == 2 || BpStatus.CurrentStep == 3 || 
+                BpStatus.CurrentStep == 7 || BpStatus.CurrentStep == 8))
             {
                 Task.Run(() => OcrAsync(_listBpSteps[BpStatus.CurrentStep], _scanningCancellationToken.Token))
                     .ConfigureAwait(false);
                 return;
             }
             
-            if ((BpStatus.CurrentStep == 0 || BpStatus.CurrentStep == 1) && !_isFirstAndSecondBanProcessing)
+            if ((BpStatus.CurrentStep == 0 || BpStatus.CurrentStep == 1 || BpStatus.CurrentStep == 2 || BpStatus.CurrentStep == 3) && !_isFirstAndSecondBanProcessing)
             {
-                Task.Run(ProcessFirstAndSecondBan).ConfigureAwait(false);
+                Task.Run(ProcessFirstToFourthBan).ConfigureAwait(false);
                 return;
             }
-            if ((BpStatus.CurrentStep == 5 || BpStatus.CurrentStep == 6) && !_isThirdAndFourthBanProcessing)
+            if ((BpStatus.CurrentStep == 7 || BpStatus.CurrentStep == 8) && !_isThirdAndFourthBanProcessing)
             {
-                Task.Run(ProcessThirdAndFourthBan).ConfigureAwait(false);
+                Task.Run(ProcessFifthAndSixthBan).ConfigureAwait(false);
             }
         }
 
@@ -901,17 +925,17 @@ namespace HotsBpHelper.Pages
             }
         }
 
-        private async Task ProcessThirdAndFourthBan()
+        private async Task ProcessFifthAndSixthBan()
         {
             _isThirdAndFourthBanProcessing = true;
             var finder = new Finder();
             var stageInfo = new StageInfo();
-            await AwaitStageAsync(stageInfo, finder, 6);
+            await AwaitStageAsync(stageInfo, finder, 8);
 
             if (!_scanningCancellationToken.IsCancellationRequested)
-                Execute.OnUIThread(ForceFourthBanProcess);
+                Execute.OnUIThread(() => ForceBanProcess(8));
 
-            await AwaitStageAsync(stageInfo, finder, 7);
+            await AwaitStageAsync(stageInfo, finder, 9);
             if (!_scanningCancellationToken.IsCancellationRequested)
                 Execute.OnUIThread(ForceFourthPickProcess);
 
@@ -1106,7 +1130,7 @@ namespace HotsBpHelper.Pages
             Show();
         }
 
-        private async Task ProcessFirstAndSecondBan()
+        private async Task ProcessFirstToFourthBan()
         {
             _isFirstAndSecondBanProcessing = true;
             var finder = new Finder();
@@ -1114,9 +1138,19 @@ namespace HotsBpHelper.Pages
             await AwaitStageAsync(stageInfo, finder, 1);
 
             if (!_scanningCancellationToken.IsCancellationRequested)
-                Execute.OnUIThread(ForceSecondBanProcess);
+                Execute.OnUIThread(() => ForceBanProcess(1));
             
             await AwaitStageAsync(stageInfo, finder, 2);
+
+            if (!_scanningCancellationToken.IsCancellationRequested)
+                Execute.OnUIThread(() => ForceBanProcess(2));
+
+            await AwaitStageAsync(stageInfo, finder, 3);
+
+            if (!_scanningCancellationToken.IsCancellationRequested)
+                Execute.OnUIThread(() => ForceBanProcess(3));
+
+            await AwaitStageAsync(stageInfo, finder, 4);
 
             if (!_scanningCancellationToken.IsCancellationRequested)
                 Execute.OnUIThread(ForceFirstPickProcess);

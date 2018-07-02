@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows;
 using HotsBpHelper.Utils;
 using ImageProcessor.Extensions;
+using ToastNotifications.Lifetime;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
 
@@ -13,6 +14,29 @@ namespace HotsBpHelper.HeroFinder
 {
     public static class StageFinder
     {
+        private static List<string> PossibleSequences = new List<string>
+        {
+            @"00044400444",
+            @"00004400444",
+            @"00004440444",
+            @"00004440044",
+        };
+
+        private static List<string> GetSecondaryPossibleSequences(string sequence)
+        {
+            var secondaryPossibleSequences = new List<string>();
+            for (int i = 0; i < sequence.Length; ++i)
+            {
+                if (sequence[i] != '4')
+                    continue;
+
+                var secondarySb = new StringBuilder(sequence);
+                secondarySb[i] = '3';
+                secondaryPossibleSequences.Add(secondarySb.ToString());
+            }
+            return secondaryPossibleSequences;
+        }
+
         public static StageInfo ProcessStageInfo(Bitmap screenshotBitmap)
         {
             var circleBitmaps = new List<Bitmap>();
@@ -22,39 +46,46 @@ namespace HotsBpHelper.HeroFinder
                 InitializeCircles(circleBitmaps, circles, screenshotBitmap);
                 var sb = new StringBuilder();
                 
-                for (var i = 0; i < 18; i++)
+                for (var i = 0; i < 22; i++)
                 {
                     var bitmap = circleBitmaps[i];
                     var samples = GetCentrePixelSamples(bitmap);
-                    if (i == 5)
+                    if (i == 13)
                         Console.Write(true);
                     var regular = IsColorConsistent(samples);
                     var matchingBorders = MatchingBorders(bitmap);
-                    sb.Append(regular ? matchingBorders.ToString() : "0");
+                    sb.Append(regular ? matchingBorders.ToString() : (matchingBorders >= 3 ? "0" : "X"));
                 }
 
                 var tempCheckString = sb.ToString();
-                var listString = @"444444444";
-                var beginInex = tempCheckString.IndexOf(listString, StringComparison.Ordinal);
+                var beginInex = -1;
+                foreach (string listString in PossibleSequences)
+                {
+                    beginInex = tempCheckString.IndexOf(listString, StringComparison.Ordinal);
+                    if (beginInex != -1)
+                        break;
+
+                }
+
                 if (beginInex == -1)
                 {
-                    for (int i = 0; i < 10; ++i)
+                    foreach (string listString in PossibleSequences.SelectMany(GetSecondaryPossibleSequences))
                     {
-                        var text = RepeatString("4", i) + 3 + RepeatString("4", 8 - i);
-                        beginInex = tempCheckString.IndexOf(text, StringComparison.Ordinal);
+                        beginInex = tempCheckString.IndexOf(listString, StringComparison.Ordinal);
                         if (beginInex != -1)
                             break;
                     }
-                    if (beginInex == -1)
-                        return new StageInfo { Step = -1, IsFirstPick = false, Error = tempCheckString };
                 }
-                
-                var lastBitmap = circleBitmaps[beginInex + 8];
+
+                if (beginInex == -1)
+                    return new StageInfo { Step = -1, IsFirstPick = false, Error = tempCheckString };
+
+                var lastBitmap = circleBitmaps[beginInex + 10];
                 var circle9R = lastBitmap.GetPixel(lastBitmap.Width / 2, lastBitmap.Height / 2).R;
 
-                var step = 9 - beginInex;
+                var step = 11 - beginInex;
                 var isFirstPick = circle9R > 45;
-                if (step == 9)
+                if (step == 11)
                     return new StageInfo { Step = step, IsFirstPick = !isFirstPick, Error = tempCheckString };
 
                 return new StageInfo {Step = step, IsFirstPick = isFirstPick, Error = tempCheckString };
@@ -227,11 +258,11 @@ namespace HotsBpHelper.HeroFinder
             int height = screenshotBitmap.Height;
             var imageUtil = new ImageUtils();
             var listCirclePosition = new List<PositionInfo>();
-            for (var i = 9; i >= 1; --i)
+            for (var i = 11; i >= 1; --i)
             {
                 listCirclePosition.Add(GetLeftCirclePositionInfo(i, width, height));
             }
-            for (var i = 1; i <= 9; ++i)
+            for (var i = 1; i <= 11; ++i)
             {
                 listCirclePosition.Add(GetRightCirclePositionInfo(i, width, height));
             }
@@ -239,6 +270,7 @@ namespace HotsBpHelper.HeroFinder
             circleBitmaps.AddRange(
                 listCirclePosition.Select(
                     positionInfo => imageUtil.CaptureArea(screenshotBitmap, positionInfo.Rectangle, positionInfo.ClipPoints)));
+
             //circleBitmaps.AddRange(
             // listCirclePosition.Select(
             //     positionInfo => screenshotBitmap.CropAtRect(positionInfo.Rectangle)));
@@ -253,8 +285,8 @@ namespace HotsBpHelper.HeroFinder
                     new Rectangle(
                         new Point(
                             (int)
-                                Math.Round(0.5* width + 0.0604* height +
-                                 (index - 1)*0.021* height, 0),
+                                Math.Round(0.5* width + 0.05903 * height +
+                                 (index - 1)* 0.01909722222222222222222222222222 * height, 0),
                             (int)Math.Round(0.08025* height, 0)),
                         new Size((int)Math.Round(0.0174* height, 0), (int)Math.Round(0.0174* height, 0))),
                 ClipPoints = new Point[0]
@@ -270,8 +302,8 @@ namespace HotsBpHelper.HeroFinder
                     new Rectangle(
                         new Point(
                             (int)
-                                Math.Round(0.5* width - 0.0604* height -
-                                 (index - 1)*0.021* height - 0.0174* height, 0),
+                                Math.Round(0.5* width - 0.0590 * height -
+                                 (index - 1)* 0.01909722222222222222222222222222 * height - 0.0174* height, 0),
                             (int)Math.Round(0.08025* height, 0)),
                         new Size((int)Math.Round(0.0174* height, 0), (int)Math.Round(0.0174* height, 0))),
                 ClipPoints = new Point[0]
