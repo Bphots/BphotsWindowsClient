@@ -227,14 +227,14 @@ namespace HotsBpHelper.Pages
         {
             get
             {
-                var HotsweekPrefix = L("HotsweekUrl") + " - ";
+                var hotsweekPrefix = L("HotsweekUrl") + " - ";
                 DateTime dateTimeNow = DateTime.Now;
                 var validDataTime = Const.HotsweekAcceptTime;
                 while (validDataTime < dateTimeNow)
-                    validDataTime.AddDays(7);
+                    validDataTime = validDataTime.AddDays(7);
 
                 string dateStr = validDataTime.ToLongDateString();
-                return HotsweekPrefix + dateStr;
+                return hotsweekPrefix + dateStr;
             }
         }
 
