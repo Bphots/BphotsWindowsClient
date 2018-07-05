@@ -54,7 +54,7 @@ namespace HotsBpHelper
 
         public static bool HasServiceAsked { get; set; }
 
-        public static bool HasHotsWeekAsked { get; set; }
+        public static bool HasHotsweekAsked { get; set; }
 
         public static List<string> LobbyMaps { get; set; }
 

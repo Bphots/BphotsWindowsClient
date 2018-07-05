@@ -342,10 +342,10 @@
   <data name="ServiceRestartQuestion" xml:space="preserve">
     <value>Your installation folder has been changed, would you like to re-install the Auto-Start service to make it compatible with your new folder?</value>
   </data>
-  <data name="HotsWeekUrl" xml:space="preserve">
+  <data name="HotsweekUrl" xml:space="preserve">
     <value>HotS Weekly</value>
   </data>
-  <data name="HotsWeekQuestion" xml:space="preserve">
-    <value>Would like to enable the new feature HotSWeek from HotsBpHelper 3.0?</value>
+  <data name="HotsweekQuestion" xml:space="preserve">
+    <value>Would like to enable the new feature Hotsweek from HotsBpHelper 3.0?</value>
   </data>
 </root>

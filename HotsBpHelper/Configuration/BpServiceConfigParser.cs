@@ -11,7 +11,7 @@ namespace HotsBpHelper.Configuration
             Path.GetFullPath(@".\Service\Variables.ini");
         
         private const string LoadedKey = "BpServiceQuestionLoaded";
-        private const string HotsWeekAskedKey = "BpWeekQuestionAsked";
+        private const string HotsweekAskedKey = "BpWeekQuestionAsked";
 
         public BpServiceConfigParser() : base(BpServiceConfigPath)
         {
@@ -24,9 +24,9 @@ namespace HotsBpHelper.Configuration
             return !string.IsNullOrEmpty(isLoaded);
         }
 
-        public bool GetHotsWeekAsked()
+        public bool GetHotsweekAsked()
         {
-            var asked = GetConfigurationValue(HotsWeekAskedKey);
+            var asked = GetConfigurationValue(HotsweekAskedKey);
 
             return !string.IsNullOrEmpty(asked);
         }
@@ -36,8 +36,8 @@ namespace HotsBpHelper.Configuration
             var parser = new BpServiceConfigParser();
             if (!App.HasServiceAsked)
                 App.HasServiceAsked = parser.GetLoaded();
-            if (!App.HasHotsWeekAsked)
-                App.HasHotsWeekAsked = parser.GetHotsWeekAsked();
+            if (!App.HasHotsweekAsked)
+                App.HasHotsweekAsked = parser.GetHotsweekAsked();
         }
 
         public static void WriteConfig()
@@ -46,8 +46,8 @@ namespace HotsBpHelper.Configuration
 
             if (App.HasServiceAsked)
                parser.AllValues[LoadedKey] = "1";
-            if (App.HasHotsWeekAsked)
-               parser.AllValues[HotsWeekAskedKey] = "1";
+            if (App.HasHotsweekAsked)
+               parser.AllValues[HotsweekAskedKey] = "1";
 
             var sb = new StringBuilder();
             foreach (var tuple in parser.AllValues)
