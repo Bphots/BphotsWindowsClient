@@ -14,29 +14,24 @@ namespace HotsBpHelper.HeroFinder
 {
     public static class StageFinder
     {
-        private static List<string> PossibleSequences = new List<string>
+        private static int GetMaxIndex(string sequence)
         {
-            @"00044400444",
-            @"00004400444",
-            @"00004440444",
-            @"00004440044",
-        };
-
-        private static List<string> GetSecondaryPossibleSequences(string sequence)
-        {
-            var secondaryPossibleSequences = new List<string>();
-            for (int i = 0; i < sequence.Length; ++i)
+            var intList = sequence.Select(c => int.Parse(c.ToString())).ToList();
+            var maxIndex = -1;
+            var maxValue = 45;
+            for (int i = 0; i < 12; ++i)
             {
-                if (sequence[i] != '4')
-                    continue;
-
-                var secondarySb = new StringBuilder(sequence);
-                secondarySb[i] = '3';
-                secondaryPossibleSequences.Add(secondarySb.ToString());
+                var sum = intList.Skip(i).Take(11).Sum();
+                if (sum > maxValue)
+                {
+                    maxValue = sum;
+                    maxIndex = i;
+                }
             }
-            return secondaryPossibleSequences;
-        }
 
+            return maxIndex;
+        }
+        
         public static StageInfo ProcessStageInfo(Bitmap screenshotBitmap)
         {
             var circleBitmaps = new List<Bitmap>();
@@ -50,32 +45,30 @@ namespace HotsBpHelper.HeroFinder
                 {
                     var bitmap = circleBitmaps[i];
                     var samples = GetCentrePixelSamples(bitmap);
-                    if (i == 13)
-                        Console.Write(true);
-                    var regular = IsColorConsistent(samples);
+                    var regular = IsColorConsistent(samples, 25);
                     var matchingBorders = MatchingBorders(bitmap);
-                    sb.Append(regular ? matchingBorders.ToString() : (matchingBorders >= 3 ? "0" : "X"));
+
+                    var score = 0;
+                    if (regular)
+                    {
+                        if (matchingBorders >= 3)
+                            score = matchingBorders + 1;
+                        else
+                            score = 0;
+                    }
+                    else
+                    {
+                        if (matchingBorders >= 3)
+                            score = matchingBorders;
+                        else
+                            score = 0;
+                    }
+
+                    sb.Append(score.ToString());
                 }
 
                 var tempCheckString = sb.ToString();
-                var beginInex = -1;
-                foreach (string listString in PossibleSequences)
-                {
-                    beginInex = tempCheckString.IndexOf(listString, StringComparison.Ordinal);
-                    if (beginInex != -1)
-                        break;
-
-                }
-
-                if (beginInex == -1)
-                {
-                    foreach (string listString in PossibleSequences.SelectMany(GetSecondaryPossibleSequences))
-                    {
-                        beginInex = tempCheckString.IndexOf(listString, StringComparison.Ordinal);
-                        if (beginInex != -1)
-                            break;
-                    }
-                }
+                var beginInex = GetMaxIndex(tempCheckString);
 
                 if (beginInex == -1)
                     return new StageInfo { Step = -1, IsFirstPick = false, Error = tempCheckString };
@@ -101,17 +94,7 @@ namespace HotsBpHelper.HeroFinder
             }
             return new StageInfo {Step = -1, IsFirstPick = false};
         }
-
-        private static string RepeatString(string text, int count)
-        {
-            var sb = new StringBuilder();
-            for (int i = 0; i < count; ++i)
-            {
-                sb.Append(text);
-            }
-            return sb.ToString();
-        }
-
+        
         private static List<Color> GetCentrePixelSamples(Bitmap bitmap)
         {
             List<Color> colors = new List<Color>();
@@ -229,18 +212,23 @@ namespace HotsBpHelper.HeroFinder
             return matchingBorders;
         }
 
-        private static bool IsColorConsistent(List<Color> colors )
+        private static bool IsColorConsistent(List<Color> colors, int tolarance)
         {
             if (!colors.Any())
                 return false;
 
             var sampleColor = colors[colors.Count / 2];
+            int faultCount = 0;
             foreach (var color in colors)
             {
-                if (Math.Abs(color.R - sampleColor.R) + Math.Abs(color.G - sampleColor.G) +
-                        Math.Abs(color.B - sampleColor.B) > 25)
-                    return false;
+                if (Math.Abs(color.R - sampleColor.R) + Math.Abs(color.G - sampleColor.G) + Math.Abs(color.B - sampleColor.B) > tolarance)
+                {
+                    faultCount++;
+                    if (faultCount > 0)
+                        return false;
+                }
             }
+            
             return true;
         }
         
@@ -266,15 +254,10 @@ namespace HotsBpHelper.HeroFinder
             {
                 listCirclePosition.Add(GetRightCirclePositionInfo(i, width, height));
             }
-
+            
             circleBitmaps.AddRange(
                 listCirclePosition.Select(
                     positionInfo => imageUtil.CaptureArea(screenshotBitmap, positionInfo.Rectangle, positionInfo.ClipPoints)));
-
-            //circleBitmaps.AddRange(
-            // listCirclePosition.Select(
-            //     positionInfo => screenshotBitmap.CropAtRect(positionInfo.Rectangle)));
-            //circles.AddRange(circleBitmaps.Select(circleBitmap => new FastBitmap(circleBitmap)));
         }
 
         private static PositionInfo GetRightCirclePositionInfo(int index, int width, int height)
