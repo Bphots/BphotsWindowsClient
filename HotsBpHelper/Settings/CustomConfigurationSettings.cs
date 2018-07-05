@@ -4,7 +4,7 @@ namespace HotsBpHelper.Settings
 {
     public class CustomConfigurationSettings
     {
-        public string HotsWeekPlayerId { get; set; }
+        public string HotsweekPlayerId { get; set; }
 
         public bool AutoShowHideHelper { get; set; }
 

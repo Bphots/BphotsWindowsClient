@@ -101,7 +101,7 @@ namespace HotsBpHelper
                     App.UploadMinimumAcceptableTime = DateTime.Parse(dateString).ToUniversalTime();
                 }
                 else
-                    App.UploadMinimumAcceptableTime = Const.HotsWeekAcceptTime;
+                    App.UploadMinimumAcceptableTime = Const.HotsweekAcceptTime;
             }
             catch
             {

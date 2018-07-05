@@ -24,7 +24,7 @@ namespace HotsBpHelper.Configuration
         private const string MMRAutoCloseTimeKey = @"MMRAutoCloseTime";
         private const string UploadBanSampleKey = @"UploadBanSample";
         private const string PlayerTagKey = @"PlayerTag";
-        private const string HotsWeekPlayerIdKey = @"HotsWeekPlayerId";
+        private const string HotsweekPlayerIdKey = @"HotsweekPlayerId";
 
         private static readonly string BpHelperConfigPath =
             Path.GetFullPath(@".\config.ini");
@@ -50,10 +50,10 @@ namespace HotsBpHelper.Configuration
             return playerTags.ToList();
         }
 
-        public string GetHotsWeekPlayerId()
+        public string GetHotsweekPlayerId()
         {
-            var hotsWeekPlayerIdString = GetConfigurationValue(HotsWeekPlayerIdKey);
-            return hotsWeekPlayerIdString;
+            var HotsweekPlayerIdString = GetConfigurationValue(HotsweekPlayerIdKey);
+            return HotsweekPlayerIdString;
         }
 
         public bool GetUploadBanSample()
@@ -211,7 +211,7 @@ namespace HotsBpHelper.Configuration
             customConfigurationSettings.UploadStrategy = parser.GeUploadStrategy();
             customConfigurationSettings.MMRAutoCloseTime = parser.GetMMRAutoCloseTime();
             customConfigurationSettings.PlayerTags = parser.GetPlayerTags();
-            customConfigurationSettings.HotsWeekPlayerId = parser.GetHotsWeekPlayerId();
+            customConfigurationSettings.HotsweekPlayerId = parser.GetHotsweekPlayerId();
 
             customConfigurationSettings.LanguageForBphots = parser.GetLanguageForBphots();
             App.Language = customConfigurationSettings.LanguageForBphots;
@@ -273,8 +273,8 @@ namespace HotsBpHelper.Configuration
                 sb.AppendLine(WriteConfigurationValue(LanguageForMessageKey, customConfigurationSettings.LanguageForMessage));
                 sb.AppendLine(WriteConfigurationValue(PlayerTagKey, 
                     string.Join("|", customConfigurationSettings.PlayerTags)));
-                sb.AppendLine(WriteConfigurationValue(HotsWeekPlayerIdKey,
-                    customConfigurationSettings.HotsWeekPlayerId));
+                sb.AppendLine(WriteConfigurationValue(HotsweekPlayerIdKey,
+                    customConfigurationSettings.HotsweekPlayerId));
 
                 var languageFromGame = GetLanguageFromGame();
                 if (string.IsNullOrEmpty(languageFromGame))

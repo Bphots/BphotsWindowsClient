@@ -16,7 +16,7 @@ namespace HotsBpHelper.Pages
         Configure,
         BigData,
         About,
-        HotsWeek
+        Hotsweek
     }
 
     public class ManagerViewModel : ViewModelBase
@@ -52,8 +52,8 @@ namespace HotsBpHelper.Pages
                 ShowReplays(false);
             if (s == "About")
                 ShowAbout(false);
-            if (s == "HotSWeek")
-                ShowHotsWeek(false);
+            if (s == "Hotsweek")
+                ShowHotsweek(false);
         }
 
         private void OnConfigurationSaved(object sender, EventArgs eventArgs)
@@ -131,19 +131,19 @@ namespace HotsBpHelper.Pages
             OnTabChanged();
         }
 
-        public void ShowHotsWeek(bool invokeWeb = true)
+        public void ShowHotsweek(bool invokeWeb = true)
         {
-            SettingsTab = SettingsTab.HotsWeek;
+            SettingsTab = SettingsTab.Hotsweek;
             if (invokeWeb)
                 _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
                 {
                     ScriptName = "setTab",
-                    Args = new[] { "HotsWeek" }
+                    Args = new[] { "Hotsweek" }
                 }, "ManagerChannel");
 
-            if (!PopulatedTabs.Contains(SettingsTab.HotsWeek))
+            if (!PopulatedTabs.Contains(SettingsTab.Hotsweek))
             {
-                PopulateHotsWeek();
+                PopulateHotsweek();
             }
 
             OnTabChanged();
@@ -159,14 +159,14 @@ namespace HotsBpHelper.Pages
             PopulatedTabs.Add(SettingsTab.About);
         }
 
-        public void PopulateHotsWeek()
+        public void PopulateHotsweek()
         {
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
-                ScriptName = "populateHotsWeek",
-                Args = new[] { App.CustomConfigurationSettings.HotsWeekPlayerId, App.CustomConfigurationSettings.LanguageForBphots }
+                ScriptName = "populateHotsweek",
+                Args = new[] { App.CustomConfigurationSettings.HotsweekPlayerId, App.CustomConfigurationSettings.LanguageForBphots }
             }, "ManagerChannel");
-            PopulatedTabs.Add(SettingsTab.HotsWeek);
+            PopulatedTabs.Add(SettingsTab.Hotsweek);
         }
 
         private void PopulateUploadManager()
