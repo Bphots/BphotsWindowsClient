@@ -51,8 +51,8 @@ namespace HotsBpHelper.Configuration
 
         public string GetHotsweekPlayerId()
         {
-            var HotsweekPlayerIdString = GetConfigurationValue(HotsweekPlayerIdKey);
-            return HotsweekPlayerIdString;
+            var hotsweekPlayerIdString = GetConfigurationValue(HotsweekPlayerIdKey);
+            return hotsweekPlayerIdString;
         }
 
         public bool GetUploadBanSample()
