@@ -227,14 +227,14 @@ namespace HotsBpHelper.Pages
         {
             get
             {
-                var hotsweekPrefix = L("HotsweekUrl") + " - ";
+                var hotsWeekPrefix = L("HotsweekUrl") + " - ";
                 DateTime dateTimeNow = DateTime.Now;
                 var validDataTime = Const.HotsweekAcceptTime;
                 while (validDataTime < dateTimeNow)
-                    validDataTime = validDataTime.AddDays(7);
+                    validDataTime.AddDays(7);
 
                 string dateStr = validDataTime.ToLongDateString();
-                return hotsweekPrefix + dateStr;
+                return hotsWeekPrefix + dateStr;
             }
         }
 
@@ -1079,13 +1079,13 @@ namespace HotsBpHelper.Pages
                 HeroHeight = heroHeight,
                 Left = new SidePosition
                 {
-                    Ban1 = new Point((int) (0.53125 * height), (int) (0.016*height)),
+                    Ban1 = new Point((int) (0.53125 * height), (int) (0.010*height)),
                     Ban2 =
                         new Point((int) (0.53125 * height),
-                            (int) (0.016*height) + (int) (0.023*height)),
+                            (int) (0.010*height) + (int) (0.025*height)),
                     Ban3 =
                         new Point((int)(0.53125 * height),
-                            (int)(0.016 * height) + (int)(0.046 * height)),
+                            (int)(0.010 * height) + (int)(0.050 * height)),
 
                     Pick1 = new Point((int) (0.195*height), (int) (0.132*height)),
                     Dx = (int) (0.0905*height),
@@ -1101,15 +1101,15 @@ namespace HotsBpHelper.Pages
                 },
                 Right = new SidePosition
                 {
-                    Ban1 = new Point((int) (width - 0.54225 * height), (int) (0.016*height)),
+                    Ban1 = new Point((int) (width - 0.54225 * height), (int) (0.010*height)),
                     Ban2 =
                         new Point((int) (width - 0.54225 * height),
-                            (int) (0.016*height) + (int) (0.023*height)),
+                            (int) (0.010*height) + (int) (0.025*height)),
                     Ban3 =
                         new Point((int)(width - 0.54225 * height),
-                            (int)(0.016 * height) + (int)(0.046 * height)),
+                            (int)(0.010 * height) + (int)(0.050 * height)),
 
-                    Pick1 = new Point((int) (width - 0.215*height), (int) (0.132*height)),
+                    Pick1 = new Point((int) (width - 0.235*height), (int) (0.132*height)),
                     Dx = (int) (-0.0905*height),
                     Dy = (int) (0.1565*height),
                     HeroPathPoints =
