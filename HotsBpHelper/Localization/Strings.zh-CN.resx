@@ -348,10 +348,10 @@
   <data name="ServiceRestartQuestion" xml:space="preserve">
     <value>检测到安装目录已经更改，是否重新注册服务以兼容您的新目录？</value>
   </data>
-  <data name="HotsWeekUrl" xml:space="preserve">
+  <data name="HotsweekUrl" xml:space="preserve">
     <value>背锅周报</value>
   </data>
-  <data name="HotsWeekQuestion" xml:space="preserve">
+  <data name="HotsweekQuestion" xml:space="preserve">
     <value>是否立刻体验背锅助手3.0的新功能——背锅周报？</value>
   </data>
 </root>

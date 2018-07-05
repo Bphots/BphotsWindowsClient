@@ -26,7 +26,7 @@ namespace HotsBpHelper.Uploader
                 var status = GetPreStatus(replay, parseResult);
 
                 if (status != null) {
-                    file.HotsWeekUploadStatus = file.HotsApiUploadStatus = status.Value;
+                    file.HotsweekUploadStatus = file.HotsApiUploadStatus = status.Value;
                 }
 
                 if (parseResult != DataParser.ReplayParseResult.Success) {

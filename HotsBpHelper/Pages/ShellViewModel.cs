@@ -223,18 +223,18 @@ namespace HotsBpHelper.Pages
             }
         }
 
-        public string HotsWeekEntry
+        public string HotsweekEntry
         {
             get
             {
-                var hotsWeekPrefix = L("HotsWeekUrl") + " - ";
+                var HotsweekPrefix = L("HotsweekUrl") + " - ";
                 DateTime dateTimeNow = DateTime.Now;
-                var validDataTime = Const.HotsWeekAcceptTime;
+                var validDataTime = Const.HotsweekAcceptTime;
                 while (validDataTime < dateTimeNow)
                     validDataTime.AddDays(7);
 
                 string dateStr = validDataTime.ToLongDateString();
-                return hotsWeekPrefix + dateStr;
+                return HotsweekPrefix + dateStr;
             }
         }
 
@@ -468,7 +468,7 @@ namespace HotsBpHelper.Pages
             }
 
             BpServiceConfigParser.PopulateConfigurationSettings();
-            bool launchHotsWeek = false;
+            bool launchHotsweek = false;
             if (!App.HasServiceAsked)
             {
                 if (ServiceNotRunning)
@@ -486,20 +486,20 @@ namespace HotsBpHelper.Pages
                         ServiceRestart();
                 }
             }
-            else if (!App.HasHotsWeekAsked)
+            else if (!App.HasHotsweekAsked)
             {
-                if (TopMostMessageBox.Show(L(@"HotsWeekQuestion"),
+                if (TopMostMessageBox.Show(L(@"HotsweekQuestion"),
                     @"Question",
                     MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    launchHotsWeek = true;
+                    launchHotsweek = true;
                     App.CustomConfigurationSettings.AutoUploadReplayToHotsweek = true;
                     App.NextConfigurationSettings.AutoUploadReplayToHotsweek = true;
                 }
             }
 
             App.HasServiceAsked = true;
-            App.HasHotsWeekAsked = true;
+            App.HasHotsweekAsked = true;
             BpServiceConfigParser.WriteConfig();
 
             AutoDetect = App.CustomConfigurationSettings.AutoDetectHeroAndMap && CanOcr && _bpViewModel.OcrAvailable && App.AppSetting.Position.Height > Const.BestExpericenResolutionHeight && isWindowlessMax;
@@ -524,8 +524,8 @@ namespace HotsBpHelper.Pages
             WebCallbackListener.StartServiceRequested += WebCallbackListenerOnStartServiceRequested;
             WebCallbackListener.StopServiceRequested += WebCallbackListenerOnStopServiceRequested;
 
-            if (launchHotsWeek)
-                ShowHotsWeek(); 
+            if (launchHotsweek)
+                ShowHotsweek(); 
         }
 
         private void WebCallbackListenerOnStopServiceRequested(object sender, EventArgs eventArgs)
@@ -552,7 +552,7 @@ namespace HotsBpHelper.Pages
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
             NotifyOfPropertyChange(() => CanShowAbout);
-            NotifyOfPropertyChange(() => CanShowHotsWeek);
+            NotifyOfPropertyChange(() => CanShowHotsweek);
         }
 
         private void Upload()
@@ -1211,7 +1211,7 @@ namespace HotsBpHelper.Pages
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
             NotifyOfPropertyChange(() => CanShowAbout);
-            NotifyOfPropertyChange(() => CanShowHotsWeek);
+            NotifyOfPropertyChange(() => CanShowHotsweek);
         }
 
         public void ShowReplays()
@@ -1229,7 +1229,7 @@ namespace HotsBpHelper.Pages
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
             NotifyOfPropertyChange(() => CanShowAbout);
-            NotifyOfPropertyChange(() => CanShowHotsWeek);
+            NotifyOfPropertyChange(() => CanShowHotsweek);
         }
                 
         public void SetAutoStart()
@@ -1383,10 +1383,10 @@ namespace HotsBpHelper.Pages
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
             NotifyOfPropertyChange(() => CanShowAbout);
-            NotifyOfPropertyChange(() => CanShowHotsWeek);
+            NotifyOfPropertyChange(() => CanShowHotsweek);
         }
 
-        public void ShowHotsWeek()
+        public void ShowHotsweek()
         {
             if (_managerVm == null)
             {
@@ -1396,12 +1396,12 @@ namespace HotsBpHelper.Pages
 
             InitializeManagerView();
 
-            _managerVm.ShowHotsWeek();
+            _managerVm.ShowHotsweek();
 
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
             NotifyOfPropertyChange(() => CanShowAbout);
-            NotifyOfPropertyChange(() => CanShowHotsWeek);
+            NotifyOfPropertyChange(() => CanShowHotsweek);
         }
 
         private void InitializeManagerView()
@@ -1434,7 +1434,7 @@ namespace HotsBpHelper.Pages
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
             NotifyOfPropertyChange(() => CanShowAbout);
-            NotifyOfPropertyChange(() => CanShowHotsWeek);
+            NotifyOfPropertyChange(() => CanShowHotsweek);
         }
 
         public bool CanShowSettings => _managerVm == null || _managerVm.IsClosed || _managerVm.SettingsTab != SettingsTab.Configure;
@@ -1443,7 +1443,7 @@ namespace HotsBpHelper.Pages
 
         public bool CanShowReplays => _managerVm == null || _managerVm.IsClosed || _managerVm.SettingsTab != SettingsTab.Replay;
 
-        public bool CanShowHotsWeek => _managerVm == null || _managerVm.IsClosed || _managerVm.SettingsTab != SettingsTab.HotsWeek;
+        public bool CanShowHotsweek => _managerVm == null || _managerVm.IsClosed || _managerVm.SettingsTab != SettingsTab.Hotsweek;
 
         public string ShowHideHelperTip
             => _bpViewModel != null && _bpViewModel.BpScreenLoaded ? L("HideHelper") : L("ShowHelper");

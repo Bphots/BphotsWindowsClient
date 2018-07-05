@@ -40,11 +40,11 @@ namespace HotsBpHelper.Uploader
             }
             catch (Exception)
             {
-                file.HotsWeekUploadStatus = UploadStatus.UploadError;
+                file.HotsweekUploadStatus = UploadStatus.UploadError;
                 return;
             }
 
-            file.HotsWeekUploadStatus = await Upload(tempPath, file.Fingerprint);
+            file.HotsweekUploadStatus = await Upload(tempPath, file.Fingerprint);
         }
 
         /// <summary>
@@ -114,10 +114,10 @@ namespace HotsBpHelper.Uploader
             {
                 if (file.Created < App.UploadMinimumAcceptableTime)
                 {
-                    file.HotsWeekUploadStatus = UploadStatus.TooOld;
+                    file.HotsweekUploadStatus = UploadStatus.TooOld;
                     continue;
                 }
-                _log.Trace($"Check file {file.Filename} + {file.HotsWeekUploadStatus}");
+                _log.Trace($"Check file {file.Filename} + {file.HotsweekUploadStatus}");
 
                 fileIds.Add(new ReplayIdentity()
                 {
@@ -139,10 +139,10 @@ namespace HotsBpHelper.Uploader
                     continue;
 
                 if (fingerPrintInfo.Access == FingerPrintStatus.Reserved)
-                    file.HotsWeekUploadStatus = UploadStatus.Reserved;
+                    file.HotsweekUploadStatus = UploadStatus.Reserved;
 
                 if (fingerPrintInfo.Access == FingerPrintStatus.Duplicated)
-                    file.HotsWeekUploadStatus = UploadStatus.Duplicate;
+                    file.HotsweekUploadStatus = UploadStatus.Duplicate;
 
             }
             //  replays.Where(x => exists.Contains(x.Fingerprint)).Map(x => x.UploadStatus = UploadStatus.Duplicate);
