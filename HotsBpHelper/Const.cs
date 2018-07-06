@@ -41,6 +41,6 @@ namespace HotsBpHelper
 
         public const string HotsweeklyUrl = "https://www.bphots.com/week/subscribe";
 
-        public static readonly DateTime HotsweekAcceptTime = DateTime.Parse("2018-07-1T09:00:00Z", new CultureInfo("en-US")).ToUniversalTime();
+        public static readonly DateTime HotsweekAcceptTime = DateTime.Parse("2018-07-8T09:00:00Z", new CultureInfo("en-US")).ToUniversalTime();
     }
 }
