@@ -27,7 +27,7 @@ namespace HotsBpHelper.Uploader
         private bool _deleted;
 
         private UploadStatus _hotsApiUploadStatus = UploadStatus.None;
-        private UploadStatus _HotsweekUploadStatus = UploadStatus.None;
+        private UploadStatus _hotsweekUploadStatus = UploadStatus.None;
 
         public ReplayFile()
         {
@@ -69,18 +69,19 @@ namespace HotsBpHelper.Uploader
         [XmlIgnore]
         public string HotsApiUploadStatusText => HotsApiUploadStatus.ToString();
 
+        [XmlElement("HotsWeekUploadStatus")]
         [JsonIgnore]
         public UploadStatus HotsweekUploadStatus
         {
-            get { return _HotsweekUploadStatus; }
+            get { return _hotsweekUploadStatus; }
             set
             {
-                if (_HotsweekUploadStatus == value)
+                if (_hotsweekUploadStatus == value)
                 {
                     return;
                 }
 
-                _HotsweekUploadStatus = value;
+                _hotsweekUploadStatus = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UploadStatus)));
             }
         }
@@ -110,7 +111,7 @@ namespace HotsBpHelper.Uploader
                 needUpdate = _hotsApiUploadStatus == UploadStatus.None;
 
             if (App.CustomConfigurationSettings.AutoUploadReplayToHotsweek && !needUpdate)
-                needUpdate = _HotsweekUploadStatus == UploadStatus.None || _HotsweekUploadStatus == UploadStatus.Reserved;
+                needUpdate = _hotsweekUploadStatus == UploadStatus.None || _hotsweekUploadStatus == UploadStatus.Reserved;
             
             return needUpdate;
         }
@@ -120,7 +121,7 @@ namespace HotsBpHelper.Uploader
             var ignored = new[] { UploadStatus.None, UploadStatus.UploadError, UploadStatus.InProgress };
             bool settled = !(App.CustomConfigurationSettings.AutoUploadReplayToHotslogs && ignored.Contains(_hotsApiUploadStatus));
 
-            if (App.CustomConfigurationSettings.AutoUploadReplayToHotsweek && ignored.Contains(_HotsweekUploadStatus))
+            if (App.CustomConfigurationSettings.AutoUploadReplayToHotsweek && ignored.Contains(_hotsweekUploadStatus))
                 settled = false;
 
             return settled;

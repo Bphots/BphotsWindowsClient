@@ -230,7 +230,7 @@ namespace HotsBpHelper.Pages
                 var hotsweekPrefix = L("HotsweekUrl") + " - ";
                 DateTime dateTimeNow = DateTime.Now;
                 var validDataTime = Const.HotsweekAcceptTime;
-                while (validDataTime < dateTimeNow)
+                while (validDataTime.AddDays(7) <= dateTimeNow)
                     validDataTime = validDataTime.AddDays(7);
 
                 string dateStr = validDataTime.ToLongDateString();
