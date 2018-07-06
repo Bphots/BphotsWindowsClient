@@ -14,8 +14,8 @@ namespace HotsBpHelper
         public const string LOCAL_WEB_FILE_DIR = "WebFiles";
 
         public const string OSS_ADDRESS = "http://bphots-1251808214.cossh.myqcloud.com/bp_helper/client/inform.txt";
-        
-        public const string PATCH = "18070602";
+
+        public const string PATCH = "18070702";
 
         public const string UPDATE_FEED_XML = "https://www.bphots.com/bp_helper/get/update?patch=" + PATCH;
 
@@ -41,6 +41,6 @@ namespace HotsBpHelper
 
         public const string HotsweeklyUrl = "https://www.bphots.com/week/subscribe";
 
-        public static readonly DateTime HotsweekAcceptTime = DateTime.Parse("2018-07-8T00:00:00Z", new CultureInfo("en-US")).ToUniversalTime();
+        public static readonly DateTime HotsweekAcceptTime = DateTime.Parse("2018-07-1T09:00:00Z", new CultureInfo("en-US")).ToUniversalTime();
     }
 }
