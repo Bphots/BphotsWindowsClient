@@ -182,6 +182,8 @@ namespace HotsBpHelper.Api
 
             parameters.Add(Tuple.Create("timestamp", sp.Timestamp));
             parameters.Add(Tuple.Create("client_patch", sp.Patch));
+            if (App.Debug)
+                parameters.Add(Tuple.Create("debug", "1"));
 
             var urlParam = string.Join("&", parameters.Select(tuple => $"{tuple.Item1}={tuple.Item2}"));
             if (App.Debug)

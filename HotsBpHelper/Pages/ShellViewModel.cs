@@ -256,16 +256,11 @@ namespace HotsBpHelper.Pages
             {
                 // ignored
             }
-
-            if (!App.Debug)
-            {
-                // ²»ÊÇµ÷ÊÔÄ£Äâ,Ôò¼ì²é¸üÐÂ
-                _notifyUpdateTaskCompleted = new NotifyTaskCompletion<bool>(UpdateAsync());
-                _notifyUpdateTaskCompleted.TaskStopped += OnFeedUpdateCompleted;
-                if (_notifyUpdateTaskCompleted.IsCompleted)
-                    OnFeedUpdateCompleted(this, EventArgs.Empty);
-            }
-            else
+            
+            // ²»ÊÇµ÷ÊÔÄ£Äâ,Ôò¼ì²é¸üÐÂ
+            _notifyUpdateTaskCompleted = new NotifyTaskCompletion<bool>(UpdateAsync());
+            _notifyUpdateTaskCompleted.TaskStopped += OnFeedUpdateCompleted;
+            if (_notifyUpdateTaskCompleted.IsCompleted)
                 OnFeedUpdateCompleted(this, EventArgs.Empty);
         }
 
@@ -401,16 +396,11 @@ namespace HotsBpHelper.Pages
 
             Execute.OnUIThread(() =>
             {
-                if (!App.Debug)
-                {
-                    var webUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
-                    webUpdateVm.ShellViewModel = this;
-                    webUpdateVm.UpdateCompleted += OnWebFileUpdateCompleted;
-                    if (WindowManager.ShowDialog(webUpdateVm) != true)
-                        Exit();
-                }
-                else
-                    OnWebFileUpdateCompleted(this, EventArgs.Empty);
+                var webUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
+                webUpdateVm.ShellViewModel = this;
+                webUpdateVm.UpdateCompleted += OnWebFileUpdateCompleted;
+                if (WindowManager.ShowDialog(webUpdateVm) != true)
+                    Exit();
             });
         }
 
@@ -961,6 +951,8 @@ namespace HotsBpHelper.Pages
                 var source = Const.UPDATE_FEED_XML;
                 if (App.ForceUpdate)
                     source += @"&is_debug=1";
+                if (App.Debug)
+                    source += @"&debug=1";
 
                 updManager.UpdateSource = new SimpleWebSource(source);
                 try
