@@ -229,7 +229,10 @@ namespace HotsBpHelper.Pages
             {
                 var hotsWeekPrefix = L("HotsweekUrl") + " - ";
                 DateTime dateTimeNow = DateTime.Now;
-                var validDataTime = Const.HotsweekAcceptTime;
+                var validDataTime = Const.HotsweekReportTime;
+                if (dateTimeNow < validDataTime)
+                    return L("HotsweekUrl");
+
                 while (validDataTime.AddDays(7) <= dateTimeNow)
                     validDataTime = validDataTime.AddDays(7);
 
@@ -1101,7 +1104,7 @@ namespace HotsBpHelper.Pages
                         new Point((int)(width - 0.54225 * height),
                             (int)(0.010 * height) + (int)(0.050 * height)),
 
-                    Pick1 = new Point((int) (width - 0.235*height), (int) (0.132*height)),
+                    Pick1 = new Point((int) (width - 0.230*height), (int) (0.132*height)),
                     Dx = (int) (-0.0905*height),
                     Dy = (int) (0.1565*height),
                     HeroPathPoints =
@@ -1149,6 +1152,16 @@ namespace HotsBpHelper.Pages
                     new Rectangle(width - RoundUp(0.31157407407407406666666666666667 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
                 }
             };
+
+            if (height < 920)
+            {
+                position.Left.Ban1 = new Point((int) (0.45*height), (int) (0.1177 * height));
+                position.Left.Ban2 = new Point((int) (0.45*height), (int) (0.1177 * height) + (int) (0.030*height));
+                position.Left.Ban3 = new Point((int) (0.45*height), (int) (0.1177 * height) + (int) (0.060*height));
+                position.Right.Ban1 = new Point((int) (width - 0.61*height), (int) (0.1177 * height));
+                position.Right.Ban2 = new Point((int) (width - 0.61*height), (int) (0.1177 * height) + (int) (0.030*height));
+                position.Right.Ban3 = new Point((int) (width - 0.61*height), (int) (0.1177 * height) + (int) (0.060*height));
+            }
             
             return position;
         }
