@@ -1158,9 +1158,9 @@ namespace HotsBpHelper.Pages
                 position.Left.Ban1 = new Point((int) (0.45*height), (int) (0.1177 * height));
                 position.Left.Ban2 = new Point((int) (0.45*height), (int) (0.1177 * height) + (int) (0.030*height));
                 position.Left.Ban3 = new Point((int) (0.45*height), (int) (0.1177 * height) + (int) (0.060*height));
-                position.Right.Ban1 = new Point((int) (width - 0.61*height), (int) (0.1177 * height));
-                position.Right.Ban2 = new Point((int) (width - 0.61*height), (int) (0.1177 * height) + (int) (0.030*height));
-                position.Right.Ban3 = new Point((int) (width - 0.61*height), (int) (0.1177 * height) + (int) (0.060*height));
+                position.Right.Ban1 = new Point((int) (width - 0.455*height), (int) (0.1177 * height));
+                position.Right.Ban2 = new Point((int) (width - 0.455*height), (int) (0.1177 * height) + (int) (0.030*height));
+                position.Right.Ban3 = new Point((int) (width - 0.455*height), (int) (0.1177 * height) + (int) (0.060*height));
             }
             
             return position;
