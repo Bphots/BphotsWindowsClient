@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -15,7 +14,7 @@ using NLog;
 
 namespace HotsBpHelper.Uploader
 {
-    public class Manager : INotifyPropertyChanged
+    public class Manager
     {
         private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
@@ -39,11 +38,13 @@ namespace HotsBpHelper.Uploader
             Files.CollectionChanged += (_, __) => { OnStatusChanged(); };
         }
 
-        public static bool SuspendUpload => ManualSuspend || IngameSuspend;
+        public static bool SuspendUpload => ManualSuspend || IngameSuspend || InBpSuspend;
 
         public static bool ManualSuspend { get; set; }
 
         public static bool IngameSuspend { get; set; }
+
+        public static bool InBpSuspend { get; set; }
 
         /// <summary>
         ///     Replay list
@@ -52,7 +53,7 @@ namespace HotsBpHelper.Uploader
         
         private bool UploadToHotsApi => App.CustomConfigurationSettings.AutoUploadReplayToHotslogs;
 
-        private bool UplaodToHotsWeek => App.CustomConfigurationSettings.AutoUploadReplayToHotsweek;
+        private bool UplaodToHotsweek => App.CustomConfigurationSettings.AutoUploadReplayToHotsweek;
 
         public string Status
         {
@@ -68,11 +69,9 @@ namespace HotsBpHelper.Uploader
                 if (SuspendUpload)
                     return ViewModelBase.L("Suspended") + @" " + processed + "/" + _processingQueue.Count;
 
-                return ViewModelBase.L("Uploading...") + @" " + processed + "/" + _processingQueue.Count;
+                return ViewModelBase.L("Uploading") + @" " + processed + "/" + _processingQueue.Count;
             }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         ///     Fires when a new replay file is found
@@ -87,12 +86,11 @@ namespace HotsBpHelper.Uploader
         /// <summary>
         ///     Start uploading and watching for new replays
         /// </summary>
-        public async void Start()
+        public void Start()
         {
             if (_initialized)
-            {
                 return;
-            }
+
             _initialized = true;
 
             _bpHelperUploader = new BpHelperUploader(_restApi);
@@ -153,13 +151,13 @@ namespace HotsBpHelper.Uploader
                         if (file == null)
                             continue;
                         
-                        if (UplaodToHotsWeek)
-                            file.HotsWeekUploadStatus = UploadStatus.InProgress;
-                        if (UploadToHotsApi)
+                        if (UplaodToHotsweek && (file.HotsweekUploadStatus == UploadStatus.None || file.HotsweekUploadStatus == UploadStatus.Reserved))
+                            file.HotsweekUploadStatus = UploadStatus.InProgress;
+                        if (UploadToHotsApi && file.HotsApiUploadStatus == UploadStatus.None)
                             file.HotsApiUploadStatus = UploadStatus.InProgress;
 
                         var replay = _analyzer.Analyze(file);
-                        if (replay != null && (file.HotsWeekUploadStatus == UploadStatus.InProgress ||
+                        if (replay != null && (file.HotsweekUploadStatus == UploadStatus.InProgress ||
                                                file.HotsApiUploadStatus == UploadStatus.InProgress))
                         {
                             if (_processingQueue.ContainsKey(file))
@@ -181,7 +179,7 @@ namespace HotsBpHelper.Uploader
                         OnReplayFileStatusChanged(new EventArgs<ReplayFile>(file));
                     }
 
-                    if (UplaodToHotsWeek)
+                    if (UplaodToHotsweek)
                         await _bpHelperUploader.CheckDuplicate(files.Keys.ToList());
 
                     foreach (var file in files)
@@ -189,9 +187,18 @@ namespace HotsBpHelper.Uploader
                         if (UploadToHotsApi)
                             await UploadHotsApi(file.Key);
 
-                        if (UplaodToHotsWeek)
+                        if (UplaodToHotsweek)
                         {
-                            await UploadHotsBpHelper(file.Key);
+                            _log.Trace($"Pre-preparsing file {file.Key.Filename} + {file.Value.GameMode}");
+                            if (file.Value != null && file.Value.GameMode != GameMode.QuickMatch &&
+                                file.Value.GameMode != GameMode.HeroLeague
+                                && file.Value.GameMode != GameMode.TeamLeague &&
+                                file.Value.GameMode != GameMode.UnrankedDraft)
+                            {
+                                file.Key.HotsweekUploadStatus = UploadStatus.AiDetected;
+                            }
+                            else
+                                await UploadHotsBpHelper(file.Key);
                         }
 
                         if (_processingQueue.ContainsKey(file.Key))
@@ -212,6 +219,8 @@ namespace HotsBpHelper.Uploader
 
         private async Task UploadHotsApi(ReplayFile file)
         {
+            await Task.Delay(1000);
+
             if (file.HotsApiUploadStatus == UploadStatus.InProgress)
             {
                 // if it is, upload it
@@ -226,8 +235,10 @@ namespace HotsBpHelper.Uploader
 
         private async Task UploadHotsBpHelper(ReplayFile file)
         {
+            await Task.Delay(1000);
             // test if replay is eligible for upload (not AI, PTR, Custom, etc)
-            if (file.HotsWeekUploadStatus == UploadStatus.InProgress)
+            _log.Trace($"Pre-parsing file {file.Filename} : { file.HotsweekUploadStatus }");
+            if (file.HotsweekUploadStatus == UploadStatus.InProgress)
             {
                 // if it is, upload it
                 while (SuspendUpload)
@@ -244,7 +255,7 @@ namespace HotsBpHelper.Uploader
         //    Status =
         //        Files.Any(
         //            x =>
-        //                x.HotsWeekUploadStatus == UploadStatus.InProgress ||
+        //                x.HotsweekUploadStatus == UploadStatus.InProgress ||
         //                x.HotsApiUploadStatus == UploadStatus.InProgress)
         //            ? "Uploading..."
         //            : "Idle";

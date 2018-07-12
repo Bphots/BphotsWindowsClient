@@ -86,6 +86,8 @@ namespace HotsBpHelper.Settings
 
         public Point Ban2 { get; set; }
 
+        public Point Ban3 { get; set; }
+
         public Point Pick1 { get; set; }
 
         public int Dx { get; set; }

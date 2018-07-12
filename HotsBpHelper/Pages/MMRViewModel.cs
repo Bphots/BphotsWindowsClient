@@ -32,7 +32,7 @@ namespace HotsBpHelper.Pages
             var location = new Point(App.AppSetting.Position.Width / 2 - App.AppSetting.Position.MmrWidth / 2, App.AppSetting.Position.Height / 2 - App.AppSetting.Position.MmrHeight / 2).ToUnitPoint();
             Left = location.X;
             Top = location.Y;
-            
+
             var filePath = Path.Combine(App.AppPath, Const.LOCAL_WEB_FILE_DIR, "mmr.html#") + App.Language;
             LocalFileUri = filePath;
             WebCallbackListener.LobbyRequested += WebCallbackListenerOnLobbyRequested;
@@ -102,7 +102,7 @@ namespace HotsBpHelper.Pages
             }, "MMRChanel");
 
             // 取得地区ID
-            var regionId = ((int) game.Region).ToString();
+            var regionId = ((int)game.Region).ToString();
             // 玩家BattleTags
             var battleTags = string.Join("|", game.Players
                 .Select(p => p.Tag + "#" + p.SelectedHero));
@@ -142,7 +142,7 @@ namespace HotsBpHelper.Pages
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
                 ScriptName = "setPlayers",
-                Args = new[] {regionId, defaultPlayerIndex.ToString(), battleTags}
+                Args = new[] { regionId, defaultPlayerIndex.ToString(), battleTags }
             }, "MMRChanel");
         }
 

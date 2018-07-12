@@ -144,7 +144,7 @@ namespace HotsBpHelper.Utils
             }
         }
 
-        public async Task<List<string>> LookForLoadingLabels()
+        public List<string> LookForLoadingLabels()
         {
             var finder = new Finder();
             var sb = new StringBuilder();
@@ -201,7 +201,7 @@ namespace HotsBpHelper.Utils
         public async Task<bool> CheckIfInTeamMatchAsync(ScanSide side, CancellationToken cancellationToken)
         {
             float rotation = side == ScanSide.Left ? (float) 29.7 : (float) -29.7;
-            List<int> ids = side == ScanSide.Right ? new List<int>() {9, 10} : new List<int> {2, 3};
+            List<int> ids = side == ScanSide.Right ? new List<int>() {11, 12} : new List<int> {4, 5};
             var sb = new StringBuilder();
             Finder finder = new Finder();
             var fileDic = new Dictionary<int, string>();
@@ -247,10 +247,10 @@ namespace HotsBpHelper.Utils
                 OcrAsyncChecker.CheckThread(OcrAsyncChecker.ScanLabelAsyncChecker);
 
                 var finder = new Finder();
-                if (ids.Count == 1 && (ids[0] == 2 || ids[0] == 9))
+                if (ids.Count == 1 && (ids[0] == 4 || ids[0] == 11))
                 {
                     var stageInfo = new StageInfo();
-                    while (stageInfo.Step < 2 && !cancellationToken.IsCancellationRequested)
+                    while (stageInfo.Step < 4 && !cancellationToken.IsCancellationRequested)
                     {
                         await Task.Delay(500);
                         stageInfo = finder.GetStageInfo();
@@ -330,7 +330,7 @@ namespace HotsBpHelper.Utils
                         {
                             using (var bitmap = new ImageUtils().CaptureScreen())
                             {
-                                if (!warned && bpViewModel.BpStatus.CurrentStep < 9 &&
+                                if (!warned && bpViewModel.BpStatus.CurrentStep < 11 &&
                                     StageFinder.ProcessStageInfo(bitmap).Step == -1)
                                 {
                                     bpScreenFail++;
@@ -351,7 +351,7 @@ namespace HotsBpHelper.Utils
                                     logUtil.Log("Starting right");
                                     var chartInfo = FrameFinder.CheckIfInChat(bitmap);
                                     logUtil.Log("Detect chat mode end");
-                                    if (chartInfo == FrameFinder.ChatInfo.Partial && ids[i] > 10 ||
+                                    if (chartInfo == FrameFinder.ChatInfo.Partial && ids[i] > 12 ||
                                         chartInfo == FrameFinder.ChatInfo.Full)
                                     {
                                         logUtil.Log("Overlap detected");

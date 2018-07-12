@@ -23,10 +23,10 @@ namespace HotsBpHelper.Uploader
                 var result = DataParser.ParseReplay(file.Filename, false, false, false);
                 var replay = result.Item2;
                 var parseResult = result.Item1;
-                var status = GetPreStatus(replay, parseResult);
+                var status = GetPreStatus(file, replay, parseResult);
 
                 if (status != null) {
-                    file.HotsWeekUploadStatus = file.HotsApiUploadStatus = status.Value;
+                    file.HotsweekUploadStatus = file.HotsApiUploadStatus = status.Value;
                 }
 
                 if (parseResult != DataParser.ReplayParseResult.Success) {
@@ -42,7 +42,7 @@ namespace HotsBpHelper.Uploader
             }
         }
 
-        public UploadStatus? GetPreStatus(Replay replay, DataParser.ReplayParseResult parseResult)
+        public UploadStatus? GetPreStatus(ReplayFile file, Replay replay, DataParser.ReplayParseResult parseResult)
         {
             switch (parseResult) {
                 case DataParser.ReplayParseResult.ComputerPlayerFound:
@@ -53,7 +53,9 @@ namespace HotsBpHelper.Uploader
                 case DataParser.ReplayParseResult.Incomplete:
                     return UploadStatus.Incomplete;
                 case DataParser.ReplayParseResult.Exception:
-                    return UploadStatus.Incomplete;
+                    if ((DateTime.Now - file.Created).Days > 7)
+                        return UploadStatus.Incomplete;
+                    return UploadStatus.UploadError;
                 case DataParser.ReplayParseResult.PreAlphaWipe:
                     return UploadStatus.TooOld;
             }

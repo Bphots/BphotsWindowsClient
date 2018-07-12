@@ -6,9 +6,12 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetHelper;
+using Heroes.ReplayParser;
 using HotsBpHelper.Api;
 using HotsBpHelper.Api.Model;
 using HotsBpHelper.Api.Security;
+using Newtonsoft.Json;
 
 namespace HotsBpHelper.Uploader
 {
@@ -27,25 +30,40 @@ namespace HotsBpHelper.Uploader
         /// <param name="file"></param>
         public override async Task Upload(ReplayFile file)
         {
-            file.HotsWeekUploadStatus = await Upload(file.Filename);
+            var result = DataParser.ParseReplayFull(file.Filename, false, false, false);
+            FilePath tempPath = Path.GetTempFileName();
+            tempPath = tempPath.GetDirPath() + tempPath.GetFileNameWithoutExtension() + ".json";
+            try
+            {
+                var resultText = JsonConvert.SerializeObject(result.Item2);
+                File.WriteAllText(tempPath, resultText);
+            }
+            catch (Exception)
+            {
+                file.HotsweekUploadStatus = UploadStatus.UploadError;
+                return;
+            }
+
+            file.HotsweekUploadStatus = await Upload(tempPath, file.Fingerprint);
         }
 
         /// <summary>
         /// Upload replay
         /// </summary>
         /// <param name="file">Path to file</param>
+        /// <param name="fingerprint"></param>
         /// <returns>Upload result</returns>
-        public override async Task<UploadStatus> Upload(string file)
+        private async Task<UploadStatus> Upload(string file, string fingerprint)
         {
             try
             {
-                return await _restApi.UploadReplay(file);
+                return await _restApi.UploadReplay(file, fingerprint);
             }
             catch (WebException ex)
             {
                 if (await CheckApiThrottling(ex.Response))
                 {
-                    return await Upload(file);
+                    return await Upload(file, fingerprint);
                 }
                 _log.Warn(ex, $"Error uploading file '{file}'");
                 return UploadStatus.UploadError;
@@ -94,13 +112,24 @@ namespace HotsBpHelper.Uploader
             var fileIds = new List<ReplayIdentity>();
             foreach (var file in replays)
             {
+                if (file.Created < App.UploadMinimumAcceptableTime)
+                {
+                    file.HotsweekUploadStatus = UploadStatus.TooOld;
+                    continue;
+                }
+                _log.Trace($"Check file {file.Filename} + {file.HotsweekUploadStatus}");
+
                 fileIds.Add(new ReplayIdentity()
                 {
                     FingerPrint = file.Fingerprint,
                     Md5 = CalculateMD5(file.Filename),
                     Size = new FileInfo(file.Filename).Length
                 });
+
             }
+
+            if (!fileIds.Any())
+                return;
 
             var checkStatus = await CheckDuplicate(fileIds);
             foreach (var fingerPrintInfo in checkStatus.Status)
@@ -110,10 +139,10 @@ namespace HotsBpHelper.Uploader
                     continue;
 
                 if (fingerPrintInfo.Access == FingerPrintStatus.Reserved)
-                    file.HotsWeekUploadStatus = UploadStatus.Reserved;
+                    file.HotsweekUploadStatus = UploadStatus.Reserved;
 
                 if (fingerPrintInfo.Access == FingerPrintStatus.Duplicated)
-                    file.HotsWeekUploadStatus = UploadStatus.Duplicate;
+                    file.HotsweekUploadStatus = UploadStatus.Duplicate;
 
             }
             //  replays.Where(x => exists.Contains(x.Fingerprint)).Map(x => x.UploadStatus = UploadStatus.Duplicate);

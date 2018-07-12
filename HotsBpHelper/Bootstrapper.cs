@@ -82,9 +82,29 @@ namespace HotsBpHelper
                 App.Debug = true;
             }
 
-            if (args.Any(arg => arg.ToLower() == "/forceupdate"))
+            if (args.Any(arg => arg.ToLower() == "/debugv2"))
             {
+                LogUtil.NoLog = false;
+                OcrEngine.Debug = true;
+                App.Debug = true;
+            }
+
+            if (args.Any(arg => arg.ToLower() == "/forceupdate"))
                 App.ForceUpdate = true;
+
+            try
+            {
+                if (args.Any(arg => arg.ToLower().StartsWith("/upload")))
+                {
+                    var dateString = args.First(arg => arg.ToLower().StartsWith("/upload")).Substring(7);
+                    App.UploadMinimumAcceptableTime = DateTime.Parse(dateString).ToUniversalTime();
+                }
+                else
+                    App.UploadMinimumAcceptableTime = Const.HotsweekAcceptTime;
+            }
+            catch
+            {
+                App.UploadMinimumAcceptableTime = DateTime.Now;
             }
 
             if (args.Any(arg => arg.ToLower() == "/errortest"))

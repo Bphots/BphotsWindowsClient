@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using DotNetHelper;
 using HotsBpHelper.Settings;
 using ImageProcessor.Ocr;
 using WPFLocalizeExtension.Engine;
@@ -25,6 +23,7 @@ namespace HotsBpHelper.Configuration
         private const string MMRAutoCloseTimeKey = @"MMRAutoCloseTime";
         private const string UploadBanSampleKey = @"UploadBanSample";
         private const string PlayerTagKey = @"PlayerTag";
+        private const string HotsweekPlayerIdKey = @"HotsweekPlayerId";
 
         private static readonly string BpHelperConfigPath =
             Path.GetFullPath(@".\config.ini");
@@ -48,6 +47,12 @@ namespace HotsBpHelper.Configuration
 
             var playerTags = playerTagString.Split('|');
             return playerTags.ToList();
+        }
+
+        public string GetHotsweekPlayerId()
+        {
+            var hotsweekPlayerIdString = GetConfigurationValue(HotsweekPlayerIdKey);
+            return hotsweekPlayerIdString;
         }
 
         public bool GetUploadBanSample()
@@ -81,9 +86,8 @@ namespace HotsBpHelper.Configuration
         public bool GetAutoUploadNewReplayToHotsweek()
         {
             var autoUploadNewReplayToHotsweek = GetConfigurationValue(AutoUploadNewReplayToHotsweekKey);
-
-            return false;
-            //return autoUploadNewReplayToHotsweek != "0";
+            
+            return autoUploadNewReplayToHotsweek != "0";
         }
 
         public UploadStrategy GeUploadStrategy()
@@ -133,11 +137,11 @@ namespace HotsBpHelper.Configuration
             var languageForGameClient = GetConfigurationValue(LanguageForGameClientKey);
             if (!string.IsNullOrEmpty(languageForGameClient))
                 return languageForGameClient;
-            
+
             var languageFromGame = GetLanguageFromGame();
             if (!string.IsNullOrEmpty(languageFromGame))
                 return languageFromGame;
-            
+
             return string.Empty;
         }
 
@@ -159,6 +163,7 @@ namespace HotsBpHelper.Configuration
                     return "en-US";
             }
         }
+
         private static string GetLanguageFromGame()
         {
             var config = new HotsVariableConfigParser();
@@ -205,11 +210,13 @@ namespace HotsBpHelper.Configuration
             customConfigurationSettings.UploadStrategy = parser.GeUploadStrategy();
             customConfigurationSettings.MMRAutoCloseTime = parser.GetMMRAutoCloseTime();
             customConfigurationSettings.PlayerTags = parser.GetPlayerTags();
+            customConfigurationSettings.HotsweekPlayerId = parser.GetHotsweekPlayerId();
 
             customConfigurationSettings.LanguageForBphots = parser.GetLanguageForBphots();
             App.Language = customConfigurationSettings.LanguageForBphots;
-            LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo(customConfigurationSettings.LanguageForBphots);
-            
+            LocalizeDictionary.Instance.Culture =
+                CultureInfo.GetCultureInfo(customConfigurationSettings.LanguageForBphots);
+
             customConfigurationSettings.LanguageForMessage = parser.GetLanguageForMessage();
 
             customConfigurationSettings.LanguageForGameClient = parser.GetLanguageForGameClient();
@@ -244,27 +251,36 @@ namespace HotsBpHelper.Configuration
             }
         }
 
-
         public static void WriteConfig(CustomConfigurationSettings customConfigurationSettings)
         {
             var sb = new StringBuilder();
             {
-                sb.AppendLine(WriteConfigurationValue(AutoDetectHeroAndMapKey, customConfigurationSettings.AutoDetectHeroAndMap));
-                sb.AppendLine(WriteConfigurationValue(AutoShowHideHelperKey, customConfigurationSettings.AutoShowHideHelper));
+                sb.AppendLine(WriteConfigurationValue(AutoDetectHeroAndMapKey,
+                    customConfigurationSettings.AutoDetectHeroAndMap));
+                sb.AppendLine(WriteConfigurationValue(AutoShowHideHelperKey,
+                    customConfigurationSettings.AutoShowHideHelper));
                 sb.AppendLine(WriteConfigurationValue(AutoShowMMRKey, customConfigurationSettings.AutoShowMMR));
-                sb.AppendLine(WriteConfigurationValue(AutoUploadNewReplayToHotslogsKey, customConfigurationSettings.AutoUploadReplayToHotslogs));
+                sb.AppendLine(WriteConfigurationValue(AutoUploadNewReplayToHotslogsKey,
+                    customConfigurationSettings.AutoUploadReplayToHotslogs));
                 sb.AppendLine(WriteConfigurationValue(UploadBanSampleKey, customConfigurationSettings.UploadBanSample));
-                //sb.AppendLine(WriteConfigurationValue(AutoUploadNewReplayToHotsweekKey, customConfigurationSettings.AutoUploadReplayToHotsweek));
-                sb.AppendLine(WriteConfigurationValue(UploadStrategyKey, (int)customConfigurationSettings.UploadStrategy));
+                sb.AppendLine(WriteConfigurationValue(AutoUploadNewReplayToHotsweekKey,
+                    customConfigurationSettings.AutoUploadReplayToHotsweek));
+                sb.AppendLine(WriteConfigurationValue(UploadStrategyKey,
+                    (int) customConfigurationSettings.UploadStrategy));
                 sb.AppendLine(WriteConfigurationValue(MMRAutoCloseTimeKey, customConfigurationSettings.MMRAutoCloseTime));
-                sb.AppendLine(WriteConfigurationValue(LanguageForBphotsKey, customConfigurationSettings.LanguageForBphots));
-                sb.AppendLine(WriteConfigurationValue(LanguageForMessageKey, customConfigurationSettings.LanguageForMessage));
-                sb.AppendLine(WriteConfigurationValue(PlayerTagKey, 
+                sb.AppendLine(WriteConfigurationValue(LanguageForBphotsKey,
+                    customConfigurationSettings.LanguageForBphots));
+                sb.AppendLine(WriteConfigurationValue(LanguageForMessageKey,
+                    customConfigurationSettings.LanguageForMessage));
+                sb.AppendLine(WriteConfigurationValue(PlayerTagKey,
                     string.Join("|", customConfigurationSettings.PlayerTags)));
+                sb.AppendLine(WriteConfigurationValue(HotsweekPlayerIdKey,
+                    customConfigurationSettings.HotsweekPlayerId));
 
                 var languageFromGame = GetLanguageFromGame();
                 if (string.IsNullOrEmpty(languageFromGame))
-                    sb.AppendLine(WriteConfigurationValue(LanguageForGameClientKey, customConfigurationSettings.LanguageForGameClient));
+                    sb.AppendLine(WriteConfigurationValue(LanguageForGameClientKey,
+                        customConfigurationSettings.LanguageForGameClient));
             }
 
             File.WriteAllText(BpHelperConfigPath, sb.ToString());

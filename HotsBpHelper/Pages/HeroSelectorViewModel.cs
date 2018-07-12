@@ -56,7 +56,7 @@ namespace HotsBpHelper.Pages
 
         public void InitializeUnselect()
         {
-            if (Id == 0 || Id == 1 || Id == 7 || Id == 8)
+            if (Id == 0 || Id == 1 || Id == 2 || Id == 8 || Id == 9 || Id == 10)
             {
                 // 禁选英雄选择,增加[未选择]
                 ItemsInfos.Insert(0, new ComboBoxItemInfo

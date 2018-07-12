@@ -4,6 +4,8 @@ namespace HotsBpHelper.Settings
 {
     public class CustomConfigurationSettings
     {
+        public string HotsweekPlayerId { get; set; }
+
         public bool AutoShowHideHelper { get; set; }
 
         public bool AutoDetectHeroAndMap { get; set; }
@@ -25,7 +27,7 @@ namespace HotsBpHelper.Settings
         public int MMRAutoCloseTime { get; set; }
 
         public bool UploadBanSample { get; set; }
-        
+
         public List<string> PlayerTags { get; set; }
     }
 

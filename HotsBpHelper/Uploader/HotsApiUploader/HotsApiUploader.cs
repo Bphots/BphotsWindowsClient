@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Heroes.ReplayParser;
 using HotsBpHelper.Api.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -40,7 +42,7 @@ namespace HotsBpHelper.Uploader
         /// </summary>
         /// <param name="file">Path to file</param>
         /// <returns>Upload result</returns>
-        public override async Task<UploadStatus> Upload(string file)
+        private async Task<UploadStatus> Upload(string file)
         {
             try
             {

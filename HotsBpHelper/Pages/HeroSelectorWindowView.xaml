@@ -29,6 +29,7 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
+    
     <ItemsControl ItemsSource="{Binding HeroSelectorViewModels}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
@@ -37,7 +38,7 @@
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <wpf:FilteredComboBox Style="{DynamicResource TheComboBox}"
+                <wpf:FilteredComboBox  Style="{DynamicResource TheComboBox}"
                     Width="{Binding Size.Width}"  Opacity="0.6" VerticalAlignment="Stretch" 
                                                 IsEditable="True" 
                                                 IsTextSearchEnabled="False"

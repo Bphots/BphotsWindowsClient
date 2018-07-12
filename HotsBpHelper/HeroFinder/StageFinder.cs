@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows;
 using HotsBpHelper.Utils;
 using ImageProcessor.Extensions;
+using ToastNotifications.Lifetime;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
 
@@ -13,6 +14,24 @@ namespace HotsBpHelper.HeroFinder
 {
     public static class StageFinder
     {
+        private static int GetMaxIndex(string sequence)
+        {
+            var intList = sequence.Select(c => int.Parse(c.ToString())).ToList();
+            var maxIndex = -1;
+            var maxValue = 45;
+            for (int i = 0; i < 12; ++i)
+            {
+                var sum = intList.Skip(i).Take(11).Sum();
+                if (sum > maxValue)
+                {
+                    maxValue = sum;
+                    maxIndex = i;
+                }
+            }
+
+            return maxIndex;
+        }
+        
         public static StageInfo ProcessStageInfo(Bitmap screenshotBitmap)
         {
             var circleBitmaps = new List<Bitmap>();
@@ -22,39 +41,44 @@ namespace HotsBpHelper.HeroFinder
                 InitializeCircles(circleBitmaps, circles, screenshotBitmap);
                 var sb = new StringBuilder();
                 
-                for (var i = 0; i < 18; i++)
+                for (var i = 0; i < 22; i++)
                 {
                     var bitmap = circleBitmaps[i];
                     var samples = GetCentrePixelSamples(bitmap);
-                    if (i == 5)
-                        Console.Write(true);
-                    var regular = IsColorConsistent(samples);
+                    var regular = IsColorConsistent(samples, 25);
                     var matchingBorders = MatchingBorders(bitmap);
-                    sb.Append(regular ? matchingBorders.ToString() : "0");
+
+                    var score = 0;
+                    if (regular)
+                    {
+                        if (matchingBorders >= 3)
+                            score = matchingBorders + 1;
+                        else
+                            score = 0;
+                    }
+                    else
+                    {
+                        if (matchingBorders >= 3)
+                            score = matchingBorders;
+                        else
+                            score = 0;
+                    }
+
+                    sb.Append(score.ToString());
                 }
 
                 var tempCheckString = sb.ToString();
-                var listString = @"444444444";
-                var beginInex = tempCheckString.IndexOf(listString, StringComparison.Ordinal);
+                var beginInex = GetMaxIndex(tempCheckString);
+
                 if (beginInex == -1)
-                {
-                    for (int i = 0; i < 10; ++i)
-                    {
-                        var text = RepeatString("4", i) + 3 + RepeatString("4", 8 - i);
-                        beginInex = tempCheckString.IndexOf(text, StringComparison.Ordinal);
-                        if (beginInex != -1)
-                            break;
-                    }
-                    if (beginInex == -1)
-                        return new StageInfo { Step = -1, IsFirstPick = false, Error = tempCheckString };
-                }
-                
-                var lastBitmap = circleBitmaps[beginInex + 8];
+                    return new StageInfo { Step = -1, IsFirstPick = false, Error = tempCheckString };
+
+                var lastBitmap = circleBitmaps[beginInex + 10];
                 var circle9R = lastBitmap.GetPixel(lastBitmap.Width / 2, lastBitmap.Height / 2).R;
 
-                var step = 9 - beginInex;
+                var step = 11 - beginInex;
                 var isFirstPick = circle9R > 45;
-                if (step == 9)
+                if (step == 11)
                     return new StageInfo { Step = step, IsFirstPick = !isFirstPick, Error = tempCheckString };
 
                 return new StageInfo {Step = step, IsFirstPick = isFirstPick, Error = tempCheckString };
@@ -70,17 +94,7 @@ namespace HotsBpHelper.HeroFinder
             }
             return new StageInfo {Step = -1, IsFirstPick = false};
         }
-
-        private static string RepeatString(string text, int count)
-        {
-            var sb = new StringBuilder();
-            for (int i = 0; i < count; ++i)
-            {
-                sb.Append(text);
-            }
-            return sb.ToString();
-        }
-
+        
         private static List<Color> GetCentrePixelSamples(Bitmap bitmap)
         {
             List<Color> colors = new List<Color>();
@@ -198,18 +212,23 @@ namespace HotsBpHelper.HeroFinder
             return matchingBorders;
         }
 
-        private static bool IsColorConsistent(List<Color> colors )
+        private static bool IsColorConsistent(List<Color> colors, int tolarance)
         {
             if (!colors.Any())
                 return false;
 
             var sampleColor = colors[colors.Count / 2];
+            int faultCount = 0;
             foreach (var color in colors)
             {
-                if (Math.Abs(color.R - sampleColor.R) + Math.Abs(color.G - sampleColor.G) +
-                        Math.Abs(color.B - sampleColor.B) > 25)
-                    return false;
+                if (Math.Abs(color.R - sampleColor.R) + Math.Abs(color.G - sampleColor.G) + Math.Abs(color.B - sampleColor.B) > tolarance)
+                {
+                    faultCount++;
+                    if (faultCount > 0)
+                        return false;
+                }
             }
+            
             return true;
         }
         
@@ -227,22 +246,18 @@ namespace HotsBpHelper.HeroFinder
             int height = screenshotBitmap.Height;
             var imageUtil = new ImageUtils();
             var listCirclePosition = new List<PositionInfo>();
-            for (var i = 9; i >= 1; --i)
+            for (var i = 11; i >= 1; --i)
             {
                 listCirclePosition.Add(GetLeftCirclePositionInfo(i, width, height));
             }
-            for (var i = 1; i <= 9; ++i)
+            for (var i = 1; i <= 11; ++i)
             {
                 listCirclePosition.Add(GetRightCirclePositionInfo(i, width, height));
             }
-
+            
             circleBitmaps.AddRange(
                 listCirclePosition.Select(
                     positionInfo => imageUtil.CaptureArea(screenshotBitmap, positionInfo.Rectangle, positionInfo.ClipPoints)));
-            //circleBitmaps.AddRange(
-            // listCirclePosition.Select(
-            //     positionInfo => screenshotBitmap.CropAtRect(positionInfo.Rectangle)));
-            //circles.AddRange(circleBitmaps.Select(circleBitmap => new FastBitmap(circleBitmap)));
         }
 
         private static PositionInfo GetRightCirclePositionInfo(int index, int width, int height)
@@ -253,8 +268,8 @@ namespace HotsBpHelper.HeroFinder
                     new Rectangle(
                         new Point(
                             (int)
-                                Math.Round(0.5* width + 0.0604* height +
-                                 (index - 1)*0.021* height, 0),
+                                Math.Round(0.5* width + 0.05903 * height +
+                                 (index - 1)* 0.01909722222222222222222222222222 * height, 0),
                             (int)Math.Round(0.08025* height, 0)),
                         new Size((int)Math.Round(0.0174* height, 0), (int)Math.Round(0.0174* height, 0))),
                 ClipPoints = new Point[0]
@@ -270,8 +285,8 @@ namespace HotsBpHelper.HeroFinder
                     new Rectangle(
                         new Point(
                             (int)
-                                Math.Round(0.5* width - 0.0604* height -
-                                 (index - 1)*0.021* height - 0.0174* height, 0),
+                                Math.Round(0.5* width - 0.0590 * height -
+                                 (index - 1)* 0.01909722222222222222222222222222 * height - 0.0174* height, 0),
                             (int)Math.Round(0.08025* height, 0)),
                         new Size((int)Math.Round(0.0174* height, 0), (int)Math.Round(0.0174* height, 0))),
                 ClipPoints = new Point[0]

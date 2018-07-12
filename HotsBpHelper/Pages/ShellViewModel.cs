@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.ServiceProcess;
@@ -27,15 +26,12 @@ using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using HotsBpHelper.WPF;
 using ImageProcessor.Ocr;
-using LobbyFileParser;
 using NAppUpdate.Framework;
 using NAppUpdate.Framework.Sources;
 using NAppUpdate.Framework.Tasks;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Stylet;
 using Application = System.Windows.Application;
-using MessageBox = System.Windows.Forms.MessageBox;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
 
@@ -227,6 +223,24 @@ namespace HotsBpHelper.Pages
             }
         }
 
+        public string HotsweekEntry
+        {
+            get
+            {
+                var hotsWeekPrefix = L("HotsweekUrl") + " - ";
+                DateTime dateTimeNow = DateTime.Now;
+                var validDataTime = Const.HotsweekReportTime;
+                if (dateTimeNow < validDataTime)
+                    return L("HotsweekUrl");
+
+                while (validDataTime.AddDays(7) <= dateTimeNow)
+                    validDataTime = validDataTime.AddDays(7);
+
+                string dateStr = validDataTime.ToLongDateString();
+                return hotsWeekPrefix + dateStr;
+            }
+        }
+
         private bool _loadingFailed;
 
         private void OnTimeStampCompleted(object sender, EventArgs e)
@@ -245,16 +259,11 @@ namespace HotsBpHelper.Pages
             {
                 // ignored
             }
-
-            if (!App.Debug)
-            {
-                // ²»ÊÇµ÷ÊÔÄ£Äâ,Ôò¼ì²é¸üÐÂ
-                _notifyUpdateTaskCompleted = new NotifyTaskCompletion<bool>(UpdateAsync());
-                _notifyUpdateTaskCompleted.TaskStopped += OnFeedUpdateCompleted;
-                if (_notifyUpdateTaskCompleted.IsCompleted)
-                    OnFeedUpdateCompleted(this, EventArgs.Empty);
-            }
-            else
+            
+            // ²»ÊÇµ÷ÊÔÄ£Äâ,Ôò¼ì²é¸üÐÂ
+            _notifyUpdateTaskCompleted = new NotifyTaskCompletion<bool>(UpdateAsync());
+            _notifyUpdateTaskCompleted.TaskStopped += OnFeedUpdateCompleted;
+            if (_notifyUpdateTaskCompleted.IsCompleted)
                 OnFeedUpdateCompleted(this, EventArgs.Empty);
         }
 
@@ -282,7 +291,7 @@ namespace HotsBpHelper.Pages
             App.AdviceMapInfos = await _restApi.GetMapListV2();
             var lobbyHeroList = await _restApi.GetLobbyHeroList(App.Language);
             var lobbyMapList = await _restApi.GetLobbyMapList(App.Language);
-            App.LobbyHeroes = lobbyHeroList.Where(h => !h.IsNew).Select(h => h.Name).ToList();
+            App.LobbyHeroes = lobbyHeroList.Select(h => h.Name).ToList();
             App.LobbyMaps = lobbyMapList.Select(v => v.Name).ToList();
 
             if (!string.IsNullOrEmpty(App.CustomConfigurationSettings.LanguageForGameClient))
@@ -349,12 +358,37 @@ namespace HotsBpHelper.Pages
             if (_notifyUpdateTaskCompleted != null && !_notifyUpdateTaskCompleted.IsSuccessfullyCompleted)
             {
                 Logger.Trace("Upldate failed");
+                try
+                {
+                    var ossInfo = _restApi.GetOss();
+                    if (!string.IsNullOrEmpty(ossInfo))
+                    {
+                        DisplayFatalMessage(ossInfo);
+                        return;
+                    }
+                }
+                catch
+                {
+
+                }
                 DisplayFatalMessage(L("UpdateFailed"));
                 return;
             }
 
             if (_loadingFailed)
             {
+                try
+                {
+                    var ossInfo = _restApi.GetOss();
+                    if (!string.IsNullOrEmpty(ossInfo))
+                    {
+                        DisplayFatalMessage(ossInfo);
+                        return;
+                    }
+                }
+                catch
+                {
+                }
                 DisplayFatalMessage(L("ApiFailed"));
                 return;
             }
@@ -365,16 +399,11 @@ namespace HotsBpHelper.Pages
 
             Execute.OnUIThread(() =>
             {
-                if (!App.Debug)
-                {
-                    var webUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
-                    webUpdateVm.ShellViewModel = this;
-                    webUpdateVm.UpdateCompleted += OnWebFileUpdateCompleted;
-                    if (WindowManager.ShowDialog(webUpdateVm) != true)
-                        Exit();
-                }
-                else
-                    OnWebFileUpdateCompleted(this, EventArgs.Empty);
+                var webUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
+                webUpdateVm.ShellViewModel = this;
+                webUpdateVm.UpdateCompleted += OnWebFileUpdateCompleted;
+                if (WindowManager.ShowDialog(webUpdateVm) != true)
+                    Exit();
             });
         }
 
@@ -432,6 +461,7 @@ namespace HotsBpHelper.Pages
             }
 
             BpServiceConfigParser.PopulateConfigurationSettings();
+            bool launchHotsweek = false;
             if (!App.HasServiceAsked)
             {
                 if (ServiceNotRunning)
@@ -448,11 +478,23 @@ namespace HotsBpHelper.Pages
                        MessageBoxButtons.YesNo) == DialogResult.Yes)
                         ServiceRestart();
                 }
-
+            }
+            else if (!App.HasHotsweekAsked)
+            {
+                if (TopMostMessageBox.Show(L(@"HotsweekQuestion"),
+                    @"Question",
+                    MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    launchHotsweek = true;
+                    App.CustomConfigurationSettings.AutoUploadReplayToHotsweek = true;
+                    App.NextConfigurationSettings.AutoUploadReplayToHotsweek = true;
+                }
             }
 
             App.HasServiceAsked = true;
+            App.HasHotsweekAsked = true;
             BpServiceConfigParser.WriteConfig();
+
             AutoDetect = App.CustomConfigurationSettings.AutoDetectHeroAndMap && CanOcr && _bpViewModel.OcrAvailable && App.AppSetting.Position.Height > Const.BestExpericenResolutionHeight && isWindowlessMax;
             AutoShowHideHelper = App.CustomConfigurationSettings.AutoShowHideHelper && isWindowlessMax;
             AutoShowMmr = App.CustomConfigurationSettings.AutoShowMMR && isWindowlessMax; 
@@ -474,6 +516,9 @@ namespace HotsBpHelper.Pages
 
             WebCallbackListener.StartServiceRequested += WebCallbackListenerOnStartServiceRequested;
             WebCallbackListener.StopServiceRequested += WebCallbackListenerOnStopServiceRequested;
+
+            if (launchHotsweek)
+                ShowHotsweek(); 
         }
 
         private void WebCallbackListenerOnStopServiceRequested(object sender, EventArgs eventArgs)
@@ -500,6 +545,7 @@ namespace HotsBpHelper.Pages
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
             NotifyOfPropertyChange(() => CanShowAbout);
+            NotifyOfPropertyChange(() => CanShowHotsweek);
         }
 
         private void Upload()
@@ -525,13 +571,13 @@ namespace HotsBpHelper.Pages
             get
             {
                 if (_uploadManager == null)
-                    return L("Loading Uploader...");
+                    return L("LoadingUploader");
                 
                 return _uploadManager.Status;
             }
         }
 
-        public string SwitchUploadDescription => Manager.ManualSuspend ? L("Resume Uploading") : L("Suspend Uploading");
+        public string SwitchUploadDescription => Manager.ManualSuspend ? L("ResumeUploading") : L("SuspendUploading");
 
         public string AutoShowHideHelperInputGestureText => AutoShowHideHelper ? "Ctrl+Shift+B" : string.Empty;
 
@@ -908,6 +954,8 @@ namespace HotsBpHelper.Pages
                 var source = Const.UPDATE_FEED_XML;
                 if (App.ForceUpdate)
                     source += @"&is_debug=1";
+                if (App.Debug)
+                    source += @"&debug=1";
 
                 updManager.UpdateSource = new SimpleWebSource(source);
                 try
@@ -920,11 +968,11 @@ namespace HotsBpHelper.Pages
                     if (e.Message.Contains(@"Already checked for updates"))
                         return;
 
-                    Execute.OnUIThread(() => {
-                        var errorView = new ErrorView(L("FileUpdateFail"), e.Message, "https://www.bphots.com/articles/errors/1");
-                        errorView.ShowDialog();
-                    });
-                    throw;
+                    //Execute.OnUIThread(() => {
+                    //    var errorView = new ErrorView(L("FileUpdateFail"), e.Message, "https://www.bphots.com/articles/errors/1");
+                    //    errorView.ShowDialog();
+                    //});
+                    throw e;
                 }
                 catch (Exception ex)
                 {
@@ -1026,10 +1074,14 @@ namespace HotsBpHelper.Pages
                 HeroHeight = heroHeight,
                 Left = new SidePosition
                 {
-                    Ban1 = new Point((int) (0.45*height), (int) (0.016*height)),
+                    Ban1 = new Point((int) (0.53125 * height), (int) (0.010*height)),
                     Ban2 =
-                        new Point((int) (0.45*height),
-                            (int) (0.016*height) + (int) (0.023*height) + (int) (0.015*height)),
+                        new Point((int) (0.53125 * height),
+                            (int) (0.010*height) + (int) (0.025*height)),
+                    Ban3 =
+                        new Point((int)(0.53125 * height),
+                            (int)(0.010 * height) + (int)(0.050 * height)),
+
                     Pick1 = new Point((int) (0.195*height), (int) (0.132*height)),
                     Dx = (int) (0.0905*height),
                     Dy = (int) (0.1565*height),
@@ -1044,11 +1096,15 @@ namespace HotsBpHelper.Pages
                 },
                 Right = new SidePosition
                 {
-                    Ban1 = new Point((int) (width - 0.46*height), (int) (0.016*height)),
+                    Ban1 = new Point((int) (width - 0.54225 * height), (int) (0.010*height)),
                     Ban2 =
-                        new Point((int) (width - 0.46*height),
-                            (int) (0.016*height) + (int) (0.023*height) + (int) (0.015*height)),
-                    Pick1 = new Point((int) (width - 0.205*height), (int) (0.132*height)),
+                        new Point((int) (width - 0.54225 * height),
+                            (int) (0.010*height) + (int) (0.025*height)),
+                    Ban3 =
+                        new Point((int)(width - 0.54225 * height),
+                            (int)(0.010 * height) + (int)(0.050 * height)),
+
+                    Pick1 = new Point((int) (width - 0.230*height), (int) (0.132*height)),
                     Dx = (int) (-0.0905*height),
                     Dy = (int) (0.1565*height),
                     HeroPathPoints =
@@ -1084,16 +1140,28 @@ namespace HotsBpHelper.Pages
                     Dy = RoundUp(0.1229166666666667 * height)
                 },
                 MmrWidth = (int)(600 * ratio),
-                MmrHeight = (int)(400 * ratio),
+                MmrHeight = (int)(380 * ratio),
 
                 BanPositions = new List<Rectangle>()
                 {
-                    new Rectangle(RoundUp(0.2824074074074074 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
-                    new Rectangle(RoundUp(0.375 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
-                    new Rectangle(width - RoundUp(0.425 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
-                    new Rectangle(width - RoundUp(0.3324074074074074 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
+                    new Rectangle(RoundUp(0.26597222222222222222222222222222 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
+                    new Rectangle(RoundUp(0.35902777777777777777777777777778 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
+                    new Rectangle(RoundUp(0.45208333333333333333333333333334 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
+                    new Rectangle(width - RoundUp(0.49675925925925926666666666666667 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
+                    new Rectangle(width - RoundUp(0.40416666666666666666666666666667 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
+                    new Rectangle(width - RoundUp(0.31157407407407406666666666666667 * height), RoundUp(0.0287037037037037 * height), RoundUp(0.05 * height), RoundUp(0.05 * height)),
                 }
             };
+
+            if (height < 920)
+            {
+                position.Left.Ban1 = new Point((int) (0.45*height), (int) (0.1177 * height));
+                position.Left.Ban2 = new Point((int) (0.45*height), (int) (0.1177 * height) + (int) (0.030*height));
+                position.Left.Ban3 = new Point((int) (0.45*height), (int) (0.1177 * height) + (int) (0.060*height));
+                position.Right.Ban1 = new Point((int) (width - 0.455*height), (int) (0.1177 * height));
+                position.Right.Ban2 = new Point((int) (width - 0.455*height), (int) (0.1177 * height) + (int) (0.030*height));
+                position.Right.Ban3 = new Point((int) (width - 0.455*height), (int) (0.1177 * height) + (int) (0.060*height));
+            }
             
             return position;
         }
@@ -1158,6 +1226,7 @@ namespace HotsBpHelper.Pages
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
             NotifyOfPropertyChange(() => CanShowAbout);
+            NotifyOfPropertyChange(() => CanShowHotsweek);
         }
 
         public void ShowReplays()
@@ -1175,8 +1244,9 @@ namespace HotsBpHelper.Pages
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
             NotifyOfPropertyChange(() => CanShowAbout);
+            NotifyOfPropertyChange(() => CanShowHotsweek);
         }
-
+                
         public void SetAutoStart()
         {
             try
@@ -1328,6 +1398,25 @@ namespace HotsBpHelper.Pages
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
             NotifyOfPropertyChange(() => CanShowAbout);
+            NotifyOfPropertyChange(() => CanShowHotsweek);
+        }
+
+        public void ShowHotsweek()
+        {
+            if (_managerVm == null)
+            {
+                _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
+                _managerVm.UploadManager = _uploadManager;
+            }
+
+            InitializeManagerView();
+
+            _managerVm.ShowHotsweek();
+
+            NotifyOfPropertyChange(() => CanShowSettings);
+            NotifyOfPropertyChange(() => CanShowReplays);
+            NotifyOfPropertyChange(() => CanShowAbout);
+            NotifyOfPropertyChange(() => CanShowHotsweek);
         }
 
         private void InitializeManagerView()
@@ -1360,6 +1449,7 @@ namespace HotsBpHelper.Pages
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
             NotifyOfPropertyChange(() => CanShowAbout);
+            NotifyOfPropertyChange(() => CanShowHotsweek);
         }
 
         public bool CanShowSettings => _managerVm == null || _managerVm.IsClosed || _managerVm.SettingsTab != SettingsTab.Configure;
@@ -1367,6 +1457,8 @@ namespace HotsBpHelper.Pages
         public bool CanShowAbout => _managerVm == null || _managerVm.IsClosed || _managerVm.SettingsTab != SettingsTab.About;
 
         public bool CanShowReplays => _managerVm == null || _managerVm.IsClosed || _managerVm.SettingsTab != SettingsTab.Replay;
+
+        public bool CanShowHotsweek => _managerVm == null || _managerVm.IsClosed || _managerVm.SettingsTab != SettingsTab.Hotsweek;
 
         public string ShowHideHelperTip
             => _bpViewModel != null && _bpViewModel.BpScreenLoaded ? L("HideHelper") : L("ShowHelper");

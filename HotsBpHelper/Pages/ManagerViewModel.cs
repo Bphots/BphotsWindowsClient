@@ -15,7 +15,8 @@ namespace HotsBpHelper.Pages
         Replay,
         Configure,
         BigData,
-        About
+        About,
+        Hotsweek
     }
 
     public class ManagerViewModel : ViewModelBase
@@ -51,6 +52,8 @@ namespace HotsBpHelper.Pages
                 ShowReplays(false);
             if (s == "About")
                 ShowAbout(false);
+            if (s == "Hotsweek")
+                ShowHotsweek(false);
         }
 
         private void OnConfigurationSaved(object sender, EventArgs eventArgs)
@@ -128,6 +131,24 @@ namespace HotsBpHelper.Pages
             OnTabChanged();
         }
 
+        public void ShowHotsweek(bool invokeWeb = true)
+        {
+            SettingsTab = SettingsTab.Hotsweek;
+            if (invokeWeb)
+                _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
+                {
+                    ScriptName = "setTab",
+                    Args = new[] { "Hotsweek" }
+                }, "ManagerChannel");
+
+            if (!PopulatedTabs.Contains(SettingsTab.Hotsweek))
+            {
+                PopulateHotsweek();
+            }
+
+            OnTabChanged();
+        }
+
         public void PopulateAbout()
         {
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
@@ -136,6 +157,16 @@ namespace HotsBpHelper.Pages
                 Args = new[] {JsonConvert.SerializeObject(App.About)}
             }, "ManagerChannel");
             PopulatedTabs.Add(SettingsTab.About);
+        }
+
+        public void PopulateHotsweek()
+        {
+            _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
+            {
+                ScriptName = "populateHotsweek",
+                Args = new[] { App.CustomConfigurationSettings.HotsweekPlayerId }
+            }, "ManagerChannel");
+            PopulatedTabs.Add(SettingsTab.Hotsweek);
         }
 
         private void PopulateUploadManager()
