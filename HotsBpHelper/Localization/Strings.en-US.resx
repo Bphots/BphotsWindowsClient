@@ -346,6 +346,6 @@
     <value>HotS Weekly</value>
   </data>
   <data name="HotsweekQuestion" xml:space="preserve">
-    <value>Would like to enable the new feature Hotsweek from HotsBpHelper 3.0?</value>
+    <value>New feature available: Would you like to subscribe to HotS Weekly Report?</value>
   </data>
 </root>
