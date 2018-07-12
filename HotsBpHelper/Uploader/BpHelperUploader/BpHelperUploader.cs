@@ -107,44 +107,42 @@ namespace HotsBpHelper.Uploader
         /// <summary>
         /// Mass check replay fingerprints against database to detect duplicates
         /// </summary>
-        public async Task CheckDuplicate(IList<ReplayFile> replays)
+        public async Task CheckDuplicate(ReplayFile file)
         {
             var fileIds = new List<ReplayIdentity>();
-            foreach (var file in replays)
+
+            if (file.Created < App.UploadMinimumAcceptableTime)
             {
-                if (file.Created < App.UploadMinimumAcceptableTime)
-                {
-                    file.HotsweekUploadStatus = UploadStatus.TooOld;
-                    continue;
-                }
+                file.HotsweekUploadStatus = UploadStatus.TooOld;
+                return;
+            }
+
+            if (App.Debug)
                 _log.Trace($"Check file {file.Filename} + {file.HotsweekUploadStatus}");
 
-                fileIds.Add(new ReplayIdentity()
-                {
-                    FingerPrint = file.Fingerprint,
-                    Md5 = CalculateMD5(file.Filename),
-                    Size = new FileInfo(file.Filename).Length
-                });
-
-            }
-
-            if (!fileIds.Any())
-                return;
-
-            var checkStatus = await CheckDuplicate(fileIds);
-            foreach (var fingerPrintInfo in checkStatus.Status)
+            fileIds.Add(new ReplayIdentity()
             {
-                var file = replays.FirstOrDefault(f => f.Fingerprint == fingerPrintInfo.FingerPrint);
-                if (file == null)
-                    continue;
+                FingerPrint = file.Fingerprint,
+                Md5 = CalculateMD5(file.Filename),
+                Size = new FileInfo(file.Filename).Length
+            });
+            
+            
+            var checkStatus = await CheckDuplicate(fileIds);
 
-                if (fingerPrintInfo.Access == FingerPrintStatus.Reserved)
-                    file.HotsweekUploadStatus = UploadStatus.Reserved;
-
-                if (fingerPrintInfo.Access == FingerPrintStatus.Duplicated)
-                    file.HotsweekUploadStatus = UploadStatus.Duplicate;
-
+            var fingerPrintInfo = checkStatus.Status.FirstOrDefault();
+            if (fingerPrintInfo == null)
+            {
+                file.HotsweekUploadStatus = UploadStatus.UploadError;
+                return;
             }
+
+            if (fingerPrintInfo.Access == FingerPrintStatus.Reserved)
+                file.HotsweekUploadStatus = UploadStatus.Reserved;
+
+            if (fingerPrintInfo.Access == FingerPrintStatus.Duplicated)
+                file.HotsweekUploadStatus = UploadStatus.Duplicate;
+                
             //  replays.Where(x => exists.Contains(x.Fingerprint)).Map(x => x.UploadStatus = UploadStatus.Duplicate);
         }
 
