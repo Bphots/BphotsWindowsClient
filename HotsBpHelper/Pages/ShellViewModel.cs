@@ -1153,7 +1153,7 @@ namespace HotsBpHelper.Pages
                 }
             };
 
-            if (height < 920)
+            if (height / ratio < 920)
             {
                 position.Left.Ban1 = new Point((int) (0.45*height), (int) (0.1177 * height));
                 position.Left.Ban2 = new Point((int) (0.45*height), (int) (0.1177 * height) + (int) (0.030*height));
