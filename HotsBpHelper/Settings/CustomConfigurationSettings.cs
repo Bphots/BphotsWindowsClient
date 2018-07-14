@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace HotsBpHelper.Settings
 {
     public class CustomConfigurationSettings
     {
-        public string HotsweekPlayerId { get; set; }
-
         public bool AutoShowHideHelper { get; set; }
 
         public bool AutoDetectHeroAndMap { get; set; }
@@ -27,8 +26,15 @@ namespace HotsBpHelper.Settings
         public int MMRAutoCloseTime { get; set; }
 
         public bool UploadBanSample { get; set; }
+    }
 
+    public class UserDataSettings
+    {
         public List<string> PlayerTags { get; set; }
+
+        public string HotsweekPlayerId { get; set; }
+
+        public DateTime LastHotsweekVisit { get; set; }
     }
 
     public enum UploadStrategy

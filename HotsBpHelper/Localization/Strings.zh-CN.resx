@@ -357,4 +357,7 @@
   <data name="Hotsweek" xml:space="preserve">
     <value>背锅周报</value>
   </data>
+  <data name="HotsweekPopup" xml:space="preserve">
+    <value>您有一份新背锅周报，点击查看。</value>
+  </data>
 </root>

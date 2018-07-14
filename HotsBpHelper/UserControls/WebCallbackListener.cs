@@ -57,8 +57,7 @@ namespace HotsBpHelper.UserControls
             if (args[0].StringValue == "SavePlayerId")
             {
                 var param = args[1].StringValue;
-                App.CustomConfigurationSettings.HotsweekPlayerId = param;
-                App.NextConfigurationSettings.HotsweekPlayerId = param;
+                App.UserDataSettings.HotsweekPlayerId = param;
                 OnConfigurationSaved();
             }
             if (args[0].StringValue == "SetTab")

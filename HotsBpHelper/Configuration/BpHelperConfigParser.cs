@@ -209,8 +209,9 @@ namespace HotsBpHelper.Configuration
             customConfigurationSettings.AutoUploadReplayToHotsweek = parser.GetAutoUploadNewReplayToHotsweek();
             customConfigurationSettings.UploadStrategy = parser.GeUploadStrategy();
             customConfigurationSettings.MMRAutoCloseTime = parser.GetMMRAutoCloseTime();
-            customConfigurationSettings.PlayerTags = parser.GetPlayerTags();
-            customConfigurationSettings.HotsweekPlayerId = parser.GetHotsweekPlayerId();
+            
+            App.UserDataSettings.PlayerTags = parser.GetPlayerTags();
+            App.UserDataSettings.HotsweekPlayerId = parser.GetHotsweekPlayerId();
 
             customConfigurationSettings.LanguageForBphots = parser.GetLanguageForBphots();
             App.Language = customConfigurationSettings.LanguageForBphots;
@@ -272,10 +273,6 @@ namespace HotsBpHelper.Configuration
                     customConfigurationSettings.LanguageForBphots));
                 sb.AppendLine(WriteConfigurationValue(LanguageForMessageKey,
                     customConfigurationSettings.LanguageForMessage));
-                sb.AppendLine(WriteConfigurationValue(PlayerTagKey,
-                    string.Join("|", customConfigurationSettings.PlayerTags)));
-                sb.AppendLine(WriteConfigurationValue(HotsweekPlayerIdKey,
-                    customConfigurationSettings.HotsweekPlayerId));
 
                 var languageFromGame = GetLanguageFromGame();
                 if (string.IsNullOrEmpty(languageFromGame))
