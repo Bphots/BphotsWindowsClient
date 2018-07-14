@@ -360,4 +360,7 @@
   <data name="HotsweekPopup" xml:space="preserve">
     <value>您有一份新背锅周报，点击查看。</value>
   </data>
+  <data name="Remaining" xml:space="preserve">
+    <value>剩余</value>
+  </data>
 </root>

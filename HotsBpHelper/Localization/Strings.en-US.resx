@@ -354,4 +354,7 @@
   <data name="HotsweekPopup" xml:space="preserve">
     <value>Your new HotS Weekly Report is available. Click to view.</value>
   </data>
+  <data name="Remaining" xml:space="preserve">
+    <value>Remaining</value>
+  </data>
 </root>

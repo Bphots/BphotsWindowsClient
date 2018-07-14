@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Heroes.ReplayParser;
 using HotsBpHelper.Api;
@@ -81,10 +82,12 @@ namespace HotsBpHelper.Uploader
                 }
 
                 var processed = _hotsApiProcessingQueue.Count(l => l.Value == ProcessingStatus.Processed);
-                if (SuspendUpload)
-                    return ViewModelBase.L("Suspended") + @" " + processed + "/" + _hotsApiProcessingQueue.Count;
+                var remaining = _hotsApiProcessingQueue.Count - processed;
 
-                return ViewModelBase.L("Uploading") + @" " + processed + "/" + _hotsApiProcessingQueue.Count;
+                if (SuspendUpload)
+                    return ViewModelBase.L("Suspended") + @" " + remaining + @" " + ViewModelBase.L("Remaining");
+
+                return ViewModelBase.L("Uploading") + @" " + remaining + @" " + ViewModelBase.L("Remaining");
             }
         }
 
@@ -99,10 +102,12 @@ namespace HotsBpHelper.Uploader
                 }
 
                 var processed = _hotsweekProcessingQueue.Count(l => l.Value == ProcessingStatus.Processed);
-                if (SuspendUpload)
-                    return ViewModelBase.L("Suspended") + @" " + processed + "/" + _hotsweekProcessingQueue.Count;
+                var remaining = _hotsweekProcessingQueue.Count - processed;
 
-                return ViewModelBase.L("Uploading") + @" " + processed + "/" + _hotsweekProcessingQueue.Count;
+                if (SuspendUpload)
+                    return ViewModelBase.L("Suspended") + @" " + remaining + @" " + ViewModelBase.L("Remaining");
+
+                return ViewModelBase.L("Uploading") + @" " + remaining + @" " + ViewModelBase.L("Remaining");
             }
         }
 
