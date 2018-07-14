@@ -16,14 +16,13 @@ namespace HotsBpHelper.Uploader
 {
     public class Manager
     {
-        public enum ProcessingStatus
+        private enum ProcessingStatus
         {
             None,
-            Processing,
             Processed
         }
 
-        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         private readonly ConcurrentDictionary<ReplayFile, ProcessingStatus> _hotsApiProcessingQueue = new ConcurrentDictionary<ReplayFile, ProcessingStatus>();
 
@@ -65,7 +64,11 @@ namespace HotsBpHelper.Uploader
         
         private bool UploadToHotsApi => App.CustomConfigurationSettings.AutoUploadReplayToHotslogs;
 
-        private bool UplaodToHotsweek => App.CustomConfigurationSettings.AutoUploadReplayToHotsweek;
+        private bool UploadToHotsweek => App.CustomConfigurationSettings.AutoUploadReplayToHotsweek;
+
+        private bool _uploadToHotsApi;
+
+        private bool _uploadToHotsweek;
 
         public string HotsApiUploadStatus
         {
@@ -132,6 +135,8 @@ namespace HotsBpHelper.Uploader
             var replays = ScanReplays();
             Files.AddRange(replays.OrderByDescending(l => l.Created));
             _uploadStrategy = App.CustomConfigurationSettings.UploadStrategy;
+            _uploadToHotsApi = UploadToHotsApi;
+            _uploadToHotsweek = UploadToHotsweek;
             if (App.CustomConfigurationSettings.UploadStrategy == UploadStrategy.UploadAll)
             {
                 replays.Where(x => x.NeedHotsApiUpdate()).Reverse().Map(x => _hotsApiProcessingQueue[x] = ProcessingStatus.None);
@@ -160,20 +165,38 @@ namespace HotsBpHelper.Uploader
 
         public Monitor Monitor => _monitor;
 
+
+
         public void RepopulateQueue()
         {
-            if (App.CustomConfigurationSettings.UploadStrategy == _uploadStrategy)
-                return;
-
-            _hotsApiProcessingQueue.Clear();
-            _hotsweekProcessingQueue.Clear();
-            if (App.CustomConfigurationSettings.UploadStrategy == UploadStrategy.UploadAll)
+            if (App.CustomConfigurationSettings.UploadStrategy != _uploadStrategy)
             {
-                Files.Where(x => x.NeedHotsApiUpdate()).Reverse().Map(x => _hotsApiProcessingQueue[x] = ProcessingStatus.None);
-                Files.Where(x => x.NeedHotsweekUpdate()).Reverse().Map(x => _hotsweekProcessingQueue[x] = ProcessingStatus.None);
+                _hotsApiProcessingQueue.Clear();
+                _hotsweekProcessingQueue.Clear();
+                if (App.CustomConfigurationSettings.UploadStrategy == UploadStrategy.UploadAll)
+                {
+                    Files.Where(x => x.NeedHotsApiUpdate()).Reverse().Map(x => _hotsApiProcessingQueue[x] = ProcessingStatus.None);
+                    Files.Where(x => x.NeedHotsweekUpdate()).Reverse().Map(x => _hotsweekProcessingQueue[x] = ProcessingStatus.None);
+                }
             }
+            else
+            {
+                if (_uploadToHotsApi != UploadToHotsApi)
+                {
+                    _hotsApiProcessingQueue.Clear();
+                    Files.Where(x => x.NeedHotsApiUpdate()).Reverse().Map(x => _hotsApiProcessingQueue[x] = ProcessingStatus.None);
+                }
 
+                if (_uploadToHotsweek != UploadToHotsweek)
+                {
+                    _hotsweekProcessingQueue.Clear();
+                    Files.Where(x => x.NeedHotsweekUpdate()).Reverse().Map(x => _hotsweekProcessingQueue[x] = ProcessingStatus.None);
+                }
+            }
+            
             _uploadStrategy = App.CustomConfigurationSettings.UploadStrategy;
+            _uploadToHotsApi = UploadToHotsApi;
+            _uploadToHotsweek = UploadToHotsweek;
             OnStatusChanged();
         }
 
@@ -239,7 +262,7 @@ namespace HotsBpHelper.Uploader
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex, "Error in hotslogs upload loop");
+                    Log.Error(ex, "Error in hotslogs upload loop");
                 }
             }
         }
@@ -250,7 +273,7 @@ namespace HotsBpHelper.Uploader
 
             while (true)
             {
-                if (!UplaodToHotsweek)
+                if (!UploadToHotsweek)
                     continue;
 
                 if (App.CustomConfigurationSettings.UploadStrategy != UploadStrategy.None && OcrUtil.InGame)
@@ -305,7 +328,7 @@ namespace HotsBpHelper.Uploader
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex, "Error in hotsweek upload loop");
+                    Log.Error(ex, "Error in hotsweek upload loop");
                 }
             }
         }
@@ -332,7 +355,7 @@ namespace HotsBpHelper.Uploader
             await _bpHelperUploader.CheckDuplicate(file);
 
             if (App.Debug)
-                _log.Trace($"Pre-preparsing file {file.Filename} + {file.GameMode}");
+                Log.Trace($"Pre-preparsing file {file.Filename} + {file.GameMode}");
 
             if (file.GameMode != GameMode.QuickMatch &&
                 file.GameMode != GameMode.HeroLeague
@@ -342,7 +365,7 @@ namespace HotsBpHelper.Uploader
                 file.HotsweekUploadStatus = UploadStatus.AiDetected;
             }
             // test if replay is eligible for upload (not AI, PTR, Custom, etc)
-            _log.Trace($"Pre-parsing file {file.Filename} : { file.HotsweekUploadStatus }");
+            Log.Trace($"Pre-parsing file {file.Filename} : { file.HotsweekUploadStatus }");
             
             while (SuspendUpload)
             {
@@ -369,7 +392,7 @@ namespace HotsBpHelper.Uploader
             }
             catch (Exception ex)
             {
-                _log.Error(ex, "Error saving replay list");
+                Log.Error(ex, "Error saving replay list");
             }
         }
 
