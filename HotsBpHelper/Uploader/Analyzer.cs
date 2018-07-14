@@ -29,15 +29,18 @@ namespace HotsBpHelper.Uploader
                 var replay = result.Item2;
                 var parseResult = result.Item1;
                 var status = GetPreStatus(file, replay, parseResult);
-                
+
                 if (status != null)
                 {
                     file.HotsweekUploadStatus = file.HotsApiUploadStatus = status.Value;
                 }
+                else if (parseResult != DataParser.ReplayParseResult.Success)
+                {
+                    file.HotsweekUploadStatus = file.HotsApiUploadStatus = UploadStatus.Incomplete;
+                }
 
                 if (parseResult != DataParser.ReplayParseResult.Success)
                 {
-                    file.HotsweekUploadStatus = file.HotsApiUploadStatus = UploadStatus.Incomplete;
                     return false;
                 }
 
