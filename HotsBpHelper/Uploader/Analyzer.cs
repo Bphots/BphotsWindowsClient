@@ -35,7 +35,9 @@ namespace HotsBpHelper.Uploader
                     file.HotsweekUploadStatus = file.HotsApiUploadStatus = status.Value;
                 }
 
-                if (parseResult != DataParser.ReplayParseResult.Success) {
+                if (parseResult != DataParser.ReplayParseResult.Success)
+                {
+                    file.HotsweekUploadStatus = file.HotsApiUploadStatus = UploadStatus.Incomplete;
                     return false;
                 }
 

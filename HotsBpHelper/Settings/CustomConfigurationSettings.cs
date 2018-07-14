@@ -34,7 +34,7 @@ namespace HotsBpHelper.Settings
 
         public string HotsweekPlayerId { get; set; }
 
-        public DateTime LastHotsweekVisit { get; set; }
+        public DateTime LastClientVisit { get; set; }
     }
 
     public enum UploadStrategy
