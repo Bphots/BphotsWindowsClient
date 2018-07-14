@@ -226,7 +226,7 @@ namespace HotsBpHelper.Uploader
                     if (replayFile == null)
                         continue;
                         
-                    if (replayFile.HotsApiUploadStatus == UploadStatus.None)
+                    if (replayFile.NeedHotsApiUpdate())
                         replayFile.HotsApiUploadStatus = UploadStatus.InProgress;
 
                     bool parsed = false;
@@ -292,7 +292,7 @@ namespace HotsBpHelper.Uploader
                     if (replayFile == null)
                         continue;
 
-                    if (replayFile.HotsweekUploadStatus == UploadStatus.None || replayFile.HotsweekUploadStatus == UploadStatus.Reserved)
+                    if (replayFile.NeedHotsweekUpdate())
                         replayFile.HotsweekUploadStatus = UploadStatus.InProgress;
 
                     bool parsed = false;
