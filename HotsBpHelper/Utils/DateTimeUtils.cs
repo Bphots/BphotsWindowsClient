@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HotsBpHelper
+namespace HotsBpHelper.Utils
 {
     public static class DateTimeUtils
     {

@@ -63,7 +63,7 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>browser.ico</ApplicationIcon>
+    <ApplicationIcon>Images\browser.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Deploy|AnyCPU'">
     <OutputPath>bin\Deploy\</OutputPath>
@@ -206,7 +206,7 @@
     <Compile Include="Configuration\ConfigureFileParser.cs" />
     <Compile Include="Configuration\HotsVariableConfigParser.cs" />
     <Compile Include="Const.cs" />
-    <Compile Include="DateTimeUtils.cs" />
+    <Compile Include="Utils\DateTimeUtils.cs" />
     <Compile Include="Factories\GenericViewModelFactory.cs" />
     <Compile Include="HeroFinder\FrameFinder.cs" />
     <Compile Include="HeroFinder\Finder.cs" />
@@ -331,14 +331,12 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Resource Include="Images\0.ico" />
-    <Resource Include="imageres_00080.png" />
-    <Resource Include="imageres_00077.png" />
+    <Resource Include="Images\imageres_00080.png" />
+    <Resource Include="Images\imageres_00077.png" />
     <Resource Include="Images\hots.ico" />
-    <Resource Include="icon.ico" />
     <Resource Include="Images\icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="browser.ico" />
     <Content Include="cef\Cfx\BrowserSubProcess.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

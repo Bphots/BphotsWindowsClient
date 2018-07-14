@@ -30,7 +30,7 @@
         </Label>
         <Label x:Name="label1" Content="{lex:Loc OfficalWebsite}" HorizontalAlignment="Left" Margin="376,160,0,0" VerticalAlignment="Top"/>
         <Label x:Name="label1_Copy" Content="{lex:Loc QQGroup}" HorizontalAlignment="Left" Margin="376,186,0,0" VerticalAlignment="Top"/>
-        <Image x:Name="___HotsBpHelper_component_imageres_00077_png" Margin="20,30,498,100" Source="/HotsBpHelper;component/imageres_00077.png" Stretch="Fill"/>
+        <Image x:Name="___HotsBpHelper_component_imageres_00077_png" Margin="20,30,498,100" Source="/Images/imageres_00077.png" Stretch="Fill"/>
 
     </Grid>
 </Window>
