@@ -5,11 +5,14 @@ using Chromium.WebBrowser;
 using HotsBpHelper.Configuration;
 using HotsBpHelper.Settings;
 using Newtonsoft.Json;
+using NLog;
 
 namespace HotsBpHelper.UserControls
 {
     public class WebCallbackListener : JSObject
     {
+        private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+
         public WebCallbackListener()
         {
             AddFunction("callback").Execute += Callback;
@@ -35,19 +38,26 @@ namespace HotsBpHelper.UserControls
 
             if (args[0].StringValue == "SaveConfig")
             {
-                var newConfig = JsonConvert.DeserializeObject<CustomConfigurationSettings>(args[1].StringValue);
-                BpHelperConfigParser.WriteConfig(newConfig);
-                App.CustomConfigurationSettings.MMRAutoCloseTime = newConfig.MMRAutoCloseTime;
-                App.CustomConfigurationSettings.UploadStrategy = newConfig.UploadStrategy;
-                App.CustomConfigurationSettings.AutoUploadReplayToHotslogs = newConfig.AutoUploadReplayToHotslogs;
-                App.NextConfigurationSettings = newConfig;
-                OnConfigurationSaved();
+                try
+                {
+                    var newConfig = JsonConvert.DeserializeObject<CustomConfigurationSettings>(args[1].StringValue);
+                    BpHelperConfigParser.WriteConfig(newConfig);
+                    App.CustomConfigurationSettings.MMRAutoCloseTime = newConfig.MMRAutoCloseTime;
+                    App.CustomConfigurationSettings.UploadStrategy = newConfig.UploadStrategy;
+                    App.CustomConfigurationSettings.AutoUploadReplayToHotslogs = newConfig.AutoUploadReplayToHotslogs;
+                    App.CustomConfigurationSettings.AutoUploadReplayToHotsweek = newConfig.AutoUploadReplayToHotsweek;
+                    App.NextConfigurationSettings = newConfig;
+                    OnConfigurationSaved();
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(ex);
+                }
             }
             if (args[0].StringValue == "SavePlayerId")
             {
                 var param = args[1].StringValue;
-                App.CustomConfigurationSettings.HotsweekPlayerId = param;
-                App.NextConfigurationSettings.HotsweekPlayerId = param;
+                App.UserDataSettings.HotsweekPlayerId = param;
                 OnConfigurationSaved();
             }
             if (args[0].StringValue == "SetTab")

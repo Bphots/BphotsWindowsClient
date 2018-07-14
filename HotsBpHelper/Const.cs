@@ -15,7 +15,7 @@ namespace HotsBpHelper
 
         public const string OSS_ADDRESS = "http://bphots-1251808214.cossh.myqcloud.com/bp_helper/client/inform.txt";
 
-        public const string PATCH = "18071101";
+        public const string PATCH = "18071411";
 
         public const string UPDATE_FEED_XML = "https://www.bphots.com/bp_helper/get/update?patch=" + PATCH;
 

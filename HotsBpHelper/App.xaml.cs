@@ -28,6 +28,8 @@ namespace HotsBpHelper
 
         public static CustomConfigurationSettings NextConfigurationSettings;
 
+        public static UserDataSettings UserDataSettings { get; set; } = new UserDataSettings { LastClientVisit = DateTime.Now };
+
         public static List<HeroInfo> OcrHeroInfos;
 
         public static List<MapInfo> OcrMapInfos;

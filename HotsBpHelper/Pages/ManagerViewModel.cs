@@ -16,12 +16,15 @@ namespace HotsBpHelper.Pages
         Configure,
         BigData,
         About,
-        Hotsweek
+        Hotsweek,
+        None
     }
 
     public class ManagerViewModel : ViewModelBase
     {
         private readonly IEventAggregator _eventAggregator;
+
+        private SettingsTab _cachedTab = SettingsTab.None;
 
         public HashSet<SettingsTab> PopulatedTabs = new HashSet<SettingsTab>();
 
@@ -54,6 +57,20 @@ namespace HotsBpHelper.Pages
                 ShowAbout(false);
             if (s == "Hotsweek")
                 ShowHotsweek(false);
+
+            if (s == "default")
+            {
+                if (_cachedTab == SettingsTab.Configure)
+                    ShowSettings();
+                if (_cachedTab == SettingsTab.Replay)
+                    ShowReplays();
+                if (_cachedTab == SettingsTab.About)
+                    ShowAbout();
+                if (_cachedTab == SettingsTab.Hotsweek)
+                    ShowHotsweek();
+
+                _cachedTab = SettingsTab.None;
+            }
         }
 
         private void OnConfigurationSaved(object sender, EventArgs eventArgs)
@@ -61,7 +78,30 @@ namespace HotsBpHelper.Pages
             UploadManager.RepopulateQueue();
         }
 
+        public bool PresetTab(SettingsTab tab)
+        {
+            if (PopulatedTabs.Any())
+                return false;
 
+            _cachedTab = tab;
+            return true;
+        }
+
+        public void ShowTab(SettingsTab tab)
+        {
+            if (!PopulatedTabs.Any())
+                return;
+
+            if (tab == SettingsTab.Configure)
+                ShowSettings();
+            if (tab == SettingsTab.Replay)
+                ShowReplays();
+            if (tab == SettingsTab.About)
+                ShowAbout();
+            if (tab == SettingsTab.Hotsweek)
+                ShowHotsweek();
+        }
+        
         public void ShowSettings(bool invokeWeb = true)
         {
             SettingsTab = SettingsTab.Configure;
@@ -164,7 +204,7 @@ namespace HotsBpHelper.Pages
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
                 ScriptName = "populateHotsweek",
-                Args = new[] { App.CustomConfigurationSettings.HotsweekPlayerId }
+                Args = new[] { App.UserDataSettings.HotsweekPlayerId }
             }, "ManagerChannel");
             PopulatedTabs.Add(SettingsTab.Hotsweek);
         }

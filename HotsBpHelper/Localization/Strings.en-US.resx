@@ -348,4 +348,16 @@
   <data name="HotsweekQuestion" xml:space="preserve">
     <value>New feature available: Would you like to subscribe to HotS Weekly Report?</value>
   </data>
+  <data name="Hotsweek" xml:space="preserve">
+    <value>Hotsweek</value>
+  </data>
+  <data name="HotsweekNotice" xml:space="preserve">
+    <value>Your new HotS Weekly Report is available.</value>
+  </data>
+  <data name="HotsweekPopup" xml:space="preserve">
+    <value>Your new HotS Weekly Report is available. Click to view.</value>
+  </data>
+  <data name="Remaining" xml:space="preserve">
+    <value>Remaining</value>
+  </data>
 </root>

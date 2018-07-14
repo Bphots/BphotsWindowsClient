@@ -298,19 +298,19 @@
     <value>您的游戏文本语言暂时不支持自动识别。目前仅有简体中文，繁体中文，英语支持自动识别。请调整语言重启游戏后，再打开背锅助手。</value>
   </data>
   <data name="Idle" xml:space="preserve">
-    <value>暂无录像需要上传</value>
+    <value>没有上传中的录像</value>
   </data>
   <data name="LoadingUploader" xml:space="preserve">
     <value>正在加载上传模块...</value>
   </data>
   <data name="ResumeUploading" xml:space="preserve">
-    <value>恢复上传</value>
+    <value>点击恢复上传</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>设置</value>
   </data>
   <data name="SuspendUploading" xml:space="preserve">
-    <value>暂停上传</value>
+    <value>点击暂停上传</value>
   </data>
   <data name="Suspended" xml:space="preserve">
     <value>暂停</value>
@@ -353,5 +353,17 @@
   </data>
   <data name="HotsweekQuestion" xml:space="preserve">
     <value>发现新功能：是否立刻订阅背锅周报？</value>
+  </data>
+  <data name="Hotsweek" xml:space="preserve">
+    <value>背锅周报</value>
+  </data>
+  <data name="HotsweekNotice" xml:space="preserve">
+    <value>您有一份新背锅周报，请注意查看。</value>
+  </data>
+  <data name="HotsweekPopup" xml:space="preserve">
+    <value>您有一份新背锅周报，点击查看。</value>
+  </data>
+  <data name="Remaining" xml:space="preserve">
+    <value>剩余</value>
   </data>
 </root>

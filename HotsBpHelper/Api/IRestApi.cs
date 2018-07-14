@@ -27,7 +27,7 @@ namespace HotsBpHelper.Api
 
         Task<int> GetMinimalBuild();
 
-        Task<object> Analysis(string type, string para, string lang);
+        Task<object> Analyze(string type, string para, string lang);
 
         Task<UploadStatus> UploadReplay(string file, string fingerprint);
 

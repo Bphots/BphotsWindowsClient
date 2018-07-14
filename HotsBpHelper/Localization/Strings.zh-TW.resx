@@ -298,19 +298,19 @@
     <value>您的遊戲文本語言暫時不支持自動識別。目前僅有正體中文，簡體中文，英語支持自動識別。請調整語言重啟遊戲後，再打開背鍋助手。</value>
   </data>
   <data name="Idle" xml:space="preserve">
-    <value>暫無錄像需要上傳</value>
+    <value>沒有上傳中的錄像</value>
   </data>
   <data name="LoadingUploader" xml:space="preserve">
     <value>正在加載上傳模塊...</value>
   </data>
   <data name="ResumeUploading" xml:space="preserve">
-    <value>恢復上傳</value>
+    <value>點擊恢復上傳</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>設置</value>
   </data>
   <data name="SuspendUploading" xml:space="preserve">
-    <value>暫停上傳</value>
+    <value>點擊暫停上傳</value>
   </data>
   <data name="Suspended" xml:space="preserve">
     <value>暫停</value>
@@ -353,5 +353,17 @@
   </data>
   <data name="HotsweekQuestion" xml:space="preserve">
     <value>發現新功能：是否立刻訂閱背鍋周報？</value>
+  </data>
+  <data name="Hotsweek" xml:space="preserve">
+    <value>背鍋周報</value>
+  </data>
+  <data name="HotsweekNotice" xml:space="preserve">
+    <value>您有一份新背鍋周報，請注意查看。</value>
+  </data>
+  <data name="HotsweekPopup" xml:space="preserve">
+    <value>您有一份新背鍋周報，點擊查看。</value>
+  </data>
+  <data name="Remaining" xml:space="preserve">
+    <value>剩餘</value>
   </data>
 </root>

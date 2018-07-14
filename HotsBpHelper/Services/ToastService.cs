@@ -22,6 +22,8 @@ namespace HotsBpHelper.Services
 
         void CloseMessages(string message);
 
+        void ShowInformation(string message, Action customAction);
+
         void DisposeManager();
 
         void ReinitializeToast();
@@ -63,6 +65,23 @@ namespace HotsBpHelper.Services
                 return;
 
             _notificationManager.Dispose();
+        }
+
+        public void ShowInformation(string message, Action customAction)
+        {
+            if (!_isInitialzed)
+                return;
+
+             var messageOption = new MessageOptions
+             {
+                 ShowCloseButton = true,
+                 FreezeOnMouseEnter = true,
+                 UnfreezeOnMouseLeave = false,
+                 NotificationClickAction = n => { customAction.Invoke(); }
+             };
+
+            Execute.OnUIThread(() =>
+                    _notificationManager.ShowInformation(message, messageOption));
         }
 
         public void DisposeManager()

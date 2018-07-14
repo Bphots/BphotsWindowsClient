@@ -160,21 +160,12 @@ namespace HotsBpHelper.Pages
                     if (!OcrEngine.IsTessDataAvailable(App.OcrLanguage))
                     {
                         IsLoaded = false;
-                        if (TopMostMessageBox.Show(L("TessdataQuestion"), @"Warning",
-                            MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        {
-                            var tessdataWebUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
-                            var languageParams = OcrEngine.GetDirectory(App.OcrLanguage);
-                            tessdataWebUpdateVm.ShellViewModel = this;
-                            tessdataWebUpdateVm.UpdateCompleted += OnTessdataFileReinitializeCompleted;
-                            tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
-                            WindowManager.ShowDialog(tessdataWebUpdateVm);
-                        }
-                        else
-                        {
-                            IsLoaded = true;
-                            return;
-                        }
+                        var tessdataWebUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
+                        var languageParams = OcrEngine.GetDirectory(App.OcrLanguage);
+                        tessdataWebUpdateVm.ShellViewModel = this;
+                        tessdataWebUpdateVm.UpdateCompleted += OnTessdataFileReinitializeCompleted;
+                        tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
+                        WindowManager.ShowDialog(tessdataWebUpdateVm);
                     }
                 }
 
@@ -479,7 +470,8 @@ namespace HotsBpHelper.Pages
                         ServiceRestart();
                 }
             }
-            else if (!App.HasHotsweekAsked)
+
+            if (!App.HasHotsweekAsked)
             {
                 if (TopMostMessageBox.Show(L(@"HotsweekQuestion"),
                     @"Question",
@@ -518,7 +510,36 @@ namespace HotsBpHelper.Pages
             WebCallbackListener.StopServiceRequested += WebCallbackListenerOnStopServiceRequested;
 
             if (launchHotsweek)
-                ShowHotsweek(); 
+                ShowHotsweek();
+
+            ShowNewHotsweek();
+        }
+
+        public void ShowNewHotsweek()
+        {
+            if (App.Debug)
+            {
+                if (!string.IsNullOrEmpty(App.UserDataSettings.HotsweekPlayerId))
+                    _toastService.ShowInformation(L("HotsweekPopup"), ShowHotsweek);
+                else
+                    _toastService.ShowInformation(L("HotsweekNotice"));
+            }
+            
+            var lastClientVisit = App.UserDataSettings.LastClientVisit;
+
+            DateTime dateTimeNow = DateTime.Now;
+            var hotsweekTime = Const.HotsweekReportTime;
+
+            while (hotsweekTime.AddDays(7) <= dateTimeNow)
+                hotsweekTime = hotsweekTime.AddDays(7);
+            
+            if (lastClientVisit > hotsweekTime || dateTimeNow < hotsweekTime)
+                return;
+
+            if (!string.IsNullOrEmpty(App.UserDataSettings.HotsweekPlayerId))
+                _toastService.ShowInformation(L("HotsweekPopup"), ShowHotsweek);
+            else
+                _toastService.ShowInformation(L("HotsweekNotice"));
         }
 
         private void WebCallbackListenerOnStopServiceRequested(object sender, EventArgs eventArgs)
@@ -563,17 +584,29 @@ namespace HotsBpHelper.Pages
 
         private void OnUploadStateChanged(object sender, EventArgs e)
         {
-            NotifyOfPropertyChange(() => UploadStatusDescription);
+            NotifyOfPropertyChange(() => HotsApiUploadStatusDescription);
+            NotifyOfPropertyChange(() => HotsweekUploadStatusDescription);
         }
 
-        public string UploadStatusDescription
+        public string HotsApiUploadStatusDescription
         {
             get
             {
                 if (_uploadManager == null)
                     return L("LoadingUploader");
                 
-                return _uploadManager.Status;
+                return "HotsLogs" + " - " + _uploadManager.HotsApiUploadStatus;
+            }
+        }
+
+        public string HotsweekUploadStatusDescription
+        {
+            get
+            {
+                if (_uploadManager == null)
+                    return L("LoadingUploader");
+
+                return L("Hotsweek") + " - " + _uploadManager.HotsweekUploadStatus;
             }
         }
 
@@ -589,7 +622,8 @@ namespace HotsBpHelper.Pages
         {
             Manager.ManualSuspend = !Manager.ManualSuspend;
             NotifyOfPropertyChange(() => SwitchUploadDescription);
-            NotifyOfPropertyChange(() => UploadStatusDescription);
+            NotifyOfPropertyChange(() => HotsApiUploadStatusDescription);
+            NotifyOfPropertyChange(() => HotsweekUploadStatusDescription);
         }
 
         private void OnWebFileUpdateCompleted(object sender, EventArgs e)
@@ -607,22 +641,8 @@ namespace HotsBpHelper.Pages
             tessdataWebUpdateVm.UpdateCompleted += OnTessdataFileUpdateCompleted;
 
             var languageParams = OcrEngine.GetDirectory(App.OcrLanguage);
-            if (!OcrEngine.IsTessDataAvailable(App.OcrLanguage))
-            {
-                if (TopMostMessageBox.Show(L("TessdataQuestion"), @"Warning",
-                        MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
-                    WindowManager.ShowDialog(tessdataWebUpdateVm);
-                }
-                else
-                    OnTessdataFileUpdateCompleted(this, EventArgs.Empty);
-            }
-            else
-            {
-                tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
-                WindowManager.ShowDialog(tessdataWebUpdateVm);
-            }
+            tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
+            WindowManager.ShowDialog(tessdataWebUpdateVm);
         }
 
         private void BpViewModelOnTurnOffAutoDetectMode(object sender, EventArgs e)
@@ -1153,7 +1173,7 @@ namespace HotsBpHelper.Pages
                 }
             };
 
-            if (height < 920)
+            if (height / ratio < 920)
             {
                 position.Left.Ban1 = new Point((int) (0.45*height), (int) (0.1177 * height));
                 position.Left.Ban2 = new Point((int) (0.45*height), (int) (0.1177 * height) + (int) (0.030*height));
@@ -1199,6 +1219,7 @@ namespace HotsBpHelper.Pages
             try
             {
                 BpHelperConfigParser.WriteConfig(App.NextConfigurationSettings);
+                UserDataConfigParser.WriteConfig();
                 _hotKeyManager?.Dispose();
                 _bpViewModel?.OcrUtil?.Dispose();
                 AutoShowHideHelper = false;
@@ -1218,10 +1239,13 @@ namespace HotsBpHelper.Pages
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
                 _managerVm.UploadManager = _uploadManager;
             }
-            
+
+            var preset = _managerVm.PresetTab(SettingsTab.Configure);
+
             InitializeManagerView();
 
-            _managerVm.ShowSettings();
+            if (!preset)
+                _managerVm.ShowTab(SettingsTab.Configure);
 
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
@@ -1236,10 +1260,13 @@ namespace HotsBpHelper.Pages
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
                 _managerVm.UploadManager = _uploadManager;
             }
-            
+
+            var preset = _managerVm.PresetTab(SettingsTab.Replay);
+
             InitializeManagerView();
 
-            _managerVm.ShowReplays();
+            if (!preset)
+                _managerVm.ShowTab(SettingsTab.Replay);
 
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
@@ -1268,7 +1295,7 @@ namespace HotsBpHelper.Pages
 
                     process.WaitForExit();
 
-                    _restApi.Analysis("action", "switchOnService", App.Language).ConfigureAwait(false);
+                    _restApi.Analyze("action", "switchOnService", App.Language).ConfigureAwait(false);
                     Thread.Sleep(500);
                 }
             }
@@ -1306,7 +1333,7 @@ namespace HotsBpHelper.Pages
 
                 process.WaitForExit();
 
-                _restApi.Analysis("action", "switchOnService", App.Language).ConfigureAwait(false);
+                _restApi.Analyze("action", "switchOnService", App.Language).ConfigureAwait(false);
                 Thread.Sleep(500);
             }
             catch (Exception)
@@ -1338,7 +1365,7 @@ namespace HotsBpHelper.Pages
                 
                 process.WaitForExit();
 
-                _restApi.Analysis("action", "switchOffService", App.Language).ConfigureAwait(false);
+                _restApi.Analyze("action", "switchOffService", App.Language).ConfigureAwait(false);
                 Thread.Sleep(500);
             }
             catch (Exception)
@@ -1390,10 +1417,13 @@ namespace HotsBpHelper.Pages
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
                 _managerVm.UploadManager = _uploadManager;
             }
-            
+
+            var preset =  _managerVm.PresetTab(SettingsTab.About);
+
             InitializeManagerView();
 
-            _managerVm.ShowAbout();
+            if (!preset)
+                _managerVm.ShowTab(SettingsTab.About);
 
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
@@ -1403,15 +1433,21 @@ namespace HotsBpHelper.Pages
 
         public void ShowHotsweek()
         {
+            if (!CanShowHotsweek)
+                return;
+
             if (_managerVm == null)
             {
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
                 _managerVm.UploadManager = _uploadManager;
             }
 
+            var preset = _managerVm.PresetTab(SettingsTab.Hotsweek);
+
             InitializeManagerView();
 
-            _managerVm.ShowHotsweek();
+            if (!preset)
+                _managerVm.ShowTab(SettingsTab.Hotsweek);
 
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
