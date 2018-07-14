@@ -160,21 +160,12 @@ namespace HotsBpHelper.Pages
                     if (!OcrEngine.IsTessDataAvailable(App.OcrLanguage))
                     {
                         IsLoaded = false;
-                        if (TopMostMessageBox.Show(L("TessdataQuestion"), @"Warning",
-                            MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        {
-                            var tessdataWebUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
-                            var languageParams = OcrEngine.GetDirectory(App.OcrLanguage);
-                            tessdataWebUpdateVm.ShellViewModel = this;
-                            tessdataWebUpdateVm.UpdateCompleted += OnTessdataFileReinitializeCompleted;
-                            tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
-                            WindowManager.ShowDialog(tessdataWebUpdateVm);
-                        }
-                        else
-                        {
-                            IsLoaded = true;
-                            return;
-                        }
+                        var tessdataWebUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
+                        var languageParams = OcrEngine.GetDirectory(App.OcrLanguage);
+                        tessdataWebUpdateVm.ShellViewModel = this;
+                        tessdataWebUpdateVm.UpdateCompleted += OnTessdataFileReinitializeCompleted;
+                        tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
+                        WindowManager.ShowDialog(tessdataWebUpdateVm);
                     }
                 }
 
@@ -479,7 +470,8 @@ namespace HotsBpHelper.Pages
                         ServiceRestart();
                 }
             }
-            else if (!App.HasHotsweekAsked)
+
+            if (!App.HasHotsweekAsked)
             {
                 if (TopMostMessageBox.Show(L(@"HotsweekQuestion"),
                     @"Question",
@@ -526,12 +518,14 @@ namespace HotsBpHelper.Pages
         public void ShowNewHotsweek()
         {
             if (App.Debug)
-                _toastService.ShowInformation("HotsweekPopup", ShowHotsweek);
-
-            if (!CanShowHotsweek || string.IsNullOrEmpty(App.UserDataSettings.HotsweekPlayerId))
-                return;
-
-            var lastHotsweekVisit = App.UserDataSettings.LastHotsweekVisit;
+            {
+                if (!string.IsNullOrEmpty(App.UserDataSettings.HotsweekPlayerId))
+                    _toastService.ShowInformation(L("HotsweekPopup"), ShowHotsweek);
+                else
+                    _toastService.ShowInformation(L("HotsweekNotice"));
+            }
+            
+            var lastClientVisit = App.UserDataSettings.LastClientVisit;
 
             DateTime dateTimeNow = DateTime.Now;
             var hotsweekTime = Const.HotsweekReportTime;
@@ -539,10 +533,13 @@ namespace HotsBpHelper.Pages
             while (hotsweekTime.AddDays(7) <= dateTimeNow)
                 hotsweekTime = hotsweekTime.AddDays(7);
             
-            if (lastHotsweekVisit > hotsweekTime)
+            if (lastClientVisit > hotsweekTime || dateTimeNow < hotsweekTime)
                 return;
 
-            _toastService.ShowInformation("HotsweekPopup", ShowHotsweek);
+            if (!string.IsNullOrEmpty(App.UserDataSettings.HotsweekPlayerId))
+                _toastService.ShowInformation(L("HotsweekPopup"), ShowHotsweek);
+            else
+                _toastService.ShowInformation(L("HotsweekNotice"));
         }
 
         private void WebCallbackListenerOnStopServiceRequested(object sender, EventArgs eventArgs)
@@ -644,22 +641,8 @@ namespace HotsBpHelper.Pages
             tessdataWebUpdateVm.UpdateCompleted += OnTessdataFileUpdateCompleted;
 
             var languageParams = OcrEngine.GetDirectory(App.OcrLanguage);
-            if (!OcrEngine.IsTessDataAvailable(App.OcrLanguage))
-            {
-                if (TopMostMessageBox.Show(L("TessdataQuestion"), @"Warning",
-                        MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
-                    WindowManager.ShowDialog(tessdataWebUpdateVm);
-                }
-                else
-                    OnTessdataFileUpdateCompleted(this, EventArgs.Empty);
-            }
-            else
-            {
-                tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
-                WindowManager.ShowDialog(tessdataWebUpdateVm);
-            }
+            tessdataWebUpdateVm.SetPaths(languageParams[0], languageParams[1]);
+            WindowManager.ShowDialog(tessdataWebUpdateVm);
         }
 
         private void BpViewModelOnTurnOffAutoDetectMode(object sender, EventArgs e)
@@ -1441,6 +1424,9 @@ namespace HotsBpHelper.Pages
 
         public void ShowHotsweek()
         {
+            if (!CanShowHotsweek)
+                return;
+
             if (_managerVm == null)
             {
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
@@ -1448,8 +1434,6 @@ namespace HotsBpHelper.Pages
             }
 
             InitializeManagerView();
-
-            App.UserDataSettings.LastHotsweekVisit = DateTime.Now;
 
             _managerVm.ShowHotsweek();
 

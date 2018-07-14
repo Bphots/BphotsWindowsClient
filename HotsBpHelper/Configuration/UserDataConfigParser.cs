@@ -17,7 +17,7 @@ namespace HotsBpHelper.Configuration
 
         private const string PlayerTagKey = @"PlayerTag";
         private const string HotsweekPlayerIdKey = @"HotsweekPlayerId";
-        private const string LastHotsweekVisitKey = @"LastHotsweekVisit";
+        private const string LastClientVisitKey = @"LastClientVisit";
 
         public UserDataConfigParser() : base(UserDataConfigPath)
         {
@@ -39,14 +39,14 @@ namespace HotsBpHelper.Configuration
             return hotsweekPlayerIdString;
         }
 
-        public DateTime GetLastHotsweekVisit()
+        public DateTime GetLastClientVisit()
         {
-            var lastHotsweekVisit = GetConfigurationValue(LastHotsweekVisitKey);
-            if (string.IsNullOrEmpty(lastHotsweekVisit))
+            var lastClientVisit = GetConfigurationValue(LastClientVisitKey);
+            if (string.IsNullOrEmpty(lastClientVisit))
                 return DateTime.Now;
 
             DateTime dateTime;
-            if (DateTime.TryParseExact(lastHotsweekVisit, FMT, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
+            if (DateTime.TryParseExact(lastClientVisit, FMT, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
                 return dateTime;
             
             return DateTime.Now;
@@ -64,7 +64,7 @@ namespace HotsBpHelper.Configuration
             if (!string.IsNullOrEmpty(hotsweekPlayerId))
                 App.UserDataSettings.HotsweekPlayerId = hotsweekPlayerId;
 
-            App.UserDataSettings.LastHotsweekVisit = parser.GetLastHotsweekVisit();
+            App.UserDataSettings.LastClientVisit = parser.GetLastClientVisit();
         }
 
         public static void WriteConfig()
@@ -75,8 +75,8 @@ namespace HotsBpHelper.Configuration
                 string.Join("|", App.UserDataSettings.PlayerTags)));
             sb.AppendLine(WriteConfigurationValue(HotsweekPlayerIdKey,
                  App.UserDataSettings.HotsweekPlayerId));
-            sb.AppendLine(WriteConfigurationValue(LastHotsweekVisitKey,
-                 App.UserDataSettings.LastHotsweekVisit.ToString(FMT)));
+            sb.AppendLine(WriteConfigurationValue(LastClientVisitKey,
+                 DateTime.Now.ToString(FMT)));
 
             File.WriteAllText(UserDataConfigPath, sb.ToString());
         }
