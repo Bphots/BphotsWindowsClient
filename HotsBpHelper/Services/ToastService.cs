@@ -72,13 +72,17 @@ namespace HotsBpHelper.Services
             if (!_isInitialzed)
                 return;
 
-             var messageOption = new MessageOptions
-             {
-                 ShowCloseButton = true,
-                 FreezeOnMouseEnter = true,
-                 UnfreezeOnMouseLeave = false,
-                 NotificationClickAction = n => { customAction.Invoke(); }
-             };
+            var messageOption = new MessageOptions
+            {
+                ShowCloseButton = true,
+                FreezeOnMouseEnter = true,
+                UnfreezeOnMouseLeave = false,
+                NotificationClickAction = n =>
+                {
+                    customAction.Invoke();
+                    n.Close();
+                }
+            };
 
             Execute.OnUIThread(() =>
                     _notificationManager.ShowInformation(message, messageOption));

@@ -1234,18 +1234,25 @@ namespace HotsBpHelper.Pages
         
         public void ShowSettings()
         {
+            var loadedAlready = false;
+            if (_managerVm != null && _managerVm.IsClosed)
+            {
+                loadedAlready = _managerVm.PopulatedTabs.Any();
+                _managerVm.PopulatedTabs.Clear();
+            }
+
             if (_managerVm == null)
             {
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
                 _managerVm.UploadManager = _uploadManager;
             }
 
-            var preset = _managerVm.PresetTab(SettingsTab.Configure);
+            var preset = _managerVm.PresetTab(SettingsTab.Configure) && !loadedAlready;
 
             InitializeManagerView();
 
             if (!preset)
-                _managerVm.ShowTab(SettingsTab.Configure);
+                _managerVm.ShowTab(SettingsTab.Configure, loadedAlready);
 
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
@@ -1255,18 +1262,25 @@ namespace HotsBpHelper.Pages
 
         public void ShowReplays()
         {
+            var loadedAlready = false;
+            if (_managerVm != null && _managerVm.IsClosed)
+            {
+                loadedAlready = _managerVm.PopulatedTabs.Any();
+                _managerVm.PopulatedTabs.Clear();
+            }
+
             if (_managerVm == null)
             {
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
                 _managerVm.UploadManager = _uploadManager;
             }
 
-            var preset = _managerVm.PresetTab(SettingsTab.Replay);
+            var preset = _managerVm.PresetTab(SettingsTab.Replay) && !loadedAlready;
 
             InitializeManagerView();
 
             if (!preset)
-                _managerVm.ShowTab(SettingsTab.Replay);
+                _managerVm.ShowTab(SettingsTab.Replay, loadedAlready);
 
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
@@ -1412,18 +1426,25 @@ namespace HotsBpHelper.Pages
 
         public void ShowAbout()
         {
+            var loadedAlready = false;
+            if (_managerVm != null && _managerVm.IsClosed)
+            {
+                loadedAlready = _managerVm.PopulatedTabs.Any();
+                _managerVm.PopulatedTabs.Clear();
+            }
+
             if (_managerVm == null)
             {
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
                 _managerVm.UploadManager = _uploadManager;
             }
 
-            var preset =  _managerVm.PresetTab(SettingsTab.About);
+            var preset =  _managerVm.PresetTab(SettingsTab.About) && !loadedAlready;
 
             InitializeManagerView();
 
             if (!preset)
-                _managerVm.ShowTab(SettingsTab.About);
+                _managerVm.ShowTab(SettingsTab.About, loadedAlready);
 
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
@@ -1436,18 +1457,25 @@ namespace HotsBpHelper.Pages
             if (!CanShowHotsweek)
                 return;
 
+            var loadedAlready = false;
+            if (_managerVm != null && _managerVm.IsClosed)
+            {
+                loadedAlready = _managerVm.PopulatedTabs.Any();
+                _managerVm.PopulatedTabs.Clear();
+            }
+
             if (_managerVm == null)
             {
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
                 _managerVm.UploadManager = _uploadManager;
             }
 
-            var preset = _managerVm.PresetTab(SettingsTab.Hotsweek);
+            var preset = _managerVm.PresetTab(SettingsTab.Hotsweek) && !loadedAlready;
 
             InitializeManagerView();
 
             if (!preset)
-                _managerVm.ShowTab(SettingsTab.Hotsweek);
+                _managerVm.ShowTab(SettingsTab.Hotsweek, loadedAlready);
 
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
@@ -1482,6 +1510,8 @@ namespace HotsBpHelper.Pages
         {
             _managerVm.PopulatedTabs.Clear();
             _managerVm.IsClosed = true;
+
+            App.HotsWeekDelay = 100;
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
             NotifyOfPropertyChange(() => CanShowAbout);
