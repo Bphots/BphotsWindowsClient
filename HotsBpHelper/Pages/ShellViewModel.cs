@@ -1239,10 +1239,13 @@ namespace HotsBpHelper.Pages
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
                 _managerVm.UploadManager = _uploadManager;
             }
-            
+
+            var preset = _managerVm.PresetTab(SettingsTab.Configure);
+
             InitializeManagerView();
 
-            _managerVm.ShowSettings();
+            if (!preset)
+                _managerVm.ShowTab(SettingsTab.Configure);
 
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
@@ -1257,10 +1260,13 @@ namespace HotsBpHelper.Pages
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
                 _managerVm.UploadManager = _uploadManager;
             }
-            
+
+            var preset = _managerVm.PresetTab(SettingsTab.Replay);
+
             InitializeManagerView();
 
-            _managerVm.ShowReplays();
+            if (!preset)
+                _managerVm.ShowTab(SettingsTab.Replay);
 
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
@@ -1411,10 +1417,13 @@ namespace HotsBpHelper.Pages
                 _managerVm = _viewModelFactory.CreateViewModel<ManagerViewModel>();
                 _managerVm.UploadManager = _uploadManager;
             }
-            
+
+            var preset =  _managerVm.PresetTab(SettingsTab.About);
+
             InitializeManagerView();
 
-            _managerVm.ShowAbout();
+            if (!preset)
+                _managerVm.ShowTab(SettingsTab.About);
 
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
@@ -1433,9 +1442,12 @@ namespace HotsBpHelper.Pages
                 _managerVm.UploadManager = _uploadManager;
             }
 
+            var preset = _managerVm.PresetTab(SettingsTab.Hotsweek);
+
             InitializeManagerView();
 
-            _managerVm.ShowHotsweek();
+            if (!preset)
+                _managerVm.ShowTab(SettingsTab.Hotsweek);
 
             NotifyOfPropertyChange(() => CanShowSettings);
             NotifyOfPropertyChange(() => CanShowReplays);
