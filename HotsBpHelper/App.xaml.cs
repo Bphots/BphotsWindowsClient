@@ -50,6 +50,8 @@ namespace HotsBpHelper
 
         public static bool DevTool { get; set; }
 
+        public static int HotsWeekDelay { get; set; } = 100;
+
         public static Dictionary<int, HeroInfoV2> AdviceHeroInfos { get; set; }
 
         public static Dictionary<string, MapInfoV2> AdviceMapInfos { get; set; }

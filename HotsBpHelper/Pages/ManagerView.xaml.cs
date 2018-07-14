@@ -18,7 +18,11 @@ namespace HotsBpHelper.Pages
 
         public void Handle(InvokeScriptMessage message)
         {
-            Browser.InvokeScript(message);
+            var win = GetWindow(this);
+            if (win != null && win.Visibility == Visibility.Visible)
+            {
+                Browser.InvokeScript(message);
+            }
         }
 
         public void RegisterTitleHandler()

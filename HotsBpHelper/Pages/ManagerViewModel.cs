@@ -68,8 +68,6 @@ namespace HotsBpHelper.Pages
                     ShowAbout();
                 if (_cachedTab == SettingsTab.Hotsweek)
                     ShowHotsweek();
-
-                _cachedTab = SettingsTab.None;
             }
         }
 
@@ -87,9 +85,9 @@ namespace HotsBpHelper.Pages
             return true;
         }
 
-        public void ShowTab(SettingsTab tab)
+        public void ShowTab(SettingsTab tab, bool isLoaded)
         {
-            if (!PopulatedTabs.Any())
+            if (!PopulatedTabs.Any() && !isLoaded)
                 return;
 
             if (tab == SettingsTab.Configure)
@@ -138,17 +136,15 @@ namespace HotsBpHelper.Pages
         public void ShowReplays(bool invokeWeb = true)
         {
             SettingsTab = SettingsTab.Replay;
+            App.HotsWeekDelay = 1000;
             if (invokeWeb)
                 _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
                 {
                     ScriptName = "setTab",
                     Args = new[] {"Replays"}
                 }, "ManagerChannel");
-
-            if (!PopulatedTabs.Contains(SettingsTab.Replay))
-            {
-                PopulateUploadManager();
-            }
+            
+            PopulateUploadManager();
 
             OnTabChanged();
         }
@@ -223,6 +219,7 @@ namespace HotsBpHelper.Pages
 
         private void UpdateReplay(object sender, EventArgs<ReplayFile> e)
         {
+            if (PopulatedTabs.Contains(SettingsTab.Replay) && SettingsTab == SettingsTab.Replay)
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
                 ScriptName = "updateReplayFile",
