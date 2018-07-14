@@ -278,6 +278,8 @@ namespace HotsBpHelper.Uploader
 
             while (true)
             {
+                await Task.Delay(App.HotsWeekDelay);
+
                 if (!UploadToHotsweek)
                     continue;
 
@@ -290,7 +292,10 @@ namespace HotsBpHelper.Uploader
                     bool valid = true;
                     var replayFile = _hotsweekProcessingQueue.OrderByDescending(l => l.Key.Created).FirstOrDefault(l => l.Value == ProcessingStatus.None).Key;
                     if (replayFile == null)
+                    {
+                        await Task.Delay(1000);
                         continue;
+                    }
 
                     if (replayFile.NeedHotsweekUpdate())
                         replayFile.HotsweekUploadStatus = UploadStatus.InProgress;

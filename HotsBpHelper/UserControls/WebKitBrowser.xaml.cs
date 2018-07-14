@@ -106,6 +106,12 @@ namespace HotsBpHelper.UserControls
 
         public void DisposeBrowser()
         {
+            while (Scripts.Any())
+            {
+                string script;
+                Scripts.TryDequeue(out script);
+            }
+
             Execute.OnUIThread(() =>
             {
                 if (Browser != null && !Browser.IsDisposed)
