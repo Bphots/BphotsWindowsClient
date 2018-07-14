@@ -25,12 +25,17 @@ namespace HotsBpHelper.Uploader
 
         private static readonly Logger _log = LogManager.GetCurrentClassLogger();
 
-        private readonly ConcurrentDictionary<ReplayFile, ProcessingStatus> _processingQueue = new ConcurrentDictionary<ReplayFile, ProcessingStatus>();
+        private readonly ConcurrentDictionary<ReplayFile, ProcessingStatus> _hotsApiProcessingQueue = new ConcurrentDictionary<ReplayFile, ProcessingStatus>();
+
+        private readonly ConcurrentDictionary<ReplayFile, ProcessingStatus> _hotsweekProcessingQueue = new ConcurrentDictionary<ReplayFile, ProcessingStatus>();
 
         private readonly IRestApi _restApi;
+        private UploadStrategy _uploadStrategy;
 
         private readonly IReplayStorage _storage;
         private Analyzer _analyzer;
+
+        private static object StorageLock = new object();
 
         private BpHelperUploader _bpHelperUploader;
         private HotsApiUploader _hotsApiUploader;
@@ -62,21 +67,39 @@ namespace HotsBpHelper.Uploader
 
         private bool UplaodToHotsweek => App.CustomConfigurationSettings.AutoUploadReplayToHotsweek;
 
-        public string Status
+        public string HotsApiUploadStatus
         {
             get
             {
-                if (!_processingQueue.Any() || _processingQueue.All(l => l.Value == ProcessingStatus.Processed))
+                if (!_hotsApiProcessingQueue.Any() || _hotsApiProcessingQueue.All(l => l.Value == ProcessingStatus.Processed))
                 {
-                    _processingQueue.Clear();
+                    _hotsApiProcessingQueue.Clear();
                     return ViewModelBase.L("Idle");
                 }
 
-                var processed = _processingQueue.Count(l => l.Value == ProcessingStatus.Processed);
+                var processed = _hotsApiProcessingQueue.Count(l => l.Value == ProcessingStatus.Processed);
                 if (SuspendUpload)
-                    return ViewModelBase.L("Suspended") + @" " + processed + "/" + _processingQueue.Count;
+                    return ViewModelBase.L("Suspended") + @" " + processed + "/" + _hotsApiProcessingQueue.Count;
 
-                return ViewModelBase.L("Uploading") + @" " + processed + "/" + _processingQueue.Count;
+                return ViewModelBase.L("Uploading") + @" " + processed + "/" + _hotsApiProcessingQueue.Count;
+            }
+        }
+
+        public string HotsweekUploadStatus
+        {
+            get
+            {
+                if (!_hotsweekProcessingQueue.Any() || _hotsweekProcessingQueue.All(l => l.Value == ProcessingStatus.Processed))
+                {
+                    _hotsweekProcessingQueue.Clear();
+                    return ViewModelBase.L("Idle");
+                }
+
+                var processed = _hotsweekProcessingQueue.Count(l => l.Value == ProcessingStatus.Processed);
+                if (SuspendUpload)
+                    return ViewModelBase.L("Suspended") + @" " + processed + "/" + _hotsweekProcessingQueue.Count;
+
+                return ViewModelBase.L("Uploading") + @" " + processed + "/" + _hotsweekProcessingQueue.Count;
             }
         }
 
@@ -108,15 +131,22 @@ namespace HotsBpHelper.Uploader
 
             var replays = ScanReplays();
             Files.AddRange(replays.OrderByDescending(l => l.Created));
+            _uploadStrategy = App.CustomConfigurationSettings.UploadStrategy;
             if (App.CustomConfigurationSettings.UploadStrategy == UploadStrategy.UploadAll)
-                replays.Where(x => x.NeedUpdate()).Reverse().Map(x => _processingQueue[x] = ProcessingStatus.None);
+            {
+                replays.Where(x => x.NeedHotsApiUpdate()).Reverse().Map(x => _hotsApiProcessingQueue[x] = ProcessingStatus.None);
+                replays.Where(x => x.NeedHotsweekUpdate()).Reverse().Map(x => _hotsweekProcessingQueue[x] = ProcessingStatus.None);
+            }
 
             _monitor.ReplayAdded += async (_, e) =>
             {
                 await EnsureFileAvailable(e.Data, 3000);
                 var replay = new ReplayFile(e.Data);
                 Files.Insert(0, replay);
-                _processingQueue[replay] = ProcessingStatus.None;
+
+                _hotsApiProcessingQueue[replay] = ProcessingStatus.None;
+                _hotsweekProcessingQueue[replay] = ProcessingStatus.None;
+
                 OnReplayFileStatusChanged(new EventArgs<ReplayFile>(replay));
                 OnStatusChanged();
             };
@@ -124,55 +154,64 @@ namespace HotsBpHelper.Uploader
             _monitor.Start();
 
             _analyzer.MinimumBuild = Const.ReplayMinimumBuild;
-            Task.Run(UploadLoop).Forget();
+            Task.Run(UploadHotsApiLoop).Forget();
+            Task.Run(UploadHotsweekLoop).Forget();
         }
 
         public Monitor Monitor => _monitor;
 
         public void RepopulateQueue()
         {
-            _processingQueue.Clear();
-            if (App.CustomConfigurationSettings.UploadStrategy == UploadStrategy.UploadAll)
-                Files.Where(x => x.NeedUpdate()).Reverse().Map(x => _processingQueue[x] = ProcessingStatus.None);
+            if (App.CustomConfigurationSettings.UploadStrategy == _uploadStrategy)
+                return;
 
+            _hotsApiProcessingQueue.Clear();
+            _hotsweekProcessingQueue.Clear();
+            if (App.CustomConfigurationSettings.UploadStrategy == UploadStrategy.UploadAll)
+            {
+                Files.Where(x => x.NeedHotsApiUpdate()).Reverse().Map(x => _hotsApiProcessingQueue[x] = ProcessingStatus.None);
+                Files.Where(x => x.NeedHotsweekUpdate()).Reverse().Map(x => _hotsweekProcessingQueue[x] = ProcessingStatus.None);
+            }
+
+            _uploadStrategy = App.CustomConfigurationSettings.UploadStrategy;
             OnStatusChanged();
         }
 
-        private async Task UploadLoop()
+        private async Task UploadHotsApiLoop()
         {
             int invalidCount = 0;
 
             while (true)
             {
-                await Task.Delay(3000);
+                await Task.Delay(1000);
                 if (App.CustomConfigurationSettings.UploadStrategy != UploadStrategy.None && OcrUtil.InGame)
                     continue;
 
                 try
                 {
                     OnStatusChanged();
+                    if (!UploadToHotsApi)
+                        continue;
+
                     bool valid = true;
-                    var replayFile = _processingQueue.OrderByDescending(l => l.Key.Created).FirstOrDefault(l => l.Value == ProcessingStatus.None).Key;
+                    var replayFile = _hotsApiProcessingQueue.OrderByDescending(l => l.Key.Created).FirstOrDefault(l => l.Value == ProcessingStatus.None).Key;
                     if (replayFile == null)
                         continue;
                         
-                    if (UplaodToHotsweek && (replayFile.HotsweekUploadStatus == UploadStatus.None || replayFile.HotsweekUploadStatus == UploadStatus.Reserved))
-                        replayFile.HotsweekUploadStatus = UploadStatus.InProgress;
-                    if (UploadToHotsApi && replayFile.HotsApiUploadStatus == UploadStatus.None)
+                    if (replayFile.HotsApiUploadStatus == UploadStatus.None)
                         replayFile.HotsApiUploadStatus = UploadStatus.InProgress;
 
-                    var replay = _analyzer.Analyze(replayFile);
-                    if (replay != null && (replayFile.HotsweekUploadStatus == UploadStatus.InProgress ||
-                                            replayFile.HotsApiUploadStatus == UploadStatus.InProgress))
+                    bool parsed = false;
+                    lock (replayFile)
                     {
-                        if (_processingQueue.ContainsKey(replayFile))
-                            _processingQueue[replayFile] = ProcessingStatus.Processing;
+                        parsed = _analyzer.Analyze(replayFile);
                     }
-                    else
+                    
+                    if (!parsed || replayFile.HotsApiUploadStatus != UploadStatus.InProgress)
                     {
                         invalidCount ++;
-                        if (_processingQueue.ContainsKey(replayFile))
-                            _processingQueue[replayFile] = ProcessingStatus.Processed;
+                        if (_hotsApiProcessingQueue.ContainsKey(replayFile))
+                            _hotsApiProcessingQueue[replayFile] = ProcessingStatus.Processed;
 
                         valid = false;
                     }
@@ -187,15 +226,11 @@ namespace HotsBpHelper.Uploader
 
                     if (!valid)
                         continue;
-
-                    if (UploadToHotsApi)
-                        await UploadHotsApi(replayFile);
-
-                    if (UplaodToHotsweek)
-                        await UploadHotsBpHelper(replayFile, replay);
                     
-                    if (_processingQueue.ContainsKey(replayFile))
-                        _processingQueue[replayFile] = ProcessingStatus.Processed;
+                    await UploadHotsApi(replayFile);
+                    
+                    if (_hotsApiProcessingQueue.ContainsKey(replayFile))
+                        _hotsApiProcessingQueue[replayFile] = ProcessingStatus.Processed;
 
                     OnReplayFileStatusChanged(new EventArgs<ReplayFile>(replayFile));
 
@@ -204,7 +239,73 @@ namespace HotsBpHelper.Uploader
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex, "Error in upload loop");
+                    _log.Error(ex, "Error in hotslogs upload loop");
+                }
+            }
+        }
+
+        private async Task UploadHotsweekLoop()
+        {
+            int invalidCount = 0;
+
+            while (true)
+            {
+                if (!UplaodToHotsweek)
+                    continue;
+
+                if (App.CustomConfigurationSettings.UploadStrategy != UploadStrategy.None && OcrUtil.InGame)
+                    continue;
+
+                try
+                {
+                    OnStatusChanged();
+                    bool valid = true;
+                    var replayFile = _hotsweekProcessingQueue.OrderByDescending(l => l.Key.Created).FirstOrDefault(l => l.Value == ProcessingStatus.None).Key;
+                    if (replayFile == null)
+                        continue;
+
+                    if (replayFile.HotsweekUploadStatus == UploadStatus.None || replayFile.HotsweekUploadStatus == UploadStatus.Reserved)
+                        replayFile.HotsweekUploadStatus = UploadStatus.InProgress;
+
+                    bool parsed = false;
+                    lock (replayFile)
+                    {
+                        parsed = _analyzer.Analyze(replayFile);
+                    }
+
+                    if (!parsed || replayFile.HotsweekUploadStatus != UploadStatus.InProgress)
+                    {
+                        invalidCount++;
+                        if (_hotsweekProcessingQueue.ContainsKey(replayFile))
+                            _hotsweekProcessingQueue[replayFile] = ProcessingStatus.Processed;
+
+                        valid = false;
+                    }
+
+                    if (invalidCount == 10)
+                    {
+                        invalidCount = 0;
+                        SaveReplayList();
+                    }
+
+                    OnReplayFileStatusChanged(new EventArgs<ReplayFile>(replayFile));
+
+                    if (!valid)
+                        continue;
+                    
+                    await UploadHotsBpHelper(replayFile);
+
+                    if (_hotsweekProcessingQueue.ContainsKey(replayFile))
+                        _hotsweekProcessingQueue[replayFile] = ProcessingStatus.Processed;
+
+                    OnReplayFileStatusChanged(new EventArgs<ReplayFile>(replayFile));
+
+                    OnStatusChanged();
+                    SaveReplayList();
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(ex, "Error in hotsweek upload loop");
                 }
             }
         }
@@ -213,65 +314,58 @@ namespace HotsBpHelper.Uploader
         {
             await Task.Delay(1000);
 
+            while (SuspendUpload)
+            {
+                await Task.Delay(1000);
+            }
+
             if (file.HotsApiUploadStatus == UploadStatus.InProgress)
             {
                 // if it is, upload it
-                while (SuspendUpload)
-                {
-                    await Task.Delay(1000);
-                }
 
                 await _hotsApiUploader.Upload(file);
             }
         }
 
-        private async Task UploadHotsBpHelper(ReplayFile file, Replay replay)
+        private async Task UploadHotsBpHelper(ReplayFile file)
         {
             await _bpHelperUploader.CheckDuplicate(file);
-            if (App.Debug)
-                _log.Trace($"Pre-preparsing file {file.Filename} + {replay.GameMode}");
 
-            if (replay != null && replay.GameMode != GameMode.QuickMatch &&
-                replay.GameMode != GameMode.HeroLeague
-                && replay.GameMode != GameMode.TeamLeague &&
-                replay.GameMode != GameMode.UnrankedDraft)
+            if (App.Debug)
+                _log.Trace($"Pre-preparsing file {file.Filename} + {file.GameMode}");
+
+            if (file.GameMode != GameMode.QuickMatch &&
+                file.GameMode != GameMode.HeroLeague
+                && file.GameMode != GameMode.TeamLeague &&
+                file.GameMode != GameMode.UnrankedDraft)
             {
                 file.HotsweekUploadStatus = UploadStatus.AiDetected;
             }
-
-            await Task.Delay(1000);
             // test if replay is eligible for upload (not AI, PTR, Custom, etc)
             _log.Trace($"Pre-parsing file {file.Filename} : { file.HotsweekUploadStatus }");
+            
+            while (SuspendUpload)
+            {
+                await Task.Delay(1000);
+            }
+
             if (file.HotsweekUploadStatus == UploadStatus.InProgress)
             {
                 // if it is, upload it
-                while (SuspendUpload)
-                {
-                    await Task.Delay(1000);
-                }
 
                 await _bpHelperUploader.Upload(file);
             }
         }
-
-        //private void RefreshStatusAndAggregates()
-        //{
-        //    Status =
-        //        Files.Any(
-        //            x =>
-        //                x.HotsweekUploadStatus == UploadStatus.InProgress ||
-        //                x.HotsApiUploadStatus == UploadStatus.InProgress)
-        //            ? "Uploading..."
-        //            : "Idle";
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Status)));
-        //}
-
+        
         private void SaveReplayList()
         {
             try
             {
                 // save only replays with fixed status. Will retry failed ones on next launch.
-                _storage.Save(Files.Where(x => x.Settled()));
+                lock (StorageLock)
+                {
+                    _storage.Save(Files.Where(x => x.Settled()));
+                }
             }
             catch (Exception ex)
             {
