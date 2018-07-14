@@ -266,7 +266,8 @@ namespace HotsBpHelper.UserControls
 
             if (App.Debug)
             {
-                LogManager.GetCurrentClassLogger().Trace(script);
+                if (script.Length < 1000)
+                    LogManager.GetCurrentClassLogger().Trace(script);
             }
 
             return script;

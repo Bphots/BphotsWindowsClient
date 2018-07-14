@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using Heroes.ReplayParser;
+using HotsBpHelper.Configuration;
 using Newtonsoft.Json;
 
 namespace HotsBpHelper.Uploader
@@ -45,6 +47,10 @@ namespace HotsBpHelper.Uploader
         public string Fingerprint { get; set; }
 
         public string Filename { get; set; }
+
+        [XmlIgnore]
+        [JsonIgnore]
+        public GameMode GameMode { get; set; }
 
         public DateTime Created { get; set; }
 
@@ -104,27 +110,38 @@ namespace HotsBpHelper.Uploader
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public bool NeedUpdate()
+        public bool NeedHotsApiUpdate()
         {
             bool needUpdate = false;
             if (App.CustomConfigurationSettings.AutoUploadReplayToHotslogs)
-                needUpdate = _hotsApiUploadStatus == UploadStatus.None;
+                needUpdate = _hotsApiUploadStatus == UploadStatus.None ||
+                             _hotsApiUploadStatus == UploadStatus.UploadError ||
+                             _hotsApiUploadStatus == UploadStatus.InProgress;
 
-            if (App.CustomConfigurationSettings.AutoUploadReplayToHotsweek && !needUpdate)
-                needUpdate = _hotsweekUploadStatus == UploadStatus.None || _hotsweekUploadStatus == UploadStatus.Reserved;
-            
+            return needUpdate;
+        }
+
+        public bool NeedHotsweekUpdate()
+        {
+            bool needUpdate = false;
+            if (App.CustomConfigurationSettings.AutoUploadReplayToHotsweek)
+                needUpdate = _hotsweekUploadStatus == UploadStatus.None ||
+                             _hotsweekUploadStatus == UploadStatus.Reserved ||
+                             _hotsweekUploadStatus == UploadStatus.UploadError ||
+                             _hotsweekUploadStatus == UploadStatus.InProgress;
+
             return needUpdate;
         }
 
         public bool Settled()
         {
             var ignored = new[] { UploadStatus.None, UploadStatus.UploadError, UploadStatus.InProgress };
-            bool settled = !(App.CustomConfigurationSettings.AutoUploadReplayToHotslogs && ignored.Contains(_hotsApiUploadStatus));
 
-            if (App.CustomConfigurationSettings.AutoUploadReplayToHotsweek && ignored.Contains(_hotsweekUploadStatus))
-                settled = false;
+            var hotsApiSettled = !App.CustomConfigurationSettings.AutoUploadReplayToHotslogs || !ignored.Contains(_hotsApiUploadStatus);
 
-            return settled;
+            var hotsweekSettled = !App.CustomConfigurationSettings.AutoUploadReplayToHotsweek || !ignored.Contains(_hotsweekUploadStatus);
+
+            return hotsApiSettled || hotsweekSettled;
         }
 
         public override string ToString()

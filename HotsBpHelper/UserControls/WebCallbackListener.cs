@@ -40,6 +40,7 @@ namespace HotsBpHelper.UserControls
                 App.CustomConfigurationSettings.MMRAutoCloseTime = newConfig.MMRAutoCloseTime;
                 App.CustomConfigurationSettings.UploadStrategy = newConfig.UploadStrategy;
                 App.CustomConfigurationSettings.AutoUploadReplayToHotslogs = newConfig.AutoUploadReplayToHotslogs;
+                App.CustomConfigurationSettings.AutoUploadReplayToHotsweek = newConfig.AutoUploadReplayToHotsweek;
                 App.NextConfigurationSettings = newConfig;
                 OnConfigurationSaved();
             }

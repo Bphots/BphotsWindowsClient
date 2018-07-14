@@ -117,6 +117,8 @@ namespace HotsBpHelper.Uploader
                 return;
             }
 
+            await Task.Delay(1000);
+
             if (App.Debug)
                 _log.Trace($"Check file {file.Filename} + {file.HotsweekUploadStatus}");
 

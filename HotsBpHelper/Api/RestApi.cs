@@ -85,7 +85,7 @@ namespace HotsBpHelper.Api
             return await ExecuteWeekAsync<int>(request);
         }
 
-        public async Task<object> Analysis(string type, string para, string lang)
+        public async Task<object> Analyze(string type, string para, string lang)
         {
             try
             {

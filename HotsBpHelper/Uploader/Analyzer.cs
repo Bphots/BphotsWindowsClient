@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,35 +11,42 @@ namespace HotsBpHelper.Uploader
     public class Analyzer
     {
         public int MinimumBuild { get; set; }
-
+        
         private static Logger _log = LogManager.GetCurrentClassLogger();
-
+        
         /// <summary>
         /// Analyze replay locally before uploading
         /// </summary>
         /// <param name="file">Replay file</param>
-        public Replay Analyze(ReplayFile file)
+        public bool Analyze(ReplayFile file)
         {
-            try {
+            try
+            {
+                if (!string.IsNullOrEmpty(file.Fingerprint))
+                    return true;
+
                 var result = DataParser.ParseReplay(file.Filename, false, false, false);
                 var replay = result.Item2;
                 var parseResult = result.Item1;
                 var status = GetPreStatus(file, replay, parseResult);
-
-                if (status != null) {
+                
+                if (status != null)
+                {
                     file.HotsweekUploadStatus = file.HotsApiUploadStatus = status.Value;
                 }
 
                 if (parseResult != DataParser.ReplayParseResult.Success) {
-                    return null;
+                    return false;
                 }
 
                 file.Fingerprint = GetFingerprint(replay);
-                return replay;
+                file.GameMode = replay.GameMode;
+                
+                return true;
             }
             catch (Exception e) {
                 _log.Warn(e, $"Error analyzing file {file}");
-                return null;
+                return false;
             }
         }
 

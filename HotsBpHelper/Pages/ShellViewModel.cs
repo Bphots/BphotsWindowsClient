@@ -563,17 +563,29 @@ namespace HotsBpHelper.Pages
 
         private void OnUploadStateChanged(object sender, EventArgs e)
         {
-            NotifyOfPropertyChange(() => UploadStatusDescription);
+            NotifyOfPropertyChange(() => HotsApiUploadStatusDescription);
+            NotifyOfPropertyChange(() => HotsweekUploadStatusDescription);
         }
 
-        public string UploadStatusDescription
+        public string HotsApiUploadStatusDescription
         {
             get
             {
                 if (_uploadManager == null)
                     return L("LoadingUploader");
                 
-                return _uploadManager.Status;
+                return "HotsLogs" + " - " + _uploadManager.HotsApiUploadStatus;
+            }
+        }
+
+        public string HotsweekUploadStatusDescription
+        {
+            get
+            {
+                if (_uploadManager == null)
+                    return L("LoadingUploader");
+
+                return L("Hotsweek") + " - " + _uploadManager.HotsweekUploadStatus;
             }
         }
 
@@ -589,7 +601,8 @@ namespace HotsBpHelper.Pages
         {
             Manager.ManualSuspend = !Manager.ManualSuspend;
             NotifyOfPropertyChange(() => SwitchUploadDescription);
-            NotifyOfPropertyChange(() => UploadStatusDescription);
+            NotifyOfPropertyChange(() => HotsApiUploadStatusDescription);
+            NotifyOfPropertyChange(() => HotsweekUploadStatusDescription);
         }
 
         private void OnWebFileUpdateCompleted(object sender, EventArgs e)
@@ -1268,7 +1281,7 @@ namespace HotsBpHelper.Pages
 
                     process.WaitForExit();
 
-                    _restApi.Analysis("action", "switchOnService", App.Language).ConfigureAwait(false);
+                    _restApi.Analyze("action", "switchOnService", App.Language).ConfigureAwait(false);
                     Thread.Sleep(500);
                 }
             }
@@ -1306,7 +1319,7 @@ namespace HotsBpHelper.Pages
 
                 process.WaitForExit();
 
-                _restApi.Analysis("action", "switchOnService", App.Language).ConfigureAwait(false);
+                _restApi.Analyze("action", "switchOnService", App.Language).ConfigureAwait(false);
                 Thread.Sleep(500);
             }
             catch (Exception)
@@ -1338,7 +1351,7 @@ namespace HotsBpHelper.Pages
                 
                 process.WaitForExit();
 
-                _restApi.Analysis("action", "switchOffService", App.Language).ConfigureAwait(false);
+                _restApi.Analyze("action", "switchOffService", App.Language).ConfigureAwait(false);
                 Thread.Sleep(500);
             }
             catch (Exception)
