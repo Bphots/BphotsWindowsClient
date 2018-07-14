@@ -102,25 +102,16 @@ namespace HotsBpHelper.Pages
                 .Select(p => p.Tag + "#" + p.SelectedHero));
             Players = game.Players.Select(p => p.Tag).ToList();
             string defaultPlayer = Players.First();
-            if (App.CustomConfigurationSettings.PlayerTags.Any(p => Players.Contains(p)))
+            if (App.UserDataSettings.PlayerTags.Any(p => Players.Contains(p)))
             {
-                defaultPlayer = App.CustomConfigurationSettings.PlayerTags.First(p => Players.Contains(p));
-                App.CustomConfigurationSettings.PlayerTags.Remove(defaultPlayer);
-                App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
-                // for config.ini
-                if (App.NextConfigurationSettings != App.CustomConfigurationSettings)
-                {
-                    App.NextConfigurationSettings.PlayerTags.Remove(defaultPlayer);
-                    App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
-                }
+                defaultPlayer = App.UserDataSettings.PlayerTags.First(p => Players.Contains(p));
+                App.UserDataSettings.PlayerTags.Remove(defaultPlayer);
+                App.UserDataSettings.PlayerTags.Insert(0, defaultPlayer);
             }
             else if (LastMatchPlayers.Count(p => Players.Contains(p)) == 1)
             {
                 defaultPlayer = LastMatchPlayers.First(p => Players.Contains(p));
-                App.CustomConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
-                // for config.ini
-                if (App.NextConfigurationSettings != App.CustomConfigurationSettings)
-                    App.NextConfigurationSettings.PlayerTags.Insert(0, defaultPlayer);
+                App.UserDataSettings.PlayerTags.Insert(0, defaultPlayer);
             }
 
             int defaultPlayerIndex = Players.IndexOf(defaultPlayer);

@@ -60,11 +60,19 @@ namespace HotsBpHelper
 
             var args = Environment.GetCommandLineArgs();
 
-            var configurationSettings = new CustomConfigurationSettings();
-            BpHelperConfigParser.PopulateConfigurationSettings(configurationSettings);
-            App.CustomConfigurationSettings = configurationSettings;
-            App.NextConfigurationSettings = configurationSettings;
-
+            try
+            {
+                var configurationSettings = new CustomConfigurationSettings();
+                BpHelperConfigParser.PopulateConfigurationSettings(configurationSettings);
+                UserDataConfigParser.PopulateUserDataSettings();
+                App.CustomConfigurationSettings = configurationSettings;
+                App.NextConfigurationSettings = configurationSettings;
+            }
+            catch (Exception)
+            {
+                //Ignored
+            }
+            
             if (args.Any(arg => arg.ToLower() == "/log"))
             {
                 LogUtil.NoLog = false;

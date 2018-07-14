@@ -164,7 +164,7 @@ namespace HotsBpHelper.Pages
             _eventAggregator.PublishOnUIThread(new InvokeScriptMessage
             {
                 ScriptName = "populateHotsweek",
-                Args = new[] { App.CustomConfigurationSettings.HotsweekPlayerId }
+                Args = new[] { App.UserDataSettings.HotsweekPlayerId }
             }, "ManagerChannel");
             PopulatedTabs.Add(SettingsTab.Hotsweek);
         }

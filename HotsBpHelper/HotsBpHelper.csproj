@@ -201,6 +201,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Configuration\UserDataConfigParser.cs" />
     <Compile Include="Configuration\BpServiceConfigParser.cs" />
     <Compile Include="Configuration\BpHelperConfigParser.cs" />
     <Compile Include="Configuration\ConfigureFileParser.cs" />

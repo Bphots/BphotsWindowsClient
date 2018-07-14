@@ -518,7 +518,31 @@ namespace HotsBpHelper.Pages
             WebCallbackListener.StopServiceRequested += WebCallbackListenerOnStopServiceRequested;
 
             if (launchHotsweek)
-                ShowHotsweek(); 
+                ShowHotsweek();
+
+            ShowNewHotsweek();
+        }
+
+        public void ShowNewHotsweek()
+        {
+            if (App.Debug)
+                _toastService.ShowInformation("HotsweekPopup", ShowHotsweek);
+
+            if (!CanShowHotsweek || string.IsNullOrEmpty(App.UserDataSettings.HotsweekPlayerId))
+                return;
+
+            var lastHotsweekVisit = App.UserDataSettings.LastHotsweekVisit;
+
+            DateTime dateTimeNow = DateTime.Now;
+            var hotsweekTime = Const.HotsweekReportTime;
+
+            while (hotsweekTime.AddDays(7) <= dateTimeNow)
+                hotsweekTime = hotsweekTime.AddDays(7);
+            
+            if (lastHotsweekVisit > hotsweekTime)
+                return;
+
+            _toastService.ShowInformation("HotsweekPopup", ShowHotsweek);
         }
 
         private void WebCallbackListenerOnStopServiceRequested(object sender, EventArgs eventArgs)
@@ -1212,6 +1236,7 @@ namespace HotsBpHelper.Pages
             try
             {
                 BpHelperConfigParser.WriteConfig(App.NextConfigurationSettings);
+                UserDataConfigParser.WriteConfig();
                 _hotKeyManager?.Dispose();
                 _bpViewModel?.OcrUtil?.Dispose();
                 AutoShowHideHelper = false;
@@ -1423,6 +1448,8 @@ namespace HotsBpHelper.Pages
             }
 
             InitializeManagerView();
+
+            App.UserDataSettings.LastHotsweekVisit = DateTime.Now;
 
             _managerVm.ShowHotsweek();
 
