@@ -20,7 +20,7 @@
             <TextBlock x:Name="errorInfo" TextWrapping="Wrap"
         		Width="445" Text="{lex:Loc UnknownError}" />
         </Label>
-        <Image x:Name="___HotsBpHelper_component_imageres_00080_png" Grid.ColumnSpan="2" Margin="20,30,512,112" Source="/HotsBpHelper;component/imageres_00080.png" Stretch="Fill"/>
+        <Image x:Name="___HotsBpHelper_component_imageres_00080_png" Grid.ColumnSpan="2" Margin="20,30,512,112" Source="/Images/imageres_00080.png" Stretch="Fill"/>
         <Label x:Name="label" Grid.ColumnSpan="2" Content="417011860" HorizontalAlignment="Left" Margin="522,187,0,0" VerticalAlignment="Top" FontSize="10.667" Width="71"/>
         <Label x:Name="label6" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="466,160,0,0" VerticalAlignment="Top" Width="129" Height="23">
             <Hyperlink Name="hyperlink0" Click="hyperlink0_Click" NavigateUri="mailto:support@bphots.com" FontSize="10.667">support@bphots.com
