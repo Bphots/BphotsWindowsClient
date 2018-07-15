@@ -502,6 +502,9 @@ namespace HotsBpHelper.Pages
 
             Logger.Trace("BpHelper successfully loaded");
             Upload();
+
+            ShowNewHotsweek();
+            
             Task.Run(CheckFocusAsync).ConfigureAwait(false);
             Task.Run(MonitorInGameAsync).ConfigureAwait(false);
             Task.Run(MonitorLobbyFile).ConfigureAwait(false);
@@ -511,8 +514,6 @@ namespace HotsBpHelper.Pages
 
             if (launchHotsweek)
                 ShowHotsweek();
-
-            ShowNewHotsweek();
         }
 
         public void ShowNewHotsweek()
