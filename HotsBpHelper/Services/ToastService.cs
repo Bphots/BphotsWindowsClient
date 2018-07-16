@@ -85,7 +85,12 @@ namespace HotsBpHelper.Services
             };
 
             Execute.OnUIThread(() =>
-                    _notificationManager.ShowInformation(message, messageOption));
+            {
+                if (!_isInitialzed)
+                    return;
+
+                _notificationManager.ShowInformation(message, messageOption);
+            });
         }
 
         public void DisposeManager()
