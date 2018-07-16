@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,8 +11,16 @@ using ImageProcessor.Ocr;
 
 namespace ImageProcessor
 {
+    public enum ProcessedResult
+    {
+        Trustable,
+        Success,
+        Fail
+    }
+
     public class Recognizer : IDisposable
     {
+
         private const int DarkModeThreshold = 60;
         private const int LightModeThreshold = 115;
 
@@ -44,13 +54,13 @@ namespace ImageProcessor
         /// <summary>
         ///     Processing the file with a rotating angle
         /// </summary>
-        /// <param name="file"></param>
+        /// <param name="bitmap"></param>
         /// <param name="angle"></param>
         /// <param name="sb"></param>
         /// <param name="textInWhite"></param>
-        public bool Recognize(string file, float angle, StringBuilder sb, int offset, bool textInWhite = false)
+        public ProcessedResult Recognize(Bitmap bitmap, float angle, StringBuilder sb, int offset, bool textInWhite = false)
         {
-            return ProcessHero(file, angle, sb, offset, textInWhite);
+            return ProcessHero(bitmap, angle, sb, offset, textInWhite);
         }
 
         public bool ProcessMap(FilePath file, StringBuilder sb)
@@ -134,23 +144,26 @@ namespace ImageProcessor
             sb.Append(pendingMatchResult.Values.First().Value);
         }
 
-        private bool ProcessHero(FilePath file, float rotationAngle, StringBuilder sb, int offset, bool textInWhite)
+        private ProcessedResult ProcessHero(Bitmap bitMap, float rotationAngle, StringBuilder sb, int offset, bool textInWhite)
         {
             var tempPath = TempDirectoryPath + "temp.tiff";
-            var mode = textInWhite ? 0 : ImageProcessingHelper.CheckMode(file, rotationAngle);
+            var mode = textInWhite ? 0 : ImageProcessingHelper.CheckMode(bitMap, rotationAngle);
+
+            FilePath file = Path.GetTempFileName();
+            if (OcrEngine.Debug)
+            {
+                bitMap.Save(TempDirectoryPath.Parent + file.GetFileNameWithoutExtension() + ".bmp");
+            }
 
             if (mode == -1)
             {
-                if (!OcrEngine.Debug && OcrEngine.Delete)
-                    file.DeleteIfExists();
-
-                return false;
+                return ProcessedResult.Fail;
             }
             
             var startThresholding = LightModeThreshold;
 
             int sampleWidth;
-            var image = ImageProcessingHelper.GetRotatedImage(rotationAngle, file, textInWhite, out sampleWidth);
+            var image = ImageProcessingHelper.GetRotatedImage(rotationAngle, bitMap, textInWhite, out sampleWidth);
             if (OcrEngine.Debug)
                 image.Save(TempDirectoryPath + "RotatedImage.bmp");
 
@@ -203,7 +216,7 @@ namespace ImageProcessor
                 }
                 catch (Exception)
                 {
-                    return false;
+                    return ProcessedResult.Fail;
                 }
 
                 // 100% match case
@@ -275,12 +288,14 @@ namespace ImageProcessor
 
             sb.Append(pendingMatchResult);
             image.Dispose();
-
-
+            
             if (!OcrEngine.Debug && OcrEngine.Delete)
                 file.DeleteIfExists();
 
-            return maxValue == int.MaxValue;
+            if (maxValue == 0)
+                return ProcessedResult.Fail;
+
+            return maxValue == int.MaxValue ? ProcessedResult.Trustable : ProcessedResult.Success;
         }
     }
 }

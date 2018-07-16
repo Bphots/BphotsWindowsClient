@@ -14,6 +14,8 @@ namespace HotsBpHelper.Pages
         protected readonly IEventAggregator EventAggregator;
         
         protected ComboBoxItemInfo PSelectedItemInfo;
+        private int _left;
+        private int _top;
 
         protected SelectorViewModel(IComboxItemUtil comboxItemUtil, IEventAggregator eventAggregator)
         {
@@ -25,9 +27,17 @@ namespace HotsBpHelper.Pages
         
         public int Id { get; set; }
 
-        public int Left { get; set; }
+        public int Left
+        {
+            get { return _left; }
+            set { SetAndNotify(ref _left, value); }
+        }
 
-        public int Top { get; set; }
+        public int Top
+        {
+            get { return _top; }
+            set { SetAndNotify(ref _top, value); }
+        }
 
         public Size Size { get; set; }
 

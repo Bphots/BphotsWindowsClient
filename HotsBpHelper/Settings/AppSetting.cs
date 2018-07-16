@@ -11,6 +11,8 @@ namespace HotsBpHelper.Settings
 
     public class Position
     {
+        public int TeamLeagueDy { get; set; }
+
         public MapPosition MapPosition { get; set; }
         
         public int Width { get; set; }
