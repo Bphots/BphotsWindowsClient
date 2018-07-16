@@ -72,6 +72,8 @@ namespace HotsBpHelper.Pages
 
         private IList<Point> _listPositions;
 
+        private IList<Point> _teamLeagueListPositions;
+
         private MapSelectorViewModel _mapSelectorViewModel;
 
         public ConcurrentDictionary<int, bool> ProcessingThreads { get; set; } = new ConcurrentDictionary<int, bool>();
@@ -426,6 +428,7 @@ namespace HotsBpHelper.Pages
                 return;
             }
             BpStarted = true;
+            OcrUtil?.ClearProcessedPositions();
             // 初始化BP过程
             BpStatus = new BpStatus
             {
@@ -510,6 +513,7 @@ namespace HotsBpHelper.Pages
             Reload();
             if (hide)
                 Hide();
+            
             if (AutoShowHideHelper)
             {
                 Task.Run(LookForBpScreen).ConfigureAwait(false);
@@ -716,39 +720,61 @@ namespace HotsBpHelper.Pages
             SidePosition sidePosition;
             int x, y;
             int dx, dy;
-            _listPositions = new List<Point>(16); // BP总共14个选择
+            int teamLeagueX, teamLeaguey;
+            int teamLeaguedy;
+            _listPositions = new List<Point>(16); // BP总共16个选择
+            _teamLeagueListPositions = new List<Point>(16); // BP总共16个选择
+
+            teamLeaguedy = App.AppSetting.Position.TeamLeagueDy;
 
             // Left
             sidePosition = App.MyPosition.Left;
             _listPositions.Add(sidePosition.Ban1);
             _listPositions.Add(sidePosition.Ban2);
             _listPositions.Add(sidePosition.Ban3);
+            _teamLeagueListPositions.Add(sidePosition.Ban1);
+            _teamLeagueListPositions.Add(sidePosition.Ban2);
+            _teamLeagueListPositions.Add(sidePosition.Ban3);
             x = sidePosition.Pick1.X;
             y = sidePosition.Pick1.Y;
             dx = sidePosition.Dx;
             dy = sidePosition.Dy;
+
+            teamLeagueX = (int) (sidePosition.Pick1.X * 1.05 + dx);
+            teamLeaguey = sidePosition.Pick1.Y;
             for (var i = 0; i < 5; i++)
             {
                 _listPositions.Add(new Point(x, y));
+                _teamLeagueListPositions.Add(new Point(teamLeagueX, teamLeaguey));
                 x += dx;
                 y += dy;
                 dx = -dx;
+                teamLeaguey += teamLeaguedy;
             }
             // Right
             sidePosition = App.MyPosition.Right;
             _listPositions.Add(sidePosition.Ban1);
             _listPositions.Add(sidePosition.Ban2);
             _listPositions.Add(sidePosition.Ban3);
+            _teamLeagueListPositions.Add(sidePosition.Ban1);
+            _teamLeagueListPositions.Add(sidePosition.Ban2);
+            _teamLeagueListPositions.Add(sidePosition.Ban3);
             x = sidePosition.Pick1.X;
             y = sidePosition.Pick1.Y;
             dx = sidePosition.Dx;
             dy = sidePosition.Dy;
+            
+            teamLeagueX = (int)(sidePosition.Pick1.X * 0.95);
+            teamLeaguey = sidePosition.Pick1.Y;
+
             for (var i = 0; i < 5; i++)
             {
                 _listPositions.Add(new Point(x, y));
+                _teamLeagueListPositions.Add(new Point(teamLeagueX, teamLeaguey));
                 x += dx;
                 y += dy;
                 dx = -dx;
+                teamLeaguey += teamLeaguedy;
             }
         }
 
@@ -815,6 +841,7 @@ namespace HotsBpHelper.Pages
             _isFirstAndSecondBanProcessing = false;
             _isThirdAndFourthBanProcessing = false;
             InitializeMapSelector();
+            OcrUtil?.ClearProcessedPositions();
         }
 
         public void CancelAllActiveScan()
@@ -825,6 +852,24 @@ namespace HotsBpHelper.Pages
 
         private async Task OcrAsync(IEnumerable<int> steps, CancellationToken cancellationToken)
         {
+            if (BpStatus.CurrentStep == 4)
+            {
+                bool isTeamLeague = await OcrUtil.CheckIfInTeamMatchAsync(BpStatus.FirstSide == BpStatus.Side.Left ? OcrUtil.ScanSide.Left : OcrUtil.ScanSide.Right, cancellationToken);
+
+                if (isTeamLeague)
+                {
+                    Execute.OnUIThread(RelocateSelectors);
+                }
+                
+                Execute.OnUIThread(() =>
+                {
+                    foreach (var i in _listBpSteps[4])
+                    {
+                        ShowHeroSelector(i);
+                    }
+                });
+            }
+
             var stepToProcess = new List<int>();
             foreach (var i in steps)
             {
@@ -877,6 +922,27 @@ namespace HotsBpHelper.Pages
             }
         }
 
+        private void RelocateSelectors()
+        {
+            if (_cachedHeroSelectorViewModels.Count < 16)
+                return;
+
+            for (var i = 0; i <= 15; ++i)
+            {
+                var vm = _cachedHeroSelectorViewModels[i];
+                var position = _teamLeagueListPositions[i];
+                if (i < 8 && i > 2)
+                {
+                    vm.SetLeftAndTop(position);
+                }
+                else if (i > 10)
+                {
+                    vm.SetRightAndTop(position);
+                }
+                vm.Refresh();
+            }
+        }
+
 
         private void ProcessStep()
         {
@@ -891,10 +957,11 @@ namespace HotsBpHelper.Pages
 
         private void ProcessAutoStep()
         {
-            foreach (var i in _listBpSteps[BpStatus.CurrentStep])
-            {
-                ShowHeroSelector(i);
-            }
+            if (BpStatus.CurrentStep != 4)
+                foreach (var i in _listBpSteps[BpStatus.CurrentStep])
+                {
+                    ShowHeroSelector(i);
+                }
 
             if (!(BpStatus.CurrentStep == 0 || BpStatus.CurrentStep == 1 || 
                 BpStatus.CurrentStep == 2 || BpStatus.CurrentStep == 3 || 

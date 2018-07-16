@@ -1086,6 +1086,7 @@ namespace HotsBpHelper.Pages
             var heroHeight = (int) (0.087962962962963 * height);
             var position = new Position
             {
+                TeamLeagueDy = (int) (0.03 * height),
                 Width = width,
                 Height = height,
                 BpHelperSize = bpHelperSize,

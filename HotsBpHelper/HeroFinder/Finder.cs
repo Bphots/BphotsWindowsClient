@@ -179,6 +179,12 @@ namespace HotsBpHelper.HeroFinder
             }
         }
 
+        public Bitmap AddNewTemplateBitmap(int id, FilePath screenshotPath)
+        {
+            using (var bitmap = new Bitmap(screenshotPath))
+                return AddNewTemplateBitmap(id, bitmap);
+        }
+
         public void AddNewTemplate(int id, string heroName, Dictionary<int, string> fileDictionary, Bitmap screenshotBitmap)
         {
             var imageUtil = new ImageUtils();
@@ -201,27 +207,47 @@ namespace HotsBpHelper.HeroFinder
             }
         }
 
-        public void AddNewTemplate(int id, string heroName, Dictionary<int, string> fileDictionary, bool textInWhite = false)
+        public Bitmap AddNewTemplateBitmap(int id, Bitmap screenshotBitmap)
         {
             var imageUtil = new ImageUtils();
             var positionInfo = CalculatePositionInfo(id);
 
             if (positionInfo.ClipPoints == null)
-                return;
+                return null;
 
             var path = Path.Combine(App.AppPath, "Images\\Heroes");
-            var path2 = string.Format("{0}x{1}", App.MyPosition.Width, App.MyPosition.Height);
-            FilePath screenshotPath = Path.Combine(path, path2, "Screenshot.png");
+            var path2 = string.Format("{0}x{1}", App.AppSetting.Position.Width, App.AppSetting.Position.Height);
             FilePath text = Path.Combine(path, path2, positionInfo.DirStr,
-                string.Format("{0}_{1:yyyyMMddhhmmss}.bmp", heroName, DateTime.Now));
+                $"{DateTime.Now:yyyyMMddhhmmss}.bmp");
+
+            if (!text.GetDirPath().Exists)
+                Directory.CreateDirectory(text.GetDirPath());
+
+            var bitmap2 = imageUtil.CaptureArea(screenshotBitmap, positionInfo.Rectangle, positionInfo.ClipPoints);
+
+            return bitmap2;
+        }
+
+
+        public Bitmap AddNewTemplate(int id, bool textInWhite = false)
+        {
+            var imageUtil = new ImageUtils();
+            var positionInfo = CalculatePositionInfo(id);
+
+            if (positionInfo.ClipPoints == null)
+                return null;
+
+            var path = Path.Combine(App.AppPath, "Images\\Heroes");
+            var path2 = string.Format("{0}x{1}", App.AppSetting.Position.Width, App.AppSetting.Position.Height);
+            FilePath text = Path.Combine(path, path2, positionInfo.DirStr,
+                $"{DateTime.Now:yyyyMMddhhmmss}.bmp");
             if (!text.GetDirPath().Exists)
                 Directory.CreateDirectory(text.GetDirPath());
 
             using (var bitmap = imageUtil.CaptureScreen())
-            using (var bitmap2 = imageUtil.CaptureArea(bitmap, positionInfo.Rectangle, positionInfo.ClipPoints, textInWhite))
             {
-                bitmap2.Save(text);
-                fileDictionary[id] = text;
+                var bitmap2 = imageUtil.CaptureArea(bitmap, positionInfo.Rectangle, positionInfo.ClipPoints, textInWhite);
+                return bitmap2;
             }
         }
 
