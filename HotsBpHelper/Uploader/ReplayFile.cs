@@ -128,7 +128,9 @@ namespace HotsBpHelper.Uploader
                 needUpdate = _hotsweekUploadStatus == UploadStatus.None ||
                              _hotsweekUploadStatus == UploadStatus.Reserved ||
                              _hotsweekUploadStatus == UploadStatus.UploadError ||
-                             _hotsweekUploadStatus == UploadStatus.InProgress;
+                             _hotsweekUploadStatus == UploadStatus.InProgress ||
+                             _hotsweekUploadStatus == UploadStatus.Duplicate ||
+                             _hotsweekUploadStatus == UploadStatus.Success;
 
             return needUpdate;
         }
