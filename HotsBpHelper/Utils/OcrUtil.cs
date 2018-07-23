@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
@@ -27,11 +28,29 @@ namespace HotsBpHelper.Utils
         public static bool NotInFocus = false;
 
         public static bool InGame = false;
+        private readonly int _trustableThreashold = App.AppSetting.Position.Height > 1200 ? 5 : 3;
+
+        private static readonly List<int> LeftIdList = new List<int> { 3, 4, 5, 6, 7 };
+
+        private static readonly List<int> RightIdList = new List<int> { 11, 12, 13, 14, 15 };
+
+        private static readonly Dictionary<ScanSide, List<int>> IdList = new Dictionary<ScanSide, List<int>>
+        {
+            {ScanSide.Left, LeftIdList},
+            {ScanSide.Right, RightIdList}
+        };
 
         public static bool SuspendScanning => InGame || NotInFocus;
 
+        private ConcurrentDictionary<int, bool> ProcessedPositions { get; } = new ConcurrentDictionary<int, bool>();
+
         public OcrUtil()
         {
+        }
+
+        public void ClearProcessedPositions()
+        {
+            ProcessedPositions.Clear();
         }
 
         public bool IsInitialized { get; set; }
@@ -211,9 +230,11 @@ namespace HotsBpHelper.Utils
             {
                 lock (ImageProcessingHelper.GDILock)
                 {
-                    finder.AddNewTemplate(ids[0], ids[0].ToString(), fileDic, true);
-                    logUtil.Log("Capture Complete " + ids[0]);
-                    _recognizer.Recognize(fileDic[ids[0]], rotation, sb, 5, true);
+                    using (var bitmap = finder.AddNewTemplate(ids[1], true))
+                    {
+                        logUtil.Log("Capture Complete " + ids[1]);
+                        _recognizer.Recognize(bitmap, rotation, sb, 5, true);
+                    }
                 }
                 if (sb.ToString() == _recognizer.PickingText)
                     break;
@@ -231,9 +252,11 @@ namespace HotsBpHelper.Utils
             sb.Clear();
             lock (ImageProcessingHelper.GDILock)
             {
-                finder.AddNewTemplate(ids[1], ids[1].ToString(), fileDic, true);
-                logUtil.Log("Second Capture Complete " + ids[1]);
-                _recognizer.Recognize(fileDic[ids[1]], rotation, sb, 5, true);
+                using (var bitmap = finder.AddNewTemplate(ids[1], true))
+                {
+                    logUtil.Log("Second Capture Complete " + ids[1]);
+                    _recognizer.Recognize(bitmap, rotation, sb, 5, true);
+                }
             }
             logUtil.Log(sb.ToString());
             logUtil.Flush();
@@ -247,25 +270,6 @@ namespace HotsBpHelper.Utils
                 OcrAsyncChecker.CheckThread(OcrAsyncChecker.ScanLabelAsyncChecker);
 
                 var finder = new Finder();
-                if (ids.Count == 1 && (ids[0] == 4 || ids[0] == 11))
-                {
-                    var stageInfo = new StageInfo();
-                    while (stageInfo.Step < 4 && !cancellationToken.IsCancellationRequested)
-                    {
-                        await Task.Delay(500);
-                        stageInfo = finder.GetStageInfo();
-                    }
-                    if (!cancellationToken.IsCancellationRequested)
-                    {
-                        bool isInTeamMatch =
-                            await CheckIfInTeamMatchAsync(side, cancellationToken).ConfigureAwait(false);
-                        if (isInTeamMatch)
-                        {
-                            bpViewModel.CancelScan();
-                            return;
-                        }
-                    }
-                }
 
                 float rotation = side == ScanSide.Left ? (float) 29.7 : (float) -29.7;
 
@@ -279,188 +283,175 @@ namespace HotsBpHelper.Utils
 
                     bpVm[id] = vm;
                 }
+
                 for (var i = 0; i < ids.Count; ++i)
                 {
                     checkedDic[i] = false;
                 }
-
-                var fileDic = new Dictionary<int, string>();
-
+                
                 var logUtil = new LogUtil(@".\logPick" + string.Join("&", ids) + ".txt");
                 logUtil.Log("PickChecked");
 
                 int bpScreenFail = 0;
                 bool warned = false;
+                bool awaitFlag = false;
                 while (checkedDic.Any(c => !c.Value))
                 {
                     var sb = new StringBuilder();
                     var sbConfirm = new StringBuilder();
-                    bool awaitFlag = false;
-                    for (var i = 0; i < ids.Count; ++i)
+                    var i = checkedDic.FirstOrDefault(l => !l.Value).Key;
+
+                    if (awaitFlag)
                     {
-                        if (awaitFlag)
+                        await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
+                        awaitFlag = false;
+                    }
+
+                    if (checkedDic.ContainsKey(i) && checkedDic[i])
+                        continue;
+
+                    if (bpVm[ids[i]].Selected)
+                    {
+                        checkedDic[i] = true;
+                        continue;
+                    }
+
+                    if (cancellationToken.IsCancellationRequested)
+                        return;
+
+                    if (SuspendScanning)
+                    {
+                        await Task.Delay(1000).ConfigureAwait(false);
+                        continue;
+                    }
+
+                    logUtil.Log("Starting detect quit");
+                    var processedResult = ProcessedResult.Fail;
+
+                    int realPositionId = ids[i];
+
+                    // first attempt
+                    lock (ImageProcessingHelper.GDILock)
+                    {
+                        using (var bitmap = new ImageUtils().CaptureScreen())
                         {
-                            await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
-                            awaitFlag = false;
-                        }
-
-                        if (checkedDic.ContainsKey(i) && checkedDic[i])
-                            continue;
-
-                        if (bpVm[ids[i]].Selected)
-                        {
-                            checkedDic[i] = true;
-                            continue;
-                        }
-
-                        if (cancellationToken.IsCancellationRequested)
-                            return;
-
-                        if (SuspendScanning)
-                        {
-                            await Task.Delay(1000).ConfigureAwait(false);
-                            continue;
-                        }
-
-                        logUtil.Log("Starting detect quit");
-                        var alreadyTrustable = false;
-
-                        // first attempt
-                        lock (ImageProcessingHelper.GDILock)
-                        {
-                            using (var bitmap = new ImageUtils().CaptureScreen())
+                            if (!warned && bpViewModel.BpStatus.CurrentStep < 11 &&
+                                StageFinder.ProcessStageInfo(bitmap).Step == -1)
                             {
-                                if (!warned && bpViewModel.BpStatus.CurrentStep < 11 &&
-                                    StageFinder.ProcessStageInfo(bitmap).Step == -1)
+                                bpScreenFail++;
+                                if (bpScreenFail == 5)
                                 {
-                                    bpScreenFail++;
-                                    if (bpScreenFail == 5)
-                                    {
-                                        warned = true;
-                                        bpViewModel.WarnNotInBp();
-                                    }
+                                    warned = true;
+                                    bpViewModel.WarnNotInBp();
                                 }
-                                else
-                                {
-                                    bpScreenFail = 0;
-                                }
-
-                                logUtil.Log("Starting detect overlap");
-                                if (side == ScanSide.Right)
-                                {
-                                    logUtil.Log("Starting right");
-                                    var chartInfo = FrameFinder.CheckIfInChat(bitmap);
-                                    logUtil.Log("Detect chat mode end");
-                                    if (chartInfo == FrameFinder.ChatInfo.Partial && ids[i] > 12 ||
-                                        chartInfo == FrameFinder.ChatInfo.Full)
-                                    {
-                                        logUtil.Log("Overlap detected");
-                                        awaitFlag = true;
-                                        continue;
-                                    }
-
-                                    var hasFrame = FrameFinder.CheckIfInRightFrame(bitmap);
-                                    logUtil.Log("Detect right frame end");
-                                    if (hasFrame)
-                                    {
-                                        logUtil.Log("Overlap detected");
-                                        awaitFlag = true;
-                                        continue;
-                                    }
-                                }
-                                else
-                                {
-                                    logUtil.Log("Starting left");
-                                    var hasFrame = FrameFinder.CheckIfInLeftFrame(bitmap);
-                                    logUtil.Log("Detect left frame end");
-                                    if (hasFrame)
-                                    {
-                                        logUtil.Log("Overlap detected");
-                                        awaitFlag = true;
-                                        continue;
-                                    }
-                                }
-
-                                sb.Clear();
-                                sbConfirm.Clear();
-
-                                finder.AddNewTemplate(ids[i], ids[i].ToString(), fileDic, bitmap);
-                                logUtil.Log("Capture Complete " + ids[i]);
-                                alreadyTrustable = _recognizer.Recognize(fileDic[ids[i]], rotation, sb,
-                                    App.AppSetting.Position.Height > 1200 ? 5 : 3);
                             }
-                        }
-
-
-                        logUtil.Log("Checked " + ids[i] + " (" + sb.ToString() + ")");
-
-                        if (sb.ToString() == _recognizer.PickingText || string.IsNullOrEmpty(sb.ToString()))
-                            continue;
-
-                        if (cancellationToken.IsCancellationRequested)
-                            return;
-
-                        if (SuspendScanning)
-                        {
-                            logUtil.Log("SuspendScanning delay 1000 " + ids[i]);
-                            await Task.Delay(1000).ConfigureAwait(false);
-                            continue;
-                        }
-
-                        // second attempt
-                        FilePath tempscreenshotPath = null;
-                        if (!alreadyTrustable)
-                        {
-                            logUtil.Log("Delay 500 " + ids[i]);
-                            await Task.Delay(500).ConfigureAwait(false);
-                            if (cancellationToken.IsCancellationRequested)
-                                return;
-                            if (SuspendScanning)
+                            else
                             {
-                                await Task.Delay(1000).ConfigureAwait(false);
+                                bpScreenFail = 0;
+                            }
+
+                            if (CheckIsOverlap(side, logUtil, bitmap))
+                            {
+                                awaitFlag = true;
                                 continue;
                             }
 
-                            lock (ImageProcessingHelper.GDILock)
+                            sb.Clear();
+                            sbConfirm.Clear();
+
+                            foreach (var scanSideId in IdList[side].Where(id => !ProcessedPositions.ContainsKey(id)))
                             {
-                                tempscreenshotPath = finder.CaptureScreen();
-                                finder.AddNewTemplate(ids[i], ids[i].ToString(), fileDic, tempscreenshotPath);
-                                logUtil.Log("Capture Complete " + ids[i]);
-                                _recognizer.Recognize(fileDic[ids[i]], rotation, sbConfirm,
-                                    App.AppSetting.Position.Height > 1200 ? 5 : 3);
+                                using (var bitMap = finder.AddNewTemplateBitmap(scanSideId, bitmap))
+                                {
+                                    logUtil.Log("Capture Complete " + scanSideId);
+                                    processedResult = _recognizer.Recognize(bitMap, rotation, sb,
+                                        _trustableThreashold);
+                                    if (processedResult != ProcessedResult.Fail)
+                                    {
+                                        realPositionId = scanSideId;
+                                        break;
+                                    }
+                                }
                             }
+                               
                         }
+                    }
+                        
+                    logUtil.Log("Checked " + ids[i] + " (" + sb + ")");
 
-                        logUtil.Log("Second checked " + ids[i] + " (" + sbConfirm.ToString() + ")");
+                    if (sb.ToString() == _recognizer.PickingText || string.IsNullOrEmpty(sb.ToString()) || processedResult == ProcessedResult.Fail)
+                        continue;
 
+                    if (cancellationToken.IsCancellationRequested)
+                        return;
+
+                    if (SuspendScanning)
+                    {
+                        logUtil.Log("SuspendScanning delay 1000 " + ids[i]);
+                        await Task.Delay(1000).ConfigureAwait(false);
+                        continue;
+                    }
+
+                    // second attempt
+                    FilePath tempscreenshotPath = null;
+                    if (processedResult != ProcessedResult.Trustable)
+                    {
+                        logUtil.Log("Delay 500 " + ids[i]);
+                        await Task.Delay(500).ConfigureAwait(false);
+                        if (cancellationToken.IsCancellationRequested)
+                            return;
                         if (SuspendScanning)
                         {
-                            logUtil.Log("SuspendScanning delay 1000 " + ids[i]);
                             await Task.Delay(1000).ConfigureAwait(false);
                             continue;
                         }
 
-                        if (bpVm[ids[i]].Selected)
+                        lock (ImageProcessingHelper.GDILock)
                         {
-                            logUtil.Log("Vm already selected delay 1000 " + ids[i]);
-                            checkedDic[i] = true;
-                            continue;
+                            tempscreenshotPath = finder.CaptureScreen();
+                            using (var bitMap = finder.AddNewTemplateBitmap(realPositionId, tempscreenshotPath))
+                            {
+                                logUtil.Log("Capture Complete " + realPositionId);
+                                _recognizer.Recognize(bitMap, rotation, sbConfirm,
+                                    _trustableThreashold);
+                            }
                         }
+                    }
 
-                        if (alreadyTrustable)
-                            bpScreenFail = 0;
+                    logUtil.Log("Second checked " + ids[i] + " (" + sbConfirm.ToString() + ")");
 
-                        if ((alreadyTrustable || sb.ToString() == sbConfirm.ToString()) &&
-                            !cancellationToken.IsCancellationRequested && CheckIfInFocus())
-                        {
-                            tempscreenshotPath?.DeleteIfExists();
-                            var text = sb.ToString();
-                            var index = ids[i];
+                    if (SuspendScanning)
+                    {
+                        logUtil.Log("SuspendScanning delay 1000 " + ids[i]);
+                        await Task.Delay(1000).ConfigureAwait(false);
+                        continue;
+                    }
 
-                            Execute.OnUIThread(() => { bpViewModel.ShowHeroSelector(index, text); });
-                            checkedDic[i] = true;
-                            logUtil.Log("Confirmed " + index + " " + text);
-                        }
+                    if (bpVm[ids[i]].Selected)
+                    {
+                        logUtil.Log("Vm already selected delay 1000 " + ids[i]);
+                        checkedDic[i] = true;
+                        continue;
+                    }
+
+                    if (processedResult == ProcessedResult.Trustable)
+                        bpScreenFail = 0;
+
+                    if ((processedResult == ProcessedResult.Trustable || sb.ToString() == sbConfirm.ToString()) &&
+                        !cancellationToken.IsCancellationRequested && CheckIfInFocus())
+                    {
+                        bpScreenFail = 0;
+                        tempscreenshotPath?.DeleteIfExists();
+                        var text = sb.ToString();
+                        var index = ids[checkedDic.First(l => !l.Value).Key];
+
+                        if (ids.Contains(realPositionId) && !checkedDic[ids.IndexOf(realPositionId)])
+                            index = realPositionId;
+
+                        Execute.OnUIThread(() => { bpViewModel.ShowHeroSelector(index, text); });
+                        ProcessedPositions[realPositionId] = true;
+                        checkedDic[ids.IndexOf(index)] = true;
+                        logUtil.Log("Confirmed " + index + " " + text);
                     }
 
                 }
@@ -475,6 +466,43 @@ namespace HotsBpHelper.Utils
             {
                 OcrAsyncChecker.CleanThread(OcrAsyncChecker.ScanLabelAsyncChecker);
             }
+        }
+
+        private static bool CheckIsOverlap(ScanSide side, LogUtil logUtil, Bitmap bitmap)
+        {
+            logUtil.Log("Starting detect overlap");
+            if (side == ScanSide.Right)
+            {
+                logUtil.Log("Starting right");
+                var chartInfo = FrameFinder.CheckIfInChat(bitmap);
+                logUtil.Log("Detect chat mode end");
+                if (chartInfo == FrameFinder.ChatInfo.Partial ||
+                    chartInfo == FrameFinder.ChatInfo.Full)
+                {
+                    logUtil.Log("Overlap detected");
+                    return true;
+                }
+
+                var hasFrame = FrameFinder.CheckIfInRightFrame(bitmap);
+                logUtil.Log("Detect right frame end");
+                if (hasFrame)
+                {
+                    logUtil.Log("Overlap detected");
+                    return true;
+                }
+            }
+            else
+            {
+                logUtil.Log("Starting left");
+                var hasFrame = FrameFinder.CheckIfInLeftFrame(bitmap);
+                logUtil.Log("Detect left frame end");
+                if (hasFrame)
+                {
+                    logUtil.Log("Overlap detected");
+                    return true;
+                }
+            }
+            return false;
         }
 
         private static bool CheckIfInFocus()

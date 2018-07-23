@@ -174,9 +174,8 @@ namespace ImageProcessor.ImageProcessing
             }
         }
 
-        public static int CheckMode(string file, float rotationAngle)
+        public static int CheckMode(Bitmap bitmap, float rotationAngle)
         {
-            using (var bitmap = new Bitmap(file))
             using (var bitmapGray = bitmap.ToGrayscale())
             {
                 using (var rotatedImage = bitmapGray.RotateImage(rotationAngle))
@@ -274,9 +273,8 @@ namespace ImageProcessor.ImageProcessing
             }
         }
 
-        public static Bitmap GetRotatedImage(float rotationAngle, FilePath file, bool textInWhite, out int sampleWidth)
+        public static Bitmap GetRotatedImage(float rotationAngle, Bitmap bitmap, bool textInWhite, out int sampleWidth)
         {
-            using (var bitmap = new Bitmap(file))
             using (var bitmapGray = bitmap.ToGrayscale())
             using (var zoomedBitmapGray = bitmapGray.Zoom(200))
             {
