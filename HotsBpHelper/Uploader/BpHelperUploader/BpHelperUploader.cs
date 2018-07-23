@@ -143,7 +143,7 @@ namespace HotsBpHelper.Uploader
                 file.HotsweekUploadStatus = UploadStatus.Reserved;
 
             if (fingerPrintInfo.Access == FingerPrintStatus.Duplicated)
-                file.HotsweekUploadStatus = UploadStatus.Duplicate;
+                file.HotsweekUploadStatus = UploadStatus.HotsweekDuplicate;
                 
             //  replays.Where(x => exists.Contains(x.Fingerprint)).Map(x => x.UploadStatus = UploadStatus.Duplicate);
         }
