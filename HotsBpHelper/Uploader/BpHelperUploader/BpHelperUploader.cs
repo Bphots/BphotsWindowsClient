@@ -57,7 +57,7 @@ namespace HotsBpHelper.Uploader
         {
             try
             {
-                return await _restApi.UploadReplay(file, fingerprint);
+                return await _restApi.UploadReplayJson(file, fingerprint);
             }
             catch (WebException ex)
             {

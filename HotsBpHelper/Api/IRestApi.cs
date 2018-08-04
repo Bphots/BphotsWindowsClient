@@ -25,9 +25,13 @@ namespace HotsBpHelper.Api
 
         Task<FingerPrintStatusCollection> CheckDuplicatesAsync(IEnumerable<ReplayIdentity> replayIdentities);
 
+        Task<FingerPrintStatusCollection> CheckDuplicatesV2(ReplayIdentity replayIdentity);
+
         Task<int> GetMinimalBuild();
 
         Task<object> Analyze(string type, string para, string lang);
+
+        Task<UploadStatus> UploadReplayJson(string file, string fingerprint);
 
         Task<UploadStatus> UploadReplay(string file, string fingerprint);
 
