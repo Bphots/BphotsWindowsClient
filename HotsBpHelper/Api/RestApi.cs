@@ -79,6 +79,11 @@ namespace HotsBpHelper.Api
             return await ExecuteWeekAsync<FingerPrintStatusCollection>(request);
         }
 
+        public Task<FingerPrintStatusCollection> CheckDuplicatesV2(ReplayIdentity replayIdentity)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<int> GetMinimalBuild()
         {
             var request = CreateRequest("min-build", new List<Tuple<string, string>>());
@@ -105,7 +110,7 @@ namespace HotsBpHelper.Api
             }
         }
 
-        public async Task<UploadStatus> UploadReplay(string file, string fingerprint)
+        public async Task<UploadStatus> UploadReplayJson(string file, string fingerprint)
         {
             var url = GetSignedUrl(new List<Tuple<string, string>> { Tuple.Create("fingerprint", fingerprint) }, "upload");
             if (App.Debug)
@@ -118,6 +123,11 @@ namespace HotsBpHelper.Api
                 var responseItem = JsonConvert.DeserializeObject<GenericResponse>(response);
                 return responseItem.Success ? UploadStatus.HotsweekSuccess : UploadStatus.UploadError;
             }
+        }
+
+        public Task<UploadStatus> UploadReplay(string file, string fingerprint)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<UploadStatus> UploadImage(string file, string id)
