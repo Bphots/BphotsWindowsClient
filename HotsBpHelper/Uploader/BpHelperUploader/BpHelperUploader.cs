@@ -4,13 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using DotNetHelper;
 using Heroes.ReplayParser;
 using HotsBpHelper.Api;
 using HotsBpHelper.Api.Model;
-using HotsBpHelper.Api.Security;
 using Newtonsoft.Json;
 
 namespace HotsBpHelper.Uploader
@@ -35,6 +33,9 @@ namespace HotsBpHelper.Uploader
             tempPath = tempPath.GetDirPath() + tempPath.GetFileNameWithoutExtension() + ".json";
             try
             {
+                if (result.Item2 == null)
+                    throw new NullReferenceException();
+
                 var resultText = JsonConvert.SerializeObject(result.Item2);
                 File.WriteAllText(tempPath, resultText);
             }
