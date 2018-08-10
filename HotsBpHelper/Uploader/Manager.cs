@@ -139,6 +139,7 @@ namespace HotsBpHelper.Uploader
 
             var replays = ScanReplays();
             Files.AddRange(replays.OrderByDescending(l => l.Created));
+            Monitor.LatestReplayTime = replays.Max(l => l.Created);
             _uploadStrategy = App.CustomConfigurationSettings.UploadStrategy;
             _uploadToHotsApi = UploadToHotsApi;
             _uploadToHotsweek = UploadToHotsweek;

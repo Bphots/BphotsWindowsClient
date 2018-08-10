@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Controls.Primitives;
 using HotsBpHelper.Settings;
+using HotsBpHelper.Utils;
 using NLog;
 
 namespace HotsBpHelper.Uploader
@@ -11,6 +12,8 @@ namespace HotsBpHelper.Uploader
     public class Monitor
     {
         private static Logger _log = LogManager.GetCurrentClassLogger();
+
+        public static DateTime LatestReplayTime = DateTime.MinValue;
 
         protected FileSystemWatcher _watcher;
 
@@ -22,6 +25,7 @@ namespace HotsBpHelper.Uploader
         protected virtual void OnReplayAdded(string path)
         {
             _log.Debug($"Detected new replay: {path}");
+            LatestReplayTime = File.GetCreationTime(path);
             ReplayAdded?.Invoke(this, new EventArgs<string>(path));
         }
 

@@ -32,6 +32,7 @@ using NAppUpdate.Framework.Tasks;
 using Newtonsoft.Json;
 using Stylet;
 using Application = System.Windows.Application;
+using Monitor = HotsBpHelper.Uploader.Monitor;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
 
@@ -702,7 +703,7 @@ namespace HotsBpHelper.Pages
             {
                 if (AutoShowMmr)
                 {
-                    if (File.Exists(Const.BattleLobbyPath) && File.GetLastWriteTime(Const.BattleLobbyPath) != lobbyLastModified)
+                    if (ValidLobbyFilePresent() && File.GetLastWriteTime(Const.BattleLobbyPath) != lobbyLastModified)
                     {
                         lobbyLastModified = File.GetLastWriteTime(Const.BattleLobbyPath);
                         Execute.OnUIThread(() =>
@@ -726,7 +727,7 @@ namespace HotsBpHelper.Pages
             var lobbyLastModified = DateTime.MinValue;
             while (true)
             {
-                if (File.Exists(Const.BattleLobbyPath) && File.GetLastWriteTime(Const.BattleLobbyPath) != lobbyLastModified)
+                if (ValidLobbyFilePresent() && File.GetLastWriteTime(Const.BattleLobbyPath) != lobbyLastModified)
                 {
                     _uploadManager?.Monitor?.Start();
 
@@ -740,7 +741,7 @@ namespace HotsBpHelper.Pages
                     });
                 }
 
-                if (File.Exists(Const.BattleLobbyPath))
+                if (ValidLobbyFilePresent())
                 {
                     if (_bpViewModel.ProcessingThreads.All(t => !t.Value) && _bpViewModel.OcrUtil.IsInitialized)
                     {
@@ -759,7 +760,7 @@ namespace HotsBpHelper.Pages
                         Manager.IngameSuspend = true;
                 }
 
-                if (!File.Exists(Const.BattleLobbyPath) && OcrUtil.InGame)
+                if (!ValidLobbyFilePresent() && OcrUtil.InGame)
                 {
                     Execute.OnUIThread(() => _toastService.ReinitializeToast());
                     if (!_bpViewModel.OcrUtil.IsInitialized)
@@ -777,6 +778,12 @@ namespace HotsBpHelper.Pages
 
                 await Task.Delay(1000);
             }
+        }
+
+        public static bool ValidLobbyFilePresent()
+        {
+            return File.Exists(Const.BattleLobbyPath) &&
+                   File.GetLastWriteTime(Const.BattleLobbyPath) > Monitor.LatestReplayTime;
         }
 
         private void RegisterHotKey()
@@ -1423,7 +1430,7 @@ namespace HotsBpHelper.Pages
 
         public bool IsStatsVisible
         {
-            get { return File.Exists(Const.BattleLobbyPath) && OcrUtil.InGame && IsLoaded; }
+            get { return ValidLobbyFilePresent() && OcrUtil.InGame && IsLoaded; }
         }
 
         public void ShowAbout()
