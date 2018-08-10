@@ -286,9 +286,9 @@ namespace HotsBpHelper.Uploader
                 if (App.CustomConfigurationSettings.UploadStrategy != UploadStrategy.None && OcrUtil.InGame)
                     continue;
 
+                OnStatusChanged();
                 try
                 {
-                    OnStatusChanged();
                     bool valid = true;
                     var replayFile = _hotsweekProcessingQueue.OrderByDescending(l => l.Key.Created).FirstOrDefault(l => l.Value == ProcessingStatus.None).Key;
                     if (replayFile == null)
@@ -338,6 +338,7 @@ namespace HotsBpHelper.Uploader
                 }
                 catch (Exception ex)
                 {
+                    await Task.Delay(3000);
                     Log.Error(ex, "Error in hotsweek upload loop");
                 }
             }
