@@ -34,7 +34,7 @@ namespace HotsBpHelper.Pages
 
         private void WebCallbackListenerOnLobbyRequested(object sender, EventArgs eventArgs)
         {
-            if (!File.Exists(Const.BattleLobbyPath))
+            if (!ShellViewModel.ValidLobbyFilePresent())
                 return;
 
             var lobbyProcessor = new LobbyFileProcessor(Const.BattleLobbyPath, App.LobbyHeroes, App.LobbyMaps);
