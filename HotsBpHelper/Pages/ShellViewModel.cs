@@ -391,6 +391,22 @@ namespace HotsBpHelper.Pages
 
             Execute.OnUIThread(() =>
             {
+                try
+                {
+                    var tempPath = Path.GetTempPath();
+                    var files = Directory.GetFiles(tempPath, "tmp*.tmp", SearchOption.AllDirectories);
+                    foreach (var file in files)
+                    {
+                        if ((new FileInfo(file)).Length < 100)
+                            File.Delete(file);
+                    }
+                }
+                catch (Exception)
+                {
+                    
+                }
+
+
                 var webUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
                 webUpdateVm.ShellViewModel = this;
                 webUpdateVm.UpdateCompleted += OnWebFileUpdateCompleted;
