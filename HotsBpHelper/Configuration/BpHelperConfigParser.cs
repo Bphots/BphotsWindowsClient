@@ -298,7 +298,7 @@ namespace HotsBpHelper.Configuration
 
                 foreach (var key in _hotKeys)
                 {
-                    sb.AppendLine(WriteConfigurationValue(HotKeySettingsKey + key,
+                    sb.AppendLine(WriteConfigurationValue(HotKeySettingsKey + key.Key,
                         customConfigurationSettings.HotKeySettings[key.Key]));
                 }
 
