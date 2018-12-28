@@ -4,11 +4,15 @@ using System.Threading.Tasks;
 using HotsBpHelper.Api.Model;
 using HotsBpHelper.Uploader;
 
+using LobbyFileParser;
+
 namespace HotsBpHelper.Api
 {
     public interface IRestApi
     {
         List<BroadcastInfo> GetBroadcastInfo(string mode, string lang);
+
+        LobbyParameter GetLobbyParameter(string region);
 
         string GetOss();
 

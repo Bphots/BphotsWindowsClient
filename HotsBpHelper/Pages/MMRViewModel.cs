@@ -8,6 +8,7 @@ using HotsBpHelper.Utils;
 using LobbyFileParser;
 using Stylet;
 using Point = System.Drawing.Point;
+using Region = LobbyFileParser.Region;
 using Size = System.Drawing.Size;
 
 namespace HotsBpHelper.Pages
@@ -15,13 +16,17 @@ namespace HotsBpHelper.Pages
     public class MMRViewModel : ViewModelBase
     {
         private readonly IEventAggregator _eventAggregator;
+        private readonly IRestApi _restApi;
         private int _height;
         private Visibility _visibility;
         private int _width;
 
-        public MMRViewModel(IEventAggregator eventAggregator)
+        private readonly Dictionary<Region, LobbyParameter> _lobbyParameter = new Dictionary<Region, LobbyParameter>();
+
+        public MMRViewModel(IEventAggregator eventAggregator, IRestApi restApi)
         {
             _eventAggregator = eventAggregator;
+            _restApi = restApi;
 
             var location = new Point(App.AppSetting.Position.Width / 2 - App.AppSetting.Position.MmrWidth / 2, App.AppSetting.Position.Height / 2 - App.AppSetting.Position.MmrHeight / 2).ToUnitPoint();
             Left = location.X;
@@ -38,7 +43,13 @@ namespace HotsBpHelper.Pages
                 return;
 
             var lobbyProcessor = new LobbyFileProcessor(Const.BattleLobbyPath, App.LobbyHeroes, App.LobbyMaps);
-            var game = lobbyProcessor.ParseLobbyInfo();
+            var region = lobbyProcessor.GetRegion();
+            if (!_lobbyParameter.ContainsKey(region))
+            {
+                _lobbyParameter[region] = _restApi.GetLobbyParameter(region.ToString());
+            }
+
+            var game = lobbyProcessor.ParseLobbyInfo(_lobbyParameter[region]);
             FillMMR(game);
             Show();
         }

@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using HotsBpHelper.Api.Model;
 using HotsBpHelper.Api.Security;
 using HotsBpHelper.Uploader;
+
+using LobbyFileParser;
+
 using Newtonsoft.Json;
 using NLog;
 using RestSharp;
@@ -168,6 +171,17 @@ namespace HotsBpHelper.Api
                 });
 
             return Execute<List<BroadcastInfo>>(request);
+        }
+
+        public LobbyParameter GetLobbyParameter(string region)
+        {
+            var request = CreateRequest("get/lobbyParameter",
+                                        new List<Tuple<string, string>>
+                                            {
+                                                Tuple.Create("region", region)
+                                            });
+
+            return Execute<LobbyParameter>(request);
         }
 
         private RestRequest CreateRequest(string method, IList<Tuple<string, string>> parameters)
