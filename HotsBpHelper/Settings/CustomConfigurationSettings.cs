@@ -26,6 +26,8 @@ namespace HotsBpHelper.Settings
         public int MMRAutoCloseTime { get; set; }
 
         public bool UploadBanSample { get; set; }
+
+        public readonly Dictionary<string, string> HotKeySettings = new Dictionary<string, string>();
     }
 
     public class UserDataSettings

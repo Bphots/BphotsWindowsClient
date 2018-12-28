@@ -24,9 +24,19 @@ namespace HotsBpHelper.Configuration
         private const string UploadBanSampleKey = @"UploadBanSample";
         private const string PlayerTagKey = @"PlayerTag";
         private const string HotsweekPlayerIdKey = @"HotsweekPlayerId";
+        private const string HotKeySettingsKey = @"HotKey";
 
         private static readonly string BpHelperConfigPath =
             Path.GetFullPath(@".\config.ini");
+
+        private static readonly Dictionary<string, string> _hotKeys = new Dictionary<string, string>() {
+            { "ShowHideHelper", "B" },
+            { "ShowMmr",        "M" },
+            { "AutoDetect",     "R" },
+            { "ResetHelper",    "N" },
+            { "ShowDevTool",    "D" },
+            { "CaptureScreen",  "C" }
+        };
 
         public BpHelperConfigParser() : base(BpHelperConfigPath)
         {
@@ -104,6 +114,13 @@ namespace HotsBpHelper.Configuration
                 return UploadStrategy.None;
 
             return UploadStrategy.UploadAll;
+        }
+
+        public string GetHotKeySettings(string key)
+        {
+            var hotkey = GetConfigurationValue(HotKeySettingsKey + key);
+
+            return hotkey == string.Empty ? _hotKeys[key] : hotkey;
         }
 
         public string GetLanguageForBphots()
@@ -209,7 +226,12 @@ namespace HotsBpHelper.Configuration
             customConfigurationSettings.AutoUploadReplayToHotsweek = parser.GetAutoUploadNewReplayToHotsweek();
             customConfigurationSettings.UploadStrategy = parser.GeUploadStrategy();
             customConfigurationSettings.MMRAutoCloseTime = parser.GetMMRAutoCloseTime();
-            
+
+            foreach (var hotKey in _hotKeys)
+            {
+                customConfigurationSettings.HotKeySettings[hotKey.Key] = parser.GetHotKeySettings(hotKey.Key);
+            }
+
             App.UserDataSettings.PlayerTags = parser.GetPlayerTags();
             App.UserDataSettings.HotsweekPlayerId = parser.GetHotsweekPlayerId();
 
@@ -273,6 +295,12 @@ namespace HotsBpHelper.Configuration
                     customConfigurationSettings.LanguageForBphots));
                 sb.AppendLine(WriteConfigurationValue(LanguageForMessageKey,
                     customConfigurationSettings.LanguageForMessage));
+
+                foreach (var key in _hotKeys)
+                {
+                    sb.AppendLine(WriteConfigurationValue(HotKeySettingsKey + key.Key,
+                        customConfigurationSettings.HotKeySettings[key.Key]));
+                }
 
                 var languageFromGame = GetLanguageFromGame();
                 if (string.IsNullOrEmpty(languageFromGame))

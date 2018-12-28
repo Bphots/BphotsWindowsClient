@@ -149,9 +149,10 @@ namespace ImageProcessor
             var tempPath = TempDirectoryPath + "temp.tiff";
             var mode = textInWhite ? 0 : ImageProcessingHelper.CheckMode(bitMap, rotationAngle);
 
-            FilePath file = Path.GetTempFileName();
+            FilePath file = null;
             if (OcrEngine.Debug)
             {
+                file = Path.GetTempFileName();
                 bitMap.Save(TempDirectoryPath.Parent + file.GetFileNameWithoutExtension() + ".bmp");
             }
 
@@ -290,7 +291,7 @@ namespace ImageProcessor
             image.Dispose();
             
             if (!OcrEngine.Debug && OcrEngine.Delete)
-                file.DeleteIfExists();
+                file?.DeleteIfExists();
 
             if (maxValue == 0)
                 return ProcessedResult.Fail;

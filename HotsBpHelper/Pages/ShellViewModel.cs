@@ -391,6 +391,22 @@ namespace HotsBpHelper.Pages
 
             Execute.OnUIThread(() =>
             {
+                try
+                {
+                    var tempPath = Path.GetTempPath();
+                    var files = Directory.GetFiles(tempPath, "tmp*.tmp", SearchOption.AllDirectories);
+                    foreach (var file in files)
+                    {
+                        if ((new FileInfo(file)).Length < 100)
+                            File.Delete(file);
+                    }
+                }
+                catch (Exception)
+                {
+                    
+                }
+
+
                 var webUpdateVm = _viewModelFactory.CreateViewModel<WebFileUpdaterViewModel>();
                 webUpdateVm.ShellViewModel = this;
                 webUpdateVm.UpdateCompleted += OnWebFileUpdateCompleted;
@@ -790,12 +806,14 @@ namespace HotsBpHelper.Pages
         {
             try
             {
-                _hotKeyManager.Register(Key.B, ModifierKeys.Control | ModifierKeys.Shift);
-                _hotKeyManager.Register(Key.C, ModifierKeys.Control | ModifierKeys.Shift);
-                _hotKeyManager.Register(Key.M, ModifierKeys.Control | ModifierKeys.Shift);
-                _hotKeyManager.Register(Key.N, ModifierKeys.Control | ModifierKeys.Shift);
-                _hotKeyManager.Register(Key.R, ModifierKeys.Control | ModifierKeys.Shift);
-                _hotKeyManager.Register(Key.D, ModifierKeys.Control | ModifierKeys.Shift);
+                // var key = (Key)App.CustomConfigurationSettings.HotKeyShowHideHelper[0];
+                // var key = Enum.Parse(typeof(Key), "Enter");
+                Key key;
+                foreach (var hotKeySetting in App.CustomConfigurationSettings.HotKeySettings)
+                {
+                    if (!Enum.TryParse(hotKeySetting.Value, out key)) continue;
+                    _hotKeyManager.Register(key, ModifierKeys.Control | ModifierKeys.Shift);
+                }
                 _hotKeyManager.KeyPressed += HotKeyManagerPressed;
             }
             catch (Exception e)
@@ -885,37 +903,62 @@ namespace HotsBpHelper.Pages
         {
             if (!IsLoaded)
                 return;
-            
-            if (e.HotKey.Key == Key.B)
+
+            var key = e.HotKey.Key.ToString();
+
+            var keyShowHideHelper = App.CustomConfigurationSettings.HotKeySettings["ShowHideHelper"];
+
+            if (key == keyShowHideHelper)
             {
                 ManuallyShowHideHelper();
+                return;
             }
-            if (e.HotKey.Key == Key.M)
+
+            var keyShowMmr = App.CustomConfigurationSettings.HotKeySettings["ShowMmr"];
+
+            if (key == keyShowMmr)
             {
                 if (IsStatsVisible)
                     ShowMmr();
+                return;
             }
-            if (e.HotKey.Key == Key.R)
+
+            var keyAutoDetect = App.CustomConfigurationSettings.HotKeySettings["AutoDetect"];
+
+            if (key == keyAutoDetect)
             {
                 if (CanOcr)
                     AutoDetect = !_bpViewModel.IsAutoMode;
+                return;
             }
-            if (e.HotKey.Key == Key.N)
+
+            var keyResetHelper = App.CustomConfigurationSettings.HotKeySettings["ResetHelper"];
+
+            if (key == keyResetHelper)
             {
                 ResetHelper();
+                return;
             }
-            if (e.HotKey.Key == Key.D)
+
+            var keyShowDevTool = App.CustomConfigurationSettings.HotKeySettings["ShowDevTool"];
+
+            if (key == keyShowDevTool)
             {
                 if (_bpViewModel == null)
                     return; 
 
                 _bpViewModel.ShowDevTool = !_bpViewModel.ShowDevTool;
+                return;
             }
-            else if (e.HotKey.Key == Key.C)
+
+            var keyCaptureScreen = App.CustomConfigurationSettings.HotKeySettings["CaptureScreen"];
+
+            if (key == keyCaptureScreen)
             {
                 var captureName = Path.Combine(App.AppPath, "Screenshots",
                     DateTime.Now.ToString("yyyyMMdd_hhmmss") + ".bmp");
                 _imageUtil.CaptureScreen().Save(captureName);
+                return;
             }
         }
 
