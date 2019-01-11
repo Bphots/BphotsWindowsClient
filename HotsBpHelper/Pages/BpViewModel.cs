@@ -99,11 +99,6 @@ namespace HotsBpHelper.Pages
             
             try
             {
-                var folder = @".\hashlist.json";
-                var sourceContent = File.ReadAllText(folder);
-
-                AllHero.HeroInfo = JsonConvert.DeserializeObject<List<EachHero>>(sourceContent);
-
                 OcrUtil = new OcrUtil();
                 OcrUtil.Initialize();
                 OcrAvailable = true;

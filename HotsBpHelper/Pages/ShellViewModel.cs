@@ -25,6 +25,7 @@ using HotsBpHelper.Uploader;
 using HotsBpHelper.UserControls;
 using HotsBpHelper.Utils;
 using HotsBpHelper.WPF;
+using ImageProcessor.HashProcessing;
 using ImageProcessor.Ocr;
 using NAppUpdate.Framework;
 using NAppUpdate.Framework.Sources;
@@ -281,10 +282,7 @@ namespace HotsBpHelper.Pages
 
             App.AdviceHeroInfos = await _restApi.GetHeroListV2();
             App.AdviceMapInfos = await _restApi.GetMapListV2();
-            var lobbyHeroList = await _restApi.GetLobbyHeroList(App.Language);
-            var lobbyMapList = await _restApi.GetLobbyMapList(App.Language);
-            App.LobbyHeroes = lobbyHeroList.Select(h => h.Name).ToList();
-            App.LobbyMaps = lobbyMapList.Select(v => v.Name).ToList();
+            AllHero.HeroInfo = await _restApi.GetHashList();
 
             if (!string.IsNullOrEmpty(App.CustomConfigurationSettings.LanguageForGameClient))
             {
@@ -1027,16 +1025,21 @@ namespace HotsBpHelper.Pages
                 if (App.Debug)
                     source += @"&debug=1";
 
+                if (updManager.State == UpdateManager.UpdateProcessState.AfterRestart)
+                    return;
+
                 updManager.UpdateSource = new SimpleWebSource(source);
+
                 try
                 {
                     updManager.CheckForUpdates();
                 }
                 catch (InvalidOperationException e)
                 {
-                    Logger.Error(e);
                     if (e.Message.Contains(@"Already checked for updates"))
                         return;
+
+                    Logger.Error(e);
 
                     //Execute.OnUIThread(() => {
                     //    var errorView = new ErrorView(L("FileUpdateFail"), e.Message, "https://www.bphots.com/articles/errors/1");

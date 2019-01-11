@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using HotsBpHelper.Api.Model;
 using HotsBpHelper.Api.Security;
 using HotsBpHelper.Uploader;
-
+using ImageProcessor.HashProcessing;
 using LobbyFileParser;
 
 using Newtonsoft.Json;
@@ -42,26 +42,33 @@ namespace HotsBpHelper.Api
             client.DownloadDataAsync(new Uri(url));
         }
 
-        public async Task<List<LobbyHeroInfo>> GetLobbyHeroList(string language)
+        public async Task<List<LobbyHeroInfo>> GetLobbyHeroList(string region)
         {
             var request = CreateRequest("get/herolist/lobby",
                 new List<Tuple<string, string>>
                 {
-                    Tuple.Create("lang", language)
+                    Tuple.Create("region", region)
                 });
 
             return await ExecuteAsync<List<LobbyHeroInfo>>(request).ConfigureAwait(false);
         }
 
-        public async Task<List<LobbyMapInfo>> GetLobbyMapList(string language)
+        public async Task<List<LobbyMapInfo>> GetLobbyMapList(string region)
         {
             var request = CreateRequest("get/maplist/lobby",
                 new List<Tuple<string, string>>
                 {
-                    Tuple.Create("lang", language)
+                    Tuple.Create("region", region)
                 });
 
             return await ExecuteAsync<List<LobbyMapInfo>>(request).ConfigureAwait(false);
+        }
+
+        public async Task<List<EachHero>> GetHashList()
+        {
+            var request = CreateRequest("get/hashlist");
+
+            return await ExecuteAsync<List<EachHero>>(request).ConfigureAwait(false);
         }
 
         public async Task<double> GetTimestamp()
@@ -173,7 +180,7 @@ namespace HotsBpHelper.Api
             return Execute<List<BroadcastInfo>>(request);
         }
 
-        public LobbyParameter GetLobbyParameter(string region)
+        public async Task<LobbyParameter> GetLobbyParameter(string region)
         {
             var request = CreateRequest("get/lobbyParameter",
                                         new List<Tuple<string, string>>
@@ -181,7 +188,7 @@ namespace HotsBpHelper.Api
                                                 Tuple.Create("region", region)
                                             });
 
-            return Execute<LobbyParameter>(request);
+            return await ExecuteAsync<LobbyParameter>(request).ConfigureAwait(false);
         }
 
         private RestRequest CreateRequest(string method, IList<Tuple<string, string>> parameters)

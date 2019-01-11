@@ -3,7 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using HotsBpHelper.Api.Model;
 using HotsBpHelper.Uploader;
-
+using ImageProcessor.HashProcessing;
 using LobbyFileParser;
 
 namespace HotsBpHelper.Api
@@ -12,7 +12,7 @@ namespace HotsBpHelper.Api
     {
         List<BroadcastInfo> GetBroadcastInfo(string mode, string lang);
 
-        LobbyParameter GetLobbyParameter(string region);
+        Task<LobbyParameter> GetLobbyParameter(string region);
 
         string GetOss();
 
@@ -21,9 +21,11 @@ namespace HotsBpHelper.Api
         void DownloadFileAsync(string url, DownloadProgressChangedEventHandler downloadProgressChanged,
             DownloadDataCompletedEventHandler downloadCompleted);
 
-        Task<List<LobbyHeroInfo>> GetLobbyHeroList(string name);
+        Task<List<EachHero>> GetHashList();
 
-        Task<List<LobbyMapInfo>> GetLobbyMapList(string name);
+        Task<List<LobbyHeroInfo>> GetLobbyHeroList(string region);
+
+        Task<List<LobbyMapInfo>> GetLobbyMapList(string region);
 
         Task<double> GetTimestamp();
 

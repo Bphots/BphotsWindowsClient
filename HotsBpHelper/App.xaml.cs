@@ -34,8 +34,6 @@ namespace HotsBpHelper
         public static List<HeroInfo> OcrHeroInfos;
 
         public static List<MapInfo> OcrMapInfos;
-        
-        public static List<string> LobbyHeroes;
 
         public static bool Debug;
 
@@ -60,8 +58,6 @@ namespace HotsBpHelper
         public static bool HasServiceAsked { get; set; }
 
         public static bool HasHotsweekAsked { get; set; }
-
-        public static List<string> LobbyMaps { get; set; }
 
         private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {

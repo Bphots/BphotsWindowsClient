@@ -22,6 +22,8 @@ namespace HotsBpHelper.Pages
         private int _width;
 
         private readonly Dictionary<Region, LobbyParameter> _lobbyParameter = new Dictionary<Region, LobbyParameter>();
+        private readonly Dictionary<Region, List<string>> _lobbyHeroes = new Dictionary<Region, List<string>>();
+        private readonly Dictionary<Region, List<string>> _lobbyMaps = new Dictionary<Region, List<string>>();
 
         public MMRViewModel(IEventAggregator eventAggregator, IRestApi restApi)
         {
@@ -37,21 +39,37 @@ namespace HotsBpHelper.Pages
             WebCallbackListener.LobbyRequested += WebCallbackListenerOnLobbyRequested;
         }
 
-        private void WebCallbackListenerOnLobbyRequested(object sender, EventArgs eventArgs)
+        private async void WebCallbackListenerOnLobbyRequested(object sender, EventArgs eventArgs)
         {
             if (!ShellViewModel.ValidLobbyFilePresent())
                 return;
 
-            var lobbyProcessor = new LobbyFileProcessor(Const.BattleLobbyPath, App.LobbyHeroes, App.LobbyMaps);
+            var lobbyProcessor = new LobbyFileProcessor(Const.BattleLobbyPath);
             var region = lobbyProcessor.GetRegion();
+            
             if (!_lobbyParameter.ContainsKey(region))
             {
-                _lobbyParameter[region] = _restApi.GetLobbyParameter(region.ToString());
+                _lobbyParameter[region] = await _restApi.GetLobbyParameter(region.ToString());
             }
 
-            var game = lobbyProcessor.ParseLobbyInfo(_lobbyParameter[region]);
-            FillMMR(game);
-            Show();
+            if (!_lobbyHeroes.ContainsKey(region))
+            {
+                var result = await _restApi.GetLobbyHeroList(region.ToString());
+                _lobbyHeroes[region] = result.Select(h => h.Name).ToList();
+            }
+
+            if (!_lobbyMaps.ContainsKey(region))
+            {
+                var result = await _restApi.GetLobbyMapList(region.ToString());
+                _lobbyMaps[region] = result.Select(h => h.Name).ToList();
+            }
+
+            var game = lobbyProcessor.ParseLobbyInfo(_lobbyParameter[region], _lobbyHeroes[region], _lobbyMaps[region]);
+            Execute.OnUIThread(() => 
+            {
+                FillMMR(game);
+                Show();
+            });
         }
 
         public string LocalFileUri { get; set; }
