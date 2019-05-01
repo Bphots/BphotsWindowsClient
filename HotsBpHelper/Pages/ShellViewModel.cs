@@ -347,7 +347,7 @@ namespace HotsBpHelper.Pages
         {
             if (_notifyUpdateTaskCompleted != null && !_notifyUpdateTaskCompleted.IsSuccessfullyCompleted)
             {
-                Logger.Trace("Upldate failed");
+                Logger.Trace("Update failed");
                 try
                 {
                     var ossInfo = _restApi.GetOss();

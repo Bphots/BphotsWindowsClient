@@ -44,7 +44,7 @@ namespace HotsBpHelper.Api
 
         public async Task<List<LobbyHeroInfo>> GetLobbyHeroList(string region)
         {
-            var request = CreateRequest("get/herolist/lobby",
+            var request = CreateRequest("get/herolist/v2/lobby",
                 new List<Tuple<string, string>>
                 {
                     Tuple.Create("region", region)
@@ -55,7 +55,7 @@ namespace HotsBpHelper.Api
 
         public async Task<List<LobbyMapInfo>> GetLobbyMapList(string region)
         {
-            var request = CreateRequest("get/maplist/lobby",
+            var request = CreateRequest("get/maplist/v2/lobby",
                 new List<Tuple<string, string>>
                 {
                     Tuple.Create("region", region)
