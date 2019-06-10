@@ -370,10 +370,11 @@ namespace HotsBpHelper.Uploader
             if (App.Debug)
                 Log.Trace($"Pre-preparsing file {file.Filename} + {file.GameMode}");
 
-            if (file.GameMode != GameMode.QuickMatch &&
-                file.GameMode != GameMode.HeroLeague
-                && file.GameMode != GameMode.TeamLeague &&
-                file.GameMode != GameMode.UnrankedDraft)
+            if (file.GameMode != GameMode.QuickMatch
+                && file.GameMode != GameMode.HeroLeague
+                && file.GameMode != GameMode.TeamLeague
+                && file.GameMode != GameMode.UnrankedDraft
+                && file.GameMode != GameMode.StormLeague)
             {
                 file.HotsweekUploadStatus = UploadStatus.AiDetected;
             }

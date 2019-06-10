@@ -14,5 +14,6 @@ namespace HotsBpHelper.Uploader
         UnrankedDraft = 0x20,
         HeroLeague = 0x40,
         TeamLeague = 0x80,
+        StormLeague = 0x100
     }
 }
